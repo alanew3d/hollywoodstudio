@@ -28,6 +28,7 @@
 <script type="application/ld+json" id="ldjson">
 {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Hollywood Studio AI","applicationCategory":"MultimediaApplication","operatingSystem":"Web","description":"Plataforma de produção audiovisual com IA para gerar vídeo, imagem e áudio cinematográficos.","url":"https://hollywoodstudio.ai/","offers":{"@type":"Offer","price":"99","priceCurrency":"BRL"},"author":{"@type":"Organization","name":"Hollywood Studio AI"}}
 </script>
+<script src="/config.js"></script>
 <script>
 /* ════════ HOLLYWOOD STUDIO AI — Script #0 (data layer + helpers) ════════ */
 /* Rewritten with template literals to avoid quote-escaping issues */
@@ -1446,7 +1447,7 @@ input[type=range]{accent-color:var(--accent)}
   <div class="auth-art">
     <div class="auth-mosaic" id="authMosaic"></div>
     <div class="al">
-      <img src="/assets/logos/logo-hero.png" onerror="this.src='/assets/logo-hero.png'" style="max-width:380px;width:80%;height:auto;margin-bottom:8px" alt="Hollywood Studio AI">
+      <img src="/assets/logos/logo-hero.png" onerror="this.style.opacity='0'" style="max-width:380px;width:80%;height:auto;margin-bottom:8px" alt="Hollywood Studio AI">
       <div class="qt" id="authQuote">A direção cinematográfica encontra a inteligência generativa.</div>
     </div>
   </div>
@@ -1472,8 +1473,8 @@ input[type=range]{accent-color:var(--accent)}
 <div id="app" class="hide">
   <aside class="sidebar" id="sidebar">
     <div class="brand" onclick="go('studio')" style="cursor:pointer">
-      <img src="/assets/logos/logo-dark.png" class="brand-logo dark" alt="Hollywood Studio AI" onerror="this.src='/assets/logo-dark.png';this.onerror=()=>this.src='/public/assets/logo-dark.png'">
-      <img src="/assets/logos/logo-light.png" class="brand-logo light" alt="Hollywood Studio AI" onerror="this.src='/assets/logo-light.png';this.onerror=()=>this.src='/public/assets/logo-light.png'">
+      <img src="/assets/logos/logo-dark.png" class="brand-logo dark" alt="Hollywood Studio AI" onerror="this.style.display='none'">
+      <img src="/assets/logos/logo-light.png" class="brand-logo light" alt="Hollywood Studio AI" onerror="this.style.display='none'">
     </div>
     <nav class="nav" id="nav"></nav>
     <div style="padding:12px;border-top:1px solid var(--line)">
@@ -5988,7 +5989,7 @@ function initGoogle(){
   if(!CFG.GOOGLE_CLIENT_ID){fallbackBtn();return;}
   if(!window.google||!google.accounts||!google.accounts.id){setTimeout(initGoogle,400);return;}
   try{
-    google.accounts.id.initialize({client_id:CFG.GOOGLE_CLIENT_ID,callback:onGoogle,auto_select:false,
+    google.accounts.id.initialize({client_id:CFG.GOOGLE_CLIENT_ID,callback:onGoogle,auto_select:false,use_fedcm_for_prompt:true,itp_support:true,
       error_callback:(err)=>{console.warn('GIS error',err);helpLine();
         toast(S.lang==='pt'?'Login Google indisponível — verifique a origem no Console (ou use e-mail).':'Google login unavailable — check the origin in the Console (or use email).','err');}});
     if(c){c.innerHTML='';google.accounts.id.renderButton(c,{theme:S.theme==='dark'?'filled_black':'outline',size:'large',width:300,text:'continue_with',shape:'pill'});
@@ -6013,7 +6014,7 @@ function googleSignIn(){
     return;
   }
   if(!window.google||!google.accounts){toast('Google SDK…','err');return;}
-  google.accounts.id.initialize({client_id:CFG.GOOGLE_CLIENT_ID,callback:onGoogle});
+  google.accounts.id.initialize({client_id:CFG.GOOGLE_CLIENT_ID,callback:onGoogle,use_fedcm_for_prompt:true,itp_support:true});
   google.accounts.id.prompt();
 }
 function onGoogle(resp){

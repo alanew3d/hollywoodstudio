@@ -14,13 +14,17 @@
       "use": "@vercel/static"
     },
     {
-      "src": "public/**",
+      "src": "admin-patch.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "assets/**",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/assets/(.*)", "dest": "/public/assets/$1" },
+    { "src": "/assets/(.*)", "dest": "/assets/$1" },
     { "src": "/(.*)", "dest": "/index.html" }
   ],
   "headers": [
@@ -33,10 +37,15 @@
       ]
     },
     {
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
       ]
     }
   ]
