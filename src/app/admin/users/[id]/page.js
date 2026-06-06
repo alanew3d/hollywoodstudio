@@ -56,8 +56,8 @@ export default function AdminUserDetail() {
 
   const u = data.user;
   const limits = PLAN_LIMITS[u.plan] || PLAN_LIMITS.free;
-  const videoUsage = data.monthUsage?.find(m => m.mode?.includes("video"))?.._count || 0;
-  const imageUsage = data.monthUsage?.find(m => m.mode === "image")?.._count || 0;
+  const videoUsage = data.monthUsage?.find(m => m.mode?.includes("video"))?._count || 0;
+  const imageUsage = data.monthUsage?.find(m => m.mode === "image")?._count || 0;
 
   return (
     <div>
