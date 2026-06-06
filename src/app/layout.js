@@ -7,18 +7,17 @@ const font = Outfit({ subsets: ["latin"] });
 
 export const metadata = {
   title: "Hollywood Studio AI — Produção audiovisual com IA",
-  description: "Plataforma SaaS para gerar vídeos cinematográficos com IA, créditos flexíveis e direção criativa.",
+  description: "Workflow audiovisual com IA: brief, storyboard, modelos, geração, galeria e final cut.",
+  icons: { icon: "/assets/favicon.png" },
 };
 
 export default function RootLayout({ children }) {
-  const theme = process.env.NEXT_PUBLIC_THEME || "hollywood";
-
   return (
-    <html lang="pt-BR" className="h-dvh w-full transition-colors duration-500" data-theme={theme} style={{ colorScheme: "dark" }}>
-      <body className={`${font.className} h-dvh w-full flex flex-col antialiased transition-colors duration-500`}>
+    <html lang="pt-BR" className="min-h-screen" data-theme="hollywood" style={{ colorScheme: "dark" }}>
+      <body className={`${font.className} min-h-screen antialiased transition-colors duration-500`}>
         <Providers>
           <Navbar />
-          <div className="flex-1 flex flex-col overflow-hidden">{children}</div>
+          <main className="min-h-[calc(100vh-80px)]">{children}</main>
         </Providers>
       </body>
     </html>

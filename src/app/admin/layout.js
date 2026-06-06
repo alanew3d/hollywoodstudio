@@ -8,9 +8,14 @@ const NAV = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/analytics", label: "Analytics" },
   { href: "/admin/users", label: "Users" },
+  { href: "/admin/credits", label: "Credits" },
   { href: "/admin/payments", label: "Payments" },
   { href: "/admin/subscriptions", label: "Subscriptions" },
-  { href: "/admin/settings", label: "Site Settings" },
+  { href: "/admin/plans", label: "Plans" },
+  { href: "/admin/models", label: "Models" },
+  { href: "/admin/features", label: "Features" },
+  { href: "/admin/branding", label: "Branding" },
+  { href: "/admin/settings", label: "Settings" },
 ];
 
 export default function AdminLayout({ children }) {

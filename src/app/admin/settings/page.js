@@ -1,86 +1,18 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function AdminSettings() {
-  const [msg, setMsg] = useState(null);
+const PLAN_NAMES = { free: "Free", basico: "Básico", premium: "Premium", avancado: "Avançado" };
+const cx = (...a) => a.filter(Boolean).join(" ");
+function Card({ children, className="" }) { return <div className={cx("bg-[#161616] border border-white/10 rounded-xl p-5", className)}>{children}</div>; }
+function Label({ children }) { return <label className="text-[11px] uppercase tracking-[.12em] text-white/35 block mb-1.5">{children}</label>; }
+function Input(props) { return <input {...props} className={cx("w-full bg-[#101010] border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-yellow-500/60 placeholder-white/20", props.className)} />; }
+function Select(props) { return <select {...props} className={cx("w-full bg-[#101010] border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-yellow-500/60", props.className)} />; }
+function Textarea(props) { return <textarea {...props} className={cx("w-full bg-[#101010] border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-yellow-500/60 placeholder-white/20", props.className)} />; }
+function Button({ children, className="", ...props }) { return <button {...props} className={cx("px-3 py-2 rounded-lg text-xs font-semibold transition-colors disabled:opacity-40", className || "bg-yellow-500 text-black hover:bg-yellow-400")} >{children}</button>; }
+function Status({ on, label }) { return <span className={cx("text-[10px] px-2 py-1 rounded-full font-semibold", on ? "bg-green-500/10 text-green-400" : "bg-white/5 text-white/30")}>{label || (on ? "ON" : "OFF")}</span>; }
 
-  return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white mb-1">Site Settings</h1>
-        <p className="text-sm text-white/40">Configure platform-wide settings and integrations.</p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Plan limits */}
-        <div className="bg-[#161616] border border-white/10 rounded-xl p-6">
-          <h2 className="text-sm font-semibold mb-1">Plan Configuration</h2>
-          <p className="text-xs text-white/30 mb-5">Current plan limits (edit in config.js)</p>
-          {[
-            { name: "Básico", price: "R$99", credits: "150s", color: "text-blue-400" },
-            { name: "Premium", price: "R$199", credits: "300s", color: "text-yellow-400" },
-            { name: "Avançado", price: "R$349", credits: "600s", color: "text-purple-400" },
-          ].map(p => (
-            <div key={p.name} className="flex items-center justify-between py-3 border-b border-white/5 last:border-0">
-              <span className={`text-sm font-semibold ${p.color}`}>{p.name}</span>
-              <div className="text-right">
-                <div className="text-xs text-white/70">{p.price}/mês</div>
-                <div className="text-[11px] text-white/30">{p.credits} de vídeo</div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Payment methods status */}
-        <div className="bg-[#161616] border border-white/10 rounded-xl p-6">
-          <h2 className="text-sm font-semibold mb-1">Payment Methods</h2>
-          <p className="text-xs text-white/30 mb-5">Status of configured payment gateways</p>
-          {[
-            { name: "Stripe", icon: "💳", key: "STRIPE_SECRET_KEY", desc: "Cartão crédito/débito internacional" },
-            { name: "MercadoPago", icon: "🏦", key: "MERCADOPAGO_ACCESS_TOKEN", desc: "Pix + Boleto + Cartão BR" },
-            { name: "PayPal", icon: "🅿️", key: "NEXT_PUBLIC_PAYPAL_EMAIL", desc: "PayPal.me redirect" },
-          ].map(p => (
-            <div key={p.name} className="flex items-center justify-between py-3 border-b border-white/5 last:border-0">
-              <div className="flex items-center gap-3">
-                <span className="text-lg">{p.icon}</span>
-                <div>
-                  <div className="text-xs font-medium text-white/80">{p.name}</div>
-                  <div className="text-[11px] text-white/30">{p.desc}</div>
-                </div>
-              </div>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-white/5 text-white/30">Check .env</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Webhook URLs */}
-        <div className="bg-[#161616] border border-white/10 rounded-xl p-6 lg:col-span-2">
-          <h2 className="text-sm font-semibold mb-1">Webhook URLs</h2>
-          <p className="text-xs text-white/30 mb-5">Configure these in your payment provider dashboards</p>
-          <div className="space-y-3">
-            {[
-              { provider: "Stripe", url: `${typeof window !== "undefined" ? window.location.origin : "https://hollywoodstudio.ai"}/api/stripe/webhook`, event: "checkout.session.completed" },
-              { provider: "MercadoPago", url: `${typeof window !== "undefined" ? window.location.origin : "https://hollywoodstudio.ai"}/api/mercadopago/webhook`, event: "payment" },
-              { provider: "BytePlus/AI", url: `${typeof window !== "undefined" ? window.location.origin : "https://hollywoodstudio.ai"}/api/webhook/byteplus`, event: "Generation callback" },
-            ].map(w => (
-              <div key={w.provider} className="bg-[#111] border border-white/5 rounded-lg p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-medium text-white/70">{w.provider}</span>
-                  <span className="text-[10px] text-white/30">{w.event}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <code className="text-[11px] text-yellow-400 font-mono flex-1 truncate">{w.url}</code>
-                  <button onClick={() => { navigator.clipboard.writeText(w.url); setMsg(`${w.provider} URL copiada`); setTimeout(() => setMsg(null), 2000); }}
-                    className="text-[10px] px-2 py-1 border border-white/10 rounded text-white/40 hover:text-white hover:border-white/25 transition-colors">
-                    Copy
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-          {msg && <p className="text-xs text-yellow-400 mt-3">✓ {msg}</p>}
-        </div>
-      </div>
-    </div>
-  );
-}
+const ENV_LABELS = {
+  DATABASE_URL:"Banco Neon", NEXTAUTH_URL:"URL pública do app", NEXTAUTH_SECRET:"Segredo NextAuth", GOOGLE_CLIENT_ID:"Google OAuth Client ID", GOOGLE_CLIENT_SECRET:"Google OAuth Secret", STRIPE_SECRET_KEY:"Stripe Secret Key", STRIPE_WEBHOOK_SECRET:"Stripe Webhook Secret", NEXT_PUBLIC_STRIPE_LINK_BASICO:"Stripe Link Básico", NEXT_PUBLIC_STRIPE_LINK_PREMIUM:"Stripe Link Premium", NEXT_PUBLIC_STRIPE_LINK_AVANCADO:"Stripe Link Avançado", MERCADOPAGO_ACCESS_TOKEN:"MercadoPago Access Token", BYTEPLUS_API_KEY:"BytePlus / Seedance", ATLASCLOUD_API_KEY:"Atlas Cloud"
+};
+export default function AdminSettings(){ const [data,setData]=useState(null); const [msg,setMsg]=useState(null); useEffect(()=>{fetch('/api/admin/platform').then(r=>r.ok?r.json():null).then(setData).catch(()=>setData({envChecklist:{}}));},[]); const origin=typeof window!=='undefined'?window.location.origin:'https://hollywoodstudio.ai'; const copy=(t)=>{navigator.clipboard.writeText(t);setMsg('Copiado');setTimeout(()=>setMsg(null),1500)};
+  return <div><div className="mb-6"><h1 className="text-2xl font-bold text-white mb-1">Launch Settings</h1><p className="text-sm text-white/40">Checklist operacional: secrets ficam na Vercel; conteúdos comerciais ficam no Admin.</p></div>{msg&&<div className="mb-4 text-xs text-yellow-400">✓ {msg}</div>}<div className="grid grid-cols-1 lg:grid-cols-2 gap-5"><Card><h2 className="text-sm font-semibold mb-1">Environment Variables</h2><p className="text-xs text-white/35 mb-4">Configure em Vercel → Project → Environment Variables.</p><div className="space-y-2">{Object.entries(ENV_LABELS).map(([k,label])=><div key={k} className="flex items-center justify-between gap-3 border-b border-white/5 pb-2"><div><div className="text-xs text-white/70 font-mono">{k}</div><div className="text-[11px] text-white/30">{label}</div></div><Status on={!!data?.envChecklist?.[k]} label={data?.envChecklist?.[k]?'OK':'Falta'}/></div>)}</div></Card><Card><h2 className="text-sm font-semibold mb-1">Webhook URLs</h2><p className="text-xs text-white/35 mb-4">Copie para Stripe, MercadoPago e BytePlus/Atlas.</p>{[{p:'Stripe',u:`${origin}/api/stripe/webhook`,e:'checkout.session.completed'},{p:'MercadoPago',u:`${origin}/api/mercadopago/webhook`,e:'payment'},{p:'BytePlus/AI',u:`${origin}/api/webhook/byteplus`,e:'generation callback'},{p:'NextAuth Google',u:`${origin}/api/auth/callback/google`,e:'Authorized redirect URI'}].map(w=><div key={w.p} className="bg-[#101010] border border-white/5 rounded-lg p-3 mb-3"><div className="flex justify-between text-xs mb-2"><b>{w.p}</b><span className="text-white/35">{w.e}</span></div><div className="flex gap-2"><code className="text-[11px] text-yellow-400 truncate flex-1">{w.u}</code><button onClick={()=>copy(w.u)} className="text-[10px] px-2 py-1 border border-white/10 rounded text-white/50">Copy</button></div></div>)}</Card></div><div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5"><Card><h3 className="font-semibold text-white">Planos</h3><p className="text-xs text-white/35 mt-1 mb-3">Preços, links e créditos.</p><a className="text-xs text-yellow-400" href="/admin/plans">Abrir Plans →</a></Card><Card><h3 className="font-semibold text-white">Modelos</h3><p className="text-xs text-white/35 mt-1 mb-3">Ativar Atlas, Seedance e providers.</p><a className="text-xs text-yellow-400" href="/admin/models">Abrir Models →</a></Card><Card><h3 className="font-semibold text-white">Branding</h3><p className="text-xs text-white/35 mt-1 mb-3">Logo, idioma, tema e suporte.</p><a className="text-xs text-yellow-400" href="/admin/branding">Abrir Branding →</a></Card></div></div> }
