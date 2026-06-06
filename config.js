@@ -69,7 +69,7 @@ window.HSAI_CONFIG = {
   },
 
   // ─── CRÉDITOS GRÁTIS NO CADASTRO ─────────────────────────────────────────
-  FREE_CREDITS: 50,                 // segundos dados ao criar conta
+  FREE_CREDITS: 0,                 // segundos dados ao criar conta
 
   // ─── ENDPOINTS DO BACKEND (Vercel Functions) ─────────────────────────────
   // Deixe vazios se não tiver backend — o sistema usa localStorage como fallback
