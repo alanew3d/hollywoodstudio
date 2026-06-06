@@ -6,52 +6,46 @@ import { AIService } from "@/lib/services/ai";
 export async function POST(req) {
   try {
     const session = await getServerSession(authOptions);
-
     if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const body = await req.json();
-    const { mode, prompt, aspect_ratio, resolution, duration, quality, model, images_list } = body;
+    const { mode, prompt, aspect_ratio, resolution, duration, quality, model, images_list, video_files, audio_files } = body;
 
-    if (!prompt && mode === 'text-to-video') {
-      return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
+    if (!prompt && mode === "text-to-video") {
+      return NextResponse.json({ error: "Prompt obrigatório" }, { status: 400 });
     }
 
+    // Estima créditos antes de gerar (para o frontend mostrar)
+    const { getCreditCost } = await import("@/lib/services/ai");
+    const estimatedCost = getCreditCost(mode, duration, quality, resolution);
+
     let result;
-    if (mode === "reference-to-video") {
-      result = await AIService.edit(session.user.id, {
-        mode,
-        prompt,
-        images_list,
-        aspect_ratio,
-        resolution,
-        duration,
-        quality,
-        model
-      });
-    } else {
+    try {
       result = await AIService.generate(session.user.id, {
-        mode,
-        prompt,
-        aspect_ratio,
-        resolution,
-        duration,
-        quality,
-        model,
-        images_list
+        mode, prompt, aspect_ratio, resolution, duration, quality, model, images_list, video_files, audio_files,
       });
+    } catch (err) {
+      if (err.message === "Créditos insuficientes") {
+        return NextResponse.json(
+          { error: "Créditos insuficientes", code: "INSUFFICIENT_CREDITS", required: estimatedCost },
+          { status: 403 }
+        );
+      }
+      throw err;
     }
 
     return NextResponse.json({
       ...result,
-      metadata: { prompt, aspect_ratio, resolution }
+      estimatedCost,
+      metadata: { prompt, aspect_ratio, resolution, duration, model },
     });
   } catch (error) {
-    if (error.message === "Insufficient credits") {
-      return new NextResponse("Insufficient credits", { status: 403 });
-    }
-    console.error("[AI_SEEDANCE]", error);
-    return new NextResponse(error.message || "Internal Error", { status: 500 });
+    console.error("[AI_GENERATE]", error);
+    return NextResponse.json(
+      { error: error.message || "Erro interno ao gerar" },
+      { status: 500 }
+    );
   }
 }

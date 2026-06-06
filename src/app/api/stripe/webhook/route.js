@@ -1,13 +1,13 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { BillingService } from "@/lib/services/billing";
+import { StripeService } from "@/lib/services/billing";
 
 export async function POST(req) {
   const body = await req.text();
-  const signature = headers().get("Stripe-Signature");
+  const signature = (await headers()).get("Stripe-Signature");
 
   try {
-    await BillingService.handleWebhook(body, signature);
+    await StripeService.handleWebhook(body, signature);
     return new NextResponse(null, { status: 200 });
   } catch (error) {
     console.error("[STRIPE_WEBHOOK]", error);

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
-import { StripeService } from "@/lib/services/billing";
+import { MercadoPagoService } from "@/lib/services/billing";
 import config from "@/lib/config";
 
 export async function POST(req) {
@@ -14,17 +14,10 @@ export async function POST(req) {
       return NextResponse.json({ error: "Plano inválido" }, { status: 400 });
     }
 
-    // Se tem Payment Link pré-configurado, retorna direto (mais simples)
-    const plan = config.plans[planId];
-    if (plan.stripeLink) {
-      return NextResponse.json({ url: plan.stripeLink });
-    }
-
-    // Senão, cria sessão dinâmica
-    const result = await StripeService.createCheckoutSession(session.user.id, planId);
+    const result = await MercadoPagoService.createPreference(session.user.id, planId);
     return NextResponse.json(result);
   } catch (error) {
-    console.error("[STRIPE_CHECKOUT]", error);
+    console.error("[MP_CHECKOUT]", error);
     return new NextResponse(error.message || "Internal Error", { status: 500 });
   }
 }

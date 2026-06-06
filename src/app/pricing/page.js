@@ -2,156 +2,254 @@
 
 import { useState } from "react";
 import { useSession, signIn } from "next-auth/react";
-import { motion } from "framer-motion";
-import { FaBolt, FaCoins, FaCheckCircle, FaStar } from "react-icons/fa";
+
+const PLANS = [
+  {
+    id: "basico",
+    name: "Básico",
+    nameEn: "Basic",
+    price: 99,
+    priceUsd: 19,
+    credits: 150,
+    highlight: false,
+    badge: null,
+    features: {
+      pt: ["150 segundos de vídeo/mês", "Seedance 2.0 + Kling 3.0", "Texto → Vídeo + Imagem → Vídeo", "Galeria pessoal", "Suporte por email"],
+      en: ["150 seconds of video/month", "Seedance 2.0 + Kling 3.0", "Text → Video + Image → Video", "Personal gallery", "Email support"],
+    },
+  },
+  {
+    id: "premium",
+    name: "Premium",
+    nameEn: "Premium",
+    price: 199,
+    priceUsd: 39,
+    credits: 300,
+    highlight: true,
+    badge: "MAIS POPULAR",
+    features: {
+      pt: ["300 segundos de vídeo/mês", "Todos os modelos (Veo 3, Flux, Seedream…)", "Storyboard com IA", "Director's Eye", "Suporte prioritário"],
+      en: ["300 seconds of video/month", "All models (Veo 3, Flux, Seedream…)", "AI Storyboard", "Director's Eye", "Priority support"],
+    },
+  },
+  {
+    id: "avancado",
+    name: "Avançado",
+    nameEn: "Advanced",
+    price: 349,
+    priceUsd: 69,
+    credits: 600,
+    highlight: false,
+    badge: null,
+    features: {
+      pt: ["600 segundos de vídeo/mês", "API direta + projetos ilimitados", "Director Agent (IA)", "Referência de personagens", "Concierge dedicado"],
+      en: ["600 seconds of video/month", "Direct API + unlimited projects", "Director Agent (AI)", "Character reference", "Dedicated concierge"],
+    },
+  },
+];
+
+const PAYMENT_METHODS = [
+  { id: "mercadopago", label: "Pix / Boleto / Cartão BR", labelEn: "Pix / Boleto / BR Card", icon: "🏦", desc: "MercadoPago — aprovação instantânea" },
+  { id: "stripe", label: "Cartão Internacional", labelEn: "International Card", icon: "💳", desc: "Stripe — Visa, Mastercard, Amex" },
+  { id: "paypal", label: "PayPal", labelEn: "PayPal", icon: "🅿️", desc: `PayPal.me` },
+];
 
 export default function PricingPage() {
   const { data: session, status } = useSession();
-  const [loadingTier, setLoadingTier] = useState(null);
+  const [loadingPlan, setLoadingPlan] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState("mercadopago");
+  const [lang, setLang] = useState("pt");
 
-  const tiers = [
-    {
-      id: "basico",
-      name: "Básico",
-      credits: 150,
-      price: 99,
-      description: "Para começar a gerar vídeos e validar ideias com agilidade.",
-      features: ["150 segundos de vídeo", "Text-to-video e image-to-video", "Histórico de criações", "Suporte inicial"],
-      highlight: false,
-    },
-    {
-      id: "premium",
-      name: "Premium",
-      credits: 300,
-      price: 199,
-      description: "O melhor equilíbrio para criadores, produtoras e campanhas.",
-      features: ["300 segundos de vídeo", "Uso profissional recorrente", "Galeria e histórico", "Prioridade na evolução da plataforma"],
-      highlight: true,
-    },
-    {
-      id: "avancado",
-      name: "Avançado",
-      credits: 600,
-      price: 349,
-      description: "Para alto volume de testes, variações e produção comercial.",
-      features: ["600 segundos de vídeo", "Mais margem para refações", "Fluxo completo de produção", "Indicado para equipes criativas"],
-      highlight: false,
-    },
-  ];
+  const pt = lang === "pt";
+  const paymentError = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("payment") === "failed";
+  const paymentPending = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("payment") === "pending";
 
-  const handleCheckout = async (planId, tierName) => {
-    if (status !== "authenticated") {
-      signIn();
-      return;
-    }
+  const handleCheckout = async (planId) => {
+    if (status !== "authenticated") { signIn(); return; }
 
     try {
-      setLoadingTier(tierName);
-      const res = await fetch("/api/stripe/checkout", {
+      setLoadingPlan(planId);
+      const plan = PLANS.find((p) => p.id === planId);
+
+      if (paymentMethod === "paypal") {
+        const email = "alansorrah";
+        const price = plan.price;
+        window.open(`https://www.paypal.com/paypalme/${email}/${price}BRL`, "_blank");
+        setLoadingPlan(null);
+        return;
+      }
+
+      const endpoint = paymentMethod === "mercadopago"
+        ? "/api/mercadopago/checkout"
+        : "/api/stripe/checkout";
+
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ planId }),
       });
+
       const data = await res.json();
       if (data.url) window.location.href = data.url;
+      else throw new Error(data.error || "Erro ao criar checkout");
     } catch (err) {
-      console.error("Stripe error", err);
+      console.error("Checkout error", err);
+      alert(pt ? `Erro: ${err.message}` : `Error: ${err.message}`);
     } finally {
-      setLoadingTier(null);
+      setLoadingPlan(null);
     }
   };
 
   return (
-    <div className="flex-1 bg-transparent overflow-y-auto custom-scrollbar p-4 md:p-12">
-      <header className="max-w-7xl mx-auto mb-16 text-center space-y-4 pt-4 md:pt-0">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-500 text-[10px] font-semibold tracking-[0.4em] uppercase">
-          Créditos cinematográficos
+    <div className="min-h-screen bg-[#0a0a0a] text-white">
+      {/* Header */}
+      <div className="max-w-6xl mx-auto px-4 pt-16 pb-8 text-center">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-[10px] font-semibold tracking-[0.4em] uppercase mb-6">
+          Hollywood Studio AI
         </div>
-        <h1 className="text-4xl md:text-5xl font-semibold tracking-tight leading-tight text-foreground drop-shadow-sm">
-          PLANOS HOLLYWOOD STUDIO AI
+        <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+          {pt ? "Planos & Créditos" : "Plans & Credits"}
         </h1>
-        <p className="text-muted font-medium text-xs uppercase tracking-widest max-w-xl mx-auto leading-loose">
-          Modelo simples: 1 crédito = 1 segundo de vídeo gerado. <br />
-          Escolha o pacote ideal para sua produção.
+        <p className="text-gray-400 text-sm max-w-xl mx-auto leading-relaxed">
+          {pt
+            ? "1 crédito = 1 segundo de vídeo gerado. Escolha seu plano e produza conteúdo cinematográfico com IA."
+            : "1 credit = 1 second of generated video. Choose your plan and produce cinematic AI content."}
         </p>
-      </header>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 pb-20">
-        {tiers.map((tier, index) => (
-          <motion.div
-            key={tier.name}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className={`relative p-8 rounded-2xl border transition-all flex flex-col ${
-              tier.highlight
-                ? "bg-glass-bg backdrop-blur-3xl border-primary-500 shadow-xl shadow-primary-500/10"
-                : "bg-glass-bg backdrop-blur-3xl border-glass-border shadow-sm"
-            }`}
-          >
-            {tier.highlight && (
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-primary-500 rounded-full text-black text-[9px] font-semibold uppercase tracking-widest shadow-lg">
-                Mais escolhido
+        {/* Lang toggle */}
+        <div className="flex items-center justify-center gap-2 mt-4">
+          <button onClick={() => setLang("pt")} className={`text-xs px-3 py-1 rounded-full ${lang === "pt" ? "bg-yellow-500 text-black font-bold" : "text-gray-500"}`}>PT</button>
+          <button onClick={() => setLang("en")} className={`text-xs px-3 py-1 rounded-full ${lang === "en" ? "bg-yellow-500 text-black font-bold" : "text-gray-500"}`}>EN</button>
+        </div>
+      </div>
+
+      {/* Payment method selector */}
+      <div className="max-w-2xl mx-auto px-4 mb-10">
+        <p className="text-xs text-gray-500 text-center uppercase tracking-widest mb-3">
+          {pt ? "Método de pagamento" : "Payment method"}
+        </p>
+        <div className="grid grid-cols-3 gap-3">
+          {PAYMENT_METHODS.map((m) => (
+            <button
+              key={m.id}
+              onClick={() => setPaymentMethod(m.id)}
+              className={`p-3 rounded-xl border text-center transition-all ${
+                paymentMethod === m.id
+                  ? "border-yellow-500 bg-yellow-500/10"
+                  : "border-white/10 bg-white/5 hover:border-white/20"
+              }`}
+            >
+              <div className="text-xl mb-1">{m.icon}</div>
+              <div className="text-[11px] font-semibold">{pt ? m.label : m.labelEn}</div>
+              <div className="text-[9px] text-gray-500 mt-0.5">{m.desc}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Status messages */}
+      {paymentError && (
+        <div className="max-w-xl mx-auto px-4 mb-6">
+          <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-center text-sm text-red-400">
+            {pt ? "⚠ Pagamento não processado. Tente novamente ou escolha outro método." : "⚠ Payment not processed. Try again or choose another method."}
+          </div>
+        </div>
+      )}
+      {paymentPending && (
+        <div className="max-w-xl mx-auto px-4 mb-6">
+          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 text-center text-sm text-yellow-400">
+            {pt ? "⏳ Pagamento pendente. Seus créditos serão liberados após confirmação." : "⏳ Payment pending. Credits will be released after confirmation."}
+          </div>
+        </div>
+      )}
+
+      {/* Plans grid */}
+      <div className="max-w-6xl mx-auto px-4 pb-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {PLANS.map((plan) => (
+            <div
+              key={plan.id}
+              className={`relative rounded-2xl border p-8 flex flex-col transition-all ${
+                plan.highlight
+                  ? "border-yellow-500 bg-gradient-to-b from-yellow-500/5 to-transparent shadow-xl shadow-yellow-500/10"
+                  : "border-white/10 bg-white/5"
+              }`}
+            >
+              {plan.badge && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-yellow-500 text-black rounded-full text-[10px] font-bold uppercase tracking-wider">
+                  {pt ? plan.badge : "MOST POPULAR"}
+                </div>
+              )}
+
+              <div className="mb-6">
+                <h3 className="text-lg font-bold mb-1">{pt ? plan.name : plan.nameEn}</h3>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-4xl font-bold text-yellow-400">R${plan.price}</span>
+                  <span className="text-xs text-gray-500">/{pt ? "mês" : "month"}</span>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">≈ US${plan.priceUsd}/month</p>
               </div>
-            )}
 
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold tracking-tight mb-2 text-foreground drop-shadow-sm">{tier.name}</h3>
-              <p className="text-xs text-muted font-medium leading-relaxed">{tier.description}</p>
-            </div>
-
-            <div className="mb-8 flex items-end gap-1">
-              <span className="text-4xl font-semibold tracking-tight text-foreground drop-shadow-sm">R${tier.price}</span>
-              <span className="text-xs font-medium text-muted mb-1.5 uppercase tracking-widest">/ pacote</span>
-            </div>
-
-            <div className="flex-1 space-y-4 mb-8">
-              <div className="flex items-center gap-3 p-4 rounded-xl bg-glass-hover border border-glass-border shadow-inner">
-                <FaCoins className="text-yellow-500 text-lg" />
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-medium text-muted uppercase tracking-widest leading-none mb-1">Inclui</span>
-                  <span className="text-lg font-semibold text-foreground drop-shadow-sm">{tier.credits} créditos</span>
+              <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4 mb-6 text-center">
+                <div className="text-2xl font-bold text-yellow-400">{plan.credits}s</div>
+                <div className="text-[10px] text-gray-400 uppercase tracking-widest mt-1">
+                  {pt ? "segundos de vídeo" : "video seconds"}
                 </div>
               </div>
 
-              <ul className="space-y-3 pt-2">
-                {tier.features.map((feat) => (
-                  <li key={feat} className="flex items-center gap-3 text-xs font-medium text-muted">
-                    <FaCheckCircle className="text-primary-500 shrink-0" />
-                    {feat}
+              <ul className="space-y-3 flex-1 mb-8">
+                {plan.features[lang].map((f) => (
+                  <li key={f} className="flex items-center gap-2 text-sm text-gray-300">
+                    <span className="text-yellow-500 text-xs">✓</span> {f}
                   </li>
                 ))}
               </ul>
+
+              <button
+                onClick={() => handleCheckout(plan.id)}
+                disabled={loadingPlan === plan.id}
+                className={`w-full py-3 rounded-xl font-semibold text-sm transition-all ${
+                  plan.highlight
+                    ? "bg-yellow-500 text-black hover:bg-yellow-400 shadow-lg shadow-yellow-500/20"
+                    : "bg-white/10 text-white hover:bg-white/20 border border-white/20"
+                } disabled:opacity-40`}
+              >
+                {loadingPlan === plan.id ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    {pt ? "Aguarde..." : "Loading..."}
+                  </span>
+                ) : (
+                  pt ? `Assinar ${plan.name}` : `Subscribe ${plan.nameEn}`
+                )}
+              </button>
             </div>
+          ))}
+        </div>
 
-            <button
-              onClick={() => handleCheckout(tier.id, tier.name)}
-              disabled={loadingTier === tier.name}
-              className={`w-full h-12 rounded-xl font-semibold text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 transition-all ${
-                tier.highlight
-                  ? "bg-primary-500 text-black hover:bg-primary-600 shadow-primary-500/20"
-                  : "bg-[var(--solid-bg)] text-foreground hover:opacity-80 border border-glass-border"
-              } disabled:opacity-20`}
-            >
-              {loadingTier === tier.name ? <div className="w-5 h-5 border-2 border-primary-600 border-t-transparent rounded-full animate-spin"></div> : <>Comprar créditos <FaBolt className={tier.highlight ? "text-black" : "text-muted"} /></>}
-            </button>
-          </motion.div>
-        ))}
-      </div>
+        {/* Credits info */}
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+          {[
+            { icon: "⚡", title: pt ? "1 crédito = 1 segundo" : "1 credit = 1 second", desc: pt ? "Créditos deduzidos automaticamente antes de gerar" : "Credits deducted automatically before generation" },
+            { icon: "🔒", title: pt ? "Pagamento seguro" : "Secure payment", desc: pt ? "Stripe, MercadoPago e PayPal com criptografia" : "Stripe, MercadoPago and PayPal with encryption" },
+            { icon: "📅", title: pt ? "Validade mensal" : "Monthly validity", desc: pt ? "Créditos renovam todo mês com o plano ativo" : "Credits renew monthly with an active plan" },
+          ].map((item) => (
+            <div key={item.title} className="bg-white/5 border border-white/10 rounded-xl p-5">
+              <div className="text-2xl mb-2">{item.icon}</div>
+              <div className="text-sm font-semibold mb-1">{item.title}</div>
+              <div className="text-xs text-gray-500">{item.desc}</div>
+            </div>
+          ))}
+        </div>
 
-      <footer className="max-w-7xl mx-auto py-12 border-t border-glass-border flex flex-col md:flex-row items-center justify-between gap-8">
-        <div className="space-y-2 text-center md:text-left">
-          <div className="text-[10px] font-semibold tracking-[0.4em] text-muted uppercase">Saldo atual</div>
-          <div className="text-lg font-medium flex items-center gap-3">
-            Você tem: <span className="text-foreground font-semibold">{session?.user?.credits || 0} créditos</span>
+        {/* Current credits */}
+        {session?.user && (
+          <div className="mt-8 text-center text-sm text-gray-500">
+            {pt ? "Créditos atuais:" : "Current credits:"}
+            <span className="text-yellow-400 font-bold ml-2">{session.user.credits || 0}s</span>
           </div>
-        </div>
-        <div className="flex flex-wrap items-center justify-center gap-4 text-muted text-[10px] font-semibold uppercase tracking-widest text-center">
-          <FaStar className="text-yellow-500/30 hidden sm:block" /> Pagamento seguro via Stripe <FaStar className="text-yellow-500/30 hidden sm:block" />
-        </div>
-      </footer>
-
-      <style jsx global>{`.custom-scrollbar::-webkit-scrollbar{width:0}.custom-scrollbar{scrollbar-width:none}`}</style>
+        )}
+      </div>
     </div>
   );
 }
