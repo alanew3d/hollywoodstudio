@@ -17,14 +17,14 @@
 <meta property="og:title" content="Hollywood Studio AI — Geração de vídeo, imagem e áudio por IA">
 <meta property="og:description" content="Produza vídeos, imagens e áudio cinematográficos com os melhores modelos de IA. Direção criativa, personagens, presets e créditos flexíveis.">
 <meta property="og:url" content="https://hollywoodstudio.ai/">
-<meta property="og:image" content="https://hollywoodstudio.ai/assets/logo-hero.png">
+<meta property="og:image" content="https://hollywoodstudio.ai/assets/logos/logo-hero.png">
 <meta property="og:locale" content="pt_BR">
 <meta property="og:locale:alternate" content="en_US">
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Hollywood Studio AI — Geração de vídeo e imagem por IA">
 <meta name="twitter:description" content="Produza conteúdo cinematográfico com IA: Seedance, Kling, Veo, Sora, Flux e mais.">
-<meta name="twitter:image" content="https://hollywoodstudio.ai/assets/logo-hero.png">
+<meta name="twitter:image" content="https://hollywoodstudio.ai/assets/logos/logo-hero.png">
 <script type="application/ld+json" id="ldjson">
 {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Hollywood Studio AI","applicationCategory":"MultimediaApplication","operatingSystem":"Web","description":"Plataforma de produção audiovisual com IA para gerar vídeo, imagem e áudio cinematográficos.","url":"https://hollywoodstudio.ai/","offers":{"@type":"Offer","price":"99","priceCurrency":"BRL"},"author":{"@type":"Organization","name":"Hollywood Studio AI"}}
 </script>
@@ -720,8 +720,8 @@ if(typeof document !== 'undefined' && document.addEventListener){
 }
 
 </script>
-<link rel="icon" type="image/png" href="assets/favicon.png?v=3">
-<link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=3">
+<link rel="icon" type="image/jpeg" href="/assets/logos/favicon.jpg">
+<link rel="shortcut icon" type="image/jpeg" href="/assets/logos/favicon.jpg">
 <link rel="apple-touch-icon" href="assets/icon.png?v=3">
 <link rel="apple-touch-icon" href="assets/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1446,7 +1446,7 @@ input[type=range]{accent-color:var(--accent)}
   <div class="auth-art">
     <div class="auth-mosaic" id="authMosaic"></div>
     <div class="al">
-      <img src="assets/logo-hero.png" style="max-width:380px;width:80%;height:auto;margin-bottom:8px" alt="Hollywood Studio AI">
+      <img src="/assets/logos/logo-hero.png" style="max-width:380px;width:80%;height:auto;margin-bottom:8px" alt="Hollywood Studio AI">
       <div class="qt" id="authQuote">A direção cinematográfica encontra a inteligência generativa.</div>
     </div>
   </div>
@@ -1472,8 +1472,8 @@ input[type=range]{accent-color:var(--accent)}
 <div id="app" class="hide">
   <aside class="sidebar" id="sidebar">
     <div class="brand" onclick="go('studio')" style="cursor:pointer">
-      <img src="assets/logo.png" class="brand-logo dark" alt="Hollywood Studio AI">
-      <img src="assets/logo-light.png" class="brand-logo light" alt="Hollywood Studio AI">
+      <img src="/assets/logos/logo-dark.png" class="brand-logo dark" alt="Hollywood Studio AI">
+      <img src="/assets/logos/logo-light.png" class="brand-logo light" alt="Hollywood Studio AI">
     </div>
     <nav class="nav" id="nav"></nav>
     <div style="padding:12px;border-top:1px solid var(--line)">
@@ -2008,8 +2008,6 @@ function doAuth(){
   upsertUser(S.user);
   finishAuth();
 }
-function fixEncoding(str){try{return decodeURIComponent(escape(str));}catch(e){return str;}}
-function fixUserEncoding(u){if(!u)return u;if(u.name)u.name=u.name.replace(/Ã¡/g,'á').replace(/Ã£/g,'ã').replace(/Ã©/g,'é').replace(/Ãª/g,'ê').replace(/Ã­/g,'í').replace(/Ã³/g,'ó').replace(/Ãº/g,'ú').replace(/Ã/g,'Ã').replace(/Ã/g,'Á').replace(/Ã/g,'É').replace(/Ã/g,'Í').replace(/Ã/g,'Ó').replace(/Ã/g,'Ú').replace(/Ã./g,m=>m);return u;}
 function finishAuth(){
   const ar=document.getElementById('authReason');if(ar)ar.style.display='none';
   const isNew = !loadUsers()[S.user&&S.user.uid];
@@ -2224,12 +2222,14 @@ function modeCats(mode){return mode==='image'?'image':mode==='audio'?'audio':'vi
    Suba a pasta /assets/demo/ no servidor (surf.mp4, dog-soccer.mp4, dog-tightrope.mp4).
    Se um arquivo faltar, o app cai no placeholder "Lights, Camera, AI" automaticamente. */
 const DEMO_REEL=[
-  {url:'assets/demo/surf.mp4',         model:'Seedance 2.0',modelId:'seedance2',ratio:'16:9',dur:11,
+  {url:'/assets/demo/surf.mp4',         model:'Seedance 2.0',modelId:'seedance2',ratio:'16:9',dur:11,
    prompt:'homem surfando na indonésia — cinematic shot, 35mm lens, shallow depth of field, volumetric lighting, film color grading, smooth camera movement, high realism 4k'},
-  {url:'assets/demo/dog-soccer.mp4',   model:'Seedance 2.0',modelId:'seedance2',ratio:'16:9',dur:8,
+  {url:'/assets/demo/dog-soccer.mp4',   model:'Seedance 2.0',modelId:'seedance2',ratio:'16:9',dur:8,
    prompt:'dog playing soccer — plano cinematográfico, lente 35mm, profundidade de campo rasa, iluminação volumétrica, color grading de cinema, movimento de câmera suave, alto realismo 4k'},
-  {url:'assets/demo/dog-tightrope.mp4',model:'Seedance 2.0',modelId:'seedance2',ratio:'16:9',dur:8,
+  {url:'/assets/demo/dog-tightrope.mp4',model:'Seedance 2.0',modelId:'seedance2',ratio:'16:9',dur:8,
    prompt:'cão na corda bamba — plano cinematográfico, lente 35mm, profundidade de campo rasa, iluminação volumétrica, color grading de cinema, movimento de câmera suave, alto realismo 4k'},
+  {url:'/assets/demo/fairy.mp4',model:'Seedance 2.0',modelId:'seedance2',ratio:'16:9',dur:10,
+   prompt:'fada mágica com asas cintilantes na floresta encantada — cinematic shot, 35mm lens, shallow depth of field, volumetric lighting, magical particles, film color grading, high realism 4k'},
 ];
 function pickDemo(){ if(!window._demoPick)window._demoPick=DEMO_REEL[0]; return window._demoPick; }
 function demoByUrl(url){return DEMO_REEL.find(d=>d.url===url);}
@@ -2953,7 +2953,7 @@ function setProvider(p){S.provider=p;localStorage.setItem('hsai_provider',p);ren
 function seoData(){
   const def={title:document.title,description:(document.querySelector('meta[name=description]')||{}).content||'',
     keywords:(document.querySelector('meta[name=keywords]')||{}).content||'',
-    image:'https://hollywoodstudio.ai/assets/logo-hero.png',url:'https://hollywoodstudio.ai/'};
+    image:'https://hollywoodstudio.ai/assets/logos/logo-hero.png',url:'https://hollywoodstudio.ai/'};
   const cfg=(CFG.SEO||{});
   let saved={};try{saved=JSON.parse(localStorage.getItem('hsai_seo')||'{}');}catch(e){}
   return {...def,...cfg,...saved};
@@ -3046,7 +3046,7 @@ function galleryHasUrl(url){if(!url)return false;const k=String(url).split('?')[
 function saveUsers(u){localStorage.setItem('hsai_users',JSON.stringify(u));}
 function userKey(suf){const uid=(S.user&&S.user.uid)||'guest';return 'hsai_'+uid+'_'+suf;}
 function upsertUser(info){
-  const u=loadUsers();const FREE=(CFG.FREE_CREDITS!=null?CFG.FREE_CREDITS:50);
+  const u=loadUsers();const FREE=(CFG.FREE_CREDITS!=null?CFG.FREE_CREDITS:0);
   if(!u[info.uid]){u[info.uid]={uid:info.uid,email:info.email||'',name:info.name||info.email||info.uid,picture:info.picture||'',credits:info.admin?9999:FREE,role:info.admin?'admin':'user',createdAt:Date.now(),google:!!info.google};}
   else {const r=u[info.uid];if(info.email)r.email=info.email;if(info.name)r.name=info.name;if(info.picture)r.picture=info.picture;if(info.admin)r.role='admin';}
   saveUsers(u);return u[info.uid];
@@ -3060,7 +3060,7 @@ function loadUserState(){
   S.sections=JSON.parse(localStorage.getItem(userKey('sections'))||'[]');
   S.forum=JSON.parse(localStorage.getItem(userKey('forum'))||'null');
   S.group=localStorage.getItem(userKey('group'))||'Geral';
-  const rec=loadUsers()[S.user.uid];S.credits=rec?(rec.credits|0):(CFG.FREE_CREDITS!=null?CFG.FREE_CREDITS:50);
+  const rec=loadUsers()[S.user.uid];S.credits=rec?(rec.credits|0):(CFG.FREE_CREDITS!=null?CFG.FREE_CREDITS:0);
   S.user.admin=rec&&rec.role==='admin'?true:!!S.user.admin;
 }
 function persistCredits(){if(!S.user||!S.user.uid)return;const u=loadUsers();if(u[S.user.uid]){u[S.user.uid].credits=S.credits;saveUsers(u);}}
@@ -3163,7 +3163,7 @@ function adminUsersCard(){
       <button class="btn btn-ghost btn-sm" style="padding:4px 8px;font-size:11px;color:var(--err)" onclick="if(confirm('${S.lang==='pt'?'Excluir conta?':'Delete account?'}'))applyAdminUserAction('${r.uid}','delete')">✕</button></div>
   </div>`).join('');
   return `<div class="card" style="grid-column:1/-1"><span class="label">${S.lang==='pt'?`Usuários (${list.length}) — gerenciamento`:`Users (${list.length}) — management`}</span>
-    <p style="font-size:12px;color:var(--ink-3);margin:4px 0 12px">${S.lang==='pt'?'Cada pessoa que se cadastra/loga ganha um painel próprio com créditos, galeria, personagens e seções independentes. Edite créditos, defina papel ou exclua a conta. Novos usuários começam com '+(CFG.FREE_CREDITS!=null?CFG.FREE_CREDITS:50)+' créditos grátis.':'Each registered/logged-in person gets their own panel with independent credits, gallery, characters and sections. Edit credits, set role or delete account. New users start with '+(CFG.FREE_CREDITS!=null?CFG.FREE_CREDITS:50)+' free credits.'}</p>
+    <p style="font-size:12px;color:var(--ink-3);margin:4px 0 12px">${S.lang==='pt'?'Cada pessoa que se cadastra/loga ganha um painel próprio com créditos, galeria, personagens e seções independentes. Edite créditos, defina papel ou exclua a conta. Novos usuários começam com '+(CFG.FREE_CREDITS!=null?CFG.FREE_CREDITS:0)+' créditos grátis.':'Each registered/logged-in person gets their own panel with independent credits, gallery, characters and sections. Edit credits, set role or delete account. New users start with '+(CFG.FREE_CREDITS!=null?CFG.FREE_CREDITS:0)+' free credits.'}</p>
     <div style="display:grid;grid-template-columns:36px 1.5fr 1fr 90px 110px auto;gap:10px;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-4);padding:6px 10px;border-bottom:1px solid var(--line-2)"><span></span><span>${S.lang==='pt'?'Pessoa':'Person'}</span><span>${S.lang==='pt'?'Cadastro':'Joined'}</span><span>${S.lang==='pt'?'Créditos':'Credits'}</span><span>${S.lang==='pt'?'Papel':'Role'}</span><span></span></div>
     ${rows}</div>`;
 }
@@ -3749,47 +3749,17 @@ function finishGen(url,prompt,m,dur){
   toast(S.lang==='pt'?'Adicionado à galeria':'Added to gallery','ok');
 }
 function expandChars(p){
-  return p.replace(/@(\w+)/g,(full,tag)=>{
-    const c=S.characters.find(x=>x.tag.toLowerCase()===tag.toLowerCase());
-    if(!c)return full;
-    const photoCount=c.imgs&&c.imgs.length>1?c.imgs.length:c.img?1:0;
-    const photoNote=photoCount>1?`, ${photoCount} fotos de referência para máxima consistência facial`:'';
-    const traits=c.desc?`, ${c.desc}`:'';
-    return `${c.name}${traits}${photoNote}`;
-  });
-}
-function getCharRefImages(p){
-  const imgs=[];
-  const matches=[...p.matchAll(/@(\w+)/g)];
-  matches.forEach(m=>{
-    const c=S.characters.find(x=>x.tag.toLowerCase()===m[1].toLowerCase());
-    if(c){
-      if(c.imgs&&c.imgs.length)imgs.push(...c.imgs.slice(0,5));
-      else if(c.img)imgs.push(c.img);
-    }
-  });
-  return imgs;
+  return p.replace(/@(\w+)/g,(full,tag)=>{const c=S.characters.find(x=>x.tag.toLowerCase()===tag.toLowerCase());
+    return c?`${c.name} (${c.desc||'reference character'})`:full;});
 }
 
 /* ════════ CHARACTERS ════════ */
 function viewCharacters(){
   const cards=S.characters.map((c,i)=>`
     <div class="char-card">
-      <div class="ph">
-        ${c.imgs&&c.imgs.length>1
-          ? `<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;height:150px">${c.imgs.slice(0,4).map(src=>`<img src="${src}" style="width:100%;height:100%;object-fit:cover" referrerpolicy="no-referrer">`).join('')}</div>`
-          : c.img?`<img src="${c.img}" referrerpolicy="no-referrer">`:`<span style="color:var(--ink-4)">${S.lang==='pt'?'sem foto':'no photo'}</span>`}
-      </div>
-      <div class="meta">
-        <div class="h">@${c.tag}</div>
-        <div class="n">${escapeHtml(c.name)}</div>
-        <div class="c">${escapeHtml(c.desc||'')}</div>
-        ${c.imgs&&c.imgs.length>1?`<div style="font-size:10px;color:var(--ink-4);margin-top:4px">${c.imgs.length} ${S.lang==='pt'?'fotos':'photos'}</div>`:''}
-        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
-          <button class="pb-btn" onclick="editChar(${i})">${S.lang==='pt'?'Editar':'Edit'}</button>
-          <button class="pb-btn" style="color:var(--err)" onclick="delChar(${i})">${S.lang==='pt'?'Remover':'Remove'}</button>
-        </div>
-      </div>
+      <div class="ph">${c.img?`<img src="${c.img}" referrerpolicy="no-referrer">`:`<span style="color:var(--ink-4)">${S.lang==='pt'?'sem foto':'no photo'}</span>`}</div>
+      <div class="meta"><div class="h">@${c.tag}</div><div class="n">${escapeHtml(c.name)}</div><div class="c">${escapeHtml(c.desc||'')}</div>
+      <button class="pb-btn" style="margin-top:8px" onclick="delChar(${i})">${S.lang==='pt'?'Remover':'Remove'}</button></div>
     </div>`).join('');
   return `
   <div class="view-head"><div class="kicker">${t('create')}</div><h1 class="serif">${t('characters')}</h1>
@@ -3818,20 +3788,7 @@ function addChar(){
   S.characters.push({tag,name,desc:document.getElementById('chDesc').value.trim(),img:_chImgs[0]||'',imgs:_chImgs});
   localStorage.setItem(userKey('chars'),JSON.stringify(S.characters));_chImgs=[];render();toast(S.lang==='pt'?'Personagem salvo':'Character saved','ok');
 }
-function delChar(i){if(!confirm(S.lang==='pt'?'Remover este personagem?':'Remove this character?'))return;S.characters.splice(i,1);localStorage.setItem(userKey('chars'),JSON.stringify(S.characters));render();}
-function editChar(i){
-  const c=S.characters[i];if(!c)return;
-  // Preenche o form com os dados do personagem
-  document.getElementById('chTag').value=c.tag||'';
-  document.getElementById('chName').value=c.name||'';
-  document.getElementById('chDesc').value=c.desc||'';
-  _chImgs=c.imgs&&c.imgs.length?[...c.imgs]:[c.img].filter(Boolean);
-  document.getElementById('chThumbs').innerHTML=_chImgs.map((s,j)=>`<div style="position:relative;display:inline-block"><img class="t" src="${s}" referrerpolicy="no-referrer"><button onclick="_chImgs.splice(${j},1);this.closest('div').remove()" style="position:absolute;top:-4px;right:-4px;background:var(--err);color:#fff;border:none;border-radius:50%;width:16px;height:16px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center">×</button></div>`).join('');
-  // Remove o personagem atual (vai ser re-adicionado ao salvar)
-  S.characters.splice(i,1);
-  document.querySelector('#chTag').scrollIntoView({behavior:'smooth'});
-  toast(S.lang==='pt'?'Edite e salve o personagem':'Edit and save the character','ok');
-}
+function delChar(i){S.characters.splice(i,1);localStorage.setItem(userKey('chars'),JSON.stringify(S.characters));render();}
 
 /* ════════ STORYBOARD (GPT-4 + gallery + Director's Eye) ════════ */
 let _sbMsgs=[];
@@ -6042,7 +5999,7 @@ function googleSignIn(){
 function onGoogle(resp){
   try{
     const p=JSON.parse(atob(resp.credential.split('.')[1]));
-    S.user={uid:'g_'+p.sub,email:p.email,name:p.name||p.email.split('@')[0],admin:false,picture:p.picture,google:true};S.user=fixUserEncoding(S.user);
+    S.user={uid:'g_'+p.sub,email:p.email,name:p.name||p.email.split('@')[0],admin:false,picture:p.picture,google:true};try{S.user.name=decodeURIComponent(escape(S.user.name));}catch(e){}
     upsertUser(S.user);
     // Sessão real: se houver backend, valida o token no servidor e guarda a sessão.
     if(CFG.AUTH_ENDPOINT){
