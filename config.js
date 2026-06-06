@@ -18,7 +18,7 @@ window.HSAI_CONFIG = {
   // console.cloud.google.com → Credenciais → IDs do cliente OAuth 2.0
   // Origens autorizadas: https://hollywoodstudio.ai e https://hollywoodstudio.vercel.app
   // URIs de redirecionamento: mesmas URLs acima
-  GOOGLE_CLIENT_ID: '',             // ← Cole aqui: xxx.apps.googleusercontent.com
+  GOOGLE_CLIENT_ID: '1080113912210-medhqckkq2qp38j9ggqoegik2n9inue3.apps.googleusercontent.com',             // ← Cole aqui: xxx.apps.googleusercontent.com
 
   // ─── IA — ATLAS CLOUD (multi-modelo) ─────────────────────────────────────
   // https://atlascloud.ai → Dashboard → API Keys
