@@ -1580,7 +1580,7 @@ input[type=range]{accent-color:var(--accent)}
       </button>
     </div>
     <nav class="nav" id="nav"></nav>
-    <div style="padding:16px 14px 14px;border-top:1px solid var(--line)">
+    <div style="padding:18px 16px 16px;border-top:1px solid var(--line)">
       <div class="credits-pill" onclick="openCredits()" style="width:100%;justify-content:space-between">
         <span style="color:var(--ink-3);font-size:11.5px">Créditos</span><b id="credSide">—</b>
       </div>
@@ -4236,9 +4236,10 @@ function viewStoryboard(){
   </div>`;
 }
 function editChar(i){
-  const chars=getChars();
+  // Use S.characters directly to avoid stale localStorage reads
+  if(!S.characters||!S.characters[i])return;
+  const chars=S.characters;
   const c=chars[i];
-  if(!c)return;
   S._editCharIdx=i; // mark as editing
   // Fill form with correct field IDs
   const tagEl=document.getElementById('chTag');
@@ -4666,6 +4667,7 @@ function afterGallery(){
       <div class="gal-foot">
         <button onclick="reuseFromGallery(${idx})">${reuseIc}${S.lang==='pt'?'Reutilizar':'Reuse'}</button>
         <button onclick="addItemToSceneFlow(${idx})" title="${S.lang==='pt'?'Adicionar ao Flow de Cenas':'Add to Scene Flow'}" style="font-size:10px">🎬+</button>
+        <button onclick="galToggleFav(${idx})" style="font-size:12px;background:none;border:none;cursor:pointer;padding:0 4px" title="${S.lang==='pt'?'Favoritar':'Favorite'}">${g.favorite?'⭐':'☆'}</button>
         ${isImg?`<button onclick="bxFromGallery(${idx})">${editIc}${S.lang==='pt'?'Editar':'Edit'}</button>`:''}
         <button onclick="aiEditFromGallery(${idx})" title="${S.lang==='pt'?'Usar como referência para um novo ajuste por IA':'Use as reference for a new AI adjustment'}">${aiIc}${S.lang==='pt'?'Editar com IA':'AI edit'}</button>
         <button onclick="copyText(${pjson})">${copyIc}${S.lang==='pt'?'Copiar':'Copy'}</button>
@@ -5112,6 +5114,14 @@ function savePublic(arr){localStorage.setItem('hsai_public_gallery',JSON.stringi
 function publishItem(idx){
   const item=S.gallery[idx];if(!item)return;
   if(!confirm(S.lang==='pt'?'Tornar este item PÚBLICO?\n\nSeu prompt e o resultado aparecerão na Galeria Pública para todos os usuários se inspirarem. Você pode despublicar a qualquer momento.':'Publish this item?\n\nYour prompt and the result will appear in the Public Gallery for everyone to draw inspiration from. You can unpublish anytime.'))return;
+  // Ensure seed is loaded
+  if(typeof PUBLIC_GALLERY_SEED!=='undefined'){
+    var _existing=[];try{_existing=JSON.parse(localStorage.getItem('hsai_public_gallery')||'[]');}catch(e){}
+    if(!_existing.some(function(e){return e.id&&e.id.startsWith('seed_');})){
+      var _merged=PUBLIC_GALLERY_SEED.concat(_existing).slice(0,500);
+      localStorage.setItem('hsai_public_gallery',JSON.stringify(_merged));
+    }
+  }
   const pub=loadPublic();
   const pid='pub_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
   pub.unshift({id:pid,uid:(S.user&&S.user.uid)||'guest',author:(S.user&&S.user.name)||'Anônimo',avatar:(S.user&&S.user.picture)||'',
@@ -5193,6 +5203,15 @@ function openShareMenu(pid){
   const m=document.getElementById('shareMenu_'+pid);if(m)m.style.display=m.style.display==='block'?'none':'block';
 }
 function viewPublic(){
+  // Ensure seed data is present
+  if(typeof PUBLIC_GALLERY_SEED!=='undefined'){
+    try{
+      var _pg=JSON.parse(localStorage.getItem('hsai_public_gallery')||'[]');
+      if(!_pg.length||!_pg.some(function(e){return e.id&&e.id.indexOf('seed_')===0;})){
+        localStorage.setItem('hsai_public_gallery',JSON.stringify(PUBLIC_GALLERY_SEED.concat(_pg).slice(0,500)));
+      }
+    }catch(e){}
+  }
   const pub=loadPublic();
   const liked=JSON.parse(localStorage.getItem(userKey('liked'))||'[]');
   return `
@@ -5827,6 +5846,7 @@ let _ytQ='', _ytItems=[];
 const YT_AI_FILTER='ultra realistic AI generated cinematic';
 function viewTube(){
   return `
+  <div style="padding-left:8px">
   <div style="border-radius:14px;overflow:hidden;margin-bottom:20px;height:140px;background:url(https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1200&q=80) center/cover no-repeat"></div><div><div class="kicker" style="margin:0 0 3px;color:rgba(255,255,255,.55)">${S.lang==='pt'?'APRENDER':'LEARN'}</div><h1 class="serif" style="margin:0 0 5px;font-size:24px;color:#fff">${S.lang==='pt'?'YouTube':'YouTube'}</h1><p style="margin:0;font-size:12.5px;color:rgba(255,255,255,.65);max-width:520px">${S.lang==='pt'?'Tutoriais e masterclasses de criação com IA — para evoluir rápido.':'Tutorials and AI creation masterclasses — to grow fast.'}</p></div></div>
   <div class="view-head"><div class="kicker">${S.lang==='pt'?'DESCOBRIR':'DISCOVER'}</div><h1 class="serif">YouTube</h1>
     <p>${S.lang==='pt'?'Pesquise vídeos no YouTube sem sair da plataforma. A busca inicial já vem filtrada para vídeos ultrarrealistas feitos com IA.':'Search YouTube without leaving the platform. The initial search is pre-filtered for ultra-realistic AI videos.'}</p></div>
@@ -6371,7 +6391,7 @@ function viewFlow(){
         <button class="icon-btn" onclick="document.getElementById('flowFile').click()" title="${S.lang==='pt'?'Anexar':'Attach'}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11l-9 9a5 5 0 0 1-7-7l9-9a3 3 0 0 1 5 5l-9 9"/></svg></button>
         <input type="file" id="flowFile" class="hide" multiple onchange="flowAttach(this)">
         <input class="input" id="flowIn" placeholder="${S.lang==='pt'?'Ex.: crie um comercial de 20s para o vinho Fontenelle, mood sofisticado, 3 cenas...':'E.g.: create a 20s commercial for Fontenelle wine, sophisticated mood, 3 scenes...'}" onkeydown="if(event.key==='Enter')flowSend()">
-        <button class="btn btn-primary btn-sm" onclick="flowSend()">→</button>
+        <button onclick="flowSend()" style="background:var(--accent);color:#1a1408;border:none;border-radius:10px;width:46px;height:46px;font-size:22px;font-weight:700;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">→</button>
       </div>
     </div>
     <div class="card">
@@ -7188,7 +7208,7 @@ async function checkHeygenStatus(videoId){
 
 
 
-function openChangePassword(){
+window.openChangePassword = function openChangePassword(){
   var pt=S.lang==='pt';
   closeUserPop();
   // Remove existing overlay
@@ -7255,7 +7275,7 @@ function openChangePassword(){
     if(el)el.focus();
   },10);
 }
-function doChangePassword(){
+window.doChangePassword = function doChangePassword(){
   var pt=S.lang==='pt';
   var curEl=document.getElementById('pwCurrent');
   var nwEl=document.getElementById('pwNew');
@@ -7295,7 +7315,7 @@ function doChangePassword(){
   var ov=document.getElementById('changePwOverlay');if(ov)ov.remove();
   toast(pt?'✓ Senha alterada com sucesso!':'✓ Password changed!','ok');
 }
-function confirmDeleteAccount(){
+window.confirmDeleteAccount = function confirmDeleteAccount(){
   var pt=S.lang==='pt';
   var msg=pt
     ?'⚠️ ATENÇÃO: Esta ação é irreversível!\n\nAo excluir sua conta:\n• Todo o seu histórico de gerações será apagado\n• Seus créditos adquiridos serão perdidos (sem reembolso)\n• Personagens, favoritos e configurações serão removidos\n\nDigite CONFIRMAR para prosseguir:'
@@ -9079,7 +9099,7 @@ function viewMarketingPage(){
     +'<div class="kicker">ADMIN</div>'
     +'<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">'
     +'<h1 class="serif" style="margin:0">🚀 '+(pt?'Suite de Marketing':'Marketing Suite')+'</h1>'
-    +'<button class="btn btn-primary" onclick="openMarketingSuite()">'+(pt?'Nova Campanha':'New Campaign')+'</button>'
+    +'<button onclick="openMarketingSuite()" class="btn btn-primary" style="font-size:14px">'+(pt?'🚀 Nova Campanha':'🚀 New Campaign')+'</button>'+'</button>'
     +'</div>'
     +'<p style="max-width:600px;font-size:13.5px;color:var(--ink-2)">'
     +(pt?'Crie e publique conteúdo de divulgação do Hollywood Studio AI nas redes sociais. Gere imagens e vídeos com IA, escreva captions otimizados e publique no Instagram, TikTok, LinkedIn e Facebook.'
@@ -10686,6 +10706,70 @@ function toggleSidebar(){
     }
   }
 })();
+
+
+/* Final window exposures */
+if(typeof openChangePassword!=='undefined')window.openChangePassword=openChangePassword;
+if(typeof doChangePassword!=='undefined')window.doChangePassword=doChangePassword;
+if(typeof confirmDeleteAccount!=='undefined')window.confirmDeleteAccount=confirmDeleteAccount;
+if(typeof toggleSidebar!=='undefined')window.toggleSidebar=toggleSidebar;
+if(typeof loadTemplate!=='undefined')window.loadTemplate=loadTemplate;
+if(typeof previewTemplate!=='undefined')window.previewTemplate=previewTemplate;
+if(typeof mktSelectFormat!=='undefined')window.mktSelectFormat=mktSelectFormat;
+if(typeof mktSaveContent!=='undefined')window.mktSaveContent=mktSaveContent;
+if(typeof mktGenerateCaption!=='undefined')window.mktGenerateCaption=mktGenerateCaption;
+if(typeof mktGenerateMedia!=='undefined')window.mktGenerateMedia=mktGenerateMedia;
+if(typeof mktPublishNow!=='undefined')window.mktPublishNow=mktPublishNow;
+if(typeof mktCopyForPlatform!=='undefined')window.mktCopyForPlatform=mktCopyForPlatform;
+if(typeof mktSaveCampaign!=='undefined')window.mktSaveCampaign=mktSaveCampaign;
+if(typeof csRenderCanvas!=='undefined')window.csRenderCanvas=csRenderCanvas;
+if(typeof csExport!=='undefined')window.csExport=csExport;
+if(typeof csPageNav!=='undefined')window.csPageNav=csPageNav;
+if(typeof csRefreshPreview!=='undefined')window.csRefreshPreview=csRefreshPreview;
+if(typeof selectSBDirector!=='undefined')window.selectSBDirector=selectSBDirector;
+if(typeof runDirectorSBOpinion!=='undefined')window.runDirectorSBOpinion=runDirectorSBOpinion;
+if(typeof openDirectorStoryboardOpinion!=='undefined')window.openDirectorStoryboardOpinion=openDirectorStoryboardOpinion;
+if(typeof openDirectorFavOpinion!=='undefined')window.openDirectorFavOpinion=openDirectorFavOpinion;
+if(typeof runDirectorFavOpinion!=='undefined')window.runDirectorFavOpinion=runDirectorFavOpinion;
+if(typeof generateFullIGCaption!=='undefined')window.generateFullIGCaption=generateFullIGCaption;
+if(typeof generateIGHashtags!=='undefined')window.generateIGHashtags=generateIGHashtags;
+if(typeof connectUserInstagram!=='undefined')window.connectUserInstagram=connectUserInstagram;
+if(typeof testUserIGConnection!=='undefined')window.testUserIGConnection=testUserIGConnection;
+if(typeof analyzeUserStyle!=='undefined')window.analyzeUserStyle=analyzeUserStyle;
+if(typeof showSceneFlow!=='undefined')window.showSceneFlow=showSceneFlow;
+if(typeof addCurrentToSceneFlow!=='undefined')window.addCurrentToSceneFlow=addCurrentToSceneFlow;
+if(typeof addItemToSceneFlow!=='undefined')window.addItemToSceneFlow=addItemToSceneFlow;
+if(typeof inspoUseInStudio!=='undefined')window.inspoUseInStudio=inspoUseInStudio;
+if(typeof inspoFavorite!=='undefined')window.inspoFavorite=inspoFavorite;
+if(typeof inspoLoadMore!=='undefined')window.inspoLoadMore=inspoLoadMore;
+if(typeof generateTransition!=='undefined')window.generateTransition=generateTransition;
+if(typeof transPickClip!=='undefined')window.transPickClip=transPickClip;
+if(typeof backendLogin!=='undefined')window.backendLogin=backendLogin;
+if(typeof syncGalleryOnLogin!=='undefined')window.syncGalleryOnLogin=syncGalleryOnLogin;
+if(typeof debouncedRender!=='undefined')window.debouncedRender=debouncedRender;
+if(typeof addCustomCouncilMember!=='undefined')window.addCustomCouncilMember=addCustomCouncilMember;
+
+
+if(typeof likePublic!=='undefined')window.likePublic=likePublic;
+if(typeof submitComment!=='undefined')window.submitComment=submitComment;
+if(typeof sharePublic!=='undefined')window.sharePublic=sharePublic;
+
+window.galToggleFav = function galToggleFav(idx){
+  if(!S.gallery[idx])return;
+  S.gallery[idx].favorite = !S.gallery[idx].favorite;
+  localStorage.setItem(userKey('gal'),JSON.stringify(S.gallery.slice(0,200)));
+  // Sync to favorites section
+  var favs = JSON.parse(localStorage.getItem(userKey('favs'))||'[]');
+  var item = S.gallery[idx];
+  if(item.favorite){
+    if(!favs.find(function(f){return f.url===item.url;})) favs.unshift(item);
+  } else {
+    favs = favs.filter(function(f){return f.url!==item.url;});
+  }
+  localStorage.setItem(userKey('favs'),JSON.stringify(favs.slice(0,200)));
+  afterGallery();
+  toast(item.favorite?(S.lang==='pt'?'⭐ Adicionado aos favoritos':'⭐ Added to favorites'):(S.lang==='pt'?'Removido dos favoritos':'Removed from favorites'));
+};
 
 </script>
 </body>
