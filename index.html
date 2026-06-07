@@ -197,10 +197,10 @@ function viewFavoritesPage(){
                        .sort((a,b) => b.likes - a.likes).slice(0,12);
 
   return `
-  <div style="background:linear-gradient(135deg,#1a1200,#1a1a1a);border-radius:16px;padding:28px;margin-bottom:22px;display:flex;align-items:center;gap:18px"><div style="font-size:46px;line-height:1">⭐</div><div><div class="kicker" style="margin:0 0 3px;color:rgba(255,255,255,.55)">${S.lang==='pt'?'COLEÇÃO':'COLLECTION'}</div><h1 class="serif" style="margin:0 0 5px;font-size:24px;color:#fff">${S.lang==='pt'?'Favoritos':'Favorites'}</h1><p style="margin:0;font-size:12.5px;color:rgba(255,255,255,.65);max-width:520px">${S.lang==='pt'?'Suas criações preferidas — reutilize, analise com Director\'s Eye ou publique.':'Your favorite creations — reuse, analyze with Director\'s Eye or publish.'}</p></div></div>
-  <div style="border-radius:14px;overflow:hidden;margin-bottom:20px;height:130px;background:linear-gradient(135deg,#1a0a2e,#2e1a1a);position:relative"><div style="position:absolute;inset:0;display:flex;align-items:center;padding:0 28px;gap:18px"><div style="font-size:46px;line-height:1">⭐</div><div><div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.5);margin-bottom:4px">${S.lang==='pt'?'CRIAÇÃO':'CREATION'}</div><div style="font-size:22px;font-weight:700;color:#fff">${S.lang==='pt'?'Favoritos':'Favorites'}</div><div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:3px">${S.lang==='pt'?'Suas gerações favoritas e análise de estilo':'Your favorite generations and style analysis'}</div></div></div></div><div class="view-head">
+  
+  <div style="border-radius:14px;</div><div class="view-head">
     <div class="kicker">${pt?'Referências':'References'}</div>
-    <h1 class="serif">⭐ ${pt?"Favoritos & Director's Eye":"Favorites & Director's Eye"}</h1>
+    <h1 class="serif">${pt?"Favoritos & Director's Eye":"Favorites & Director's Eye"}</h1>
     <p style="max-width:580px">${pt?"Salve demos que inspiram, analise padrões com o Director's Eye e identifique sua assinatura cinematográfica.":"Save inspiring demos, analyze patterns with Director's Eye and identify your cinematic signature."}</p>
   </div>
 
@@ -835,9 +835,10 @@ a{color:inherit;text-decoration:none}
 [data-theme="light"] .brand-icon-fill{fill:#1a1a1a}
 [data-theme="light"] .brand-icon-stroke{stroke:#1a1a1a}
 /* brand area in collapsed state */
-.sidebar-collapsed .sidebar .brand{padding:14px 8px 12px;justify-content:center;align-items:center}
+.sidebar-collapsed .sidebar .brand{padding:14px 6px 12px;justify-content:center;align-items:center;flex-direction:column;gap:4px}
 .sidebar-collapsed .sidebar .brand-icon{display:flex!important}
 .sidebar-collapsed .sidebar .brand > div:first-child{flex:none}
+.sidebar-collapsed .sidebar #sidebarToggleBtn{position:static!important;transform:none!important;margin-top:2px;width:100%}
 
 .main{padding:0 4px 0 0;grid-area:main;overflow-y:auto;position:relative;background:
   radial-gradient(1100px 480px at 78% -8%,rgba(212,168,87,.05),transparent 60%) ,var(--bg)}
@@ -1561,7 +1562,7 @@ input[type=range]{accent-color:var(--accent)}
         <img src="/assets/logos/logo-light.png" class="brand-logo light" alt="Hollywood Studio AI" onerror="this.style.display='none'">
         <!-- Collapsed icon: ★AI mark - dark on light bg, gold on dark bg -->
         <svg class="brand-icon" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"
-          style="display:none;width:42px;height:42px;flex-shrink:0;cursor:pointer;margin:0 auto"
+          style="display:none;width:40px;height:40px;flex-shrink:0;cursor:pointer;margin:0 auto"
           onclick="go('studio')">
           <!-- star -->
           <polygon points="10,22 12.5,15 15,22 8,17.5 17,17.5" class="brand-icon-fill"/>
@@ -2101,7 +2102,30 @@ const FALLBACK_REEL=[
 const REEL_IMGS=(window.HSAI_CONFIG&&Array.isArray(window.HSAI_CONFIG.REEL_IMAGES)&&window.HSAI_CONFIG.REEL_IMAGES.length)?window.HSAI_CONFIG.REEL_IMAGES:FALLBACK_REEL;
 // Substitui automaticamente <img> que falhar carregando reel local → puxa do Unsplash
 function illus(i){return REEL_IMGS[i%REEL_IMGS.length];}
-function illusFB(i){return FALLBACK_REEL[i%FALLBACK_REEL.length];}
+
+var NEWS_THUMBS=[
+  'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=70',
+  'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=70',
+  'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=600&q=70',
+  'https://images.unsplash.com/photo-1655720828018-edd2daec9349?w=600&q=70',
+  'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=600&q=70',
+  'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&q=70',
+  'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&q=70',
+  'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&q=70',
+  'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=600&q=70',
+  'https://images.unsplash.com/photo-1555255707-c07966088b7b?w=600&q=70',
+  'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=70',
+  'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&q=70',
+  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=70',
+  'https://images.unsplash.com/photo-1509343256512-d77a5cb3791b?w=600&q=70',
+  'https://images.unsplash.com/photo-1488229297570-58520851e868?w=600&q=70',
+  'https://images.unsplash.com/photo-1593642634402-b0eb5e2eebc9?w=600&q=70',
+  'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=70',
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=70',
+  'https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2?w=600&q=70',
+  'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&q=70',
+];
+function illusFB(i){return NEWS_THUMBS[i%NEWS_THUMBS.length];}
 function aiImg(prompt,w,h,seed){ // demo placeholder — usa imagens locais empacotadas (sempre carregam, sem rede)
   const arr=(typeof REEL_IMGS!=='undefined'&&REEL_IMGS.length)?REEL_IMGS:['assets/reel/r1.jpg'];
   return arr[Math.abs(seed||0)%arr.length];
@@ -2989,7 +3013,17 @@ function inspoUseInStudio(){
     var el=document.getElementById('stPrompt')||document.getElementById('cPrompt');
     if(el&&prompt){el.value=prompt;el.focus();}
     // Also set as reference image
-    if(url){_startFrame=url;if(typeof updateRefUI==='function')updateRefUI();}
+    if(url){
+      _startFrame=url;
+      // Render the reference image in studio
+      var refWrap=document.getElementById('cRefWrap')||document.getElementById('startFrameWrap');
+      if(refWrap){
+        refWrap.innerHTML='<img src="'+url+'" style="max-width:100%;max-height:120px;border-radius:8px;object-fit:cover">';
+        refWrap.style.display='block';
+      }
+      if(typeof renderCRef==='function')renderCRef();
+      if(typeof updateStudioRefs==='function')updateStudioRefs();
+    }
     toast(S.lang==='pt'?'Prompt e imagem carregados no Estúdio!':'Prompt and image loaded in Studio!');
   },400);
 }
@@ -3505,7 +3539,7 @@ function adminUsersCard(){
       <input class="input" style="padding:5px 6px;font-size:12px;width:70px" type="number" id="cr_${r.uid}" value="${r.credits|0}" title="${S.lang==='pt'?'créditos':'credits'}">
       <button class="btn btn-ghost btn-sm" style="padding:4px 7px;font-size:13px;color:var(--ok)" onclick="applyAdminUserAction('${r.uid}','credits',document.getElementById('cr_${r.uid}').value);toast('✓','ok')" title="${S.lang==='pt'?'Salvar créditos':'Save credits'}">✓</button>
     </div>
-    <select class="input" style="padding:5px 8px;font-size:12px" onchange="(function(el){applyAdminUserAction('${r.uid}','role',el.value);toast(S.lang==='pt'?'Papel atualizado: '+el.value:'Role updated: '+el.value,'ok');setTimeout(()=>render(),200);})(this)"><option value="user" ${r.role==='user'?'selected':''}>${S.lang==='pt'?'Usuário':'User'}</option><option value="admin" ${r.role==='admin'?'selected':''}>Admin</option></select>
+    <select class="input" style="padding:5px 8px;font-size:12px" onchange="applyAdminUserAction('${r.uid}','role',this.value);toast('✓ '+this.value,'ok')"><option value="user" ${r.role==='user'?'selected':''}>${S.lang==='pt'?'Usuário':'User'}</option><option value="admin" ${r.role==='admin'?'selected':''}>Admin</option></select>
     <div style="display:flex;gap:4px"><button class="btn btn-ghost btn-sm" style="padding:4px 8px;font-size:11px" onclick="openPaymentsModal('${r.uid}')" title="${S.lang==='pt'?'Pagamentos & reembolsos':'Payments & refunds'}">💰</button>
       <button class="btn btn-ghost btn-sm" style="padding:4px 8px;font-size:11px" onclick="applyAdminUserAction('${r.uid}','addCredits',prompt('${S.lang==='pt'?'Quantos créditos adicionar?':'How many credits to add?'}','100'))">+ ${S.lang==='pt'?'cred':'cred'}</button>
       <button class="btn btn-ghost btn-sm" style="padding:4px 8px;font-size:11px;color:var(--err)" onclick="if(confirm('${S.lang==='pt'?'Excluir conta?':'Delete account?'}'))applyAdminUserAction('${r.uid}','delete')">✕</button></div>
@@ -3562,8 +3596,12 @@ function integrationsCard(){
   return `<div class="card" style="grid-column:1/-1"><span class="label">${S.lang==='pt'?'Integrações — chaves de geração & endpoints':'Integrations — generation keys & endpoints'}</span>
     <p style="font-size:12px;color:var(--ink-3);margin:4px 0 12px">${S.lang==='pt'?'As <b>bases dos provedores já vêm preenchidas</b> — você só cola a chave. Para os endpoints, informe a <b>base do seu backend</b> e clique em <b>Preencher endpoints</b> (ou ative o proxy). Salva neste navegador e vale na hora; para produção, <b>Copiar snippet</b> → config.js.':'Provider <b>bases come pre-filled</b> — just paste the key. For endpoints, set your <b>backend base</b> and click <b>Fill endpoints</b> (or enable proxy). Saved in this browser & live; for production, <b>Copy snippet</b> → config.js.'}</p>
 
-    <div style="font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin:6px 0">${S.lang==='pt'?'Provedores de geração — cole só as chaves':'Generation providers — paste only the keys'}</div>
-    ${prov('atlascloud','Atlas Cloud')}${prov('fal','fal.ai')}${prov('modelark','ModelArk · BytePlus')}
+    <div style="font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin:6px 0">${S.lang==='pt'?'Provedores de geração de vídeo/imagem':'Video/Image generation providers'}</div>
+    ${prov('atlascloud','Atlas Cloud (principal)')}${prov('fal','fal.ai')}${prov('modelark','ModelArk · BytePlus')}
+    <div style="font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin:14px 0 6px">${S.lang==='pt'?'APIs de IA conversacional':'Conversational AI APIs'}</div>
+    ${prov('claude','Anthropic Claude (análise, enhance, academy, conselho)')}
+    ${prov('openai','OpenAI GPT (fallback, enhance, conselho)')}
+    ${prov('gemini','Google Gemini (fallback enhance/academy)')}
 
     <div style="font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin:16px 0 6px">${S.lang==='pt'?'Backend & endpoints':'Backend & endpoints'}</div>
     <div class="field"><span class="label">${S.lang==='pt'?'Base do seu backend':'Your backend base'}</span>
@@ -3783,31 +3821,34 @@ function setChatLLM(id){S.chatLLM=id;renderModelRail();const pm=document.getElem
 const AREA_BANNERS={agents:'assets/banners/agents.jpg',characters:'assets/banners/characters.jpg',docs:'assets/banners/docs.jpg',flow:'assets/banners/flow.jpg',council:'assets/banners/council.jpg',analytics:'assets/banners/analytics.jpg',gallery:'assets/banners/gallery.jpg',opportunities:'assets/banners/opportunities.jpg',news:'assets/banners/news.jpg',festivals:'assets/banners/festivals.jpg',plans:'assets/banners/plans.jpg',admin:'assets/banners/admin.jpg',public:'assets/banners/public.jpg',academy:'assets/banners/academy.jpg',models:'assets/banners/models.jpg',images:'assets/banners/images.jpg',audio:'assets/banners/audio.jpg',storyboard:'assets/banners/storyboard.jpg',editing:'assets/banners/editing.jpg'};
 // Fallback via internet (Unsplash) caso a pasta local não exista no servidor
 const AREA_BANNERS_FALLBACK={
-  agents:'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1400&q=70&auto=format&fit=crop',
-  characters:'https://images.unsplash.com/photo-1492288991661-058aa541ff43?w=1400&q=70&auto=format&fit=crop',
-  docs:'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1400&q=70&auto=format&fit=crop',
-  flow:'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1400&q=70&auto=format&fit=crop',
-  council:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1400&q=70&auto=format&fit=crop',
-  analytics:'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1400&q=70&auto=format&fit=crop',
-  gallery:'https://images.unsplash.com/photo-1531913764164-f85c52e6e654?w=1400&q=70&auto=format&fit=crop',
-  opportunities:'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1400&q=70&auto=format&fit=crop',
-  news:'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1400&q=70&auto=format&fit=crop',
-  festivals:'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1400&q=70&auto=format&fit=crop',
-  plans:'https://images.unsplash.com/photo-1607344645866-009c320b63e0?w=1400&q=70&auto=format&fit=crop',
-  admin:'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1400&q=70&auto=format&fit=crop',
-  public:'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=1400&q=70&auto=format&fit=crop',
-  academy:'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1400&q=70&auto=format&fit=crop',
-  models:'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=1400&q=70&auto=format&fit=crop',
-  images:'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=1400&q=70&auto=format&fit=crop',
-  audio:'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1400&q=70&auto=format&fit=crop',
-  storyboard:'https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?w=1400&q=70&auto=format&fit=crop',
-  editing:'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=1400&q=70&auto=format&fit=crop',
-  favorites:'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=1400&q=70&auto=format&fit=crop',
-  batch:'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=1400&q=70&auto=format&fit=crop',
-  uploads:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1400&q=70&auto=format&fit=crop',
-  instagram:'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=1400&q=70&auto=format&fit=crop',
-  youtube:'https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?w=1400&q=70&auto=format&fit=crop',
-  inspo:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1400&q=70&auto=format&fit=crop'
+  agents:'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1400&q=80&auto=format&fit=crop',
+  characters:'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1400&q=80&auto=format&fit=crop',
+  docs:'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1400&q=80&auto=format&fit=crop',
+  flow:'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1400&q=80&auto=format&fit=crop',
+  council:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1400&q=80&auto=format&fit=crop',
+  analytics:'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1400&q=80&auto=format&fit=crop',
+  gallery:'https://images.unsplash.com/photo-1531913764164-f85c52e6e654?w=1400&q=80&auto=format&fit=crop',
+  opportunities:'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1400&q=80&auto=format&fit=crop',
+  news:'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1400&q=80&auto=format&fit=crop',
+  festivals:'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=1400&q=80&auto=format&fit=crop',
+  plans:'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1400&q=80&auto=format&fit=crop',
+  admin:'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1400&q=80&auto=format&fit=crop',
+  public:'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=1400&q=80&auto=format&fit=crop',
+  academy:'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1400&q=80&auto=format&fit=crop',
+  models:'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=1400&q=80&auto=format&fit=crop',
+  images:'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=1400&q=80&auto=format&fit=crop',
+  audio:'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1400&q=80&auto=format&fit=crop',
+  storyboard:'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1400&q=80&auto=format&fit=crop',
+  editing:'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=1400&q=80&auto=format&fit=crop',
+  favorites:'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=1400&q=80&auto=format&fit=crop',
+  batch:'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1400&q=80&auto=format&fit=crop',
+  uploads:'https://images.unsplash.com/photo-1544396821-4dd40b938ad3?w=1400&q=80&auto=format&fit=crop',
+  instagram:'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=1400&q=80&auto=format&fit=crop',
+  youtube:'https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?w=1400&q=80&auto=format&fit=crop',
+  inspo:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1400&q=80&auto=format&fit=crop',
+  posprodu:'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=1400&q=80&auto=format&fit=crop',
+  templates:'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=1400&q=80&auto=format&fit=crop',
+  contactsheet:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1400&q=80&auto=format&fit=crop'
 };
 function toggleSidebar(force){const s=document.getElementById('sidebar');const b=document.getElementById('sideBack');if(!s)return;const on=force===undefined?!s.classList.contains('open'):force;s.classList.toggle('open',on);b.classList.toggle('show',on);}
 // fecha sidebar mobile ao navegar
@@ -4465,7 +4506,7 @@ function viewAcademy(){
         <div style="font-size:12.5px;color:var(--ink-3);margin-top:3px">${S.lang==='pt'?'Pergunte qualquer coisa — modelos, prompts, workflow, preços. IA responde com profundidade.':'Ask anything — models, prompts, workflow, pricing. AI answers in depth.'}</div>
       </div>
     </div>
-    <textarea id="academyQ" class="input" style="width:100%;min-height:90px;resize:vertical;font-size:14px;margin-bottom:12px" placeholder="${S.lang==='pt'?'Ex.: Como manter consistência de personagem? Qual modelo usar para fashion? Como precificar meu serviço?':'E.g.: How to keep character consistency? Which model for fashion? How to price my service?'}"></textarea>
+    <textarea id="academyQ" class="input" style="width:100%;min-height:90px;resize:vertical;font-size:14px;background:#fff;color:#1a1a1a;margin-bottom:12px" placeholder="${S.lang==='pt'?'Ex.: Como manter consistência de personagem? Qual modelo usar para fashion? Como precificar meu serviço?':'E.g.: How to keep character consistency? Which model for fashion? How to price my service?'}"></textarea>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <button class="btn btn-primary" style="padding:10px 24px" onclick="askAcademy()">${S.lang==='pt'?'✨ Perguntar':'✨ Ask'}</button>
       <button class="btn btn-ghost btn-sm" onclick="document.getElementById('academyQ').value='';document.getElementById('academyAns').style.display='none'">${S.lang==='pt'?'Limpar':'Clear'}</button>
@@ -5358,10 +5399,7 @@ function viewAdmin(){
     <div class="card"><span class="label">${S.lang==='pt'?'Conversas de suporte':'Support chats'}</span>
       <p style="font-size:12.5px;color:var(--ink-2);line-height:1.6">${S.lang==='pt'?'Quando o assistente não resolver, a conversa é encaminhada e você é notificado em':'When the assistant can\'t solve it, the chat is escalated and you\'re notified at'} <b>${CFG.ADMIN_EMAIL}</b>.</p>
       ${(S.user&&S.user.admin) ? `<div class="attach-note">${S.lang==='pt'?'Requer backend: configure HELP_ENDPOINT em config.js (proxy do LLM + log + e-mail).':'Requires backend: set HELP_ENDPOINT in config.js (LLM proxy + log + email).'}</div></div>` : ''}
-    <div class="card"><span class="label">${S.lang==='pt'?'Créditos manuais':'Manual credits'}</span>
-      <input class="input" id="admEmail" placeholder="email do usuário" style="margin-bottom:8px">
-      <input class="input" id="admSecs" type="number" placeholder="segundos" style="margin-bottom:8px">
-      <button class="btn btn-primary btn-sm" style="width:100%" onclick="toast('${S.lang==='pt'?'Requer backend para persistir':'Requires backend to persist'}','err')">${S.lang==='pt'?'Creditar':'Credit'}</button></div>
+
     <div class="card"><span class="label">${S.lang==='pt'?'Vagas / lista de espera':'Jobs / waitlist'}</span>
       <p style="font-size:12.5px;color:var(--ink-2);line-height:1.6">${S.lang==='pt'?'O botão "Ver mais" em vagas e a lista estendida enviam o lead para':'The "See more" jobs button and extended list send the lead to'} <b>${CFG.ADMIN_EMAIL}</b>.</p></div>
     <div class="card"><span class="label">${S.lang==='pt'?'Provedor de geração (vídeo/imagem)':'Generation provider (video/image)'}</span>
@@ -5473,45 +5511,45 @@ async function genImage(){
 /* ════════ COUNCIL (AI judge) ════════ */
 const COUNCIL_ALL=[
   // Cinema - Diretores
-  {id:'kubrick',name:'Stanley Kubrick',cat:'direcao',c:'#1a1a3e',persona:'Stanley Kubrick: perfeccionista obsessivo, simetrico, frio, filosofico. Cada frame calculado. Prefere ambiguidade e desconforto. Influenciado por xadrez, filosofia e musica classica.',style:'Tecnico, perturbador, filosofico'},
-  {id:'spielberg',name:'Steven Spielberg',cat:'direcao',c:'#8B4513',persona:'Steven Spielberg: mestre do espetaculo emocional. Especialista em timing emocional, crenca em historias universais, movimenta camera para revelar maravilha.',style:'Emotivo, espetacular, narrativo'},
+  {id:'kubrick',featured:true,name:'Stanley Kubrick',cat:'direcao',c:'#1a1a3e',persona:'Stanley Kubrick: perfeccionista obsessivo, simetrico, frio, filosofico. Cada frame calculado. Prefere ambiguidade e desconforto. Influenciado por xadrez, filosofia e musica classica.',style:'Tecnico, perturbador, filosofico'},
+  {id:'spielberg',featured:true,name:'Steven Spielberg',cat:'direcao',c:'#8B4513',persona:'Steven Spielberg: mestre do espetaculo emocional. Especialista em timing emocional, crenca em historias universais, movimenta camera para revelar maravilha.',style:'Emotivo, espetacular, narrativo'},
   {id:'wkw',name:'Wong Kar-Wai',cat:'direcao',c:'#8B0000',persona:'Wong Kar-Wai: poesia visual, tempo dilatado, memoria e desejo. Trabalha sem roteiro fixo, confia na intuicao. Paleta saturada, nostalgia como estetica.',style:'Poetico, atmosferico, sensorial'},
-  {id:'villeneuve',name:'Denis Villeneuve',cat:'direcao',c:'#1a3a1a',persona:'Denis Villeneuve: epico cerebral, silencio como linguagem, escala colossal com intimidade emocional. Constroi tensao por subtracao.',style:'Epico, cerebral, imersivo'},
-  {id:'lynch',name:'David Lynch',cat:'direcao',c:'#0d0d0d',persona:'David Lynch: sonhos e pesadelos como realidade. A logica do inconsciente. Som industrial, imagem perturbadora. Nunca explica -- o misterio e a mensagem.',style:'Surrealista, onirico, perturbador'},
-  {id:'tarkovsky',name:'Andrei Tarkovsky',cat:'direcao',c:'#2a4a2a',persona:'Andrei Tarkovsky: tempo esculpido, natureza como personagem, espiritual. Cada plano e uma meditacao. Cinema como estado poetico.',style:'Poetico, espiritual, contemplativo'},
+  {id:'villeneuve',featured:true,name:'Denis Villeneuve',cat:'direcao',c:'#1a3a1a',persona:'Denis Villeneuve: epico cerebral, silencio como linguagem, escala colossal com intimidade emocional. Constroi tensao por subtracao.',style:'Epico, cerebral, imersivo'},
+  {id:'lynch',featured:true,name:'David Lynch',cat:'direcao',c:'#0d0d0d',persona:'David Lynch: sonhos e pesadelos como realidade. A logica do inconsciente. Som industrial, imagem perturbadora. Nunca explica -- o misterio e a mensagem.',style:'Surrealista, onirico, perturbador'},
+  {id:'tarkovsky',featured:true,name:'Andrei Tarkovsky',cat:'direcao',c:'#2a4a2a',persona:'Andrei Tarkovsky: tempo esculpido, natureza como personagem, espiritual. Cada plano e uma meditacao. Cinema como estado poetico.',style:'Poetico, espiritual, contemplativo'},
   {id:'godard',name:'Jean-Luc Godard',cat:'direcao',c:'#1a1a6e',persona:'Godard: desconstrucao da narrativa, politico e intelectual. O cinema que questiona o proprio cinema. Referencias literarias como linguagem.',style:'Experimental, politico, intelectual'},
   {id:'kurosawa',name:'Akira Kurosawa',cat:'direcao',c:'#4a3a0a',persona:'Kurosawa: epico visual, clima como extensao da psicologia humana. Movimento em grupo, composicao magistral. Honra e destino como temas.',style:'Epico, classico, psicologico'},
-  {id:'scorsese',name:'Martin Scorsese',cat:'direcao',c:'#6e1a1a',persona:'Scorsese: energia bruta, musica como linguagem cinematografica, Nova York como personagem. Violencia com consciencia moral.',style:'Energetico, musical, urbano'},
-  {id:'nolan',name:'Christopher Nolan',cat:'direcao',c:'#1a2a4a',persona:'Nolan: estrutura nao-linear, tempo como elemento dramatico. Pratico -- prefere efeitos reais. Blockbuster intelectual.',style:'Estrutural, intelectual, espetacular'},
-  {id:'fincher',name:'David Fincher',cat:'direcao',c:'#1a1a1a',persona:'Fincher: perfeccionismo tecnico, fotografia escura e precisa. Vem da publicidade -- cada frame e uma peca grafica. Crime como espelho social.',style:'Tecnico, escuro, preciso'},
-  {id:'coppola',name:'Francis Ford Coppola',cat:'direcao',c:'#3a2a0a',persona:'Coppola: saga familiar, poder e corrupcao, opera cinematografica. Improvisa dentro de uma visao grandiosa.',style:'Epico, familiar, operatico'},
+  {id:'scorsese',featured:true,name:'Martin Scorsese',cat:'direcao',c:'#6e1a1a',persona:'Scorsese: energia bruta, musica como linguagem cinematografica, Nova York como personagem. Violencia com consciencia moral.',style:'Energetico, musical, urbano'},
+  {id:'nolan',featured:true,name:'Christopher Nolan',cat:'direcao',c:'#1a2a4a',persona:'Nolan: estrutura nao-linear, tempo como elemento dramatico. Pratico -- prefere efeitos reais. Blockbuster intelectual.',style:'Estrutural, intelectual, espetacular'},
+  {id:'fincher',featured:true,name:'David Fincher',cat:'direcao',c:'#1a1a1a',persona:'Fincher: perfeccionismo tecnico, fotografia escura e precisa. Vem da publicidade -- cada frame e uma peca grafica. Crime como espelho social.',style:'Tecnico, escuro, preciso'},
+  {id:'coppola',featured:true,name:'Francis Ford Coppola',cat:'direcao',c:'#3a2a0a',persona:'Coppola: saga familiar, poder e corrupcao, opera cinematografica. Improvisa dentro de uma visao grandiosa.',style:'Epico, familiar, operatico'},
   {id:'wes_anderson',name:'Wes Anderson',cat:'direcao',c:'#d4a843',persona:'Wes Anderson: simetria obsessiva, paleta curada, nostalgia infantil, personagens excentricos. Cada filme e uma caixinha de joias visual.',style:'Simetrico, colorido, excentrico'},
-  {id:'bong',name:'Bong Joon-ho',cat:'direcao',c:'#1a4a1a',persona:'Bong: critica social em genero, estrutura precisa. A divisao de classe em narrativas entre drama e thriller com fluidez.',style:'Social, preciso, critico'},
-  {id:'almodovar',name:'Pedro Almodovar',cat:'direcao',c:'#8b0a0a',persona:'Almodovar: cores saturadas, drama feminino, melodrama elevado. Identidade, traicao e familia. Estetica pop elevada a arte.',style:'Colorido, dramatico, barroco'},
+  {id:'bong',featured:true,name:'Bong Joon-ho',cat:'direcao',c:'#1a4a1a',persona:'Bong: critica social em genero, estrutura precisa. A divisao de classe em narrativas entre drama e thriller com fluidez.',style:'Social, preciso, critico'},
+  {id:'almodovar',featured:true,name:'Pedro Almodovar',cat:'direcao',c:'#8b0a0a',persona:'Almodovar: cores saturadas, drama feminino, melodrama elevado. Identidade, traicao e familia. Estetica pop elevada a arte.',style:'Colorido, dramatico, barroco'},
   {id:'agnesdarda',name:'Agnes Varda',cat:'direcao',c:'#4a1a6e',persona:'Agnes Varda: pioneira da Nouvelle Vague, feminista, humanista. Documentario e ficcao se fundem. Curiosidade politica e ternura.',style:'Humanista, documental, intimo'},
   {id:'sofia_coppola',name:'Sofia Coppola',cat:'direcao',c:'#6e4a6e',persona:'Sofia Coppola: solidao feminina, estetica pastel, jovens perdidas em mundos dourados. Som indie, ritmo lento, beleza melancolica.',style:'Estetico, melancolico, feminino'},
   {id:'haneke',name:'Michael Haneke',cat:'direcao',c:'#2a2a2a',persona:'Haneke: violencia fora do quadro, espectador como cumplice, desconforto proposital. Cinema como espelho perturbador.',style:'Minimalista, perturbador, moral'},
   {id:'zhang_yimou',name:'Zhang Yimou',cat:'direcao',c:'#8b2a0a',persona:'Zhang Yimou: cor como narrativa, visuais monumentais, China epica. Ex-fotografo -- o frame e uma pintura.',style:'Visual, epico, monumental'},
   // Roteiristas
   {id:'kaufman',name:'Charlie Kaufman',cat:'roteiro',c:'#3a1a4a',persona:'Charlie Kaufman: meta-narrativa, identidade fragmentada, o subconsciente como estrutura dramatica. O roteiro como exploracao existencial.',style:'Existencial, meta, complexo'},
-  {id:'tarantino',name:'Quentin Tarantino',cat:'direcao',c:'#6e0a0a',persona:'Tarantino: dialogo como acao, cultura pop como linguagem, violencia estetizada. A referencia como homenagem. Nao-linearidade como estilo.',style:'Dialogado, referencial, violento'},
-  {id:'sorkin',name:'Aaron Sorkin',cat:'roteiro',c:'#0a2a6e',persona:'Aaron Sorkin: dialogo denso e veloz, personagens ultra-competentes, idealizacao da inteligencia. Teatro transformado em cinema.',style:'Verbal, inteligente, idealista'},
+  {id:'tarantino',featured:true,name:'Quentin Tarantino',cat:'direcao',c:'#6e0a0a',persona:'Tarantino: dialogo como acao, cultura pop como linguagem, violencia estetizada. A referencia como homenagem. Nao-linearidade como estilo.',style:'Dialogado, referencial, violento'},
+  {id:'sorkin',featured:true,name:'Aaron Sorkin',cat:'roteiro',c:'#0a2a6e',persona:'Aaron Sorkin: dialogo denso e veloz, personagens ultra-competentes, idealizacao da inteligencia. Teatro transformado em cinema.',style:'Verbal, inteligente, idealista'},
   {id:'mamet',name:'David Mamet',cat:'roteiro',c:'#1a1a1a',persona:'David Mamet: dialogo como conflito puro, silencio que fala mais alto. Teatro de sala, jogos de poder, subversao de expectativas.',style:'Minimalista, conflituoso, teatral'},
   // Atores/Performers
-  {id:'brando',name:'Marlon Brando',cat:'ator',c:'#2a1a0a',persona:'Marlon Brando: o metodo como revolucao, a natureza sobre a tecnica. Transformacao fisica e psicologica total. Reinventou o que significa atuar.',style:'Intenso, transformador, revolucionario'},
+  {id:'brando',featured:true,name:'Marlon Brando',cat:'ator',c:'#2a1a0a',persona:'Marlon Brando: o metodo como revolucao, a natureza sobre a tecnica. Transformacao fisica e psicologica total. Reinventou o que significa atuar.',style:'Intenso, transformador, revolucionario'},
   {id:'meryl',name:'Meryl Streep',cat:'ator',c:'#4a2a2a',persona:'Meryl Streep: tecnica e instinto em equilibrio perfeito. Pesquisa exaustiva, sotaque como camada de personagem. A atriz que desaparece no papel.',style:'Tecnico, pesquisado, transformador'},
   // Pintores
   {id:'caravaggio',name:'Caravaggio',cat:'pintura',c:'#3a1a0a',persona:'Caravaggio: chiaroscuro dramatico, luz que cria volume e tensao. Realismo brutal, personagens do povo em cenas sacras. Violento, genial, transgressor.',style:'Dramatico, tenebrista, realista'},
   {id:'vermeer',name:'Johannes Vermeer',cat:'pintura',c:'#4a6e8b',persona:'Vermeer: luz natural como pincel, interiores intimistas, cotidiano elevado ao sublime. Cada textura calculada. A quietude como linguagem.',style:'Intimo, luminoso, preciso'},
   {id:'basquiat',name:'Jean-Michel Basquiat',cat:'pintura',c:'#1a1a0a',persona:'Basquiat: urgencia grafiteira, texto e imagem como critica racial e social. Neo-expressionismo bruto com inteligencia.',style:'Bruto, urgente, critico'},
-  {id:'warhol',name:'Andy Warhol',cat:'pintura',c:'#6e0a6e',persona:'Warhol: cultura pop elevada a arte, a reproducao como critica ao consumo. Silk-screen, cores planas. O cotidiano como icone.',style:'Pop, plano, comercial'},
+  {id:'warhol',featured:true,name:'Andy Warhol',cat:'pintura',c:'#6e0a6e',persona:'Warhol: cultura pop elevada a arte, a reproducao como critica ao consumo. Silk-screen, cores planas. O cotidiano como icone.',style:'Pop, plano, comercial'},
   {id:'dali',name:'Salvador Dali',cat:'pintura',c:'#8b6e0a',persona:'Dali: tecnica academica a servico do surreal. O subconsciente externalizado com precisao fotografica. Paranoia-critica como metodo.',style:'Surrealista, tecnico, onirico'},
-  {id:'picasso',name:'Pablo Picasso',cat:'pintura',c:'#0a1a8b',persona:'Picasso: destruicao e reconstrucao da forma, multiplas perspectivas simultaneas. Cubismo como nova visao do espaco. Prolífico e provocador.',style:'Cubista, fragmentado, provocador'},
+  {id:'picasso',featured:true,name:'Pablo Picasso',cat:'pintura',c:'#0a1a8b',persona:'Picasso: destruicao e reconstrucao da forma, multiplas perspectivas simultaneas. Cubismo como nova visao do espaco. Prolífico e provocador.',style:'Cubista, fragmentado, provocador'},
   {id:'klimt',name:'Gustav Klimt',cat:'pintura',c:'#8b6e0a',persona:'Klimt: decoracao como conteudo, ouro como linguagem, erotismo e simbolismo entrelaçados. O ornamento como narrativa.',style:'Decorativo, erotico, simbolico'},
   {id:'kandinsky',name:'Wassily Kandinsky',cat:'pintura',c:'#0a4a8b',persona:'Kandinsky: a cor como musica, forma como emocao, abstracao como espiritualidade. Precursor da arte abstrata.',style:'Abstrato, musical, espiritual'},
   {id:'monet',name:'Claude Monet',cat:'pintura',c:'#4a6e4a',persona:'Monet: luz como tema, a percepcao sobre a forma, o instante capturado. O impressionismo como revolucao do olhar.',style:'Impressionista, luminoso, momentaneo'},
   // Fotografos
-  {id:'leibovitz',name:'Annie Leibovitz',cat:'fotografia',c:'#4a2a6e',persona:'Leibovitz: retrato como narrativa, luz cinematografica, intimidade com o fotografado. Do rock ao presidente -- momentos iconicos.',style:'Retrato, narrativo, cinematografico'},
+  {id:'leibovitz',featured:true,name:'Annie Leibovitz',cat:'fotografia',c:'#4a2a6e',persona:'Leibovitz: retrato como narrativa, luz cinematografica, intimidade com o fotografado. Do rock ao presidente -- momentos iconicos.',style:'Retrato, narrativo, cinematografico'},
   {id:'bresson',name:'Cartier-Bresson',cat:'fotografia',c:'#1a1a1a',persona:'Cartier-Bresson: o momento decisivo, geometria do acaso, humanismo discreto. Camera pequena, olho absoluto.',style:'Documentario, geometrico, humanista'},
   {id:'newton',name:'Helmut Newton',cat:'fotografia',c:'#2a2a2a',persona:'Helmut Newton: erotismo sofisticado, mulheres poderosas, contraste alto, ambiguidade moral. A moda como cena de poder.',style:'Erotico, sofisticado, provocador'},
   // Escritores/Pensadores
@@ -5537,7 +5575,10 @@ function viewCouncil(){
   const catFilter=S.councilCatFilter||'all';
   const filtered=catFilter==='all'?COUNCIL_ALL:COUNCIL_ALL.filter(a=>a.cat===catFilter);
   const search=(S.councilSearch||'').toLowerCase();
-  const shown=search?filtered.filter(a=>a.name.toLowerCase().includes(search)):filtered;
+  // Default: show only top 20 featured unless searching
+  const shown=search
+    ?filtered.filter(a=>a.name.toLowerCase().includes(search))
+    :(catFilter!=='all'?filtered:filtered.filter(a=>a.featured));
   const togs=shown.map(a=>'<div class="ai-tog '+(S.councilAIs.includes(a.id)?'on':'')+'" onclick="togAI(&#39;'+a.id+'&#39;)" title="'+a.style+'"><span class="d" style="background:'+a.c+'"></span>'+a.name+'</div>').join('');
   return `
   <div class="view-head"><div class="kicker">${t('intelligence')}</div><h1 class="serif">${S.lang==='pt'?'Conselho de Diretores':'Directors Council'}</h1>
@@ -5772,7 +5813,7 @@ const cards=shown.map(j=>`<div class="job-card">
   <div class="view-head"><div class="kicker">${t('community')}</div><h1 class="serif">${t('opportunities')}</h1>
     <p>${S.lang==='pt'?'Vagas, freelas e projetos de criação com IA, agregados de <b>fontes externas</b> (LinkedIn, Indeed, Behance, Upwork…). As vagas não são oferecidas por nós — clique para ir ao site de origem.':'Jobs, freelance and AI creation projects aggregated from <b>external sources</b> (LinkedIn, Indeed, Behance, Upwork…). Jobs are not offered by us — click to go to the origin site.'}</p></div>${tabs}
   <div class="opp-bar">
-    <input placeholder="${S.lang==='pt'?'Buscar por cargo, empresa, ferramenta…':'Search by role, company, tool…'}" value="${escapeAttr(S.jobQuery)}" oninput="S.jobQuery=this.value;S.jobsShown=9;render()">
+    <input id="jobQInput" class="input" placeholder="${S.lang==='pt'?'Buscar por cargo, empresa, ferramenta…':'Search by role, company, tool…'}" value="${escapeAttr(S.jobQuery)}" oninput="S.jobQuery=this.value;S.jobsShown=9;var _jq=this.value;clearTimeout(window._jqT);window._jqT=setTimeout(function(){S.jobQuery=_jq;var el=document.getElementById('jobsList');if(el)el.innerHTML=renderJobsList();},300)">
     <button class="btn btn-ghost btn-sm" onclick="loadJobsFromWeb()">↻ ${S.lang==='pt'?'Atualizar da web':'Update from web'}</button>
   </div>
   <div class="attach-note" style="margin:-6px 0 14px">${S.lang==='pt'?'A lista abaixo é curada. Para puxar vagas reais de LinkedIn, Indeed, Behance, We Work Remotely etc., configure <code>JOBS_ENDPOINT</code> (agregador no seu backend).':'List below is curated. To pull real jobs from LinkedIn, Indeed, Behance, We Work Remotely etc., set <code>JOBS_ENDPOINT</code> (aggregator on your backend).'}</div>
@@ -5847,7 +5888,7 @@ const YT_AI_FILTER='ultra realistic AI generated cinematic';
 function viewTube(){
   return `
   <div style="padding-left:8px">
-  <div style="border-radius:14px;overflow:hidden;margin-bottom:20px;height:140px;background:url(https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1200&q=80) center/cover no-repeat"></div><div><div class="kicker" style="margin:0 0 3px;color:rgba(255,255,255,.55)">${S.lang==='pt'?'APRENDER':'LEARN'}</div><h1 class="serif" style="margin:0 0 5px;font-size:24px;color:#fff">${S.lang==='pt'?'YouTube':'YouTube'}</h1><p style="margin:0;font-size:12.5px;color:rgba(255,255,255,.65);max-width:520px">${S.lang==='pt'?'Tutoriais e masterclasses de criação com IA — para evoluir rápido.':'Tutorials and AI creation masterclasses — to grow fast.'}</p></div></div>
+  <div style="border-radius:14px;overflow:hidden;margin-bottom:20px;height:140px;background:url(https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1200&q=80) center/cover no-repeat"><h1 class="serif" style="margin:0 0 5px;font-size:24px;color:#fff">${S.lang==='pt'?'YouTube':'YouTube'}</h1><p style="margin:0;font-size:12.5px;color:rgba(255,255,255,.65);max-width:520px">${S.lang==='pt'?'Tutoriais e masterclasses de criação com IA — para evoluir rápido.':'Tutorials and AI creation masterclasses — to grow fast.'}</p></div></div>
   <div class="view-head"><div class="kicker">${S.lang==='pt'?'DESCOBRIR':'DISCOVER'}</div><h1 class="serif">YouTube</h1>
     <p>${S.lang==='pt'?'Pesquise vídeos no YouTube sem sair da plataforma. A busca inicial já vem filtrada para vídeos ultrarrealistas feitos com IA.':'Search YouTube without leaving the platform. The initial search is pre-filtered for ultra-realistic AI videos.'}</p></div>
   <div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:8px">
@@ -6202,7 +6243,7 @@ function viewEditing(){
   const vids=S.gallery.filter(g=>g.type==='video');
   const pool=vids.map((g)=>`<div class="res-card" onclick="addClip(${S.gallery.indexOf(g)})"><img src="${g.url}" referrerpolicy="no-referrer"><div class="ovl"><button>+ ${S.lang==='pt'?'Timeline':'Timeline'}</button></div></div>`).join('');
   return `
-  <div style="border-radius:14px;overflow:hidden;margin-bottom:20px;height:130px;background:linear-gradient(135deg,#0a1a2e,#2e1a0a);position:relative"><div style="position:absolute;inset:0;display:flex;align-items:center;padding:0 28px;gap:18px"><div style="font-size:46px;line-height:1">✂️</div><div><div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.5);margin-bottom:4px">${S.lang==='pt'?'CRIAÇÃO':'CREATION'}</div><div style="font-size:22px;font-weight:700;color:#fff">${S.lang==='pt'?'Edição em Lote':'Batch Editing'}</div><div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:3px">${S.lang==='pt'?'Edite múltiplas imagens de uma vez com IA':'Edit multiple images at once with AI'}</div></div></div></div><div class="view-head"><div class="kicker">${t('create')}</div><h1 class="serif">${t('editing')}</h1>
+  <div class="view-head"><div class="kicker">${t('create')}</div><h1 class="serif">${t('editing')}</h1>
     <p>${S.lang==='pt'?'Anexe clipes, <b>arraste para reordenar</b> e <b>estique/encurte</b> cada um. Gere <b>continuidade por frames</b> (último frame → inicial do próximo), crie transições com IA e junte tudo num filme único.':'Attach clips, <b>drag to reorder</b> and <b>stretch/shorten</b> each one. Generate <b>frame continuity</b>, create AI transitions and stitch into one film.'}</p></div>
   <div class="grid" style="grid-template-columns:1fr 320px;align-items:start">
     <div class="card">
@@ -6390,7 +6431,10 @@ function viewFlow(){
       <div class="flow-input">
         <button class="icon-btn" onclick="document.getElementById('flowFile').click()" title="${S.lang==='pt'?'Anexar':'Attach'}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11l-9 9a5 5 0 0 1-7-7l9-9a3 3 0 0 1 5 5l-9 9"/></svg></button>
         <input type="file" id="flowFile" class="hide" multiple onchange="flowAttach(this)">
-        <input class="input" id="flowIn" placeholder="${S.lang==='pt'?'Ex.: crie um comercial de 20s para o vinho Fontenelle, mood sofisticado, 3 cenas...':'E.g.: create a 20s commercial for Fontenelle wine, sophisticated mood, 3 scenes...'}" onkeydown="if(event.key==='Enter')flowSend()">
+        <div style="position:relative;flex:1;display:flex;gap:6px">
+          <input class="input" id="flowIn" placeholder="${S.lang==='pt'?'Ex.: crie um comercial de 20s para o vinho Fontenelle, mood sofisticado, 3 cenas...':'E.g.: create a 20s commercial for Fontenelle wine, sophisticated mood, 3 scenes...'}" onkeydown="if(event.key==='Enter')flowSend()" style="flex:1">
+          <button onclick="enhanceField('flowIn','video production brief')" style="background:var(--elev);border:1px solid var(--line);border-radius:8px;padding:0 10px;cursor:pointer;font-size:14px;color:var(--accent)" title="${S.lang==='pt'?'✨ Aprimorar':'✨ Enhance'}">✨</button>
+        </div>
         <button onclick="flowSend()" style="background:var(--accent);color:#1a1408;border:none;border-radius:10px;width:46px;height:46px;font-size:22px;font-weight:700;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">→</button>
       </div>
     </div>
@@ -9099,7 +9143,7 @@ function viewMarketingPage(){
     +'<div class="kicker">ADMIN</div>'
     +'<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">'
     +'<h1 class="serif" style="margin:0">🚀 '+(pt?'Suite de Marketing':'Marketing Suite')+'</h1>'
-    +'<button onclick="openMarketingSuite()" class="btn btn-primary" style="font-size:14px">'+(pt?'🚀 Nova Campanha':'🚀 New Campaign')+'</button>'+'</button>'
+    +'<button onclick="openMarketingSuite()" class="btn btn-primary" style="font-size:14px">'+(pt?'🚀 Nova Campanha':'🚀 New Campaign')+'</button>'
     +'</div>'
     +'<p style="max-width:600px;font-size:13.5px;color:var(--ink-2)">'
     +(pt?'Crie e publique conteúdo de divulgação do Hollywood Studio AI nas redes sociais. Gere imagens e vídeos com IA, escreva captions otimizados e publique no Instagram, TikTok, LinkedIn e Facebook.'
@@ -10770,6 +10814,31 @@ window.galToggleFav = function galToggleFav(idx){
   afterGallery();
   toast(item.favorite?(S.lang==='pt'?'⭐ Adicionado aos favoritos':'⭐ Added to favorites'):(S.lang==='pt'?'Removido dos favoritos':'Removed from favorites'));
 };
+
+
+if(typeof runCouncil!=='undefined')window.runCouncil=runCouncil;
+
+/* ════ COMPREHENSIVE WINDOW EXPOSE — ensures all onclick fns work ════ */
+(function(){
+  var fns=['runCouncil','runDirectorSBOpinion','runDirectorFavOpinion','openDirectorStoryboardOpinion',
+    'openDirectorFavOpinion','selectSBDirector','openChangePassword','doChangePassword','confirmDeleteAccount',
+    'applyAdminUserAction','openMarketingSuite','renderMarketingSuite','mktStep','mktSelectPlatform',
+    'mktSelectFormat','mktSaveContent','mktGenerateCaption','mktGenerateMedia','mktPublishNow',
+    'mktCopyForPlatform','mktSaveCampaign','mktResume','loadTemplate','previewTemplate',
+    'csRenderCanvas','csExport','csPageNav','csRefreshPreview','csBindCanvasEvents',
+    'toggleSidebar','toggleCommunity','likePublic','submitComment','sharePublic',
+    'inspoUseInStudio','inspoFavorite','inspoLoadMore','generateFullIGCaption','generateIGHashtags',
+    'connectUserInstagram','testUserIGConnection','analyzeUserStyle','showSceneFlow',
+    'addCurrentToSceneFlow','addItemToSceneFlow','galToggleFav','generateTransition',
+    'transPickClip','backendLogin','syncGalleryOnLogin','debouncedRender',
+    'addCustomCouncilMember','editChar','addChar','openPaymentsModal',
+    'enhanceField','askAcademy','runCouncil','togAI','viewBanner'];
+  fns.forEach(function(fn){
+    if(typeof window[fn]==='undefined'){
+      try{var f=eval(fn);if(typeof f==='function')window[fn]=f;}catch(e){}
+    }
+  });
+})();
 
 </script>
 </body>
