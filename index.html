@@ -153,7 +153,8 @@ function saveApiKeys(){
     claude: (document.getElementById('apiKeyClaude')||{}).value || '',
     gpt:    (document.getElementById('apiKeyGPT')   ||{}).value || '',
     brevo:  (document.getElementById('apiKeyBrevo') ||{}).value || '',
-    brevoList: (document.getElementById('apiBrevoList')||{}).value || ''
+    brevoList: (document.getElementById('apiBrevoList')||{}).value || '',
+    heygen: (document.getElementById('apiKeyHeyGen')||{}).value || ''
   };
   localStorage.setItem('hsai_api_keys', JSON.stringify(keys));
   if(typeof toast === 'function') toast('✅ API Keys salvas','ok');
@@ -196,6 +197,7 @@ function viewFavoritesPage(){
                        .sort((a,b) => b.likes - a.likes).slice(0,12);
 
   return `
+  <div style="background:linear-gradient(135deg,#1a1200,#1a1a1a);border-radius:16px;padding:28px;margin-bottom:22px;display:flex;align-items:center;gap:18px"><div style="font-size:46px;line-height:1">⭐</div><div><div class="kicker" style="margin:0 0 3px;color:rgba(255,255,255,.55)">${S.lang==='pt'?'COLEÇÃO':'COLLECTION'}</div><h1 class="serif" style="margin:0 0 5px;font-size:24px;color:#fff">${S.lang==='pt'?'Favoritos':'Favorites'}</h1><p style="margin:0;font-size:12.5px;color:rgba(255,255,255,.65);max-width:520px">${S.lang==='pt'?'Suas criações preferidas — reutilize, analise com Director\'s Eye ou publique.':'Your favorite creations — reuse, analyze with Director\'s Eye or publish.'}</p></div></div>
   <div class="view-head">
     <div class="kicker">${pt?'Referências':'References'}</div>
     <h1 class="serif">⭐ ${pt?"Favoritos & Director's Eye":"Favorites & Director's Eye"}</h1>
@@ -329,7 +331,15 @@ TAREFA: Retorne APENAS JSON válido (sem markdown):
 
   let result;
   try {
-    if(apiKey){
+    const ck2=CFG.CLAUDE_API_KEY||'';
+    if(ck2){
+      const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':ck2,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1200,messages:[{role:'user',content:promptText}]})});
+      const d=await r.json();
+      const txt=(d.content&&d.content[0]?d.content[0].text:'{}').replace(/```json|```/g,'').trim();
+      result=JSON.parse(txt);
+    } else if(apiKey){
       const r = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {'Content-Type':'application/json','Authorization':'Bearer ' + apiKey},
@@ -410,7 +420,7 @@ function viewStoryboardGenerator(){
         <label><span class="label">${pt?'Título do Projeto':'Project Title'}</span>
           <input class="input" id="sbTitle" placeholder="${pt?'Ex: Nike — Campanha':'E.g.: Nike Campaign'}" value="${cfg.title||''}"></label>
         <label><span class="label">${pt?'Brief / Descrição':'Brief / Description'}</span>
-          <textarea class="input" id="sbBrief" rows="4" placeholder="${pt?'Descreva o projeto, ambiente, mood…':'Describe project, setting, mood…'}">${cfg.brief||''}</textarea></label>
+          <<div style="position:relative"><textarea class="input" id="sbBrief" rows="4" style="padding-right:115px" placeholder="${pt?'Descreva o projeto, ambiente, mood…':'Describe project, setting, mood…'}">${cfg.brief||''}</textarea<button class="btn btn-ghost btn-sm" style="position:absolute;right:8px;bottom:8px;font-size:11px;padding:5px 10px" onclick="enhanceField('sbBrief','storyboard')">✨ Aprimorar</button></div>></label>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
           <label><span class="label">${pt?'Duração por Cena':'Duration / Scene'}: <b id="sbDurVal">${cfg.duration||12}s</b></span>
             <input type="range" id="sbDuration" min="5" max="15" value="${cfg.duration||12}" oninput="document.getElementById('sbDurVal').textContent=this.value+'s';updateTotalDuration()"></label>
@@ -478,7 +488,15 @@ Retorne APENAS JSON válido (sem markdown):
 
   let data;
   try {
-    if(apiKey){
+    const ck2=CFG.CLAUDE_API_KEY||'';
+    if(ck2){
+      const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':ck2,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1200,messages:[{role:'user',content:promptText}]})});
+      const d=await r.json();
+      const txt=(d.content&&d.content[0]?d.content[0].text:'{}').replace(/```json|```/g,'').trim();
+      result=JSON.parse(txt);
+    } else if(apiKey){
       const r = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {'Content-Type':'application/json','Authorization':'Bearer ' + apiKey},
@@ -671,6 +689,8 @@ function adminApiKeysCard(){
           <input type="password" id="apiKeyClaude" class="input" placeholder="sk-ant-…" value="${keys.claude||''}"></label>
         <label><span class="label">GPT API Key (para Storyboard + Director's Eye)</span>
           <input type="password" id="apiKeyGPT" class="input" placeholder="sk-…" value="${keys.gpt||''}"></label>
+        <label><span class="label">HeyGen API Key (Avatar IA — heygen.com/settings/api)</span>
+          <input type="password" id="apiKeyHeyGen" class="input" placeholder="OTgx…" value="${keys.heygen||''}"></label>
         <label><span class="label">Brevo API Key (newsletter)</span>
           <input type="password" id="apiKeyBrevo" class="input" placeholder="xkeysib-…" value="${keys.brevo||''}"></label>
         <label><span class="label">Brevo List ID</span>
@@ -1097,6 +1117,8 @@ svg.sedges path{stroke:var(--accent);stroke-width:2;fill:none;opacity:.6}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:var(--r);
   font-size:14px;font-weight:600;border:1px solid var(--line-2);background:var(--panel-2);cursor:pointer;transition:.16s;color:var(--ink)}
 .btn:hover{border-color:var(--line-2);background:var(--elev)}
+.btn:active{transform:scale(.97);filter:brightness(1.15)}
+.btn-primary:active{filter:brightness(1.2);transform:scale(.97)}
 .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#1a1408;border:none;font-family:var(--sans)}
 .btn-primary:hover{filter:brightness(1.07)}
 .btn-primary:disabled{opacity:.5;cursor:not-allowed;filter:none}
@@ -1224,7 +1246,7 @@ svg.sedges path{stroke:var(--accent);stroke-width:2;fill:none;opacity:.6}
 .gal-bar{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
 .gal-bar input[type=range]{accent-color:var(--accent)}
 .gal-grid{display:grid;gap:12px}
-.gal-item{position:relative;cursor:default;display:inline-block;width:100%;margin-bottom:16px;break-inside:avoid}
+.gal-item{position:relative;cursor:default;display:inline-block;width:100%;margin-bottom:36px;break-inside:avoid}
 .gal-media{position:relative;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);background:var(--panel-2);cursor:pointer}
 .gal-media img,.gal-media video{width:100%;height:100%;object-fit:cover;display:block}
 .gal-foot{display:grid;grid-template-columns:repeat(auto-fit,minmax(74px,1fr));gap:6px;margin-top:7px}
@@ -1649,12 +1671,12 @@ const I18N={
     council:'Juiz Chat',analytics:'Estatísticas',opportunities:'Oportunidades',public:'Galeria Pública',
     academy:'Academy',news:'Notícias',festivals:'Festivais',gallery:'Galeria',plans:'Planos',admin:'Admin',models:'Modelos',batch:'Edição em Lote',tube:'YouTube',inspo:'Inspiração',
     create:'Criação',intelligence:'Inteligência',manage:'Gestão',community:'Comunidade',learn:'Aprender',account:'Conta',
-    generate:'Gerar',prompt:'Prompt',welcome:'Bem-vindo de volta','gemini-avatar':'Avatar Omni'},
+    generate:'Gerar',prompt:'Prompt',welcome:'Bem-vindo de volta','gemini-avatar':'Avatar IA'},
   en:{studio:'Studio',images:'Images',audio:'Audio',characters:'Characters',storyboard:'Storyboard',favorites:'Favorites',editing:'Editing',agents:'Agents',docs:'Documents',spaces:'Spaces',flow:'Assistant',
     council:'Judge Chat',analytics:'Analytics',opportunities:'Opportunities',public:'Public Gallery',
     academy:'Academy',news:'News',festivals:'Festivals',gallery:'Gallery',plans:'Plans',admin:'Admin',models:'Models',batch:'Batch Edit',tube:'YouTube',inspo:'Inspiration',
     create:'Create',intelligence:'Intelligence',manage:'Manage',community:'Community',learn:'Learn',account:'Account',
-    generate:'Generate',prompt:'Prompt',welcome:'Welcome back','gemini-avatar':'Omni Avatar'}
+    generate:'Generate',prompt:'Prompt',welcome:'Welcome back','gemini-avatar':'AI Avatar'}
 };
 
 // FEEDS CONFIG
@@ -1780,14 +1802,17 @@ const MODELS=[
   // ── IMAGE ──
   {id:'seedream5',name:'Seedream 5.0',sub:'image · live',status:'live',cat:'image',featured:true,
    res:'4K',max:'still',durs:[],ratio:'qualquer',ref:'@char · multi-ref · first/last',
+   refSpec:{start:false,end:false,refs:14,video:false,audio:false,maxTotal:14},
    desc:{pt:'Geração e edição de imagem de alto nível com raciocínio visual. Use para frames de storyboard, catálogo e key art.',
          en:'Top-tier image generation/editing with visual reasoning. Use for storyboard frames, catalog and key art.'}},
   {id:'nanobananapro',name:'Nano Banana Pro',sub:'google · live',status:'live',cat:'image',featured:true,
    res:'4K',max:'still',durs:[],ratio:'qualquer',ref:'@char · multi-ref',
+   refSpec:{start:false,end:false,refs:10,video:false,audio:false,maxTotal:10},
    desc:{pt:'Melhor modelo de imagem 4K do Google. Realismo e coerência excepcionais, ótimo com múltiplas referências.',
          en:'Google\'s best 4K image model. Exceptional realism and coherence, great with multiple references.'}},
   {id:'gptimage2',name:'GPT Image 2',sub:'openai · live',status:'live',cat:'image',featured:true,
    res:'4K',max:'still',durs:[],ratio:'qualquer',ref:'Texto + ref',
+   refSpec:{start:false,end:false,refs:10,video:false,audio:false,maxTotal:10},
    desc:{pt:'Renderização de texto quase perfeita em imagem — ideal para peças com tipografia, embalagens e anúncios.',
          en:'Near-perfect in-image text rendering — ideal for typographic pieces, packaging and ads.'}},
   {id:'geminiomni',name:'Gemini Omni',sub:'google · live',status:'live',cat:'image',featured:true,
@@ -1941,8 +1966,7 @@ const NAV=[
     {id:'characters',ic:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM5 21a7 7 0 0 1 14 0'},
     {id:'favorites',ic:'M12 2l3.1 6.3L22 9.3l-5 4.9 1.2 6.9L12 18l-6.2 3.1L7 14.2 2 9.3l6.9-1L12 2z'},
     {id:'batch',ic:'M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z'},
-    {id:'gemini-avatar',ic:'M12 2c-5.5 0-10 4.5-10 10s4.5 10 10 10 10-4.5 10-10-4.5-10-10-10zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm3.5-9c.8 0 1.5-.7 1.5-1.5S16.3 8 15.5 8 14 8.7 14 9.5s.7 1.5 1.5 1.5zm-7 0c.8 0 1.5-.7 1.5-1.5S9.3 8 8.5 8 7 8.7 7 9.5 7.7 11 8.5 11zm3.5 6c-2.3 0-4.3-1.2-5.5-3h11c-1.2 1.8-3.2 3-5.5 3z'},
-    {id:'docs',ic:'M6 2h9l5 5v15H6zM15 2v5h5M9 13h6M9 17h6'}
+        {id:'docs',ic:'M6 2h9l5 5v15H6zM15 2v5h5M9 13h6M9 17h6'}
   ]},
   {group:'intelligence',items:[
     {id:'flow',ic:'M12 3v4M12 17v4M3 12h4M17 12h4M6 6l3 3M18 6l-3 3M6 18l3-3M18 18l-3-3M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z'},
@@ -2423,7 +2447,6 @@ function viewStudio(){
             <input type="range" id="durRange" min="1" max="15" value="10" style="flex:1" oninput="cDurInput(this.value)">
             <b id="durVal" style="color:var(--accent);font-family:var(--mono);min-width:34px;text-align:right">10s</b></div></div>
         <div class="tog-row" id="audioTogRow"><span>${S.lang==='pt'?'Gerar áudio':'Generate audio'}</span><div class="sw" id="swAudio" onclick="this.classList.toggle('on')"></div></div>
-        <div class="tog-row"><span>Watermark</span><div class="sw" id="swMark" onclick="this.classList.toggle('on')"></div></div>
         <div class="field" style="margin-top:6px"><span class="label">${S.lang==='pt'?'Grupo / Projeto':'Group / Project'}</span><input class="input" id="stGroup" placeholder="Geral" value="${escapeAttr(S.group)}" oninput="S.group=this.value||'Geral'"></div>
       </div>
     </div>
@@ -2574,7 +2597,7 @@ function renderCRef(){
   if(S.cmode==='image'){
     // Imagem: só refs
     const maxR=rs.refs||3;
-    el.innerHTML=`<div class="drop" onclick="document.getElementById('refFile').click()">📎 ${pt?`Referência visual (máx. ${maxR})`:`Visual reference (max. ${maxR})`}</div>
+    el.innerHTML=`<div class="drop" onclick="document.getElementById('refFile').click()">📎 ${pt?('Referência visual (máx. '+maxR+')'):'Visual reference (max. '+maxR+')'}</div>
       <input type="file" id="refFile" multiple accept="image/*" class="hide" onchange="addRefs(this)">
       <div class="thumbs" id="refThumbs"></div>`;
     drawRefs();return;
@@ -2584,10 +2607,9 @@ function renderCRef(){
   // Determinar quais modos estão disponíveis para este modelo
   const modes=[];
   // Botões apenas quando há escolha real (nunca "Só Prompt")
-  if(rs.start) modes.push(['img2vid', pt?'Frame Inicial':'Start Frame', pt?'Imagem de partida':'Start image']);
+  if(rs.start) modes.push(['img2vid', pt?'Referências':'References', pt?'Imagem de partida':'Start image']);
   if(rs.start && rs.end) modes.push(['startend', 'Start + End', pt?'Início e fim':'First & last']);
   if(rs.video && !rs.audio) modes.push(['vidref', pt?'Ref. Movimento':'Motion Ref', pt?'Vídeo de referência':'Reference video']);
-  if(rs.audio) modes.push(['lipsync', 'Lipsync', pt?'Face + Áudio':'Face + Audio']);
 
   // Reset input mode se não disponível no modelo atual
   if(!modes.length){window._inputMode='prompt';}
@@ -2728,7 +2750,7 @@ async function runCreate(){
       const url=S.cmode==='audio'?aiImg('audio',400,220,Date.now()%9999):(S.cmode==='image'?aiImg(prompt,512,512,Date.now()%9999):'assets/sample.mp4');
       ctrl.finish(()=>finishCreate(url,expanded,m,dur));return;}
     const body={kind:S.cmode,model:m.id,prompt:expanded,aspect_ratio:(document.getElementById('ratioSel2')||{}).value,resolution:(document.getElementById('resSel2')||{}).value};
-    if(S.cmode==='video'){body.duration=dur;body.audio=document.getElementById('swAudio').classList.contains('on');body.watermark=document.getElementById('swMark').classList.contains('on');body.start_frame=_startFrame;body.end_frame=_endFrame;}
+    if(S.cmode==='video'){body.duration=dur;body.audio=document.getElementById('swAudio').classList.contains('on');body.start_frame=_startFrame;body.end_frame=_endFrame;}
     body.references=_refs;
     const data=await generateViaProviders(body);
     ctrl.finish(()=>finishCreate(data.video_url||data.image_url||data.url||'',expanded,m,dur));
@@ -3979,7 +4001,10 @@ function viewCharacters(){
     <div class="char-card">
       <div class="ph">${c.img?`<img src="${c.img}" referrerpolicy="no-referrer">`:`<span style="color:var(--ink-4)">${S.lang==='pt'?'sem foto':'no photo'}</span>`}</div>
       <div class="meta"><div class="h">@${c.tag}</div><div class="n">${escapeHtml(c.name)}</div><div class="c">${escapeHtml(c.desc||'')}</div>
-      <button class="pb-btn" style="margin-top:8px" onclick="delChar(${i})">${S.lang==='pt'?'Remover':'Remove'}</button></div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <button class="pb-btn" onclick="editChar(${i})">${S.lang==='pt'?'✏️ Editar':'✏️ Edit'}</button>
+        <button class="pb-btn" style="color:var(--err)" onclick="delChar(${i})">${S.lang==='pt'?'Remover':'Remove'}</button>
+      </div></div>
     </div>`).join('');
   return `
   <div class="view-head"><div class="kicker">${t('create')}</div><h1 class="serif">${t('characters')}</h1>
@@ -4077,6 +4102,28 @@ function viewStoryboard(){
     </div>
   </div>`;
 }
+function editChar(i){
+  const chars=getChars();
+  const c=chars[i];
+  if(!c)return;
+  // Fill form with character data
+  const tagEl=document.getElementById('charTag');
+  const nameEl=document.getElementById('charName');
+  const descEl=document.getElementById('charDesc');
+  if(tagEl) tagEl.value=c.tag||'';
+  if(nameEl) nameEl.value=c.name||'';
+  if(descEl) descEl.value=c.desc||'';
+  // Remove from list so saving replaces it
+  chars.splice(i,1);
+  localStorage.setItem(userKey('chars'),JSON.stringify(chars));
+  // Scroll to form
+  const form=document.getElementById('charForm');
+  if(form) form.scrollIntoView({behavior:'smooth'});
+  else render(); // re-render so form is visible at top
+  toast(S.lang==='pt'?'Edite e salve o personagem':'Edit and save the character');
+  render();
+}
+
 function useStoryboardInStudio(sbId){
   const sbs=getStoryboards(); const sb=sbs.find(s=>s.id===sbId); if(!sb||!sb.scenes||!sb.scenes.length)return;
   const first=sb.scenes[0]; const pt=S.lang==='pt';
@@ -4146,13 +4193,14 @@ function viewAgents(){
     <h4>${a.t[S.lang]}</h4><p>${a.d[S.lang]}</p></div>`).join('');
   return `
   <div class="view-head"><div class="kicker">${t('create')}</div><h1 class="serif">${t('agents')}</h1>
-    <p>${S.lang==='pt'?'Agentes especializados geram prompts prontos em blocos — copie, dê título e reutilize. O histórico fica salvo no seu clipboard.':'Specialized agents generate ready prompts in blocks — copy, title and reuse. History stays in your clipboard.'}</p></div>
+    <p>${S.lang==='pt'?'Agentes especializados geram prompts prontos em blocos — copie, dê título e reutilize. O histórico fica salvo no seu clipboard.':'Specialized agents generate ready prompts in blocks — copy, title and reuse. History stays in your clipboard.'}</p>
+  ${savedAgentsHTML()}</div>
   <div class="grid" style="grid-template-columns:1fr 320px;align-items:start">
     <div>
       <div class="agent-grid" style="margin-bottom:22px">${cards}</div>
       <div class="card">
         <span class="label">${S.lang==='pt'?'Agente':'Agent'}: <b style="color:var(--accent)" id="agSelected">${AGENTS.find(a=>a.id===_agent).t[S.lang]}</b></span>
-        <textarea class="input" id="agBrief" data-sug="1" style="min-height:140px;width:100%" placeholder="${S.lang==='pt'?'Descreva o que quer criar…':'Describe what you want to create…'}">${escapeHtml(AGENTS.find(a=>a.id===_agent).sug[S.lang])}</textarea>
+        <div style="position:relative"><textarea class="input" id="agBrief" data-sug="1" style="min-height:140px;width:100%" placeholder="${S.lang==='pt'?'Descreva o que quer criar…':'Describe what you want to create…'}">${escapeHtml(AGENTS.find(a=>a.id===_agent).sug[S.lang])}</textarea><button class="btn btn-ghost btn-sm" style="position:absolute;right:8px;bottom:8px;font-size:11px;padding:5px 10px" onclick="enhanceField('agBrief','agent')">✨ Aprimorar</button></div>
         <button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="genPrompts()" id="agBtn">${S.lang==='pt'?'Gerar prompts':'Generate prompts'}</button>
         <div id="agOut" style="margin-top:18px"></div>
       </div>
@@ -4262,7 +4310,23 @@ function viewAcademy(){
       <div style="font-size:13px;color:var(--ink-2);margin-top:4px">${S.lang==='pt'?'Lançamentos de modelos, ferramentas, novelas verticais e tendências — agora numa seção própria.':'Model launches, tools, vertical dramas and trends — now in its own section.'}</div></div>
     <button class="btn btn-primary btn-sm" onclick="go('news')">${S.lang==='pt'?'Ver notícias →':'View news →'}</button>
   </div>
-  <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr))">${cards}</div>`;
+    <div style="background:var(--panel-2);border:1px solid var(--line-2);border-radius:14px;padding:22px;margin-bottom:22px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <span style="font-size:36px;line-height:1">🎓</span>
+      <div>
+        <div style="font-size:17px;font-weight:700">${S.lang==='pt'?'O que você quer aprender?':'What do you want to learn?'}</div>
+        <div style="font-size:12.5px;color:var(--ink-3);margin-top:3px">${S.lang==='pt'?'Pergunte qualquer coisa — modelos, prompts, workflow, preços. IA responde com profundidade.':'Ask anything — models, prompts, workflow, pricing. AI answers in depth.'}</div>
+      </div>
+    </div>
+    <textarea id="academyQ" class="input" style="width:100%;min-height:90px;resize:vertical;font-size:14px;margin-bottom:12px" placeholder="${S.lang==='pt'?'Ex.: Como manter consistência de personagem? Qual modelo usar para fashion? Como precificar meu serviço?':'E.g.: How to keep character consistency? Which model for fashion? How to price my service?'}"></textarea>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <button class="btn btn-primary" style="padding:10px 24px" onclick="askAcademy()">${S.lang==='pt'?'✨ Perguntar':'✨ Ask'}</button>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('academyQ').value='';document.getElementById('academyAns').style.display='none'">${S.lang==='pt'?'Limpar':'Clear'}</button>
+      <span style="font-size:11px;color:var(--ink-4);margin-left:auto">Claude · Gemini</span>
+    </div>
+    <div id="academyAns" style="display:none;margin-top:16px;padding:18px;background:var(--panel-2);border-radius:12px;font-size:13.5px;line-height:1.8;max-height:500px;overflow-y:auto"></div>
+  </div>
+<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr))">${cards}</div>`;
 }
 const LESSONS={
   m1:{pt:`<h3>Uma breve história</h3><p>Em poucos anos saímos de imagens borradas de <code>GANs</code> para vídeo coerente em 1080p/4K. Os marcos: difusão (2021) trouxe controle por prompt; modelos de vídeo (2024–2025) trouxeram movimento de câmera, física e continuidade.</p><h3>O que isso libera hoje</h3><ul><li><strong>Comerciais</strong> sem set, locação ou elenco.</li><li><strong>Catálogo</strong> de produto infinito a partir de poucas fotos.</li><li><strong>Storyboards animados</strong> em horas, não semanas.</li></ul><h4>A realidade dos recursos</h4><p>Cada segundo de vídeo custa créditos. Produzir com margem é gerir esse custo: iterar barato (modelos fast), finalizar caro (modelos premium) só no take aprovado.</p>`,
@@ -4398,20 +4462,6 @@ function viewFestivals(){
 }
 
 /* ════════ GEMINI AVATAR OMNI ════════ */
-function viewGeminiAvatar(){
-  const pt=S.lang==='pt';
-  return `
-  <div class="view-head" style="margin-bottom:0">
-    <div class="kicker">${pt?'Criar':'Create'}</div>
-    <h1 class="serif">${t('gemini-avatar')}</h1>
-    <div class="card" style="background:linear-gradient(135deg,#1f6feb,#388bfd);border:1px solid #58a6ff;color:#fff;margin-bottom:20px;padding:14px">
-      <b style="display:block;margin-bottom:6px">🔗 ${pt?'Recurso Externo Google Gemini':'External Google Gemini Resource'}</b>
-      <p style="margin:0;font-size:13px;line-height:1.4">${pt?'Este editor usa a plataforma Google Gemini Labs. Você cria e gerencia seus avatares com seus próprios créditos Google, fora de seus planos Hollywood Studio. Qualidade cinematic omni-modal (texto + voz + vídeo + contexto).':'This editor uses Google Gemini Labs platform. You create and manage your avatars with your own Google credits, outside your Hollywood Studio plans. Cinematic omni-modal quality (text + voice + video + context).'}</p>
-    </div>
-  </div>
-  <iframe src="https://labs.google.com/fx/pt/toc" style="width:100%;height:calc(100vh - 280px);border:none;border-radius:12px;background:#000" title="Google Gemini Avatar Studio" allow="camera;microphone;payment"></iframe>
-  <div class="attach-note" style="margin-top:16px;font-size:12px">${pt?'<b>Dica:</b> Crie seu avatar aqui, teste gerações com vídeo/áudio, salve. Depois cole o <b>ID do avatar</b> (ex: "me Avatar") no Estúdio pra usar em gerações futuras com composição de cenários.':'<b>Tip:</b> Create your avatar here, test generations with video/audio, save. Then paste the <b>avatar ID</b> (e.g., "me Avatar") in Studio for future generations with scene composition.'}</div>`;
-}
 function afterGeminiAvatar(){
   // nenhuma ação inicial necessária
 }
@@ -4658,7 +4708,7 @@ function viewPlans(){
       <div>
         <b style="display:block;margin-bottom:6px">${S.lang==='pt'?'Avatar Omni Google Gemini — Add-on Externo':'Google Gemini Omni Avatar — External Add-on'}</b>
         <p style="margin:0;font-size:13px;line-height:1.4">${S.lang==='pt'?'Crie e customize avatares fotorrealistas no Gemini Labs, use seus próprios créditos Google (fora dos planos). Qualidade cinematic omni-modal — não incluído nos planos, mas integrado no seu estúdio.':'Create and customize photorealistic avatars in Gemini Labs using your own Google credits (outside plans). Cinematic omni-modal quality — not included in plans, but integrated in your studio.'}</p>
-        <button class="btn btn-ghost btn-sm" onclick="go('gemini-avatar')" style="margin-top:8px">${S.lang==='pt'?'Começar →':'Get started →'}</button>
+        
       </div>
     </div>
   </div>
@@ -5046,6 +5096,26 @@ function viewPublic(){
     <p style="color:var(--ink-3);max-width:480px;margin:0 auto">${S.lang==='pt'?'Seja o primeiro! Gere algo no Estúdio, vá na sua Galeria e clique em "🌍 Publicar".':'Be the first! Generate something, go to your Gallery and click "🌍 Publish".'}</p>
   </div>`}`;
 }
+function mcCaps(m){
+  var rs=m.refSpec||{};
+  var chips=[];
+  var c=function(t){return '<span style="background:var(--panel-3);border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;color:var(--ink-2);margin-left:3px">'+t+'</span>';};
+  if(m.cat==='video'){
+    chips.push(c('T→V'));
+    if(rs.start) chips.push(c('Img ref'));
+    if(rs.start&&rs.end) chips.push(c('Start+End'));
+    if(rs.refs>0) chips.push(c('+'+rs.refs+' refs'));
+    if(rs.video) chips.push(c('Vid ref'));
+    if(rs.audio) chips.push(c('Audio'));
+    if(m.func==='lipsync') chips.push(c('Lipsync'));
+    if(m.func==='camera') chips.push(c('Motion'));
+  } else if(m.cat==='image'){
+    chips.push(c('T→I'));
+    if(rs.refs>1) chips.push(c('até '+rs.refs+' refs'));
+    else if(rs.refs===1) chips.push(c('1 ref'));
+  }
+  return chips.join('');
+}
 function viewModelsCatalog(){
   const cats=[
     {id:'all',label:S.lang==='pt'?'Todos':'All'},
@@ -5064,7 +5134,8 @@ function viewModelsCatalog(){
   <div class="model-cat-grid">
     ${list.map(m=>{
       const costRate=MODEL_COST_USD[m.id]||0;const isVid=m.cat==='video';const isImg=m.cat==='image';
-      const tag=isVid?(S.lang==='pt'?'Texto para Vídeo':'Text to Video'):(isImg?(S.lang==='pt'?'Texto para Imagem':'Text to Image'):'Áudio');
+      const funcLbls={'img2vid':{pt:'Img→Vid',en:'Img→Video'},'lipsync':{pt:'Lip Sync',en:'Lip Sync'},'camera':{pt:'Câmera Ctrl',en:'Camera Ctrl'},'omni':{pt:'Omni',en:'Omni'},'ref2vid':{pt:'Ref→Vídeo',en:'Ref→Video'},'t2v':{pt:'Texto→Vídeo',en:'Text→Video'}};
+            const tag=isVid?(S.lang==='pt'?'Vídeo':'Video'):(isImg?(S.lang==='pt'?'Imagem':'Image'):(S.lang==='pt'?'Áudio':'Audio'));
       const tagCls=isVid?'video':(isImg?'image':'text');
       const fbi=Math.abs(m.id.charCodeAt(0)+m.id.charCodeAt(m.id.length-1))%FALLBACK_REEL.length;
       const reelI=m.img||FALLBACK_REEL[fbi]; // usa img específica do modelo se disponível
@@ -5072,7 +5143,7 @@ function viewModelsCatalog(){
         <div class="mc-thumb ${tagCls}"><img src="${reelI}" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.style.display='none'"><span class="mc-badge">${m.featured?'★ FEATURED':(m.status==='live'?'● LIVE':'BETA')}</span></div>
         <div class="mc-body">
           <span class="mc-tag ${tagCls}">${tag}</span>
-          <div class="mc-name">${escapeHtml(m.name)}</div>
+          <div class="mc-name">${escapeHtml(m.name)}</div><div style="margin-top:4px">${mcCaps(m)}</div>
           <div class="mc-desc">${escapeHtml((m.desc&&m.desc[S.lang])||'')}</div>
           <div class="mc-foot">
             <div><div class="mc-price">${costRate?fmtUSD(costRate)+(isVid?'<small>/s</small>':'<small>/'+(S.lang==='pt'?'img':'img')+'</small>'):(S.lang==='pt'?'—':'—')}</div></div>
@@ -5451,6 +5522,7 @@ let _ytQ='', _ytItems=[];
 const YT_AI_FILTER='ultra realistic AI generated cinematic';
 function viewTube(){
   return `
+  <div style="background:linear-gradient(135deg,#1a0800,#1a1a1a);border-radius:16px;padding:28px;margin-bottom:22px;display:flex;align-items:center;gap:18px"><div style="font-size:46px;line-height:1">▶</div><div><div class="kicker" style="margin:0 0 3px;color:rgba(255,255,255,.55)">${S.lang==='pt'?'APRENDER':'LEARN'}</div><h1 class="serif" style="margin:0 0 5px;font-size:24px;color:#fff">${S.lang==='pt'?'YouTube':'YouTube'}</h1><p style="margin:0;font-size:12.5px;color:rgba(255,255,255,.65);max-width:520px">${S.lang==='pt'?'Tutoriais e masterclasses de criação com IA — para evoluir rápido.':'Tutorials and AI creation masterclasses — to grow fast.'}</p></div></div>
   <div class="view-head"><div class="kicker">${S.lang==='pt'?'DESCOBRIR':'DISCOVER'}</div><h1 class="serif">YouTube</h1>
     <p>${S.lang==='pt'?'Pesquise vídeos no YouTube sem sair da plataforma. A busca inicial já vem filtrada para vídeos ultrarrealistas feitos com IA.':'Search YouTube without leaving the platform. The initial search is pre-filtered for ultra-realistic AI videos.'}</p></div>
   <div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:8px">
@@ -5499,10 +5571,20 @@ function ytToStudio(title){loadPromptToStudio((S.lang==='pt'?'Inspirado em: ':'I
 function viewInspo(){
   const pub=loadPublic().filter(p=>p.type==='image').map(p=>({url:p.url,prompt:p.prompt||'',by:p.author||''}));
   _inspoSeeds=INSPO_SEED.concat(pub);
-  const seeds=_inspoSeeds;
+  const srcF=S.inspoSrc||'all';
+  const seeds=srcF==='all'?_inspoSeeds:_inspoSeeds.filter(function(s){return s.src===srcF;});
   return `
+  <div style="border-radius:14px;overflow:hidden;margin-bottom:20px;height:120px;display:flex;gap:3px">
+    ${_inspoSeeds.slice(0,6).map(function(s){return '<div style="flex:1;background:url('+s.url+') center/cover;min-width:0"></div>';}).join('')}
+  </div>
   <div class="view-head"><div class="kicker">${S.lang==='pt'?'INSPIRAÇÃO':'INSPIRATION'}</div><h1 class="serif">${t('inspo')}</h1>
     <p>${S.lang==='pt'?'Mural de imagens ultrarrealistas feitas com IA — para inspirar. Clique para ver o prompt, reutilizar no Estúdio ou publicar as suas na Galeria Pública.':'A wall of ultra-realistic AI images — for inspiration. Click to view the prompt, reuse in Studio or publish yours to the Public Gallery.'}</p></div>
+  
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+    <button class="btn btn-sm ${(S.inspoSrc||'all')==='all'?'btn-primary':'btn-ghost'}" onclick="S.inspoSrc='all';render()">Todos</button>
+    <button class="btn btn-sm ${(S.inspoSrc||'all')==='unsplash'?'btn-primary':'btn-ghost'}" onclick="S.inspoSrc='unsplash';render()">Unsplash</button>
+    <button class="btn btn-sm ${(S.inspoSrc||'all')==='community'?'btn-primary':'btn-ghost'}" onclick="S.inspoSrc='community';render()">Comunidade</button>
+  </div>
   <div class="inspo-masonry" id="inspoGrid">
     ${seeds.map((s,i)=>`<figure class="inspo-card" onclick="inspoOpen(${i})">
       <img src="${s.url}" loading="lazy" referrerpolicy="no-referrer" onerror="this.closest('.inspo-card').style.display='none'">
@@ -5512,14 +5594,30 @@ function viewInspo(){
 }
 let _inspoSeeds=[];
 const INSPO_SEED=[
-  {url:'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=700&q=70&auto=format&fit=crop',prompt:'cinematic portrait, volumetric light, 85mm, ultra realistic'},
-  {url:'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=700&q=70&auto=format&fit=crop',prompt:'neon city night, anamorphic, hyperreal'},
-  {url:'https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?w=700&q=70&auto=format&fit=crop',prompt:'abstract circuitry, macro, cinematic grade'},
-  {url:'https://images.unsplash.com/photo-1635776062127-d379bfcba9f8?w=700&q=70&auto=format&fit=crop',prompt:'surreal landscape, golden hour, 35mm, high realism'},
-  {url:'https://images.unsplash.com/photo-1633101585272-9511ed3c8d44?w=700&q=70&auto=format&fit=crop',prompt:'futuristic interior, soft light, photoreal'},
-  {url:'https://images.unsplash.com/photo-1682687982501-1e58ab814714?w=700&q=70&auto=format&fit=crop',prompt:'dramatic nature, wide angle, cinematic'},
-  {url:'https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=700&q=70&auto=format&fit=crop',prompt:'editorial fashion, studio light, hyperreal'},
-  {url:'https://images.unsplash.com/photo-1681412327205-8d4f3a5f1f70?w=700&q=70&auto=format&fit=crop',prompt:'macro product, dark background, premium'}
+  {url:'https://images.unsplash.com/photo-1518929458119-e5bf444c30f4?w=900&q=80',prompt:'cinematic hero shot, golden hour, 35mm film grain, teal and orange grade',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=900&q=80',prompt:"director's clapper board, film set, dramatic lighting, bokeh",src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=900&q=80',prompt:'abstract light trails, neon, long exposure, urban night, cyberpunk',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=900&q=80',prompt:'editorial fashion, haute couture, dramatic studio lighting, Vogue',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=900&q=80',prompt:'luxury villa exterior, golden hour, infinity pool, photorealistic',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80',prompt:'aerial mountain landscape, misty peaks, sunrise, cinematic drone shot',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=900&q=80',prompt:'gourmet dish close-up, steam rising, macro lens, food photography',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=900&q=80',prompt:'AI neural network visualization, glowing nodes, dark background, 4K',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=80',prompt:'concert stage, massive crowd, light show, fog, aerial shot, Rock in Rio',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=900&q=80',prompt:'musician in recording studio, analog equipment, warm light',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=900&q=80',prompt:'portrait, studio lighting, Rembrandt light, skin texture, 85mm',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=900&q=80',prompt:'athlete in motion, action freeze, dynamic composition, sports photography',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=900&q=80',prompt:'space exploration, satellite view of earth, cinematic, NASA aesthetic',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=900&q=80',prompt:'cyberpunk city at night, neon reflections, rain, dystopian future',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=900&q=80',prompt:'luxury watch product shot, macro, dark background, dramatic side light',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=900&q=80',prompt:'modern living room interior, natural light, minimalist design, warm tones',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1518098268026-4e89f1a2cd8e?w=900&q=80',prompt:'tropical beach, crystal water, aerial 4K, magic hour, paradise',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=900&q=80',prompt:'cocktail bar, mixologist, bokeh lights, warm amber, lifestyle',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&q=80',prompt:'model walking runway, fashion week, crowd blurred, telephoto 85mm',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=900&q=80',prompt:'premium perfume bottle, studio shot, reflections, elegant fragrance campaign',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=900&q=80',prompt:'robot hand touching human hand, photorealistic, shallow DOF, concept art',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=900&q=80',prompt:'abstract fluid art, vibrant colors, macro, fine art print',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=900&q=80',prompt:'UGC authentic portrait, natural light window, casual, social media',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=900&q=80',prompt:'social media app on phone, lifestyle, flat lay, tech photography',src:'unsplash'},
 ];
 function afterInspo(){
   const pub=loadPublic().filter(p=>p.type==='image').map(p=>({url:p.url,prompt:p.prompt||'',by:p.author||''}));
@@ -5542,6 +5640,7 @@ function loadScript(url){return new Promise((res,rej)=>{if([...document.scripts]
 function viewBatch(){
   const o=_bxOps;const cropChips=['none','1:1','4:5','16:9','9:16','3:2','2:3'];
   return `
+  <div style="background:linear-gradient(135deg,#081408,#1a1a1a);border-radius:16px;padding:28px;margin-bottom:22px;display:flex;align-items:center;gap:18px"><div style="font-size:46px;line-height:1">🖼</div><div><div class="kicker" style="margin:0 0 3px;color:rgba(255,255,255,.55)">${S.lang==='pt'?'FERRAMENTAS':'TOOLS'}</div><h1 class="serif" style="margin:0 0 5px;font-size:24px;color:#fff">${S.lang==='pt'?'Edição em Lote':'Batch Editing'}</h1><p style="margin:0;font-size:12.5px;color:rgba(255,255,255,.65);max-width:520px">${S.lang==='pt'?'Edite uma imagem ou centenas de uma vez — remova fundo, redimensione, .zip.':'Edit one image or hundreds at once — remove background, resize, download .zip.'}</p></div></div>
   <div class="view-head"><div class="kicker">${S.lang==='pt'?'FERRAMENTAS':'TOOLS'}</div><h1 class="serif">${t('batch')}</h1>
     <p>${S.lang==='pt'?'Edite uma imagem ou centenas de uma vez. Remova fundo, redimensione, recorte, ajuste cor, faça upscale, aplique marca d\'água e baixe tudo em .zip — direto no navegador.':'Edit one image or hundreds at once. Remove background, resize, crop, color-adjust, upscale, watermark and download everything as .zip — right in the browser.'}</p></div>
   <div class="bx-wrap">
@@ -6082,7 +6181,7 @@ function viewDocs(){
       </div>
       <div class="field"><span class="label">${S.lang==='pt'?'Título':'Title'}</span><input class="input" id="docTitle" placeholder="${S.lang==='pt'?'Proposta — Vídeo IA para imobiliária':'Proposal — AI video for real estate'}"></div>
       <div class="field"><span class="label">Briefing</span>
-        <textarea class="input" id="docBrief" style="min-height:120px" placeholder="${S.lang==='pt'?'Descreva o objetivo, o cliente, os pontos a cobrir, tom e qualquer dado (preços, prazos)...':'Describe the goal, client, points to cover, tone and any data (prices, deadlines)...'}"></textarea></div>
+        <div style="position:relative"><textarea class="input" id="docBrief" style="min-height:120px" placeholder="${S.lang==='pt'?'Descreva o objetivo, o cliente, os pontos a cobrir, tom e qualquer dado (preços, prazos)...':'Describe the goal, client, points to cover, tone and any data (prices, deadlines)...'}"></textarea><button class="btn btn-ghost btn-sm" style="position:absolute;right:8px;bottom:8px;font-size:11px;padding:5px 10px" onclick="enhanceField('docBrief','document')">✨ Aprimorar</button></div></div>
       <div class="row">
         <div class="field" style="flex:1"><span class="label">${S.lang==='pt'?'Nº de slides / seções':'Slides / sections'}</span><input class="input" id="docN" type="number" value="8" min="3" max="20"></div>
         <div class="field" style="flex:1"><span class="label">${S.lang==='pt'?'Idioma do documento':'Document language'}</span>
@@ -6397,8 +6496,356 @@ render=function(){_origRender();if(S.view==='agents')drawClips();
   if(S.view==='studio'){const p=sessionStorage.getItem('hsai_pending');if(p){setTimeout(()=>{const b=document.getElementById('promptBox');if(b){b.value=p;sessionStorage.removeItem('hsai_pending');}},100);}}};
 
 init();
-</script>
 
-<script src="/admin-patch.js"></script>
+
+
+function mdSimple(txt){
+  // Simple markdown - NO backtick regex to avoid parser issues
+  return txt
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/### (.+)/g,'<h4 style="margin:10px 0 3px;color:var(--accent)">$1</h4>')
+    .replace(/## (.+)/g,'<h3 style="margin:12px 0 5px">$1</h3>')
+    .replace(/# (.+)/g,'<h2 style="margin:14px 0 6px">$1</h2>')
+    .replace(/^- (.+)/gm,'<li style="margin:3px 0">$1</li>')
+    .replace(/\n/g,'<br>');
+}
+async function askAcademy(){
+  const q=document.getElementById('academyQ');
+  const ans=document.getElementById('academyAns');
+  if(!q||!ans||!q.value.trim()) return;
+  const question=q.value.trim();
+  const pt=S.lang==='pt';
+  ans.style.display='block';
+  ans.innerHTML='<div style="display:flex;align-items:center;gap:8px;color:var(--ink-3)">'
+    +'<div style="width:16px;height:16px;border:2px solid var(--accent);border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0"></div>'
+    +(pt?'Consultando IA…':'Querying AI…')+'</div>';
+  const sysP=(pt
+    ?'Você é o tutor da Academy do Hollywood Studio AI. Responda em português do Brasil de forma didática e aprofundada. Planos: Básico R$99/150cr, Premium R$199/300cr, Avançado R$349/600cr. 1cr=1s de vídeo. Modelos: Seedance 2.0 (ByteDance, narrativa premium, $0.10/s), Kling 3.0 (pessoas/lip-sync, $0.04/s), Veo 3.1 (4K/áudio nativo), Sora 2, Wan 2.7, Seedream 5, Flux Pro, Suno, ElevenLabs. Workflow: briefing→storyboard imagem→aprovação→geração em blocos→montagem. Inclua exemplos de prompt e estimativas de custo.'
+    :'You are the Hollywood Studio AI Academy tutor. Answer in English didactically and in depth. Plans: Basic $25/150cr, Premium $50/300cr, Advanced $90/600cr. 1cr=1s video. Models: Seedance 2.0 (ByteDance, premium narrative, $0.10/s), Kling 3.0 (people/lip-sync, $0.04/s), Veo 3.1 (4K/native audio), Sora 2, Wan 2.7, Seedream 5, Flux Pro, Suno, ElevenLabs. Workflow: brief→image storyboard→approval→block generation→edit. Include prompt examples and cost estimates.');
+  const ck=CFG.CLAUDE_API_KEY||'';
+  const gk=CFG.GEMINI_API_KEY||'';
+  try{
+    let result='';
+    if(ck){
+      const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':ck,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:900,system:sysP,messages:[{role:'user',content:question}]})});
+      const d=await r.json();
+      result=d.content&&d.content[0]?d.content[0].text:'';
+    } else if(gk){
+      const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+gk,
+        {method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({contents:[{role:'user',parts:[{text:question}]}],systemInstruction:{parts:[{text:sysP}]}})});
+      const d=await r.json();
+      result=d.candidates&&d.candidates[0]?d.candidates[0].content.parts[0].text:'';
+    } else {
+      result=pt
+        ?'Configure CLAUDE_API_KEY ou GEMINI_API_KEY no Admin para respostas com IA.'
+        :'Set CLAUDE_API_KEY or GEMINI_API_KEY in Admin for AI answers.';
+    }
+    ans.innerHTML=result?mdSimple(result):(pt?'Sem resposta.':'No response.');
+  } catch(e){
+    ans.innerHTML=pt?'Erro ao consultar IA.':'Error querying AI.';
+  }
+}
+
+
+async function enhanceField(fieldId,context){
+  const el=document.getElementById(fieldId);
+  if(!el||!el.value.trim()) return toast(S.lang==='pt'?'Campo vazio':'Empty field');
+  const original=el.value.trim();
+  const pt=S.lang==='pt';
+  const ctxMap={storyboard:pt?'roteiro cinematográfico':'cinematic script',document:pt?'proposta comercial':'commercial proposal',agent:pt?'briefing criativo para IA':'creative AI brief',assistant:pt?'instrução criativa':'creative instruction'};
+  const ctx=ctxMap[context]||'conteúdo criativo';
+  const sys=pt
+    ?('Reescreva o texto como especialista em '+ctx+'. Mais detalhado e profissional. APENAS o texto reescrito, sem explicações.')
+    :('Rewrite the text as a '+ctx+' expert. More detailed and professional. ONLY the rewritten text, no explanations.');
+  const origTxt=el.parentElement?el.parentElement.querySelector('button[onclick*="enhanceField"]'):null;
+  if(origTxt){origTxt.textContent='⏳';origTxt.disabled=true;}
+  const ck=CFG.CLAUDE_API_KEY||'';const gk=CFG.GEMINI_API_KEY||'';const ok=CFG.OPENAI_API_KEY||'';
+  try{
+    let result='';
+    if(ck){
+      const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':ck,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:800,system:sys,messages:[{role:'user',content:original}]})});
+      const d=await r.json();result=d.content&&d.content[0]?d.content[0].text:'';
+    } else if(gk){
+      const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+gk,
+        {method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({contents:[{role:'user',parts:[{text:original}]}],systemInstruction:{parts:[{text:sys}]}})});
+      const d=await r.json();result=d.candidates&&d.candidates[0]?d.candidates[0].content.parts[0].text:'';
+    } else if(ok){
+      const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+ok},
+        body:JSON.stringify({model:'gpt-4o-mini',messages:[{role:'system',content:sys},{role:'user',content:original}],max_tokens:800})});
+      const d=await r.json();result=d.choices&&d.choices[0]?d.choices[0].message.content:'';
+    } else {
+      toast(pt?'Configure uma API Key no Admin para usar Aprimorar':'Set an API Key in Admin to use Enhance');return;
+    }
+    if(result.trim()){el.value=result.trim();toast(pt?'✨ Aprimorado!':'✨ Enhanced!');}
+  }catch(e){toast(pt?'Erro ao aprimorar':'Enhance error');}
+  finally{if(origTxt){origTxt.disabled=false;origTxt.textContent='✨ '+(pt?'Aprimorar':'Enhance');}}
+}
+
+
+function getSavedAgents(){try{return JSON.parse(localStorage.getItem('hsai_saved_agents')||'[]');}catch(e){return[];}}
+function saveAgentsList(arr){localStorage.setItem('hsai_saved_agents',JSON.stringify(arr));}
+function savedAgentsHTML(){
+  var saved=getSavedAgents();
+  if(!saved.length) return '';
+  var pt=S.lang==='pt';
+  var rows='';
+  for(var i=0;i<saved.length;i++){
+    var a=saved[i];
+    rows+='<div class="card" style="padding:12px 14px;display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">'
+      +'<div style="flex:1">'
+      +'<div style="font-weight:600;font-size:13.5px;margin-bottom:3px">'+escapeHtml(a.name)+'</div>'
+      +'<div style="font-size:12px;color:var(--ink-3)">'+escapeHtml((a.system||'').slice(0,100))+'</div>'
+      +'</div>'
+      +'<div style="display:flex;gap:6px;flex-shrink:0">'
+      +'<button class="btn btn-ghost btn-sm" data-idx="'+i+'" onclick="useSavedAgent(+this.dataset.idx)">'+(pt?'▶ Usar':'▶ Use')+'</button>'
+      +'<button class="btn btn-ghost btn-sm" style="color:var(--err)" data-idx="'+i+'" onclick="delSavedAgent(+this.dataset.idx)">&times;</button>'
+      +'</div></div>';
+  }
+  return '<div style="margin-top:16px;margin-bottom:16px">'
+    +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'
+    +'<span class="label" style="margin:0">'+(pt?'Agentes Salvos':'Saved Agents')+' ('+saved.length+')</span>'
+    +'<button class="btn btn-primary btn-sm" onclick="openNewAgentForm()">'+(pt?'+ Novo':'+ New')+'</button>'
+    +'</div>'+rows+'</div>';
+}
+function useSavedAgent(i){
+  const a=getSavedAgents()[i];if(!a)return;
+  const el=document.getElementById('agBrief');
+  if(el){el.value=a.suggestion||'';el.focus();}
+  toast(S.lang==='pt'?'Agente ativado':'Agent activated');
+}
+function delSavedAgent(i){
+  if(!confirm(S.lang==='pt'?'Excluir agente?':'Delete agent?'))return;
+  const arr=getSavedAgents();arr.splice(i,1);saveAgentsList(arr);render();
+}
+function openNewAgentForm(){
+  var pt=S.lang==='pt';
+  var existing=document.getElementById('newAgentOverlay');
+  if(existing)existing.remove();
+  var div=document.createElement('div');
+  div.className='overlay show';
+  div.id='newAgentOverlay';
+  div.onclick=function(e){if(e.target===div)div.remove();};
+  var h='<div class="modal modal-card" style="max-width:580px;width:96%">'
+    +'<span class="modal-close" onclick="document.getElementById(&#39;newAgentOverlay&#39;).remove()">×</span>'
+    +'<h3 style="margin:0 0 16px">'+(pt?'Novo Agente':'New Agent')+'</h3>'
+    +'<label class="label">'+(pt?'Nome':'Name')+'</label>'
+    +'<input class="input" id="newAgName" style="margin-bottom:10px" placeholder="'+(pt?'Ex: Agente Imobiliária':'E.g. Real Estate Agent')+'">'
+    +'<label class="label">System Prompt</label>'
+    +'<textarea class="input" id="newAgSys" style="min-height:100px;margin-bottom:10px" placeholder="'+(pt?'Você é especialista em…':'You are an expert in…')+'"></textarea>'
+    +'<label class="label">'+(pt?'Sugestão de prompt':'Prompt suggestion')+'</label>'
+    +'<textarea class="input" id="newAgSug" style="min-height:70px;margin-bottom:16px" placeholder="'+(pt?'Crie um comercial…':'Create a commercial…')+'"></textarea>'
+    +'<button class="btn btn-primary" style="width:100%" onclick="saveNewAgent()">'+(pt?'Salvar Agente':'Save Agent')+'</button>'
+    +'</div>';
+  div.innerHTML=h;
+  document.body.appendChild(div);
+}
+function saveNewAgent(){
+  const name=(document.getElementById('newAgName')||{}).value;
+  const sys=(document.getElementById('newAgSys')||{}).value;
+  const sug=(document.getElementById('newAgSug')||{}).value;
+  if(!name||!name.trim())return toast('Nome obrigatório');
+  const arr=getSavedAgents();
+  arr.push({name:name.trim(),system:sys.trim(),suggestion:sug.trim(),created:Date.now()});
+  saveAgentsList(arr);
+  const ov=document.getElementById('newAgentOverlay');if(ov)ov.remove();
+  render();
+  toast(S.lang==='pt'?'Agente salvo!':'Agent saved!');
+}
+
+
+
+function viewGeminiAvatar(){
+  var pt=S.lang==='pt';
+  var hk=CFG.HEYGEN_API_KEY||getApiKey('heygen')||'';
+  var bannerHTML='<div style="background:linear-gradient(135deg,#0d001a,#1a0030,#1a1a1a);border-radius:16px;padding:28px;margin-bottom:22px;display:flex;align-items:center;gap:18px">'
+    +'<div style="font-size:46px;line-height:1">\u{1F3AD}</div>'
+    +'<div><div class="kicker" style="margin:0 0 3px;color:rgba(255,255,255,.55)">'+(pt?'CRIA\u00C7\u00C3O':'CREATION')+'</div>'
+    +'<h1 class="serif" style="margin:0 0 5px;font-size:24px;color:#fff">'+(pt?'Avatar IA':'AI Avatar')+'</h1>'
+    +'<p style="margin:0;font-size:12.5px;color:rgba(255,255,255,.65);max-width:520px">'
+    +(pt?'Crie avatares falantes com HeyGen \u2014 sincronize texto com voz e produza v\u00EDdeos de presenter em minutos.'
+       :'Create talking avatars with HeyGen \u2014 sync text to voice and produce presenter videos in minutes.')
+    +'</p></div></div>';
+
+  var useCases=[
+    ['\u{1F5E3}',pt?'Apresenta\u00E7\u00E3o':'Presenter',pt?'Avatar fala seu roteiro':'Avatar reads your script'],
+    ['\u{1F393}',pt?'Cursos':'Courses',pt?'Instrutor virtual':'Virtual instructor'],
+    ['\u{1F6CD}',pt?'Vendas':'Sales',pt?'Pitch personalizado':'Personalized pitch'],
+    ['\u{1F310}',pt?'Multil\u00EDngue':'Multilingual',pt?'Mesmo v\u00EDdeo em 20+ idiomas':'Same video in 20+ languages']
+  ];
+  var ucHtml='';
+  for(var i=0;i<useCases.length;i++){
+    ucHtml+='<div class="card" style="padding:12px">'
+      +'<div style="font-size:22px;margin-bottom:5px">'+useCases[i][0]+'</div>'
+      +'<div style="font-weight:600;font-size:13px;margin-bottom:3px">'+useCases[i][1]+'</div>'
+      +'<div style="font-size:12px;color:var(--ink-3)">'+useCases[i][2]+'</div>'
+      +'</div>';
+  }
+  var useCasesHTML='<div class="card" style="margin-top:18px">'
+    +'<span class="label">'+(pt?'Casos de uso':'Use cases')+'</span>'
+    +'<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:12px">'+ucHtml+'</div></div>';
+
+  var mainHTML;
+  if(hk){
+    mainHTML='<div class="card" style="margin-bottom:18px">'
+      +'<span class="label">'+(pt?'Gerar V\u00EDdeo de Avatar':'Generate Avatar Video')+'</span>'
+      +'<div style="display:grid;gap:12px;margin-top:10px">'
+
+      +'<div><span class="label" style="font-size:11px">'+(pt?'ROTEIRO':'SCRIPT')+'</span>'
+      +'<div style="position:relative">'
+      +'<textarea class="input" id="heygenScript" style="min-height:90px;padding-right:115px"'
+      +' placeholder="'+(pt?'Escreva o que o avatar vai falar...':'Write what the avatar will say...')+'">'
+      +'</textarea>'
+      +'<button class="btn btn-ghost btn-sm"'
+      +' style="position:absolute;right:8px;bottom:8px;font-size:11px;padding:4px 9px"'
+      +' onclick="enhanceField(&#39;heygenScript&#39;,&#39;assistant&#39;)">'
+      +'\u2728 '+(pt?'Aprimorar':'Enhance')
+      +'</button>'
+      +'</div></div>'
+
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
+      +'<div><span class="label" style="font-size:11px">AVATAR ID</span>'
+      +'<input class="input" id="heygenAvatarId" value="Anna_public_3_20240108"'
+      +' placeholder="Anna_public_3_20240108"></div>'
+      +'<div><span class="label" style="font-size:11px">'+(pt?'VOZ':'VOICE')+'</span>'
+      +'<select class="input" id="heygenVoice">'
+      +'<option value="pt-BR-FranciscaNeural">Francisca PT-BR</option>'
+      +'<option value="pt-BR-AntonioNeural">Ant\u00F4nio PT-BR</option>'
+      +'<option value="en-US-JennyNeural">Jenny EN-US</option>'
+      +'<option value="en-US-GuyNeural">Guy EN-US</option>'
+      +'</select></div></div>'
+
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
+      +'<div><span class="label" style="font-size:11px">FUNDO</span>'
+      +'<select class="input" id="heygenBg">'
+      +'<option value="#FAFAFA">'+(pt?'Branco':'White')+'</option>'
+      +'<option value="#1a1a1a">'+(pt?'Escuro':'Dark')+'</option>'
+      +'<option value="#003366">Azul</option>'
+      +'</select></div>'
+      +'<div><span class="label" style="font-size:11px">FORMATO</span>'
+      +'<select class="input" id="heygenDim">'
+      +'<option value="16:9">16:9 YouTube</option>'
+      +'<option value="9:16">9:16 Reels</option>'
+      +'<option value="1:1">1:1 Feed</option>'
+      +'</select></div></div>'
+
+      +'<button class="btn btn-primary" id="heygenBtn" onclick="generateHeygenVideo()">'
+      +'\u{1F3AC} '+(pt?'Gerar Avatar':'Generate Avatar')+'</button>'
+      +'</div>'
+      +'<div id="heygenResult" style="display:none;margin-top:12px"></div>'
+      +'</div>';
+  } else {
+    mainHTML='<div class="card" style="border:1.5px dashed var(--accent-dim)">'
+      +'<div style="display:flex;gap:14px;align-items:flex-start">'
+      +'<div style="font-size:34px">\u{1F3AD}</div>'
+      +'<div><b style="font-size:15px">'+(pt?'Conecte o HeyGen para criar avatares falantes':'Connect HeyGen for talking avatars')+'</b>'
+      +'<p style="font-size:13px;color:var(--ink-2);margin:8px 0 12px;line-height:1.6">'
+      +(pt?'HeyGen \u00E9 a plataforma l\u00EDder em avatar IA \u2014 sincronize texto com voz e produza v\u00EDdeos de presenter em minutos.'
+         :'HeyGen is the leading AI avatar platform. Sync text to voice and produce presenter videos in minutes.')
+      +'</p>'
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap">'
+      +'<a href="https://www.heygen.com" target="_blank" class="btn btn-primary btn-sm">'
+      +'\u{1F517} '+(pt?'Criar conta HeyGen':'Create HeyGen account')+'</a>'
+      +'<button class="btn btn-ghost btn-sm" onclick="go(&#39;admin&#39;)">\u2699 API Key</button>'
+      +'</div>'
+      +'<div class="attach-note" style="margin-top:10px">'
+      +(pt?'Ap\u00F3s criar conta: Admin \u2192 API Keys \u2192 HEYGEN_API_KEY'
+         :'After signup: Admin \u2192 API Keys \u2192 HEYGEN_API_KEY')
+      +'</div>'
+      +'</div></div></div>';
+  }
+  return bannerHTML+mainHTML+useCasesHTML;
+}
+
+async function generateHeygenVideo(){
+  var hk=CFG.HEYGEN_API_KEY||getApiKey('heygen')||'';
+  var scriptEl=document.getElementById('heygenScript');
+  var avatarEl=document.getElementById('heygenAvatarId');
+  var voiceEl=document.getElementById('heygenVoice');
+  var bgEl=document.getElementById('heygenBg');
+  var dimEl=document.getElementById('heygenDim');
+  var btn=document.getElementById('heygenBtn');
+  var result=document.getElementById('heygenResult');
+  var pt=S.lang==='pt';
+  var script=scriptEl?scriptEl.value.trim():'';
+  var avatarId=avatarEl?avatarEl.value:'Anna_public_3_20240108';
+  var voice=voiceEl?voiceEl.value:'pt-BR-FranciscaNeural';
+  var bg=bgEl?bgEl.value:'#FAFAFA';
+  var dim=dimEl?dimEl.value:'16:9';
+  if(!script)return toast(pt?'Escreva o roteiro':'Write the script first');
+  if(!hk)return toast(pt?'Configure HEYGEN_API_KEY no Admin':'Set HEYGEN_API_KEY in Admin','err');
+  if(btn){btn.disabled=true;btn.textContent=pt?'Gerando\u2026':'Generating\u2026';}
+  if(result){result.style.display='block';result.innerHTML='<div style="padding:14px;color:var(--ink-3)">'+(pt?'Enviando para HeyGen\u2026':'Sending to HeyGen\u2026')+'</div>';}
+  var dimW=dim==='9:16'?720:1280;
+  var dimH=dim==='16:9'?720:dim==='9:16'?1280:720;
+  var bgObj=bg.startsWith('#')?{type:'color',value:bg}:{type:'image',url:'https://resource.heygen.ai/background/'+bg+'.jpg'};
+  try{
+    var r=await fetch('https://api.heygen.com/v2/video/generate',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Api-Key':hk},
+      body:JSON.stringify({
+        video_inputs:[{
+          character:{type:'avatar',avatar_id:avatarId,scale:1},
+          voice:{type:'text',input_text:script,voice_id:voice},
+          background:bgObj
+        }],
+        dimension:{width:dimW,height:dimH}
+      })
+    });
+    var d=await r.json();
+    if(d.error)throw new Error(d.error.message||JSON.stringify(d.error));
+    var vid=d.data?d.data.video_id:'';
+    if(!vid)throw new Error('No video_id returned');
+    if(result)result.innerHTML='<div style="padding:12px;background:var(--panel-2);border-radius:8px">'
+      +'<b>'+(pt?'V\u00EDdeo em processamento (ID: ':'Video processing (ID: ')+vid+')</b><br>'
+      +'<span style="font-size:12px;color:var(--ink-3)">'
+      +(pt?'Pronto em ~2min. Veja em ':'Ready in ~2min. Check ')
+      +'<a href="https://app.heygen.com/videos" target="_blank" style="color:var(--accent)">app.heygen.com/videos</a>'
+      +'</span><br>'
+      +'<button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="checkHeygenStatus(&#39;'+vid+'&#39;)">'
+      +(pt?'\u21BB Verificar status':'\u21BB Check status')+'</button></div>';
+    toast(pt?'Enviado! Pronto em ~2min':'Sent! Ready in ~2min');
+  }catch(e){
+    if(result)result.innerHTML='<div style="color:var(--err);padding:10px">Erro: '+escapeHtml(e.message)+'</div>';
+    toast('Erro HeyGen: '+e.message,'err');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='\u{1F3AC} '+(pt?'Gerar Avatar':'Generate Avatar');}
+  }
+}
+
+async function checkHeygenStatus(videoId){
+  var hk=CFG.HEYGEN_API_KEY||getApiKey('heygen')||'';
+  if(!hk)return;
+  var pt=S.lang==='pt';
+  try{
+    var r=await fetch('https://api.heygen.com/v1/video_status.get?video_id='+videoId,{
+      headers:{'X-Api-Key':hk}
+    });
+    var d=await r.json();
+    var status=d.data?d.data.status:'unknown';
+    var url=d.data?d.data.video_url:'';
+    if(status==='completed'&&url){
+      var el=document.getElementById('heygenResult');
+      if(el)el.innerHTML='<div style="padding:12px;background:var(--panel-2);border-radius:8px">'
+        +'<b style="color:var(--ok)">'+(pt?'Conclu\u00EDdo!':'Completed!')+'</b>'
+        +'<video src="'+url+'" controls style="width:100%;border-radius:8px;margin-top:8px"></video>'
+        +'<br><a href="'+url+'" download class="btn btn-primary btn-sm" style="margin-top:8px">\u2b07 Download</a>'
+        +'</div>';
+    }else{
+      toast((pt?'Status: ':'Status: ')+status);
+    }
+  }catch(e){toast('Erro: '+e.message,'err');}
+}
+
+
+</script>
 </body>
 </html>
