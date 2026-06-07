@@ -1616,7 +1616,7 @@ const CFG = window.HSAI_CONFIG || {
   NEWS_ENDPOINT:'',            // backend que puxa notícias de IA/audiovisual + novos módulos da Academy
   MODERATION_ENDPOINT:'',      // backend de moderação por IA do fórum (além do filtro local)
   FEED_ENDPOINT:'', AUTH_ENDPOINT:'',
-  GOOGLE_CLIENT_ID:'',         // OAuth Client ID from Google Cloud Console (for "Continuar com Google")
+  GOOGLE_CLIENT_ID:'1080113912210-medhqckkq2qp38j9ggqoegik2n9inue3.apps.googleusercontent.com', // OAuth Client ID (for "Continuar com Google")
   RATE_VIDEO:0.70,             // R$ por segundo de vídeo (apenas exibição em estatísticas)
   RATE_IMAGE:0.50,             // R$ por imagem
   CREDIT_USD:0.012,            // 1 crédito ≈ US$ (estimativa antes de gerar)
@@ -2538,7 +2538,6 @@ function renderCRef(){
   if(S.cmode==='text'){el.innerHTML='';return;}
   const pt=S.lang==='pt';
   const rs=m.refSpec||{start:false,end:false,refs:1,video:false,audio:false};
-  const maxR=rs.refs||0;
   const maxT=rs.maxTotal||0;
 
   if(S.cmode==='audio'){
@@ -2582,7 +2581,6 @@ function renderCRef(){
 
   if(mode==='prompt'){
     // Prompt + referências opcionais
-    const maxOpt=rs.refs>0?rs.refs:2;
     const maxOpt=rs.refs>0?rs.refs:(rs.start?1:2);
     const hasOmni=rs.refs>0||rs.video||rs.audio;
     if(!hasOmni){
@@ -2659,11 +2657,11 @@ function renderCRef(){
   }
 
   // refs mode (imagens de referência genéricas)
-  const maxR=rs.refs||1;
+  const refsMaxR=rs.refs||1;
   html+=`<div class="drop" onclick="document.getElementById('refFile').click()">
-    📎 ${pt?`Referência visual (máx. ${maxR} imagem)`:`Visual reference (max. ${maxR} image)`}
+    📎 ${pt?`Referência visual (máx. ${refsMaxR} imagem)`:`Visual reference (max. ${refsMaxR} image)`}
   </div>
-  <input type="file" id="refFile" ${maxR>1?'multiple':''} accept="image/*" class="hide" onchange="addRefs(this)">
+  <input type="file" id="refFile" ${refsMaxR>1?'multiple':''} accept="image/*" class="hide" onchange="addRefs(this)">
   <div class="thumbs" id="refThumbs"></div>`;
   el.innerHTML=html;drawRefs();
 }
