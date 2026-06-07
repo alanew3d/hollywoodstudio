@@ -1365,7 +1365,7 @@ svg.sedges path{stroke:var(--accent);stroke-width:2;fill:none;opacity:.6}
 .dc-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:18px}
 .dc-card h3{font-size:14px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:9px}
 .dc-card h3 .eng{font-size:9px;letter-spacing:1.2px;background:var(--accent-dim);color:var(--accent);padding:2px 7px;border-radius:5px;font-family:var(--mono)}
-.preview-stage{min-height:440px;border:1px solid var(--line);border-radius:14px;background:var(--panel-2);display:grid;place-items:center;overflow:hidden;padding:16px}
+.preview-stage{min-height:520px;border:1px solid var(--line);border-radius:14px;background:var(--panel-2);display:grid;place-items:center;overflow:hidden;padding:12px}
 .preview-empty{text-align:center;color:var(--ink-4)}
 .preview-empty .ic{font-size:40px;opacity:.5}
 .sw{position:relative;width:42px;height:23px;border-radius:999px;background:var(--line-2);cursor:pointer;transition:.2s;flex:0 0 auto}
@@ -1536,6 +1536,7 @@ input[type=range]{accent-color:var(--accent)}
     <button class="btn btn-ghost btn-sm" onclick="var v=document.getElementById('lbVideo');v.currentTime=0;v.play()">⏮ Início</button>
     <button class="btn btn-ghost btn-sm" id="lbCopyPrompt" style="display:none">⧉ Copiar prompt</button>
     <button class="btn btn-ghost btn-sm" id="lbDl">⬇ Salvar</button>
+    <button class="btn btn-primary btn-sm" id="lbReuse" style="display:none" onclick="(function(){var p=window._lbPrompt;var m=window._lbModelId;var v=document.getElementById('lbVideo');if(v){v.pause();v.removeAttribute('src');v.load();}closeModal('videoModal');if(p)loadPromptToStudio(p,m,false);})()">♻ Reuse prompt</button>
   </div>
 </div></div>
 
@@ -1690,27 +1691,27 @@ const MODELS=[
    res:'1080p',max:'15s',durs:[4,5,6,8,10,12,15],ratio:'16:9 · 9:16 · 1:1',ref:'Texto/Imagem→Vídeo · Start+End · @char',
    desc:{pt:'Carro-chefe da ByteDance. Movimento de câmera coeso, física realista e ótima aderência a prompts cinematográficos longos. Ideal para comerciais e narrativa premium.',
          en:'ByteDance flagship. Coherent camera motion, realistic physics and strong adherence to long cinematic prompts. Best for commercials and premium narrative.'},
-   refSpec:{start:true, end:true, refs:3, video:false, audio:false}},
+   refSpec:{start:true, end:true, refs:9, video:true, audio:true, maxTotal:12}},
   {id:'seedance2fast',name:'Seedance 2.0 Fast',sub:'bytedance · live',status:'live',cat:'video',
    res:'720p',max:'15s',durs:[4,5,6,8,10,15],ratio:'16:9 · 9:16',ref:'Start frame',
    desc:{pt:'Versão acelerada — metade do tempo de render por um pequeno custo em detalhe. Perfeita para iterar variações antes do take final.',
          en:'Accelerated build — half the render time for a small detail trade-off. Perfect for iterating variations before the final take.'},
-   refSpec:{start:true, end:false, refs:1, video:false, audio:false}},
+   refSpec:{start:true, end:false, refs:0, video:false, audio:false}},
   {id:'kling3',img:'https://images.unsplash.com/photo-1518929458119-e5bf444c30f4?w=900&q=70&auto=format&fit=crop',name:'Kling 3.0',sub:'kuaishou · live',status:'live',cat:'video',featured:true,
    res:'4K',max:'15s',durs:[3,5,8,10,15],ratio:'16:9 · 9:16 · 1:1',ref:'Texto/Imagem→Vídeo · Start+End · Áudio nativo',
    desc:{pt:'Excelente expressão facial, transferência de movimento e continuidade de personagem. Gera com áudio. Forte para conteúdo com pessoas e UGC.',
          en:'Excellent facial expression, motion transfer and character continuity. Generates with audio. Strong for people-driven and UGC content.'},
-   refSpec:{start:true, end:true, refs:2, video:false, audio:false}},
+   refSpec:{start:true, end:true, refs:0, video:false, audio:false}},
   {id:'klingmotion',img:'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=900&q=70&auto=format&fit=crop',name:'Kling 3.0 Motion Control',sub:'kuaishou · live',status:'live',cat:'video',featured:true,func:'motion',
    res:'1080p',max:'30s',durs:[3,5,10,15,20,30],ratio:'16:9 · 9:16',ref:'Vídeo de movimento + imagem',
    desc:{pt:'Transfere o movimento de um vídeo de referência para a sua imagem/personagem. Ideal para coreografias, gestos e mimetizar uma ação existente.',
          en:'Transfers the motion of a reference video onto your image/character. Ideal for choreography, gestures and mimicking an existing action.'},
-   refSpec:{start:false, end:false, refs:0, video:true, audio:false}},
+   refSpec:{start:true, end:false, refs:0, video:true, audio:false}},
   {id:'klingomni',name:'Kling Omni',sub:'kuaishou · live',status:'live',cat:'video',featured:true,func:'omni',
    res:'4K',max:'15s',durs:[3,5,8,10,15],ratio:'16:9 · 9:16 · 1:1',ref:'Texto/Imagem · referência de personagem',
    desc:{pt:'Edição e geração cinematográfica com controle total — muda fundo, roupa, estilo, mantém personagem. Similar ao Soul do Higgsfield.',
          en:'Full cinematic edit and generation — change background, clothes, style, keep character. Similar to Higgsfield Soul.'},
-   refSpec:{start:true, end:false, refs:3, video:false, audio:false},
+   refSpec:{start:true, end:true, refs:6, video:true, audio:true},
   },
   {id:'klinglip',name:'Lipsync Studio',sub:'kling · live',status:'live',cat:'video',func:'lipsync',
    res:'1080p',max:'30s',durs:[5,10,15,20,30],ratio:'16:9 · 9:16 · 1:1',ref:'Vídeo/foto + áudio',
@@ -1720,16 +1721,18 @@ const MODELS=[
   {id:'veo31',img:'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=900&q=70&auto=format&fit=crop',name:'Google Veo 3.1',sub:'google · live',status:'live',cat:'video',featured:true,
    res:'4K',max:'8s',durs:[4,6,8],ratio:'16:9 · 9:16',ref:'Texto + imagem + áudio',
    desc:{pt:'Áudio nativo e altíssima fidelidade fotográfica. Melhor escolha para hero shots 4K e planos com som ambiente sincronizado.',
-         en:'Native audio and very high photographic fidelity. Best for 4K hero shots and ambient-sound synced takes.'}},
+         en:'Native audio and very high photographic fidelity. Best for 4K hero shots and ambient-sound synced takes.'},
+   refSpec:{start:true, end:false, refs:0, video:false, audio:false}},
   {id:'veo31lite',name:'Veo 3.1 Lite',sub:'google · live',status:'live',cat:'video',
    res:'1080p',max:'8s',durs:[4,6,8],ratio:'16:9 · 9:16',ref:'Texto + imagem',
    desc:{pt:'Geração rápida do Google. Bom custo-benefício para iterar antes de finalizar no Veo 3.1 completo.',
-         en:'Fast Google generation. Good value to iterate before finalizing on full Veo 3.1.'}},
+         en:'Fast Google generation. Good value to iterate before finalizing on full Veo 3.1.'},
+   refSpec:{start:true, end:false, refs:0, video:false, audio:false}},
   {id:'sora2',name:'Sora 2',sub:'openai · live',status:'live',cat:'video',featured:true,
    res:'1080p',max:'12s',durs:[4,8,12],ratio:'16:9 · 9:16 · 1:1',ref:'Texto + imagem',
    desc:{pt:'Modelo avançado da OpenAI. Forte em coerência de mundo, continuidade temporal e cenas complexas com várias ações.',
          en:'OpenAI\'s advanced model. Strong world coherence, temporal continuity and complex multi-action scenes.'},
-   refSpec:{start:true, end:false, refs:2, video:false, audio:false}},
+   refSpec:{start:true, end:false, refs:0, video:false, audio:false}},
   {id:'wan27',name:'Wan 2.7',sub:'alibaba · live',status:'live',cat:'video',
    res:'1080p',max:'15s',durs:[2,5,8,10,15],ratio:'16:9 · 9:16',ref:'Primeiro + último frame',
    desc:{pt:'Controle de primeiro e último frame — excelente para encadear clipes com continuidade exata. Base para a edição por frames.',
@@ -1738,7 +1741,8 @@ const MODELS=[
   {id:'hailuo',name:'Minimax Hailuo 2.3',sub:'minimax · live',status:'live',cat:'video',
    res:'1080p',max:'10s',durs:[3,6,10],ratio:'16:9 · 9:16',ref:'Texto + imagem',
    desc:{pt:'O mais rápido e econômico. Alto dinamismo, pronto para VFX. Ótimo para volume e testes de conceito.',
-         en:'Fastest and most affordable. High-dynamic, VFX-ready. Great for volume and concept tests.'}},
+         en:'Fastest and most affordable. High-dynamic, VFX-ready. Great for volume and concept tests.'},
+   refSpec:{start:true, end:false, refs:0, video:false, audio:false}},
   // ── more VIDEO ──
   {id:'happyhorse',name:'HappyHorse',sub:'alibaba · live',status:'live',cat:'video',
    res:'1080p',max:'15s',durs:[3,5,8,15],ratio:'16:9 · 9:16',ref:'Texto + imagem + áudio',
@@ -2298,7 +2302,7 @@ function studioDemoFallback(){const st=document.getElementById('previewStage');i
 function studioHasLatest(){return !isGuest() && S.gallery && S.gallery.length>0 && !!(S.gallery[0]&&S.gallery[0].url);}
 function studioMediaHTML(g){
   if(!g||!g.url)return '';
-  if(g.type==='video')return `<video src="${g.url}" muted loop autoplay playsinline preload="auto" style="max-width:100%;max-height:420px;border-radius:10px;cursor:pointer;background:#000" onclick="openVideo('${g.url}')" referrerpolicy="no-referrer"></video>`;
+  if(g.type==='video')return `<video src="${g.url}" muted loop autoplay playsinline preload="auto" style="max-width:100%;max-height:480px;border-radius:10px;cursor:pointer;background:#000" onclick="openVideo('${g.url}')" referrerpolicy="no-referrer"></video>`;
   if(g.type==='audio')return `<div class="preview-empty"><div class="ic">🎵</div><div style="font-size:13px;color:var(--ink-2);margin-top:8px">${escapeHtml(g.model||'')} — ${S.lang==='pt'?'áudio gerado':'audio generated'}</div></div>`;
   return `<img src="${g.url}" style="max-width:100%;max-height:420px;border-radius:10px;cursor:pointer" onclick="openImage('${g.url}')" onerror="this.style.opacity=.3" referrerpolicy="no-referrer">`;
 }
@@ -2333,7 +2337,7 @@ function studioPreviewInner(){
   return `<div style="width:100%">
     <div style="display:grid;place-items:center;position:relative">
       <span style="position:absolute;top:8px;left:8px;z-index:2;background:rgba(0,0,0,.6);color:#fff;font-size:10px;letter-spacing:1px;padding:3px 8px;border-radius:6px">${S.lang==='pt'?'EXEMPLO':'EXAMPLE'}</span>
-      <video src="${d.url}" muted loop autoplay playsinline preload="auto" style="max-width:100%;max-height:420px;border-radius:10px;cursor:pointer;background:#000" onclick="openVideo('${d.url}')" onerror="studioDemoFallback()" referrerpolicy="no-referrer"></video>
+      <video src="${d.url}" muted loop autoplay playsinline preload="auto" style="max-width:100%;max-height:480px;border-radius:10px;cursor:pointer;background:#000" onclick="openVideo('${d.url}')" onerror="studioDemoFallback()" referrerpolicy="no-referrer"></video>
     </div>
     <div class="row" style="margin-top:12px;flex-wrap:wrap;justify-content:center">
       <button class="btn btn-ghost btn-sm" onclick="copyText(${JSON.stringify(d.prompt).replace(/"/g,'&quot;')})">⧉ ${S.lang==='pt'?'Copiar prompt':'Copy prompt'}</button>
@@ -2416,15 +2420,16 @@ function viewStudio(){
       </div>
     </div>
     <aside>
-      <div class="dc-card" style="margin-bottom:14px">
+      <div class="dc-card" style="margin-bottom:0">
         <div id="previewHead">${studioHeadHTML()}</div>
         <div class="preview-stage" id="previewStage">${studioPreviewInner()}</div>
       </div>
-      <div class="dc-card">
-        <h3 style="margin-bottom:12px">${S.lang==='pt'?'Galeria':'Gallery'} (<span id="galCount">${S.gallery.length}</span>)</h3>
-        <div class="gal-strip" id="galStrip"></div>
-      </div>
     </aside>
+  </div>
+  <!-- Galeria — fora do grid, depois de Camera & Output no mobile -->
+  <div class="dc-card" id="galCard" style="margin-top:16px">
+    <h3 style="margin-bottom:12px">${S.lang==='pt'?'Galeria':'Gallery'} (<span id="galCount">${S.gallery.length}</span>)</h3>
+    <div class="gal-strip" id="galStrip"></div>
   </div>`;
 }
 function afterStudio(){
@@ -2533,6 +2538,8 @@ function renderCRef(){
   if(S.cmode==='text'){el.innerHTML='';return;}
   const pt=S.lang==='pt';
   const rs=m.refSpec||{start:false,end:false,refs:1,video:false,audio:false};
+  const maxR=rs.refs||0;
+  const maxT=rs.maxTotal||0;
 
   if(S.cmode==='audio'){
     // Áudio: só referência de letra/estilo
@@ -2576,11 +2583,28 @@ function renderCRef(){
   if(mode==='prompt'){
     // Prompt + referências opcionais
     const maxOpt=rs.refs>0?rs.refs:2;
-    el.innerHTML=html+`<div class="drop" onclick="document.getElementById('refFileOpt').click()">
-      📎 ${pt?`Referência visual opcional (máx. ${maxOpt})`:`Optional visual reference (max. ${maxOpt})`}
+    const maxOpt=rs.refs>0?rs.refs:(rs.start?1:2);
+    const hasOmni=rs.refs>0||rs.video||rs.audio;
+    if(!hasOmni){
+      // Modelos só prompt (ex: Wan2.7 no modo prompt-only)
+      el.innerHTML=html+`<div style="font-size:11.5px;color:var(--ink-4);padding:4px 0;font-style:italic">${pt?'Sem referência no modo prompt — use Start/End':'No reference in prompt mode — use Start/End'}</div>`;
+      return;
+    }
+    let refHtml=`<div style="font-size:11px;color:var(--ink-4);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.8px">${pt?'Referências visuais':'Visual references'}`;
+    if(maxOpt>0)refHtml+=` <span style="color:var(--accent)">(máx. ${maxOpt}${maxT?' · '+maxT+' total':''})</span>`;
+    refHtml+=`</div>`;
+    refHtml+=`<div class="drop" onclick="document.getElementById('refFileOpt').click()">
+      📎 ${pt?`Imagens de referência (máx. ${maxOpt})`:`Reference images (max. ${maxOpt})`}
     </div>
     <input type="file" id="refFileOpt" ${maxOpt>1?'multiple':''} accept="image/*" class="hide" onchange="addRefs(this)">
     <div class="thumbs" id="refThumbs"></div>`;
+    if(rs.video)refHtml+=`<div class="drop" style="margin-top:8px" onclick="document.getElementById('refVidFileOpt').click()">
+      🎬 ${pt?'Vídeo de referência (opcional)':'Reference video (optional)'}
+    </div><input type="file" id="refVidFileOpt" accept="video/*" class="hide" onchange="addRefs(this)">`;
+    if(rs.audio)refHtml+=`<div class="drop" style="margin-top:8px" onclick="document.getElementById('refAudFileOpt').click()">
+      🎤 ${pt?'Áudio de referência (opcional, máx. 15s)':'Reference audio (optional, max. 15s)'}
+    </div><input type="file" id="refAudFileOpt" accept="audio/*" class="hide" onchange="setAudioRef(this)">`;
+    el.innerHTML=html+refHtml;
     drawRefs();return;
   }
 
@@ -2705,7 +2729,7 @@ function finishCreate(url,prompt,m,dur){
   if(galleryHasUrl(url)){
     const stg=document.getElementById('previewStage');
     if(stg){const isV=m.cat==='video';
-      stg.innerHTML=`<div style="width:100%"><div style="display:grid;place-items:center">${isV?`<video src="${url}" muted loop autoplay playsinline preload="auto" style="max-width:100%;max-height:420px;border-radius:10px;cursor:pointer;background:#000" onclick="openVideo('${url}')" referrerpolicy="no-referrer"></video>`:`<img src="${url}" style="max-width:100%;max-height:420px;border-radius:10px;cursor:pointer" onclick="openImage('${url}')" referrerpolicy="no-referrer">`}</div></div>`;}
+      stg.innerHTML=`<div style="width:100%"><div style="display:grid;place-items:center">${isV?`<video src="${url}" muted loop autoplay playsinline preload="auto" style="max-width:100%;max-height:480px;border-radius:10px;cursor:pointer;background:#000" onclick="openVideo('${url}')" referrerpolicy="no-referrer"></video>`:`<img src="${url}" style="max-width:100%;max-height:420px;border-radius:10px;cursor:pointer" onclick="openImage('${url}')" referrerpolicy="no-referrer">`}</div></div>`;}
     const b0=document.getElementById('cGenBtn');if(b0)b0.disabled=false;
     renderGalStrip();return;
   }
@@ -3018,7 +3042,7 @@ function addCompletedToGallery(out,job){
   if(stage&&S.view==='studio'){
     const isVid=item.type==='video';
     const media=isVid
-      ?`<video src="${out}" muted loop autoplay playsinline preload="auto" style="max-width:100%;max-height:420px;border-radius:10px;cursor:pointer;background:#000" onclick="openVideo('${out}')" referrerpolicy="no-referrer"></video>`
+      ?`<video src="${out}" muted loop autoplay playsinline preload="auto" style="max-width:100%;max-height:480px;border-radius:10px;cursor:pointer;background:#000" onclick="openVideo('${out}')" referrerpolicy="no-referrer"></video>`
       :`<img src="${out}" style="max-width:100%;max-height:420px;border-radius:10px;cursor:pointer" onclick="openImage('${out}')" referrerpolicy="no-referrer">`;
     stage.innerHTML=`<div style="width:100%"><div style="display:grid;place-items:center">${media}</div><div class="row" style="margin-top:12px;justify-content:center"><button class="btn btn-ghost btn-sm" onclick="dlMedia('${out}')">⬇ ${S.lang==='pt'?'Salvar':'Save'}</button></div></div>`;
     refreshPreviewHead();
@@ -3326,7 +3350,7 @@ function adminUsersCard(){
       <input class="input" style="padding:5px 6px;font-size:12px;width:70px" type="number" id="cr_${r.uid}" value="${r.credits|0}" title="${S.lang==='pt'?'créditos':'credits'}">
       <button class="btn btn-ghost btn-sm" style="padding:4px 7px;font-size:13px;color:var(--ok)" onclick="applyAdminUserAction('${r.uid}','credits',document.getElementById('cr_${r.uid}').value);toast('✓','ok')" title="${S.lang==='pt'?'Salvar créditos':'Save credits'}">✓</button>
     </div>
-    <select class="input" style="padding:5px 8px;font-size:12px" onchange="applyAdminUserAction('${r.uid}','role',this.value);toast(S.lang==='pt'?'Papel atualizado':'Role updated','ok')"><option value="user" ${r.role==='user'?'selected':''}>${S.lang==='pt'?'Usuário':'User'}</option><option value="admin" ${r.role==='admin'?'selected':''}>Admin</option></select>
+    <select class="input" style="padding:5px 8px;font-size:12px" onchange="(function(el){applyAdminUserAction('${r.uid}','role',el.value);toast(S.lang==='pt'?'Papel atualizado: '+el.value:'Role updated: '+el.value,'ok');setTimeout(()=>render(),200);})(this)"><option value="user" ${r.role==='user'?'selected':''}>${S.lang==='pt'?'Usuário':'User'}</option><option value="admin" ${r.role==='admin'?'selected':''}>Admin</option></select>
     <div style="display:flex;gap:4px"><button class="btn btn-ghost btn-sm" style="padding:4px 8px;font-size:11px" onclick="openPaymentsModal('${r.uid}')" title="${S.lang==='pt'?'Pagamentos & reembolsos':'Payments & refunds'}">💰</button>
       <button class="btn btn-ghost btn-sm" style="padding:4px 8px;font-size:11px" onclick="applyAdminUserAction('${r.uid}','addCredits',prompt('${S.lang==='pt'?'Quantos créditos adicionar?':'How many credits to add?'}','100'))">+ ${S.lang==='pt'?'cred':'cred'}</button>
       <button class="btn btn-ghost btn-sm" style="padding:4px 8px;font-size:11px;color:var(--err)" onclick="if(confirm('${S.lang==='pt'?'Excluir conta?':'Delete account?'}'))applyAdminUserAction('${r.uid}','delete')">✕</button></div>
@@ -3760,9 +3784,10 @@ function setFrame(which,inp){const f=inp.files[0];if(!f)return;const r=new FileR
 function addRefs(inp){
   const m=modelById(S.model);
   const rs=m.refSpec||{refs:3};
-  const maxR=rs.refs>0?rs.refs:3;
+  const maxR=rs.refs>0?rs.refs:9;
+  const maxT=rs.maxTotal||maxR;
   [...inp.files].forEach(f=>{
-    if(_refs.length>=maxR){toast(S.lang==='pt'?`Máximo ${maxR} referência(s) para ${m.name}`:`Max ${maxR} reference(s) for ${m.name}`,'err');return;}
+    if(_refs.length>=maxR){toast(S.lang==='pt'?`Máximo ${maxR} imagens de referência para ${m.name}`:`Max ${maxR} reference images for ${m.name}`,'err');return;}
     const r=new FileReader();
     r.onload=e=>{_refs.push(e.target.result);drawRefs();};
     r.readAsDataURL(f);
