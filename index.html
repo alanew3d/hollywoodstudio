@@ -974,7 +974,8 @@ a{color:inherit;text-decoration:none}
 .label{font-size:11px;letter-spacing:.4px;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-bottom:9px;display:block}
 
 /* ── Studio layout (generate) ── */
-.studio{display:grid;grid-template-columns:1fr minmax(340px,380px);gap:20px;align-items:start}
+.studio{display:grid;grid-template-columns:minmax(320px,360px) 1fr;gap:20px;align-items:start}
+.gal-mobile{display:none}
 @media(max-width:1080px){.studio{grid-template-columns:1fr}}
 /* ── Studio demo box acima de Creative Direction no mobile ── */
 @media(max-width:860px){
@@ -1133,6 +1134,8 @@ svg.sedges path{stroke:var(--accent);stroke-width:2;fill:none;opacity:.6}
   /* No mobile: janela Lights Camera AI fica no TOPO, acima do prompt */
   .studio>aside{order:-1}
   .studio>div{order:0}
+  .gal-desktop{display:none !important}
+  .gal-mobile{display:block !important}
 }
 /* ── Favorites grid mobile ── */
 @media(max-width:560px){
@@ -1365,7 +1368,7 @@ svg.sedges path{stroke:var(--accent);stroke-width:2;fill:none;opacity:.6}
 .dc-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:18px}
 .dc-card h3{font-size:14px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:9px}
 .dc-card h3 .eng{font-size:9px;letter-spacing:1.2px;background:var(--accent-dim);color:var(--accent);padding:2px 7px;border-radius:5px;font-family:var(--mono)}
-.preview-stage{min-height:520px;border:1px solid var(--line);border-radius:14px;background:var(--panel-2);display:grid;place-items:center;overflow:hidden;padding:12px}
+.preview-stage{min-height:560px;border:1px solid var(--line);border-radius:14px;background:var(--panel-2);display:grid;place-items:center;overflow:hidden;padding:12px}
 .preview-empty{text-align:center;color:var(--ink-4)}
 .preview-empty .ic{font-size:40px;opacity:.5}
 .sw{position:relative;width:42px;height:23px;border-radius:999px;background:var(--line-2);cursor:pointer;transition:.2s;flex:0 0 auto}
@@ -2420,16 +2423,21 @@ function viewStudio(){
       </div>
     </div>
     <aside>
-      <div class="dc-card" style="margin-bottom:0">
+      <div class="dc-card" style="margin-bottom:14px">
         <div id="previewHead">${studioHeadHTML()}</div>
         <div class="preview-stage" id="previewStage">${studioPreviewInner()}</div>
       </div>
+      <!-- Galeria desktop: abaixo do preview, dentro do aside -->
+      <div class="dc-card gal-desktop" id="galCardDesktop">
+        <h3 style="margin-bottom:12px">${S.lang==='pt'?'Galeria':'Gallery'} (<span id="galCount">${S.gallery.length}</span>)</h3>
+        <div class="gal-strip" id="galStrip"></div>
+      </div>
     </aside>
   </div>
-  <!-- Galeria — fora do grid, depois de Camera & Output no mobile -->
-  <div class="dc-card" id="galCard" style="margin-top:16px">
-    <h3 style="margin-bottom:12px">${S.lang==='pt'?'Galeria':'Gallery'} (<span id="galCount">${S.gallery.length}</span>)</h3>
-    <div class="gal-strip" id="galStrip"></div>
+  <!-- Galeria mobile: fora do grid, só aparece no mobile -->
+  <div class="dc-card gal-mobile" id="galCard" style="margin-top:16px;display:none">
+    <h3 style="margin-bottom:12px">${S.lang==='pt'?'Galeria':'Gallery'} (<span id="galCountM">${S.gallery.length}</span>)</h3>
+    <div class="gal-strip" id="galStripM"></div>
   </div>`;
 }
 function afterStudio(){
@@ -2457,8 +2465,13 @@ function initDemoCarousel(){
   function playIdx(i){
     _demoIdx=((i%playlist.length)+playlist.length)%playlist.length;
     const d=playlist[_demoIdx];
-    vid.src=d.url;vid.currentTime=0;
-    vid.play().catch(()=>{});
+    // Crossfade suave: fade out, troca src, fade in
+    vid.style.transition='opacity .4s';vid.style.opacity='0';
+    setTimeout(()=>{
+      vid.src=d.url;vid.currentTime=0;
+      vid.play().catch(()=>{});
+      vid.style.opacity='1';
+    },400);
     const ml=document.getElementById('demoModelLabel');
     const pl=document.getElementById('demoPromptLabel');
     const ub=document.getElementById('demoUseBtn');
@@ -2560,12 +2573,18 @@ function renderCRef(){
   // ── VÍDEO ─────────────────────────────────────────────
   // Determinar quais modos estão disponíveis para este modelo
   const modes=[];
-  modes.push(['prompt', pt?'Só Prompt':'Prompt Only', pt?'Texto → Vídeo':'Text → Video']);
-  if(rs.start) modes.push(['img2vid', pt?'Imagem → Vídeo':'Image → Video', pt?'Frame inicial':'Start frame']);
-  if(rs.start && rs.end) modes.push(['startend', pt?'Start + End':'Start + End', pt?'Controla início e fim':'First & last frame']);
-  if(rs.video) modes.push(['vidref', pt?'Ref. Movimento':'Motion Ref', pt?'Estilo de vídeo':'Motion style from video']);
-  if(rs.audio) modes.push(['lipsync', pt?'Lipsync':'Lipsync', pt?'Vídeo + áudio':'Video + audio']);
-  if(rs.refs>0&&!rs.start&&!rs.video) modes.push(['refs', pt?'Referências':'References', pt?`Imagens de ref. (máx. ${rs.refs})`:`Ref. images (max. ${rs.refs})`]);
+  // Só mostra botões quando há escolha real a fazer
+  // Prompt puro é o padrão — não precisa de botão
+  if(rs.start && !rs.end && !rs.video && !rs.audio){
+    // Só start frame: botão único de frame inicial
+    modes.push(['img2vid', pt?'+ Frame Inicial':'+ Start Frame', pt?'Imagem como ponto de partida':'Image as starting point']);
+  } else if(rs.start && rs.end){
+    // Start e/ou End frame
+    modes.push(['img2vid', pt?'Frame Inicial':'Start Frame', pt?'Imagem de partida':'Start image']);
+    modes.push(['startend', 'Start + End', pt?'Início e fim':'First & last']);
+  }
+  if(rs.video && !rs.audio) modes.push(['vidref', pt?'Ref. Movimento':'Motion Ref', pt?'Vídeo de referência':'Reference video']);
+  if(rs.audio) modes.push(['lipsync', 'Lipsync', pt?'Face + Áudio':'Face + Audio']);
 
   // Reset input mode se não disponível no modelo atual
   if(!window._inputMode||!modes.find(m=>m[0]===window._inputMode)) window._inputMode=modes[0][0];
@@ -2582,27 +2601,20 @@ function renderCRef(){
   if(mode==='prompt'){
     // Prompt + referências opcionais
     const maxOpt=rs.refs>0?rs.refs:(rs.start?1:2);
-    const hasOmni=rs.refs>0||rs.video||rs.audio;
-    if(!hasOmni){
-      // Modelos só prompt (ex: Wan2.7 no modo prompt-only)
-      el.innerHTML=html+`<div style="font-size:11.5px;color:var(--ink-4);padding:4px 0;font-style:italic">${pt?'Sem referência no modo prompt — use Start/End':'No reference in prompt mode — use Start/End'}</div>`;
-      return;
-    }
-    let refHtml=`<div style="font-size:11px;color:var(--ink-4);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.8px">${pt?'Referências visuais':'Visual references'}`;
-    if(maxOpt>0)refHtml+=` <span style="color:var(--accent)">(máx. ${maxOpt}${maxT?' · '+maxT+' total':''})</span>`;
-    refHtml+=`</div>`;
-    refHtml+=`<div class="drop" onclick="document.getElementById('refFileOpt').click()">
-      📎 ${pt?`Imagens de referência (máx. ${maxOpt})`:`Reference images (max. ${maxOpt})`}
-    </div>
-    <input type="file" id="refFileOpt" ${maxOpt>1?'multiple':''} accept="image/*" class="hide" onchange="addRefs(this)">
+    const hasRefs=rs.refs>0||rs.video||rs.audio;
+    // Hint compacto de tipos aceitos
+    let hint='';
+    if(rs.refs>0){hint+=`${rs.refs} ${pt?'imagens':'images'}`;}
+    if(rs.video){hint+=(hint?' · ':'')+(pt?'1 vídeo':'1 video');}
+    if(rs.audio){hint+=(hint?' · ':'')+(pt?'1 áudio 15s':'1 audio 15s');}
+    if(maxT>rs.refs&&rs.refs>0){hint+=` (${pt?'máx':'max'} ${maxT} ${pt?'total':'total'})`;}
+    const dropLabel=hint
+      ?`📎 ${pt?'Referências':'References'} — <span style="color:var(--ink-3);font-size:11px">${hint}</span>`
+      :`📎 ${pt?'Referência opcional':'Optional reference'}`;
+    const accept=`image/*${rs.video?',video/*':''}${rs.audio?',audio/*':''}`;
+    el.innerHTML=html+`<div class="drop" style="line-height:1.6" onclick="document.getElementById('refFileOpt').click()">${dropLabel}</div>
+    <input type="file" id="refFileOpt" multiple accept="${accept}" class="hide" onchange="addRefs(this)">
     <div class="thumbs" id="refThumbs"></div>`;
-    if(rs.video)refHtml+=`<div class="drop" style="margin-top:8px" onclick="document.getElementById('refVidFileOpt').click()">
-      🎬 ${pt?'Vídeo de referência (opcional)':'Reference video (optional)'}
-    </div><input type="file" id="refVidFileOpt" accept="video/*" class="hide" onchange="addRefs(this)">`;
-    if(rs.audio)refHtml+=`<div class="drop" style="margin-top:8px" onclick="document.getElementById('refAudFileOpt').click()">
-      🎤 ${pt?'Áudio de referência (opcional, máx. 15s)':'Reference audio (optional, max. 15s)'}
-    </div><input type="file" id="refAudFileOpt" accept="audio/*" class="hide" onchange="setAudioRef(this)">`;
-    el.innerHTML=html+refHtml;
     drawRefs();return;
   }
 
@@ -2687,11 +2699,15 @@ function renderGalStrip(){const el=document.getElementById('galStrip');if(!el)re
       DEMO_REEL.map(d=>`<div class="gi" title="${escapeAttr(d.prompt.slice(0,80))}"><video src="${d.url}" muted loop autoplay playsinline preload="auto" style="background:#000" onclick="event.stopPropagation();openVideo('${d.url}')" onerror="this.parentElement.style.display='none'" referrerpolicy="no-referrer"></video></div>`).join('');
     return;
   }
-  el.innerHTML=S.gallery.slice(0,6).map((g)=>{
+  const galHtml=S.gallery.slice(0,6).map((g)=>{
     const media=g.type==='video'
       ?`<video src="${g.url}" muted loop autoplay playsinline preload="auto" style="background:#000" onclick="event.stopPropagation();openVideo('${g.url}')" referrerpolicy="no-referrer"></video>`
       :`<img src="${g.url}" onclick="event.stopPropagation();openImage('${g.url}')" onerror="this.style.opacity=.2" referrerpolicy="no-referrer">`;
     return `<div class="gi" title="${escapeAttr((g.prompt||'').slice(0,60))}">${media}</div>`;}).join('');
+  el.innerHTML=galHtml;
+  // Sync mobile strip too
+  const elM=document.getElementById('galStripM');if(elM)elM.innerHTML=galHtml;
+  const gcM=document.getElementById('galCountM');if(gcM)gcM.textContent=S.gallery.length;
 }
 async function runCreate(){
   const m=modelById(S.model);const stage=document.getElementById('previewStage');
