@@ -974,7 +974,7 @@ a{color:inherit;text-decoration:none}
 .label{font-size:11px;letter-spacing:.4px;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-bottom:9px;display:block}
 
 /* ── Studio layout (generate) ── */
-.studio{display:grid;grid-template-columns:minmax(320px,360px) 1fr;gap:20px;align-items:start}
+.studio{display:grid;grid-template-columns:minmax(360px,420px) 1fr;gap:20px;align-items:start}
 .gal-mobile{display:none}
 @media(max-width:1080px){.studio{grid-template-columns:1fr}}
 /* ── Studio demo box acima de Creative Direction no mobile ── */
@@ -1010,7 +1010,7 @@ a{color:inherit;text-decoration:none}
 .input,textarea.input,select.input{width:100%;background:var(--panel-2);border:1px solid var(--line);
   border-radius:var(--r);padding:12px 13px;font-size:13.5px;transition:.16s;resize:vertical}
 .input:focus{outline:none;border-color:var(--accent-dim);box-shadow:0 0 0 3px var(--accent-dim)}
-textarea.input{min-height:120px;line-height:1.55;font-family:var(--sans)}
+textarea.input{min-height:150px;line-height:1.55;font-family:var(--sans)}
 
 /* model dropdown + SIDE description (not overlapping) */
 .model-row{display:grid;grid-template-columns:1fr;gap:14px}
@@ -1731,6 +1731,11 @@ const MODELS=[
    desc:{pt:'Geração rápida do Google. Bom custo-benefício para iterar antes de finalizar no Veo 3.1 completo.',
          en:'Fast Google generation. Good value to iterate before finalizing on full Veo 3.1.'},
    refSpec:{start:true, end:false, refs:0, video:false, audio:false}},
+  {id:'geminiflash',name:'Gemini Omni Flash',sub:'google · live',status:'live',cat:'video',featured:true,
+   res:'1080p',max:'8s',durs:[4,6,8],ratio:'16:9 · 9:16 · 1:1',ref:'Texto + imagem + áudio nativo',
+   desc:{pt:'Modelo Gemini multimodal nativo do Google com geração de vídeo+áudio em um passo. Forte para UGC, tutoriais e conteúdo de produto.',
+         en:'Native Google Gemini multimodal model with video+audio generation in one step. Strong for UGC, tutorials and product content.'},
+   refSpec:{start:true, end:false, refs:2, video:false, audio:false}},
   {id:'sora2',name:'Sora 2',sub:'openai · live',status:'live',cat:'video',featured:true,
    res:'1080p',max:'12s',durs:[4,8,12],ratio:'16:9 · 9:16 · 1:1',ref:'Texto + imagem',
    desc:{pt:'Modelo avançado da OpenAI. Forte em coerência de mundo, continuidade temporal e cenas complexas com várias ações.',
@@ -1834,7 +1839,7 @@ const MODELS=[
 const modelById=id=>MODELS.find(m=>m.id===id)||MODELS[0];
 const videoMaxSec=id=>{const m=modelById(id);return m.durs&&m.durs.length?Math.max(...m.durs):(parseInt(m.max)||10);};
 /* per-model credit cost: video = credits/second, image = credits/image, audio = flat */
-const MODEL_COST={seedance2:6,seedance2fast:3,kling3:8,klingmotion:9,klinglip:7,veo31:12,veo31lite:6,sora2:10,wan27:5,hailuo:3,happyhorse:6,grokvid:4,seedance15pro:7,higgsdop:8,geminiomni:35,nanobanana2:18,seedream45:26,fluxflex:14,flux2:24,grokimg:12,reve:16,runway:11,pixverse:4,
+const MODEL_COST={geminiflash:8,seedance2:6,seedance2fast:3,kling3:8,klingmotion:9,klinglip:7,veo31:12,veo31lite:6,sora2:10,wan27:5,hailuo:3,happyhorse:6,grokvid:4,seedance15pro:7,higgsdop:8,geminiomni:35,nanobanana2:18,seedream45:26,fluxflex:14,flux2:24,grokimg:12,reve:16,runway:11,pixverse:4,
   seedream5:30,nanobananapro:40,gptimage2:25,fluxpro:20,suno:40,mmaudio:15,elevenvoice:10};
 const RES_MULT={'720p':0.7,'1080p':1,'4K':1.8};
 /* ════════ CUSTOS DOS PROVEDORES (USD) — para calcular lucro real ════════ */
@@ -2489,12 +2494,17 @@ function initDemoCarousel(){
   vid.onclick=()=>openVideo(playlist[_demoIdx].url,playlist[_demoIdx].prompt);
   playIdx(0);
 }
-function toggleCModelMenu(){const mm=document.getElementById('cModelMenu'),ms=document.getElementById('cModelSelect');if(!mm)return;mm.classList.toggle('open');ms.classList.toggle('open');}
+function toggleCModelMenu(forceClose){
+  const mm=document.getElementById('cModelMenu'),ms=document.getElementById('cModelSelect');
+  if(!mm)return;
+  if(forceClose){mm.classList.remove('open');if(ms)ms.classList.remove('open');return;}
+  mm.classList.toggle('open');if(ms)ms.classList.toggle('open');
+}
 function renderCModelMenu(){
   const menu=document.getElementById('cModelMenu');if(!menu)return;
   if(S.cmode==='text'){menu.innerHTML='';return;}
   const cat=modeCats(S.cmode);const list=MODELS.filter(m=>m.cat===cat);
-  const row=m=>`<div class="model-opt" onclick="setModel('${m.id}');toggleCModelMenu()">
+  const row=m=>`<div class="model-opt" onclick="toggleCModelMenu(true);setModel('${m.id}')">
     <span class="dot ${m.status!=='live'?'soon':''}" style="margin-top:5px"></span>
     <div style="flex:1"><div class="mo-name">${m.name}${m.featured?' <span style="font-size:8.5px;background:var(--accent);color:#1a1408;padding:1px 5px;border-radius:5px;font-weight:700">TOP</span>':''}${m.func?` <span style="font-size:9px;background:var(--accent-dim);color:var(--accent);padding:1px 6px;border-radius:5px">${m.func}</span>`:''}</div>
       <div class="mo-desc">${m.desc[S.lang]}</div><div class="mo-chips"><span>${m.res}</span>${cat==='video'?`<span>${m.durs[0]}–${m.max}</span>`:''}<span>${m.ref}</span></div></div>
@@ -2573,21 +2583,15 @@ function renderCRef(){
   // ── VÍDEO ─────────────────────────────────────────────
   // Determinar quais modos estão disponíveis para este modelo
   const modes=[];
-  // Só mostra botões quando há escolha real a fazer
-  // Prompt puro é o padrão — não precisa de botão
-  if(rs.start && !rs.end && !rs.video && !rs.audio){
-    // Só start frame: botão único de frame inicial
-    modes.push(['img2vid', pt?'+ Frame Inicial':'+ Start Frame', pt?'Imagem como ponto de partida':'Image as starting point']);
-  } else if(rs.start && rs.end){
-    // Start e/ou End frame
-    modes.push(['img2vid', pt?'Frame Inicial':'Start Frame', pt?'Imagem de partida':'Start image']);
-    modes.push(['startend', 'Start + End', pt?'Início e fim':'First & last']);
-  }
+  // Botões apenas quando há escolha real (nunca "Só Prompt")
+  if(rs.start) modes.push(['img2vid', pt?'Frame Inicial':'Start Frame', pt?'Imagem de partida':'Start image']);
+  if(rs.start && rs.end) modes.push(['startend', 'Start + End', pt?'Início e fim':'First & last']);
   if(rs.video && !rs.audio) modes.push(['vidref', pt?'Ref. Movimento':'Motion Ref', pt?'Vídeo de referência':'Reference video']);
   if(rs.audio) modes.push(['lipsync', 'Lipsync', pt?'Face + Áudio':'Face + Audio']);
 
   // Reset input mode se não disponível no modelo atual
-  if(!window._inputMode||!modes.find(m=>m[0]===window._inputMode)) window._inputMode=modes[0][0];
+  if(!modes.length){window._inputMode='prompt';}
+  else if(!window._inputMode||!modes.find(m=>m[0]===window._inputMode)) window._inputMode=modes[0][0];
 
   let html='';
   if(modes.length>1){
@@ -2599,25 +2603,23 @@ function renderCRef(){
   const mode=window._inputMode||'prompt';
 
   if(mode==='prompt'){
-    // Prompt + referências opcionais
-    const maxOpt=rs.refs>0?rs.refs:(rs.start?1:2);
-    const hasRefs=rs.refs>0||rs.video||rs.audio;
-    // Hint compacto de tipos aceitos
+    const hasAnyRef=rs.refs>0||rs.start||rs.video||rs.audio;
+    if(!hasAnyRef){el.innerHTML=html;return;}
     let hint='';
-    if(rs.refs>0){hint+=`${rs.refs} ${pt?'imagens':'images'}`;}
-    if(rs.video){hint+=(hint?' · ':'')+(pt?'1 vídeo':'1 video');}
-    if(rs.audio){hint+=(hint?' · ':'')+(pt?'1 áudio 15s':'1 audio 15s');}
-    if(maxT>rs.refs&&rs.refs>0){hint+=` (${pt?'máx':'max'} ${maxT} ${pt?'total':'total'})`;}
+    const refCap=rs.refs>0?rs.refs:(rs.start?1:0);
+    if(refCap>0) hint+=`${refCap} ${pt?'imag.':'img.'}`;
+    if(rs.video) hint+=(hint?' + ':'')+(pt?'1 vídeo':'1 video');
+    if(rs.audio) hint+=(hint?' + ':'')+(pt?'áudio 15s':'audio 15s');
+    if(maxT>refCap&&refCap>0) hint+=` · ${pt?'máx':'max'} ${maxT} total`;
     const dropLabel=hint
-      ?`📎 ${pt?'Referências':'References'} — <span style="color:var(--ink-3);font-size:11px">${hint}</span>`
+      ?`📎 ${pt?'Referências':'References'} <span style="color:var(--ink-4);font-size:11px;font-weight:400">(${hint})</span>`
       :`📎 ${pt?'Referência opcional':'Optional reference'}`;
     const accept=`image/*${rs.video?',video/*':''}${rs.audio?',audio/*':''}`;
-    el.innerHTML=html+`<div class="drop" style="line-height:1.6" onclick="document.getElementById('refFileOpt').click()">${dropLabel}</div>
+    el.innerHTML=html+`<div class="drop" style="line-height:1.8" onclick="document.getElementById('refFileOpt').click()">${dropLabel}</div>
     <input type="file" id="refFileOpt" multiple accept="${accept}" class="hide" onchange="addRefs(this)">
     <div class="thumbs" id="refThumbs"></div>`;
     drawRefs();return;
   }
-
   if(mode==='img2vid'){
     html+=`<div class="drop" onclick="document.getElementById('startFile').click()" style="margin-bottom:8px">
       ${_startFrame?`<img src="${_startFrame}" style="max-height:72px;border-radius:6px">`:(pt?'📷 Frame inicial (imagem de partida)':'📷 Start frame (first image)')}
