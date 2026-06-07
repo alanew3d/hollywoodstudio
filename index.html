@@ -198,7 +198,7 @@ function viewFavoritesPage(){
 
   return `
   <div style="background:linear-gradient(135deg,#1a1200,#1a1a1a);border-radius:16px;padding:28px;margin-bottom:22px;display:flex;align-items:center;gap:18px"><div style="font-size:46px;line-height:1">⭐</div><div><div class="kicker" style="margin:0 0 3px;color:rgba(255,255,255,.55)">${S.lang==='pt'?'COLEÇÃO':'COLLECTION'}</div><h1 class="serif" style="margin:0 0 5px;font-size:24px;color:#fff">${S.lang==='pt'?'Favoritos':'Favorites'}</h1><p style="margin:0;font-size:12.5px;color:rgba(255,255,255,.65);max-width:520px">${S.lang==='pt'?'Suas criações preferidas — reutilize, analise com Director\'s Eye ou publique.':'Your favorite creations — reuse, analyze with Director\'s Eye or publish.'}</p></div></div>
-  <div class="view-head">
+  <div style="border-radius:14px;overflow:hidden;margin-bottom:20px;height:130px;background:linear-gradient(135deg,#1a0a2e,#2e1a1a);position:relative"><div style="position:absolute;inset:0;display:flex;align-items:center;padding:0 28px;gap:18px"><div style="font-size:46px;line-height:1">⭐</div><div><div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.5);margin-bottom:4px">${S.lang==='pt'?'CRIAÇÃO':'CREATION'}</div><div style="font-size:22px;font-weight:700;color:#fff">${S.lang==='pt'?'Favoritos':'Favorites'}</div><div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:3px">${S.lang==='pt'?'Suas gerações favoritas e análise de estilo':'Your favorite generations and style analysis'}</div></div></div></div><div class="view-head">
     <div class="kicker">${pt?'Referências':'References'}</div>
     <h1 class="serif">⭐ ${pt?"Favoritos & Director's Eye":"Favorites & Director's Eye"}</h1>
     <p style="max-width:580px">${pt?"Salve demos que inspiram, analise padrões com o Director's Eye e identifique sua assinatura cinematográfica.":"Save inspiring demos, analyze patterns with Director's Eye and identify your cinematic signature."}</p>
@@ -835,11 +835,11 @@ a{color:inherit;text-decoration:none}
 [data-theme="light"] .brand-icon-fill{fill:#1a1a1a}
 [data-theme="light"] .brand-icon-stroke{stroke:#1a1a1a}
 /* brand area in collapsed state */
-.sidebar-collapsed .sidebar .brand{padding:12px 8px;justify-content:center}
+.sidebar-collapsed .sidebar .brand{padding:14px 8px 12px;justify-content:center;align-items:center}
 .sidebar-collapsed .sidebar .brand-icon{display:flex!important}
 .sidebar-collapsed .sidebar .brand > div:first-child{flex:none}
 
-.main{grid-area:main;overflow-y:auto;position:relative;background:
+.main{padding:0 4px 0 0;grid-area:main;overflow-y:auto;position:relative;background:
   radial-gradient(1100px 480px at 78% -8%,rgba(212,168,87,.05),transparent 60%) ,var(--bg)}
 
 /* ── Mobile: sidebar vira drawer ── */
@@ -1364,8 +1364,8 @@ svg.sedges path{stroke:var(--accent);stroke-width:2;fill:none;opacity:.6}
 .ai-toggles{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 .ai-tog{display:flex;align-items:center;gap:8px;padding:8px 13px;border-radius:24px;border:1px solid var(--line);background:var(--panel-2);cursor:pointer;font-size:12.5px;font-weight:500;transition:.14s}
 .ai-tog .d{width:8px;height:8px;border-radius:50%}
-.ai-tog.on{border-color:var(--line-2);background:var(--elev)}
-.ai-tog:not(.on){opacity:.5}
+.ai-tog.on{border-color:var(--accent);background:var(--accent);color:#1a1408;font-weight:700;box-shadow:0 2px 8px rgba(212,168,67,.4)}
+.ai-tog:not(.on){opacity:.6}
 .council-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:18px}
 .ai-resp{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);padding:16px;border-top:3px solid var(--accent)}
 .ai-resp .rh{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-weight:600;font-size:13px}
@@ -1561,7 +1561,7 @@ input[type=range]{accent-color:var(--accent)}
         <img src="/assets/logos/logo-light.png" class="brand-logo light" alt="Hollywood Studio AI" onerror="this.style.display='none'">
         <!-- Collapsed icon: ★AI mark - dark on light bg, gold on dark bg -->
         <svg class="brand-icon" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"
-          style="display:none;width:34px;height:34px;flex-shrink:0;cursor:pointer"
+          style="display:none;width:42px;height:42px;flex-shrink:0;cursor:pointer;margin:0 auto"
           onclick="go('studio')">
           <!-- star -->
           <polygon points="10,22 12.5,15 15,22 8,17.5 17,17.5" class="brand-icon-fill"/>
@@ -1580,7 +1580,7 @@ input[type=range]{accent-color:var(--accent)}
       </button>
     </div>
     <nav class="nav" id="nav"></nav>
-    <div style="padding:12px;border-top:1px solid var(--line)">
+    <div style="padding:16px 14px 14px;border-top:1px solid var(--line)">
       <div class="credits-pill" onclick="openCredits()" style="width:100%;justify-content:space-between">
         <span style="color:var(--ink-3);font-size:11.5px">Créditos</span><b id="credSide">—</b>
       </div>
@@ -3787,21 +3787,27 @@ const AREA_BANNERS_FALLBACK={
   characters:'https://images.unsplash.com/photo-1492288991661-058aa541ff43?w=1400&q=70&auto=format&fit=crop',
   docs:'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1400&q=70&auto=format&fit=crop',
   flow:'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1400&q=70&auto=format&fit=crop',
-  council:'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1400&q=70&auto=format&fit=crop',
+  council:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1400&q=70&auto=format&fit=crop',
   analytics:'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1400&q=70&auto=format&fit=crop',
   gallery:'https://images.unsplash.com/photo-1531913764164-f85c52e6e654?w=1400&q=70&auto=format&fit=crop',
   opportunities:'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1400&q=70&auto=format&fit=crop',
   news:'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1400&q=70&auto=format&fit=crop',
-  festivals:'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=1400&q=70&auto=format&fit=crop',
+  festivals:'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1400&q=70&auto=format&fit=crop',
   plans:'https://images.unsplash.com/photo-1607344645866-009c320b63e0?w=1400&q=70&auto=format&fit=crop',
   admin:'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1400&q=70&auto=format&fit=crop',
-  public:'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=1400&q=70&auto=format&fit=crop',
-  academy:'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1400&q=70&auto=format&fit=crop',
-  models:'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1400&q=70&auto=format&fit=crop',
+  public:'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=1400&q=70&auto=format&fit=crop',
+  academy:'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1400&q=70&auto=format&fit=crop',
+  models:'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=1400&q=70&auto=format&fit=crop',
   images:'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=1400&q=70&auto=format&fit=crop',
   audio:'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1400&q=70&auto=format&fit=crop',
   storyboard:'https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?w=1400&q=70&auto=format&fit=crop',
-  editing:'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=1400&q=70&auto=format&fit=crop'
+  editing:'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=1400&q=70&auto=format&fit=crop',
+  favorites:'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=1400&q=70&auto=format&fit=crop',
+  batch:'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=1400&q=70&auto=format&fit=crop',
+  uploads:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1400&q=70&auto=format&fit=crop',
+  instagram:'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=1400&q=70&auto=format&fit=crop',
+  youtube:'https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?w=1400&q=70&auto=format&fit=crop',
+  inspo:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1400&q=70&auto=format&fit=crop'
 };
 function toggleSidebar(force){const s=document.getElementById('sidebar');const b=document.getElementById('sideBack');if(!s)return;const on=force===undefined?!s.classList.contains('open'):force;s.classList.toggle('open',on);b.classList.toggle('show',on);}
 // fecha sidebar mobile ao navegar
@@ -4147,8 +4153,18 @@ function addChar(){
   const tag=document.getElementById('chTag').value.trim().replace(/[^\w]/g,'');
   const name=document.getElementById('chName').value.trim();
   if(!tag||!name){toast(S.lang==='pt'?'Informe handle e nome':'Provide handle and name','err');return;}
-  S.characters.push({tag,name,desc:document.getElementById('chDesc').value.trim(),img:_chImgs[0]||'',imgs:_chImgs});
-  localStorage.setItem(userKey('chars'),JSON.stringify(S.characters));_chImgs=[];render();toast(S.lang==='pt'?'Personagem salvo':'Character saved','ok');
+  const newChar={tag,name,desc:document.getElementById('chDesc').value.trim(),img:_chImgs[0]||'',imgs:_chImgs.slice(0,10)};
+  if(S._editCharIdx!=null){
+    // Editing existing character
+    S.characters[S._editCharIdx]=newChar;
+    S._editCharIdx=null;
+    toast(S.lang==='pt'?'Personagem atualizado!':'Character updated!','ok');
+  } else {
+    S.characters.push(newChar);
+    toast(S.lang==='pt'?'Personagem salvo':'Character saved','ok');
+  }
+  localStorage.setItem(userKey('chars'),JSON.stringify(S.characters));
+  _chImgs=[];render();
 }
 function delChar(i){S.characters.splice(i,1);localStorage.setItem(userKey('chars'),JSON.stringify(S.characters));render();}
 
@@ -4223,22 +4239,35 @@ function editChar(i){
   const chars=getChars();
   const c=chars[i];
   if(!c)return;
-  // Fill form with character data
-  const tagEl=document.getElementById('charTag');
-  const nameEl=document.getElementById('charName');
-  const descEl=document.getElementById('charDesc');
+  S._editCharIdx=i; // mark as editing
+  // Fill form with correct field IDs
+  const tagEl=document.getElementById('chTag');
+  const nameEl=document.getElementById('chName');
+  const descEl=document.getElementById('chDesc');
   if(tagEl) tagEl.value=c.tag||'';
   if(nameEl) nameEl.value=c.name||'';
   if(descEl) descEl.value=c.desc||'';
-  // Remove from list so saving replaces it
-  chars.splice(i,1);
-  localStorage.setItem(userKey('chars'),JSON.stringify(chars));
+  // Restore existing photos
+  _chImgs=c.imgs||[];
+  if(c.img&&!_chImgs.length)_chImgs=[c.img];
+  // Update thumbs preview
+  const thumbs=document.getElementById('chThumbs');
+  if(thumbs){
+    thumbs.innerHTML=_chImgs.slice(0,10).map(function(src,j){
+      return '<div style="position:relative;display:inline-block;margin:3px">'
+        +'<img src="'+src+'" style="width:50px;height:50px;object-fit:cover;border-radius:6px">'
+        +'<button onclick="_chImgs.splice('+j+',1);editChar(S._editCharIdx)" '
+        +'style="position:absolute;top:-4px;right:-4px;background:#e00;color:#fff;border:none;border-radius:50%;width:16px;height:16px;font-size:10px;cursor:pointer;line-height:1">×</button>'
+        +'</div>';
+    }).join('');
+  }
+  // Highlight save button
+  const saveBtn=document.querySelector('#charForm button.btn-primary,button[onclick="addChar()"]');
+  if(saveBtn){saveBtn.textContent=S.lang==='pt'?'💾 Salvar edição':'💾 Save edit';saveBtn.style.background='var(--ok)';}
   // Scroll to form
-  const form=document.getElementById('charForm');
-  if(form) form.scrollIntoView({behavior:'smooth'});
-  else render(); // re-render so form is visible at top
-  toast(S.lang==='pt'?'Edite e salve o personagem':'Edit and save the character');
-  render();
+  const main=document.getElementById('main');
+  if(main)main.scrollTop=0;
+  toast(S.lang==='pt'?'Edite o personagem e salve':'Edit character and save');
 }
 
 function useStoryboardInStudio(sbId){
@@ -4588,11 +4617,7 @@ function viewGallery(){
   return `
   <div class="view-head"><div class="kicker">${t('discover')}</div><h1 class="serif">${t('gallery')}</h1>
     <p>${S.lang==='pt'?'Suas gerações. Clique para reabrir o prompt. Ajuste o tamanho das miniaturas e filtre por tipo.':'Your generations. Click to reopen the prompt. Adjust thumbnail size and filter by type.'}</p>
-    <div class="attach-note" style="font-size:12px;margin-top:6px">
-      ${S.lang==='pt'
-        ?'⚠️ <b>A galeria é salva localmente em cada dispositivo.</b> Gerar no desktop e abrir no celular mostrará galerias diferentes — isso é normal. Use <b>Compartilhar</b> ou <b>Salvar</b> nos itens para transferir entre dispositivos.'
-        :'⚠️ <b>Gallery is saved locally on each device.</b> Generating on desktop and opening on mobile will show different galleries — this is normal. Use <b>Share</b> or <b>Save</b> on items to transfer between devices.'}
-    </div>
+
   </div>
   <div class="gal-bar">
     <div class="seg">${['all','video','image'].map(f=>`<button class="${S.galFilter===f?'on':''}" onclick="S.galFilter='${f}';afterGallery()">${f==='all'?(S.lang==='pt'?'Tudo':'All'):(f==='video'?(S.lang==='pt'?'Vídeos':'Videos'):(S.lang==='pt'?'Imagens':'Images'))}</button>`).join('')}</div>
@@ -5907,14 +5932,14 @@ const INSPO_SEED=[
   {url:'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=900&q=80',prompt:'abstract light trails, neon, long exposure, urban night, cyberpunk',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=900&q=80',prompt:'editorial fashion, haute couture, dramatic studio lighting, Vogue',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=900&q=80',prompt:'luxury villa exterior, golden hour, infinity pool, photorealistic',src:'unsplash'},
-  {url:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80',prompt:'aerial mountain landscape, misty peaks, sunrise, cinematic drone shot',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1518877593221-1f28583780b4?w=900&q=80',prompt:'aerial mountain landscape, misty peaks, sunrise, cinematic drone shot',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=900&q=80',prompt:'gourmet dish close-up, steam rising, macro lens, food photography',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=900&q=80',prompt:'AI neural network visualization, glowing nodes, dark background, 4K',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=80',prompt:'concert stage, massive crowd, light show, fog, aerial shot, Rock in Rio',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=900&q=80',prompt:'musician in recording studio, analog equipment, warm light',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=900&q=80',prompt:'portrait, studio lighting, Rembrandt light, skin texture, 85mm',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=900&q=80',prompt:'athlete in motion, action freeze, dynamic composition, sports photography',src:'unsplash'},
-  {url:'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=900&q=80',prompt:'space exploration, satellite view of earth, cinematic, NASA aesthetic',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1543286386-713bdd548da4?w=900&q=80',prompt:'space exploration, satellite view of earth, cinematic, NASA aesthetic',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=900&q=80',prompt:'cyberpunk city at night, neon reflections, rain, dystopian future',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=900&q=80',prompt:'luxury watch product shot, macro, dark background, dramatic side light',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=900&q=80',prompt:'modern living room interior, natural light, minimalist design, warm tones',src:'unsplash'},
@@ -5930,9 +5955,9 @@ const INSPO_SEED=[
   // Extra AI-focused inspirations
   {url:'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=900&q=80',prompt:'AI avatar portrait, hyperrealistic digital human, studio lighting, 8K detail',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=900&q=80',prompt:'Fashion model editorial, AI generated, cinematic color grade',src:'unsplash'},
-  {url:'https://images.unsplash.com/photo-1604079628040-94301bb21b91?w=900&q=80',prompt:'Cyberpunk cityscape aerial night, neon lights, blade runner aesthetic, 4K',src:'unsplash'},
-  {url:'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=900&q=80',prompt:'Planet Earth from space, orbital view, atmosphere glow, cinematic NASA style',src:'unsplash'},
-  {url:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80',prompt:'Epic mountain range, sunrise timelapse, clouds below, IMAX quality',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2?w=900&q=80',prompt:'Cyberpunk cityscape aerial night, neon lights, blade runner aesthetic, 4K',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1543286386-713bdd548da4?w=900&q=80',prompt:'Planet Earth from space, orbital view, atmosphere glow, cinematic NASA style',src:'unsplash'},
+  {url:'https://images.unsplash.com/photo-1518877593221-1f28583780b4?w=900&q=80',prompt:'Epic mountain range, sunrise timelapse, clouds below, IMAX quality',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=80',prompt:'Luxury watch macro, Swiss movement detail, chrome reflections',src:'unsplash'}
 ];
 function afterInspo(){
@@ -6157,7 +6182,7 @@ function viewEditing(){
   const vids=S.gallery.filter(g=>g.type==='video');
   const pool=vids.map((g)=>`<div class="res-card" onclick="addClip(${S.gallery.indexOf(g)})"><img src="${g.url}" referrerpolicy="no-referrer"><div class="ovl"><button>+ ${S.lang==='pt'?'Timeline':'Timeline'}</button></div></div>`).join('');
   return `
-  <div class="view-head"><div class="kicker">${t('create')}</div><h1 class="serif">${t('editing')}</h1>
+  <div style="border-radius:14px;overflow:hidden;margin-bottom:20px;height:130px;background:linear-gradient(135deg,#0a1a2e,#2e1a0a);position:relative"><div style="position:absolute;inset:0;display:flex;align-items:center;padding:0 28px;gap:18px"><div style="font-size:46px;line-height:1">✂️</div><div><div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.5);margin-bottom:4px">${S.lang==='pt'?'CRIAÇÃO':'CREATION'}</div><div style="font-size:22px;font-weight:700;color:#fff">${S.lang==='pt'?'Edição em Lote':'Batch Editing'}</div><div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:3px">${S.lang==='pt'?'Edite múltiplas imagens de uma vez com IA':'Edit multiple images at once with AI'}</div></div></div></div><div class="view-head"><div class="kicker">${t('create')}</div><h1 class="serif">${t('editing')}</h1>
     <p>${S.lang==='pt'?'Anexe clipes, <b>arraste para reordenar</b> e <b>estique/encurte</b> cada um. Gere <b>continuidade por frames</b> (último frame → inicial do próximo), crie transições com IA e junte tudo num filme único.':'Attach clips, <b>drag to reorder</b> and <b>stretch/shorten</b> each one. Generate <b>frame continuity</b>, create AI transitions and stitch into one film.'}</p></div>
   <div class="grid" style="grid-template-columns:1fr 320px;align-items:start">
     <div class="card">
@@ -7336,7 +7361,7 @@ function viewPosProdu(){
   var pt=S.lang==='pt';
   return ''
     // Banner: timeline editor aesthetic
-    +'<div style="position:relative;border-radius:16px;overflow:hidden;margin-bottom:24px;height:160px;background:#0a0a14">'
+    +'<div style="position:relative;border-radius:16px;overflow:hidden;margin-bottom:24px;height:160px;background:linear-gradient(135deg,#1a0a2e,#0a1a2e)">'
     +'<div style="position:absolute;inset:0;background:linear-gradient(90deg,#0a0a14 0%,transparent 40%,transparent 60%,#0a0a14 100%);z-index:2"></div>'
     // Timeline tracks
     +'<div style="position:absolute;inset:0;padding:24px 0;display:flex;flex-direction:column;gap:8px;z-index:1">'
@@ -7470,6 +7495,47 @@ function viewPosProdu(){
     +'<div style="display:flex;gap:8px;flex-wrap:wrap">'
     +'<button class="btn btn-ghost" onclick="alert(\'Plugin em desenvolvimento -- cadastre seu interesse abaixo!\')">'+(pt?'📥 Baixar Plugin (em breve)':'📥 Download Plugin (coming soon)')+'</button>'
     +'<button class="btn btn-ghost btn-sm" onclick="window.open(\'mailto:mail@hollywoodstudio.ai?subject=Interesse+Plugin+Adobe\',\'_blank\')">'+(pt?'📧 Avisar quando disponivel':'📧 Notify me')+'</button>'
+    +'</div>'
+    +'</div></div></div>'
+
+    // ── Card 3b: CapCut ──
+    +'<div class="card" style="margin-bottom:18px;border:1.5px solid #00D4AA">'
+    +'<div style="display:flex;gap:14px;align-items:flex-start">'
+    +'<div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#00D4AA,#0066FF);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px">✂️</div>'
+    +'<div style="flex:1">'
+    +'<div style="font-size:16px;font-weight:700;margin-bottom:4px">CapCut'
+    +'<span style="font-size:10px;background:#00D4AA;color:#0a1a1a;padding:2px 8px;border-radius:10px;margin-left:8px;font-weight:700">'+(pt?'RECOMENDADO':'RECOMMENDED')+'</span>'
+    +'</div>'
+    +'<p style="font-size:13px;color:var(--ink-2);line-height:1.6;margin:0 0 14px">'
+    +(pt
+      ?'Editor de vídeo profissional gratuito — perfeito para finalizar, legendar e publicar os vídeos gerados aqui. Use no celular, desktop ou diretamente no navegador. Recursos de IA integrados: legendas automáticas, remoção de fundo, lip sync, transições automáticas e muito mais.'
+      :'Free professional video editor — perfect to finish, caption and publish the videos generated here. Use on mobile, desktop or directly in the browser. Built-in AI features: auto captions, background removal, lip sync, auto transitions and more.')
+    +'</p>'
+    +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:14px">'
+    +[
+      {ic:'📱',t:pt?'App iOS':'iOS App',d:pt?'iPhone e iPad':'iPhone and iPad',url:'https://apps.apple.com/app/capcut/id1500855883'},
+      {ic:'🤖',t:pt?'App Android':'Android App',d:'Google Play',url:'https://play.google.com/store/apps/details?id=com.lemon.lvoverseas'},
+      {ic:'🖥',t:pt?'Desktop (PC/Mac)':'Desktop (PC/Mac)',d:pt?'Windows e macOS':'Windows and macOS',url:'https://www.capcut.com/tools/desktop-video-editor'},
+      {ic:'🌐',t:pt?'CapCut Web':'CapCut Web',d:pt?'Sem instalação':'No install needed',url:'https://www.capcut.com/'},
+    ].map(function(f){
+      return '<a href="'+f.url+'" target="_blank" rel="noopener" style="text-decoration:none">'
+        +'<div class="card" style="padding:12px;cursor:pointer;transition:.15s;border:1.5px solid transparent" style2="hover">'
+        +'<div style="font-size:22px;margin-bottom:5px">'+f.ic+'</div>'
+        +'<div style="font-weight:600;font-size:12.5px;margin-bottom:2px;color:var(--ink)">'+f.t+'</div>'
+        +'<div style="font-size:11px;color:var(--ink-3)">'+f.d+'</div>'
+        +'<div style="font-size:10px;color:#00D4AA;margin-top:5px;font-weight:600">'+(pt?'⬇ Baixar / Acessar':'⬇ Download / Access')+'</div>'
+        +'</div></a>';
+    }).join('')
+    +'</div>'
+    // Workflow tip
+    +'<div style="background:linear-gradient(135deg,rgba(0,212,170,.08),rgba(0,102,255,.08));border:1px solid rgba(0,212,170,.3);border-radius:10px;padding:14px">'
+    +'<div style="font-weight:600;font-size:12.5px;margin-bottom:8px">💡 '+(pt?'Workflow recomendado:':'Recommended workflow:')+'</div>'
+    +'<ol style="font-size:12.5px;color:var(--ink-2);line-height:2;margin:0;padding-left:18px">'
+    +'<li>'+(pt?'Gere seu vídeo/imagem aqui no Hollywood Studio AI':'Generate your video/image here on Hollywood Studio AI')+'</li>'
+    +'<li>'+(pt?'Baixe o arquivo pela Galeria (botão Salvar)':'Download the file from Gallery (Save button)')+'</li>'
+    +'<li>'+(pt?'Abra no CapCut — adicione legenda, música, texto':'Open in CapCut — add captions, music, text')+'</li>'
+    +'<li>'+(pt?'Publique direto no Instagram, TikTok ou YouTube':'Publish directly to Instagram, TikTok or YouTube')+'</li>'
+    +'</ol>'
     +'</div>'
     +'</div></div></div>'
 
@@ -8464,7 +8530,7 @@ async function generateFullIGCaption(){
 async function _doGenerateCaption(prompt,targetEl){
   var ck=CFG.CLAUDE_API_KEY||'';var ok=CFG.OPENAI_API_KEY||'';
   var pt2=S.lang==='pt';
-  var sys='Gere um caption para Instagram sobre este conteúdo gerado por IA. Inclua hook, corpo curto, CTA e 10 hashtags. Máximo 800 caracteres.';
+  var sys='Você é especialista em marketing digital. Gere um caption poderoso para Instagram sobre: '+prompt+'. Inclua: 1 linha de hook impactante, 2-3 linhas de corpo, CTA clara, linha separadora ─, 20-25 hashtags relevantes (misture grandes e de nicho incluindo #hollywoodstudioai #criacaoIA #aivideo), e mencione @hollywoodstudio.ai no final. Máximo 2200 caracteres. Apenas o texto do caption.';
   var result='';
   try{
     if(ck){var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':ck,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:300,system:sys,messages:[{role:'user',content:prompt}]})});var d=await r.json();result=d.content&&d.content[0]?d.content[0].text:'';}
@@ -8668,14 +8734,14 @@ var _mktState={
   step:1
 };
 
-function openMarketingSuite(){
+window.openMarketingSuite = function openMarketingSuite(){
   var existing=document.getElementById('mktSuiteOverlay');
   if(existing)existing.remove();
   _mktState={platform:'instagram',format:'reel',campaign:'',prompt:'',caption:'',hashtags:'',generatedMedia:null,schedule:null,step:1};
   renderMarketingSuite();
 }
 
-function renderMarketingSuite(){
+window.renderMarketingSuite = function renderMarketingSuite(){
   var existing=document.getElementById('mktSuiteOverlay');
   if(existing)existing.remove();
   var pt=S.lang==='pt';
@@ -8890,8 +8956,8 @@ function renderMarketingSuite(){
 }
 
 /* ── Marketing Suite helpers ── */
-function mktStep(n){_mktState.step=n;renderMarketingSuite();}
-function mktSelectPlatform(el){
+window.mktStep=function mktStep(n){_mktState.step=n;renderMarketingSuite();}
+window.mktSelectPlatform=function mktSelectPlatform(el){
   el.closest('.modal-card').querySelectorAll('[data-pid]').forEach(function(x){x.style.borderColor='var(--line)';});
   el.style.borderColor='var(--accent)';
   _mktState.platform=el.dataset.pid;
@@ -9060,6 +9126,12 @@ function mktResume(id){
 
 
 /* Expose marketing/admin functions globally */
+if(typeof applyAdminUserAction!=='undefined')window.applyAdminUserAction=applyAdminUserAction;
+if(typeof openMarketingSuite!=='undefined')window.openMarketingSuite=openMarketingSuite;
+if(typeof mktResume!=='undefined')window.mktResume=mktResume;
+if(typeof openPaymentsModal!=='undefined')window.openPaymentsModal=openPaymentsModal;
+if(typeof editChar!=='undefined')window.editChar=editChar;
+if(typeof addChar!=='undefined')window.addChar=addChar;
 if(typeof openMarketingSuite!=='undefined')window.openMarketingSuite=openMarketingSuite;
 if(typeof renderMarketingSuite!=='undefined')window.renderMarketingSuite=renderMarketingSuite;
 if(typeof mktStep!=='undefined')window.mktStep=mktStep;
@@ -10487,7 +10559,7 @@ var PUBLIC_GALLERY_SEED = [
 
   // Paisagens / Natureza
   {id:'seed_06',uid:'u_mariana',author:'Mariana Silva',avatar:'https://i.pravatar.cc/40?img=10',
-   url:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80',
+   url:'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=900&q=80',
    type:'image',prompt:'Cinematic mountain landscape, dramatic storm clouds, epic scale, lone figure, 8K quality, photorealistic',
    model:'Seedream 5',ratio:'16:9',date:Date.now()-3600000*24,likes:156,comments:['Parece pintura renascentista','Qual prompt exato você usou?','🤯🤯🤯'],views:978},
 
