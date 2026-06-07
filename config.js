@@ -1,97 +1,126 @@
 /**
- * HOLLYWOOD STUDIO AI — config.js
- * Coloque este arquivo na raiz do seu projeto, junto com index.html
- * O index.html lê window.HSAI_CONFIG automaticamente.
+ * HOLLYWOOD STUDIO AI — config.js v3.0
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Este arquivo é carregado pelo index.html antes de tudo.
+ * Edite aqui as chaves e faça commit no GitHub — o Vercel republica em ~1 min.
  *
- * NUNCA commite este arquivo com chaves reais para repositórios públicos.
- * No Vercel: use este arquivo como template e configure as variáveis de ambiente.
+ * SEGURANÇA: Não commite chaves sk_live_ ou chaves de produção em repos PÚBLICOS.
+ * Use o Admin do site (Integrações) para configurar chaves em produção.
+ * ─────────────────────────────────────────────────────────────────────────────
  */
 
 window.HSAI_CONFIG = {
 
-  // ─── IDENTIDADE ──────────────────────────────────────────────────────────
+  // ── IDENTIDADE ──────────────────────────────────────────────────────────────
   SITE_NAME:    'Hollywood Studio AI',
   SITE_URL:     'https://hollywoodstudio.ai',
-  ADMIN_PASS:   'hw2026!',          // ← TROQUE antes de publicar
+  ADMIN_USER:   'admin',
+  ADMIN_PASS:   'hw2026!',          // ← TROQUE antes de divulgar publicamente
+  ADMIN_EMAIL:  '',                 // ← seu email — vira admin automático no Google login
 
-  // ─── GOOGLE OAUTH ─────────────────────────────────────────────────────────
-  // console.cloud.google.com → Credenciais → IDs do cliente OAuth 2.0
-  // Origens autorizadas: https://hollywoodstudio.ai e https://hollywoodstudio.vercel.app
-  // URIs de redirecionamento: mesmas URLs acima
-  GOOGLE_CLIENT_ID: '1080113912210-medhqckkq2qp38j9ggqoegik2n9inue3.apps.googleusercontent.com',             // ← Cole aqui: xxx.apps.googleusercontent.com
+  // ── GOOGLE OAUTH ────────────────────────────────────────────────────────────
+  // console.cloud.google.com → APIs → Credenciais → OAuth 2.0 Client ID
+  // Origens autorizadas: https://hollywoodstudio.ai  |  https://hollywoodstudio.vercel.app
+  GOOGLE_CLIENT_ID: '1080113912210-medhqckkq2qp38j9ggqoegik2n9inue3.apps.googleusercontent.com',
 
-  // ─── IA — ATLAS CLOUD (multi-modelo) ─────────────────────────────────────
+  // ── GERAÇÃO DE IA — ATLAS CLOUD (multi-modelo, 46 modelos) ─────────────────
   // https://atlascloud.ai → Dashboard → API Keys
-  API_KEY:   '',                    // ← Sua chave Atlas Cloud
+  API_KEY:   '',                    // ← Chave Atlas Cloud
   API_BASE:  'https://api.atlascloud.ai',
   PROVIDER:  'atlascloud',
 
-  // BytePlus ModelArk (Seedance 2.0 direto — opcional, use se quiser bypass do Atlas)
   PROVIDERS: {
     atlascloud: {
-      key:  '',                     // ← mesma API_KEY acima
+      key:  '',                     // ← mesma chave acima
       base: 'https://api.atlascloud.ai',
     },
     modelark: {
-      key:  '',                     // ← Chave BytePlus ModelArk (ark.byteplus.com)
+      // BytePlus ModelArk — Seedance 2.0 direto (opcional, bypass do Atlas)
+      // ark.byteplus.com → Console → API Keys
+      key:  '',
       base: 'https://ark.ap-southeast.bytepluses.com',
+    },
+    fal: {
+      // fal.ai — modelos alternativos
+      // fal.ai → Dashboard → API Keys
+      key:  '',
+      base: 'https://fal.run',
     },
   },
 
-  // ─── PLANOS — STRIPE PAYMENT LINKS ───────────────────────────────────────
-  // dashboard.stripe.com → Payment Links → Criar
-  // Crie 1 link por plano. Adicione metadata: userId (deixe vazio, webhook preenche)
-  // Cada link já redireciona para hollywoodstudio.ai/studio?payment=success
+  // ── CLAUDE (Anthropic) ───────────────────────────────────────────────────────
+  // console.anthropic.com → API Keys → Create Key
+  // Usado em: Help chatbot (claude-haiku-4-5), Agentes, Juiz Chat, Storyboard
+  // Custo: ~$0.001 por resposta de help · Haiku é o modelo mais barato
+  CLAUDE_API_KEY: '',               // ← sk-ant-api03-...
+
+  // ── OPENAI (GPT) ────────────────────────────────────────────────────────────
+  // platform.openai.com → API Keys → Create new secret key
+  // Usado em: Juiz Chat (GPT-4o), Storyboard, Agente Flow
+  OPENAI_API_KEY: '',               // ← sk-proj-...
+
+  // ── GOOGLE GEMINI ────────────────────────────────────────────────────────────
+  // aistudio.google.com → Get API Key (gratuito com limites generosos)
+  // Usado em: Gemini Avatar, Aprimorar prompt, Flow, Storyboard, Help chatbot
+  GEMINI_API_KEY: '',               // ← AIza...
+  GEMINI_MODEL:   'gemini-2.0-flash',
+
+  // ── YOUTUBE API ─────────────────────────────────────────────────────────────
+  // console.cloud.google.com → APIs → YouTube Data API v3 → Credenciais
+  YOUTUBE_API_KEY: '',              // ← AIza...
+
+  // ── PLANOS — STRIPE PAYMENT LINKS ───────────────────────────────────────────
+  // dashboard.stripe.com → Payment Links → Criar (moeda: BRL)
+  // URL de sucesso: https://hollywoodstudio.ai?payment=success
   STRIPE: {
-    basico:   '',                   // ← https://buy.stripe.com/...  (R$99 / 150s)
+    basico:   '',                   // ← https://buy.stripe.com/...  (R$99  / 150s)
     premium:  '',                   // ← https://buy.stripe.com/...  (R$199 / 300s)
     avancado: '',                   // ← https://buy.stripe.com/...  (R$349 / 600s)
   },
 
-  // ─── TOP-UPS DE CRÉDITOS — STRIPE ────────────────────────────────────────
+  // ── TOP-UPS AVULSOS ──────────────────────────────────────────────────────────
   STRIPE_TOPUPS: {
     t100: '',                       // ← https://buy.stripe.com/...  (100s / R$79)
     t300: '',                       // ← https://buy.stripe.com/...  (300s / R$199)
     t700: '',                       // ← https://buy.stripe.com/...  (700s / R$399)
   },
 
-  // ─── PAYPAL ───────────────────────────────────────────────────────────────
-  PAYPAL: 'alansorrah@gmail.com',   // ← seu email PayPal
+  // ── PAYPAL ───────────────────────────────────────────────────────────────────
+  PAYPAL: 'alansorrah@gmail.com',   // ← email ou handle paypal.me
 
-  // ─── PIX ─────────────────────────────────────────────────────────────────
-  PIX: '',                          // ← chave Pix ou link MercadoPago: https://mpago.la/...
+  // ── PIX / MERCADOPAGO ────────────────────────────────────────────────────────
+  // Chave Pix direta (CPF/email/telefone/aleatória) OU link MercadoPago
+  PIX: '',                          // ← ex: alansorrah@gmail.com  ou  https://mpago.la/...
 
-  // ─── MÉTODOS DE PAGAMENTO HABILITADOS ────────────────────────────────────
+  // ── MÉTODOS DE PAGAMENTO ATIVOS ─────────────────────────────────────────────
   PAY: {
     stripe: true,
     paypal: true,
     pix:    true,
   },
 
-  // ─── CRÉDITOS GRÁTIS NO CADASTRO ─────────────────────────────────────────
-  FREE_CREDITS: 0,                 // segundos dados ao criar conta
+  // ── CRÉDITOS GRÁTIS NO CADASTRO ─────────────────────────────────────────────
+  FREE_CREDITS: 0,                  // 0 = nenhum crédito grátis. Só paga usa.
 
-  // ─── ENDPOINTS DO BACKEND (Vercel Functions) ─────────────────────────────
-  // Deixe vazios se não tiver backend — o sistema usa localStorage como fallback
-  AUTH_ENDPOINT:        '',         // ← https://hollywoodstudio.vercel.app  (sem /api)
-  HELP_ENDPOINT:        '',         // ← mesmo acima — para o assistente IA real
-  COUNCIL_ENDPOINT:     '',         // ← mesmo acima — para o Juiz Chat real
+  // ── ENDPOINTS BACKEND (Vercel Serverless) ────────────────────────────────────
+  // Deixe vazio para usar localStorage + FAQ local.
+  // Preencha com https://hollywoodstudio.ai para ativar os backends reais.
+  AUTH_ENDPOINT:        'https://hollywoodstudio.ai',
+  HELP_ENDPOINT:        '',         // ← deixar vazio usa Claude/Gemini direto
+  COUNCIL_ENDPOINT:     '',
+  DOCS_ENDPOINT:        '',
+  FEED_ENDPOINT:        '',
 
-  // ─── IA ASSISTENTE (Claude direto no browser — opcional) ─────────────────
-  // Configurado pelo usuário em Admin → API Keys — não exponha aqui
-  CLAUDE_API_KEY:  '',
-  OPENAI_API_KEY:  '',
-
-  // ─── GEMINI (Flow, Storyboard, Aprimorar) ────────────────────────────────
-  GEMINI_API_KEY:  '',              // ← aistudio.google.com → Get API Key
-  GEMINI_MODEL:    'gemini-2.0-flash',
-
-  // ─── SEO ─────────────────────────────────────────────────────────────────
+  // ── SEO ──────────────────────────────────────────────────────────────────────
   SEO: {
     title:       'Hollywood Studio AI — Produção audiovisual com IA',
-    description: 'Gere vídeos, imagens e áudio cinematográficos com Seedance, Kling, Veo, Flux e mais.',
-    image:       'https://hollywoodstudio.ai/assets/logo-hero.png',
+    description: 'Gere vídeos, imagens e áudio cinematográficos com Seedance 2.0, Kling 3.0, Veo 3, Flux Pro e mais de 40 modelos. Direção criativa, storyboard e galeria.',
+    image:       'https://hollywoodstudio.ai/assets/logos/logo-hero.png',
     url:         'https://hollywoodstudio.ai',
   },
+
+  // ── GALERIA DE DEMO ──────────────────────────────────────────────────────────
+  // Deixe [] para usar os vídeos da pasta /assets/demo/
+  REEL_IMAGES: [],
 
 };

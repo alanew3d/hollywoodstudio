@@ -722,6 +722,22 @@ if(typeof document !== 'undefined' && document.addEventListener){
 
 </script>
 <link rel="icon" type="image/jpeg" href="/assets/logos/favicon.jpg">
+<script>
+// Favicon fallback
+(function(){
+  var paths=['/assets/logos/favicon.jpg','/assets/logos/favicon.png','/assets/favicon.jpg','/favicon.ico'];
+  var i=0;
+  function tryNext(){
+    if(i>=paths.length)return;
+    var l=document.querySelector('link[rel="icon"]');
+    if(!l){l=document.createElement('link');l.rel='icon';document.head.appendChild(l);}
+    l.href=paths[i];
+    l.onerror=function(){i++;tryNext();};
+    i++;
+  }
+  tryNext();
+})();
+</script>
 <link rel="shortcut icon" type="image/jpeg" href="/assets/logos/favicon.jpg">
 <link rel="apple-touch-icon" href="assets/icon.png?v=3">
 <link rel="apple-touch-icon" href="assets/icon.png">
@@ -958,14 +974,15 @@ a{color:inherit;text-decoration:none}
 .label{font-size:11px;letter-spacing:.4px;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-bottom:9px;display:block}
 
 /* ── Studio layout (generate) ── */
-.studio{display:grid;grid-template-columns:minmax(360px,400px) 1fr;gap:20px;align-items:start}
+.studio{display:grid;grid-template-columns:1fr minmax(340px,380px);gap:20px;align-items:start}
 @media(max-width:1080px){.studio{grid-template-columns:1fr}}
 /* ── Studio demo box acima de Creative Direction no mobile ── */
 @media(max-width:860px){
   .studio{display:flex;flex-direction:column}
-  .studio-demo-box{order:-1}          /* video fica primeiro */
+  .studio-demo-box{order:-1;display:block}  /* visível no desktop */
   .studio>div:nth-child(1){order:0}   /* coluna de controles */
-  .studio>aside{order:1}              /* preview/gallery */
+  .studio>aside{order:0}              /* preview/gallery vem primeiro no desktop */
+  .studio>div{order:1}                /* controls ficam depois */
 }
 /* ── Grids responsivos: 2→1 coluna em telas menores ── */
 @media(max-width:600px){
@@ -1111,8 +1128,11 @@ svg.sedges path{stroke:var(--accent);stroke-width:2;fill:none;opacity:.6}
 .sb-menu-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.12)}
 /* ── Studio demo video box mobile ── */
 @media(max-width:860px){
-  .studio-demo-box video{max-height:180px}
-  .studio-demo-box{border-radius:10px !important}
+  .studio-demo-box video{max-height:200px}
+  .studio-demo-box{border-radius:10px !important;display:none !important}  /* oculto no mobile */
+  /* No mobile: janela Lights Camera AI fica no TOPO, acima do prompt */
+  .studio>aside{order:-1}
+  .studio>div{order:0}
 }
 /* ── Favorites grid mobile ── */
 @media(max-width:560px){
@@ -1669,23 +1689,34 @@ const MODELS=[
   {id:'seedance2',img:'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=900&q=70&auto=format&fit=crop',name:'Seedance 2.0',sub:'bytedance · live',status:'live',cat:'video',featured:true,
    res:'1080p',max:'15s',durs:[4,5,6,8,10,12,15],ratio:'16:9 · 9:16 · 1:1',ref:'Texto/Imagem→Vídeo · Start+End · @char',
    desc:{pt:'Carro-chefe da ByteDance. Movimento de câmera coeso, física realista e ótima aderência a prompts cinematográficos longos. Ideal para comerciais e narrativa premium.',
-         en:'ByteDance flagship. Coherent camera motion, realistic physics and strong adherence to long cinematic prompts. Best for commercials and premium narrative.'}},
+         en:'ByteDance flagship. Coherent camera motion, realistic physics and strong adherence to long cinematic prompts. Best for commercials and premium narrative.'},
+   refSpec:{start:true, end:true, refs:3, video:false, audio:false}},
   {id:'seedance2fast',name:'Seedance 2.0 Fast',sub:'bytedance · live',status:'live',cat:'video',
    res:'720p',max:'15s',durs:[4,5,6,8,10,15],ratio:'16:9 · 9:16',ref:'Start frame',
    desc:{pt:'Versão acelerada — metade do tempo de render por um pequeno custo em detalhe. Perfeita para iterar variações antes do take final.',
-         en:'Accelerated build — half the render time for a small detail trade-off. Perfect for iterating variations before the final take.'}},
+         en:'Accelerated build — half the render time for a small detail trade-off. Perfect for iterating variations before the final take.'},
+   refSpec:{start:true, end:false, refs:1, video:false, audio:false}},
   {id:'kling3',img:'https://images.unsplash.com/photo-1518929458119-e5bf444c30f4?w=900&q=70&auto=format&fit=crop',name:'Kling 3.0',sub:'kuaishou · live',status:'live',cat:'video',featured:true,
    res:'4K',max:'15s',durs:[3,5,8,10,15],ratio:'16:9 · 9:16 · 1:1',ref:'Texto/Imagem→Vídeo · Start+End · Áudio nativo',
    desc:{pt:'Excelente expressão facial, transferência de movimento e continuidade de personagem. Gera com áudio. Forte para conteúdo com pessoas e UGC.',
-         en:'Excellent facial expression, motion transfer and character continuity. Generates with audio. Strong for people-driven and UGC content.'}},
+         en:'Excellent facial expression, motion transfer and character continuity. Generates with audio. Strong for people-driven and UGC content.'},
+   refSpec:{start:true, end:true, refs:2, video:false, audio:false}},
   {id:'klingmotion',img:'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=900&q=70&auto=format&fit=crop',name:'Kling 3.0 Motion Control',sub:'kuaishou · live',status:'live',cat:'video',featured:true,func:'motion',
    res:'1080p',max:'30s',durs:[3,5,10,15,20,30],ratio:'16:9 · 9:16',ref:'Vídeo de movimento + imagem',
    desc:{pt:'Transfere o movimento de um vídeo de referência para a sua imagem/personagem. Ideal para coreografias, gestos e mimetizar uma ação existente.',
-         en:'Transfers the motion of a reference video onto your image/character. Ideal for choreography, gestures and mimicking an existing action.'}},
+         en:'Transfers the motion of a reference video onto your image/character. Ideal for choreography, gestures and mimicking an existing action.'},
+   refSpec:{start:false, end:false, refs:0, video:true, audio:false}},
+  {id:'klingomni',name:'Kling Omni',sub:'kuaishou · live',status:'live',cat:'video',featured:true,func:'omni',
+   res:'4K',max:'15s',durs:[3,5,8,10,15],ratio:'16:9 · 9:16 · 1:1',ref:'Texto/Imagem · referência de personagem',
+   desc:{pt:'Edição e geração cinematográfica com controle total — muda fundo, roupa, estilo, mantém personagem. Similar ao Soul do Higgsfield.',
+         en:'Full cinematic edit and generation — change background, clothes, style, keep character. Similar to Higgsfield Soul.'},
+   refSpec:{start:true, end:false, refs:3, video:false, audio:false},
+  },
   {id:'klinglip',name:'Lipsync Studio',sub:'kling · live',status:'live',cat:'video',func:'lipsync',
    res:'1080p',max:'30s',durs:[5,10,15,20,30],ratio:'16:9 · 9:16 · 1:1',ref:'Vídeo/foto + áudio',
    desc:{pt:'Sincronia labial precisa: dê um rosto e um áudio (ou texto+voz) e ele faz a pessoa falar. Perfeito para avatares, dublagem e talking-heads.',
-         en:'Precise lip-sync: give a face and audio (or text+voice) and it makes the person speak. Perfect for avatars, dubbing and talking-heads.'}},
+         en:'Precise lip-sync: give a face and audio (or text+voice) and it makes the person speak. Perfect for avatars, dubbing and talking-heads.'},
+   refSpec:{start:true, end:false, refs:0, video:true, audio:true}},
   {id:'veo31',img:'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=900&q=70&auto=format&fit=crop',name:'Google Veo 3.1',sub:'google · live',status:'live',cat:'video',featured:true,
    res:'4K',max:'8s',durs:[4,6,8],ratio:'16:9 · 9:16',ref:'Texto + imagem + áudio',
    desc:{pt:'Áudio nativo e altíssima fidelidade fotográfica. Melhor escolha para hero shots 4K e planos com som ambiente sincronizado.',
@@ -1697,11 +1728,13 @@ const MODELS=[
   {id:'sora2',name:'Sora 2',sub:'openai · live',status:'live',cat:'video',featured:true,
    res:'1080p',max:'12s',durs:[4,8,12],ratio:'16:9 · 9:16 · 1:1',ref:'Texto + imagem',
    desc:{pt:'Modelo avançado da OpenAI. Forte em coerência de mundo, continuidade temporal e cenas complexas com várias ações.',
-         en:'OpenAI\'s advanced model. Strong world coherence, temporal continuity and complex multi-action scenes.'}},
+         en:'OpenAI\'s advanced model. Strong world coherence, temporal continuity and complex multi-action scenes.'},
+   refSpec:{start:true, end:false, refs:2, video:false, audio:false}},
   {id:'wan27',name:'Wan 2.7',sub:'alibaba · live',status:'live',cat:'video',
    res:'1080p',max:'15s',durs:[2,5,8,10,15],ratio:'16:9 · 9:16',ref:'Primeiro + último frame',
    desc:{pt:'Controle de primeiro e último frame — excelente para encadear clipes com continuidade exata. Base para a edição por frames.',
-         en:'First and last frame control — excellent for chaining clips with exact continuity. Backbone for frame-based editing.'}},
+         en:'First and last frame control — excellent for chaining clips with exact continuity. Backbone for frame-based editing.'},
+   refSpec:{start:true, end:true, refs:0, video:false, audio:false}},
   {id:'hailuo',name:'Minimax Hailuo 2.3',sub:'minimax · live',status:'live',cat:'video',
    res:'1080p',max:'10s',durs:[3,6,10],ratio:'16:9 · 9:16',ref:'Texto + imagem',
    desc:{pt:'O mais rápido e econômico. Alto dinamismo, pronto para VFX. Ótimo para volume e testes de conceito.',
@@ -1718,7 +1751,8 @@ const MODELS=[
   {id:'seedance15pro',name:'Seedance 1.5 Pro',sub:'bytedance · live',status:'live',cat:'video',
    res:'1080p',max:'12s',durs:[4,6,8,12],ratio:'16:9 · 9:16',ref:'Start + áudio',
    desc:{pt:'Sincronia áudio-visual de nível pro. Bom intermediário entre custo e qualidade.',
-         en:'Pro-grade audio-visual sync. Good middle ground of cost and quality.'}},
+         en:'Pro-grade audio-visual sync. Good middle ground of cost and quality.'},
+   refSpec:{start:true, end:false, refs:1, video:false, audio:true}},
   {id:'higgsdop',name:'Higgsfield DOP',sub:'higgsfield · live',status:'live',cat:'video',func:'camera',
    res:'1080p',max:'10s',durs:[3,5,10],ratio:'16:9 · 9:16',ref:'Imagem + câmera',
    desc:{pt:'Controle de câmera e VFX — defina movimentos (dolly, crane, orbit) com precisão de diretor de fotografia.',
@@ -2314,28 +2348,30 @@ function refreshPreviewHead(){
   const pm=document.getElementById('prevModel');if(pm)pm.textContent=(modelById(S.model)||{}).name||'';
 }
 function viewStudio(){
-  const opts=`<option value="16:9">16:9 — Cinema</option><option value="9:16">9:16 — Reels/TikTok</option><option value="1:1">1:1 — Feed</option><option value="2.39:1">2.39:1 — Scope</option>`;
-  const _demoV=pickDemo();
   return `
   ${reel('Generative cinema',S.lang==='pt'?'Da direção ao take final':'From direction to final take')}
-  <div class="chip-rail" id="modelRail" style="margin-bottom:16px"></div>
-  <div class="chip-rail" id="presetRail">${PRESETS.map(p=>`<div class="pchip" onclick="applyPreset('${p.n}',this)">${p.ic} ${p.n}</div>`).join('')}</div>
 
-  <!-- Video demo box antes da Creative Direction -->
-  <div class="dc-card studio-demo-box" style="margin-bottom:16px;padding:0;overflow:hidden;border-radius:14px;position:relative;cursor:pointer" onclick="openVideo('${escapeAttr(_demoV.url)}')">
-    <video src="${escapeAttr(_demoV.url)}" muted loop autoplay playsinline preload="auto"
-      style="width:100%;max-height:260px;object-fit:cover;display:block;background:#000"
+  <!-- ── BANNER DEMO — largura total, autoplay randômico, só desktop ── -->
+  <div class="dc-card studio-demo-box" id="studioDemoBox" style="margin-bottom:18px;padding:0;overflow:hidden;border-radius:14px;position:relative">
+    <video id="demoVid" muted autoplay playsinline preload="auto"
+      style="width:100%;max-height:300px;object-fit:cover;display:block;background:#000"
       onerror="this.closest('.studio-demo-box').style.display='none'"
       referrerpolicy="no-referrer"></video>
-    <div style="position:absolute;bottom:0;left:0;right:0;padding:14px 16px;background:linear-gradient(transparent,rgba(0,0,0,.75));display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    <div id="demoOverlay" style="position:absolute;bottom:0;left:0;right:0;padding:14px 18px;background:linear-gradient(transparent,rgba(0,0,0,.8));display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:8px">
       <div>
-        <div style="font-size:11px;color:rgba(255,255,255,.7);margin-bottom:2px">${S.lang==='pt'?'EXEMPLO GERADO COM':'GENERATED WITH'} ${escapeHtml(_demoV.model||'Seedance 2.0')}</div>
-        <div style="font-size:12px;color:rgba(255,255,255,.9);line-height:1.4;max-width:520px">${escapeHtml((_demoV.prompt||'').slice(0,90))}…</div>
+        <div id="demoModelLabel" style="font-size:10px;color:rgba(255,255,255,.6);letter-spacing:1px;margin-bottom:3px"></div>
+        <div id="demoPromptLabel" style="font-size:12.5px;color:rgba(255,255,255,.9);line-height:1.4;max-width:560px"></div>
       </div>
-      <button class="btn btn-sm" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:white;white-space:nowrap;backdrop-filter:blur(6px)" onclick="event.stopPropagation();loadPromptToStudio('${escapeAttr(_demoV.prompt||'')}','${_demoV.modelId||''}',false)">${S.lang==='pt'?'Usar Prompt →':'Use Prompt →'}</button>
+      <button class="btn btn-sm" id="demoUseBtn" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:white;white-space:nowrap;backdrop-filter:blur(6px)">${S.lang==='pt'?'Usar Prompt →':'Use Prompt →'}</button>
     </div>
+    <div style="position:absolute;top:10px;right:10px;display:flex;gap:6px" id="demoDots"></div>
   </div>
 
+  <!-- ── RAILS ── -->
+  <div class="chip-rail" id="modelRail" style="margin-bottom:12px"></div>
+  <div class="chip-rail" id="presetRail">${PRESETS.map(p=>`<div class="pchip" onclick="applyPreset('${p.n}',this)">${p.ic} ${p.n}</div>`).join('')}</div>
+
+  <!-- ── STUDIO GRID ── -->
   <div class="studio" style="margin-top:10px">
     <div>
       <div class="dc-card">
@@ -2396,6 +2432,44 @@ function afterStudio(){
   if(modelById(S.model).cat!==modeCats(S.cmode))S.model=MODELS.find(m=>m.cat===modeCats(S.cmode)).id;
   renderModelRail();renderCModelMenu();setModel(S.model);setCmodeUI();renderCRef();renderGalStrip();renderAspectPicker();cUpdateCost();
   setTimeout(attachMentionAutocomplete,80);
+  setTimeout(initDemoCarousel,100);
+}
+let _demoIdx=0,_demoTimer=null;
+function initDemoCarousel(){
+  const vid=document.getElementById('demoVid');
+  const box=document.getElementById('studioDemoBox');
+  if(!vid||!box)return;
+  // Combina DEMO_REEL + galeria do usuário para o carrossel
+  const galVids=(S.gallery||[]).filter(g=>g.type==='video'&&g.url).slice(0,4);
+  const pool=[...DEMO_REEL,...galVids.map(g=>({url:g.url,model:g.model||'',modelId:g.modelId||'',prompt:g.prompt||''}))];
+  if(!pool.length)return;
+  // Embaralhar deixando surf primeiro
+  const rest=pool.slice(1).sort(()=>Math.random()-.5);
+  const playlist=[pool[0],...rest];
+  // Dots de navegação
+  const dots=document.getElementById('demoDots');
+  if(dots)dots.innerHTML=playlist.map((_,i)=>`<div onclick="jumpDemo(${i})" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,${i===0?.9:.35});cursor:pointer;transition:.2s" class="ddot"></div>`).join('');
+  function playIdx(i){
+    _demoIdx=((i%playlist.length)+playlist.length)%playlist.length;
+    const d=playlist[_demoIdx];
+    vid.src=d.url;vid.currentTime=0;
+    vid.play().catch(()=>{});
+    const ml=document.getElementById('demoModelLabel');
+    const pl=document.getElementById('demoPromptLabel');
+    const ub=document.getElementById('demoUseBtn');
+    const lbl=d.model?(S.lang==='pt'?'GERADO COM ':'GENERATED WITH ')+d.model.toUpperCase():'';
+    if(ml)ml.textContent=lbl;
+    if(pl)pl.textContent=(d.prompt||'').slice(0,100)+(d.prompt&&d.prompt.length>100?'…':'');
+    if(ub){ub.onclick=()=>loadPromptToStudio(d.prompt||'',d.modelId||'',false);}
+    // Update dots
+    document.querySelectorAll('.ddot').forEach((dot,j)=>{dot.style.background=j===_demoIdx?'rgba(255,255,255,.9)':'rgba(255,255,255,.35)';});
+    clearTimeout(_demoTimer);
+    _demoTimer=setTimeout(()=>playIdx(_demoIdx+1),Math.max(8000,(d.dur||10)*1000+1000));
+  }
+  window.jumpDemo=i=>playIdx(i);
+  vid.addEventListener('ended',()=>playIdx(_demoIdx+1),{passive:true});
+  vid.onclick=()=>openVideo(playlist[_demoIdx].url,playlist[_demoIdx].prompt);
+  playIdx(0);
 }
 function toggleCModelMenu(){const mm=document.getElementById('cModelMenu'),ms=document.getElementById('cModelSelect');if(!mm)return;mm.classList.toggle('open');ms.classList.toggle('open');}
 function renderCModelMenu(){
@@ -2458,47 +2532,118 @@ function renderCRef(){
   const el=document.getElementById('cRefWrap');if(!el)return;const m=modelById(S.model);
   if(S.cmode==='text'){el.innerHTML='';return;}
   const pt=S.lang==='pt';
-  // ── Input mode selector ──────────────────────────────────
-  if(S.cmode==='video'){
-    if(!window._inputMode)window._inputMode='prompt';
-    const supSE=hasStartEnd(m), supRef=/[Vv]ídeo|[Vv]ideo|motion|[Mm]ov/.test(m.ref||'');
-    const allModes=[
-      ['prompt',  pt?'Só Prompt':'Prompt Only',       pt?'Texto → Vídeo':'Text → Video'],
-      ['img2vid', pt?'Imagem → Vídeo':'Image → Video', pt?'Upload de frame inicial':'Upload start frame'],
-      ['startend',pt?'Frame + Frame Final':'Start + End',pt?'Controla início e fim':'Controls first & last frame'],
-      ['vidref',  pt?'Ref. de Movimento':'Motion Ref', pt?'Estilo de um vídeo':'Motion style from video'],
-    ];
-    const modes=allModes.filter(([id])=>id==='prompt'||(id==='img2vid'&&supSE)||(id==='startend'&&supSE)||(id==='vidref'&&supRef));
-    if(modes.length>1){
-      const modeHtml=`<div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap" id="inputModeTabs">
-        ${modes.map(([id,lbl,sub])=>`<button onclick="window._inputMode='${id}';renderCRef()" style="padding:6px 12px;border-radius:8px;border:1.5px solid ${window._inputMode===id?'var(--accent)':'var(--line)'};background:${window._inputMode===id?'var(--accent-dim)':'transparent'};color:${window._inputMode===id?'var(--accent)':'var(--ink-3)'};font-size:11.5px;cursor:pointer;text-align:left;line-height:1.4"><b style="display:block">${lbl}</b><span style="font-size:10px;opacity:.7">${sub}</span></button>`).join('')}
-      </div>`;
-      el.innerHTML=modeHtml;
-    }
+  const rs=m.refSpec||{start:false,end:false,refs:1,video:false,audio:false};
+
+  if(S.cmode==='audio'){
+    // Áudio: só referência de letra/estilo
+    el.innerHTML=`<div class="drop" onclick="document.getElementById('refFile').click()">📎 ${pt?'Letra / referência (opcional)':'Lyrics / reference (optional)'}</div>
+      <input type="file" id="refFile" accept=".txt,audio/*" class="hide" onchange="addRefs(this)">
+      <div class="thumbs" id="refThumbs"></div>`;
+    return;
   }
-  const _mode=window._inputMode||'prompt';
-  // se modo = prompt: mostra só refs opcionais
-  // se img2vid: mostra só startFrame
-  // se startend: mostra startFrame + endFrame
-  // se vidref: mostra ref de vídeo
-  let html='';
-  if(S.cmode==='video'&&window._inputMode==='prompt'){
-    el.innerHTML=(el.innerHTML||'')+`<div class="drop" onclick="document.getElementById('refFile').click()">${S.lang==='pt'?'📎 Referência opcional (imagem/vídeo)':'📎 Optional reference (image/video)'}</div><input type="file" id="refFile" multiple accept="image/*,video/*" class="hide" onchange="addRefs(this)"><div class="thumbs" id="refThumbs"></div>`;
+
+  if(S.cmode==='image'){
+    // Imagem: só refs
+    const maxR=rs.refs||3;
+    el.innerHTML=`<div class="drop" onclick="document.getElementById('refFile').click()">📎 ${pt?`Referência visual (máx. ${maxR})`:`Visual reference (max. ${maxR})`}</div>
+      <input type="file" id="refFile" multiple accept="image/*" class="hide" onchange="addRefs(this)">
+      <div class="thumbs" id="refThumbs"></div>`;
     drawRefs();return;
   }
-  if(modeCats(S.cmode)!=='audio'&&hasStartEnd(m)&&(_mode==='startend')){
 
-    html+=`<div class="row" style="gap:10px;margin-bottom:10px">
-      <div style="flex:1"><div class="drop" onclick="document.getElementById('startFile').click()">${_startFrame?'<img src="'+_startFrame+'" style="max-height:64px;border-radius:6px">':(S.lang==='pt'?'+ Frame inicial':'+ Start frame')}</div>
-        <input type="file" id="startFile" class="hide" accept="image/*" onchange="setFrame('start',this)"></div>
-      <div style="flex:1"><div class="drop" onclick="document.getElementById('endFile').click()">${_endFrame?'<img src="'+_endFrame+'" style="max-height:64px;border-radius:6px">':(S.lang==='pt'?'+ Frame final':'+ End frame')}</div>
-        <input type="file" id="endFile" class="hide" accept="image/*" onchange="setFrame('end',this)"></div></div>`;
+  // ── VÍDEO ─────────────────────────────────────────────
+  // Determinar quais modos estão disponíveis para este modelo
+  const modes=[];
+  modes.push(['prompt', pt?'Só Prompt':'Prompt Only', pt?'Texto → Vídeo':'Text → Video']);
+  if(rs.start) modes.push(['img2vid', pt?'Imagem → Vídeo':'Image → Video', pt?'Frame inicial':'Start frame']);
+  if(rs.start && rs.end) modes.push(['startend', pt?'Start + End':'Start + End', pt?'Controla início e fim':'First & last frame']);
+  if(rs.video) modes.push(['vidref', pt?'Ref. Movimento':'Motion Ref', pt?'Estilo de vídeo':'Motion style from video']);
+  if(rs.audio) modes.push(['lipsync', pt?'Lipsync':'Lipsync', pt?'Vídeo + áudio':'Video + audio']);
+  if(rs.refs>0&&!rs.start&&!rs.video) modes.push(['refs', pt?'Referências':'References', pt?`Imagens de ref. (máx. ${rs.refs})`:`Ref. images (max. ${rs.refs})`]);
+
+  // Reset input mode se não disponível no modelo atual
+  if(!window._inputMode||!modes.find(m=>m[0]===window._inputMode)) window._inputMode=modes[0][0];
+
+  let html='';
+  if(modes.length>1){
+    html+=`<div style="display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap" id="inputModeTabs">
+      ${modes.map(([id,lbl,sub])=>`<button onclick="window._inputMode='${id}';renderCRef()" style="padding:5px 11px;border-radius:8px;border:1.5px solid ${window._inputMode===id?'var(--accent)':'var(--line)'};background:${window._inputMode===id?'var(--accent-dim)':'transparent'};color:${window._inputMode===id?'var(--accent)':'var(--ink-3)'};font-size:11px;cursor:pointer;text-align:left;line-height:1.35"><b style="display:block;font-size:12px">${lbl}</b><span style="font-size:10px;opacity:.7">${sub}</span></button>`).join('')}
+    </div>`;
   }
-  html+=`<div class="drop" onclick="document.getElementById('refFile').click()">📁 ${S.lang==='pt'?'Click or drag — referências (@)':'Click or drag — references (@)'}</div>
-    <input type="file" id="refFile" multiple accept="image/*,video/*" class="hide" onchange="addRefs(this)">
+
+  const mode=window._inputMode||'prompt';
+
+  if(mode==='prompt'){
+    // Prompt + referências opcionais
+    const maxOpt=rs.refs>0?rs.refs:2;
+    el.innerHTML=html+`<div class="drop" onclick="document.getElementById('refFileOpt').click()">
+      📎 ${pt?`Referência visual opcional (máx. ${maxOpt})`:`Optional visual reference (max. ${maxOpt})`}
+    </div>
+    <input type="file" id="refFileOpt" ${maxOpt>1?'multiple':''} accept="image/*" class="hide" onchange="addRefs(this)">
     <div class="thumbs" id="refThumbs"></div>`;
+    drawRefs();return;
+  }
+
+  if(mode==='img2vid'){
+    html+=`<div class="drop" onclick="document.getElementById('startFile').click()" style="margin-bottom:8px">
+      ${_startFrame?`<img src="${_startFrame}" style="max-height:72px;border-radius:6px">`:(pt?'📷 Frame inicial (imagem de partida)':'📷 Start frame (first image)')}
+      ${_startFrame?`<button onclick="event.stopPropagation();_startFrame=null;renderCRef()" style="position:absolute;top:4px;right:4px;background:var(--err);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer">×</button>`:''}
+    </div>
+    <input type="file" id="startFile" class="hide" accept="image/*" onchange="setFrame('start',this)">`;
+    el.innerHTML=html;return;
+  }
+
+  if(mode==='startend'){
+    html+=`<div class="row" style="gap:8px;margin-bottom:8px">
+      <div style="flex:1;position:relative">
+        <div class="drop" onclick="document.getElementById('startFile').click()">
+          ${_startFrame?`<img src="${_startFrame}" style="max-height:64px;border-radius:5px">`:(pt?'📷 Frame inicial':'📷 Start frame')}
+        </div>
+        ${_startFrame?`<button onclick="_startFrame=null;renderCRef()" style="position:absolute;top:-6px;right:-6px;background:var(--err);color:#fff;border:none;border-radius:50%;width:17px;height:17px;font-size:11px;cursor:pointer">×</button>`:''}
+        <input type="file" id="startFile" class="hide" accept="image/*" onchange="setFrame('start',this)">
+      </div>
+      <div style="flex:1;position:relative">
+        <div class="drop" onclick="document.getElementById('endFile').click()">
+          ${_endFrame?`<img src="${_endFrame}" style="max-height:64px;border-radius:5px">`:(pt?'📷 Frame final':'📷 End frame')}
+        </div>
+        ${_endFrame?`<button onclick="_endFrame=null;renderCRef()" style="position:absolute;top:-6px;right:-6px;background:var(--err);color:#fff;border:none;border-radius:50%;width:17px;height:17px;font-size:11px;cursor:pointer">×</button>`:''}
+        <input type="file" id="endFile" class="hide" accept="image/*" onchange="setFrame('end',this)">
+      </div>
+    </div>`;
+    el.innerHTML=html;return;
+  }
+
+  if(mode==='vidref'){
+    html+=`<div class="drop" onclick="document.getElementById('refFile').click()">
+      🎬 ${pt?'Vídeo de referência (estilo/movimento)':'Reference video (style/motion)'}
+    </div>
+    <input type="file" id="refFile" accept="video/*" class="hide" onchange="addRefs(this)">
+    <div class="thumbs" id="refThumbs"></div>`;
+    el.innerHTML=html;drawRefs();return;
+  }
+
+  if(mode==='lipsync'){
+    html+=`<div class="row" style="gap:8px;margin-bottom:8px">
+      <div style="flex:1"><div class="drop" onclick="document.getElementById('startFile').click()">
+        ${_startFrame?`<img src="${_startFrame}" style="max-height:64px;border-radius:5px">`:(pt?'📷 Foto/vídeo do apresentador':'📷 Presenter photo/video')}
+      </div><input type="file" id="startFile" class="hide" accept="image/*,video/*" onchange="setFrame('start',this)"></div>
+      <div style="flex:1"><div class="drop" onclick="document.getElementById('audioFile').click()">
+        🎤 ${pt?'Áudio / voz':'Audio / voice'}
+      </div><input type="file" id="audioFile" class="hide" accept="audio/*" onchange="setAudioRef(this)"></div>
+    </div>`;
+    el.innerHTML=html;return;
+  }
+
+  // refs mode (imagens de referência genéricas)
+  const maxR=rs.refs||1;
+  html+=`<div class="drop" onclick="document.getElementById('refFile').click()">
+    📎 ${pt?`Referência visual (máx. ${maxR} imagem)`:`Visual reference (max. ${maxR} image)`}
+  </div>
+  <input type="file" id="refFile" ${maxR>1?'multiple':''} accept="image/*" class="hide" onchange="addRefs(this)">
+  <div class="thumbs" id="refThumbs"></div>`;
   el.innerHTML=html;drawRefs();
 }
+function setAudioRef(inp){const f=inp.files[0];if(!f)return;window._audioRef=f;toast(S.lang==='pt'?'Áudio carregado: '+f.name:'Audio loaded: '+f.name,'ok');}
 function cDurInput(v){S._dur=+v;const dv=document.getElementById('durVal');if(dv)dv.textContent=v+'s';cUpdateCost();}
 function cUpdateCost(){
   const m=modelById(S.model);
@@ -3177,8 +3322,11 @@ function adminUsersCard(){
     <div style="width:32px;height:32px;border-radius:50%;background:var(--accent-dim);display:grid;place-items:center;color:var(--accent);font-weight:700">${r.picture?`<img src="${r.picture}" style="width:100%;height:100%;border-radius:50%;object-fit:cover" referrerpolicy="no-referrer">`:(r.name||'?')[0].toUpperCase()}</div>
     <div><b style="font-size:13px">${escapeHtml(r.name||'—')}</b><div style="font-size:11px;color:var(--ink-3)">${escapeHtml(r.email||r.uid)}${r.google?' · Google':''}</div></div>
     <div style="font-size:11px;color:var(--ink-3)">${new Date(r.createdAt).toLocaleDateString()}</div>
-    <input class="input" style="padding:5px 8px;font-size:12px" type="number" value="${r.credits|0}" onchange="applyAdminUserAction('${r.uid}','credits',this.value)" title="${S.lang==='pt'?'créditos':'credits'}">
-    <select class="input" style="padding:5px 8px;font-size:12px" onchange="applyAdminUserAction('${r.uid}','role',this.value)"><option value="user" ${r.role==='user'?'selected':''}>${S.lang==='pt'?'Usuário':'User'}</option><option value="admin" ${r.role==='admin'?'selected':''}>Admin</option></select>
+    <div style="display:flex;gap:3px;align-items:center">
+      <input class="input" style="padding:5px 6px;font-size:12px;width:70px" type="number" id="cr_${r.uid}" value="${r.credits|0}" title="${S.lang==='pt'?'créditos':'credits'}">
+      <button class="btn btn-ghost btn-sm" style="padding:4px 7px;font-size:13px;color:var(--ok)" onclick="applyAdminUserAction('${r.uid}','credits',document.getElementById('cr_${r.uid}').value);toast('✓','ok')" title="${S.lang==='pt'?'Salvar créditos':'Save credits'}">✓</button>
+    </div>
+    <select class="input" style="padding:5px 8px;font-size:12px" onchange="applyAdminUserAction('${r.uid}','role',this.value);toast(S.lang==='pt'?'Papel atualizado':'Role updated','ok')"><option value="user" ${r.role==='user'?'selected':''}>${S.lang==='pt'?'Usuário':'User'}</option><option value="admin" ${r.role==='admin'?'selected':''}>Admin</option></select>
     <div style="display:flex;gap:4px"><button class="btn btn-ghost btn-sm" style="padding:4px 8px;font-size:11px" onclick="openPaymentsModal('${r.uid}')" title="${S.lang==='pt'?'Pagamentos & reembolsos':'Payments & refunds'}">💰</button>
       <button class="btn btn-ghost btn-sm" style="padding:4px 8px;font-size:11px" onclick="applyAdminUserAction('${r.uid}','addCredits',prompt('${S.lang==='pt'?'Quantos créditos adicionar?':'How many credits to add?'}','100'))">+ ${S.lang==='pt'?'cred':'cred'}</button>
       <button class="btn btn-ghost btn-sm" style="padding:4px 8px;font-size:11px;color:var(--err)" onclick="if(confirm('${S.lang==='pt'?'Excluir conta?':'Delete account?'}'))applyAdminUserAction('${r.uid}','delete')">✕</button></div>
@@ -3195,7 +3343,7 @@ function applyCfgOverrides(){
   if(o.STRIPE){CFG.STRIPE=Object.assign({},CFG.STRIPE,o.STRIPE);}
   if(o.STRIPE_TOPUPS){CFG.STRIPE_TOPUPS=Object.assign({},CFG.STRIPE_TOPUPS,o.STRIPE_TOPUPS);}
   if(o.PAY){CFG.PAY=Object.assign({},CFG.PAY,o.PAY);}
-  ['HELP_ENDPOINT','DOCS_ENDPOINT','COUNCIL_ENDPOINT','JOBS_ENDPOINT','NEWS_ENDPOINT','MODERATION_ENDPOINT','FEED_ENDPOINT','AUTH_ENDPOINT','GOOGLE_CLIENT_ID','PROVIDER','PAYPAL','PIX','GEMINI_API_KEY','GEMINI_MODEL','YOUTUBE_API_KEY']
+  ['HELP_ENDPOINT','DOCS_ENDPOINT','COUNCIL_ENDPOINT','JOBS_ENDPOINT','NEWS_ENDPOINT','MODERATION_ENDPOINT','FEED_ENDPOINT','AUTH_ENDPOINT','GOOGLE_CLIENT_ID','PROVIDER','PAYPAL','PIX','GEMINI_API_KEY','GEMINI_MODEL','YOUTUBE_API_KEY','CLAUDE_API_KEY','OPENAI_API_KEY']
     .forEach(k=>{if(o[k]!==undefined&&o[k]!=='')CFG[k]=o[k];});
 }
 function googleAuthCard(){
@@ -3609,7 +3757,17 @@ function renderRefArea(){
 }
 function setFrame(which,inp){const f=inp.files[0];if(!f)return;const r=new FileReader();
   r.onload=e=>{if(which==='start')_startFrame=e.target.result;else _endFrame=e.target.result;renderRefArea();};r.readAsDataURL(f);}
-function addRefs(inp){[...inp.files].forEach(f=>{const r=new FileReader();r.onload=e=>{_refs.push(e.target.result);drawRefs();};r.readAsDataURL(f);});}
+function addRefs(inp){
+  const m=modelById(S.model);
+  const rs=m.refSpec||{refs:3};
+  const maxR=rs.refs>0?rs.refs:3;
+  [...inp.files].forEach(f=>{
+    if(_refs.length>=maxR){toast(S.lang==='pt'?`Máximo ${maxR} referência(s) para ${m.name}`:`Max ${maxR} reference(s) for ${m.name}`,'err');return;}
+    const r=new FileReader();
+    r.onload=e=>{_refs.push(e.target.result);drawRefs();};
+    r.readAsDataURL(f);
+  });
+}
 function drawRefs(){const el=document.getElementById('refThumbs');if(el)el.innerHTML=_refs.map((s,i)=>`<img class="t" src="${s}" onclick="_refs.splice(${i},1);drawRefs()" title="remover" referrerpolicy="no-referrer">`).join('');}
 const STYLE_DESC={
   'Cinematográfico':{pt:'estética cinematográfica, lente anamórfica, color grading de cinema, alta realismo',en:'cinematic aesthetic, anamorphic lens, film color grading, high realism'},
@@ -6044,17 +6202,45 @@ function pushHelp(role,text){_helpMsgs.push({role,text});const s=document.getEle
 async function sendHelp(){
   const inp=document.getElementById('helpIn');const q=inp.value.trim();if(!q)return;
   pushHelp('u',q);inp.value='';
+  const sub=document.getElementById('helpSub');
   if(CFG.HELP_ENDPOINT){
-    try{const r=await fetch(CFG.HELP_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({message:q,history:_helpMsgs,user:S.user})});
-      const d=await r.json();pushHelp('a',d.reply||'…');
-      if(d.escalated)pushHelp('a',S.lang==='pt'?'Encaminhei para a equipe — você terá retorno por e-mail.':'Escalated to the team — you\'ll get an email reply.');
-    }catch(e){pushHelp('a',S.lang==='pt'?'Não consegui conectar ao suporte agora. Vou registrar e a equipe responde por e-mail.':'Couldn\'t reach support now. Logging it; the team will reply by email.');}
-  }else{
-    // local FAQ fallback
-    pushHelp('a',helpFAQ(q));
+    try{const r=await fetch(CFG.HELP_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,history:_helpMsgs,user:S.user})});
+      const d=await r.json();pushHelp('a',d.reply||'…');return;}catch(e){}
   }
+  const claudeKey=CFG.CLAUDE_API_KEY||(typeof localStorage!=='undefined'?localStorage.getItem('hsai_claude_key'):'')||'';
+  if(claudeKey){
+    if(sub)sub.textContent='Pensando…';
+    try{
+      const sysP=`Você é o assistente do Hollywood Studio AI (hollywoodstudio.ai), plataforma SaaS de produção audiovisual com IA. Responda de forma concisa e útil em ${S.lang==='pt'?'português':'English'}. PLANOS: Básico R$99/150s · Premium R$199/300s · Avançado R$349/600s. Pagamento: Stripe, PayPal, Pix. MODELOS: Seedance 2.0 (vídeo premium até 15s) · Kling 3.0 (pessoas/expressões) · Veo 3 (4K+áudio) · Flux Pro (imagem editorial) · Suno (trilha) · ElevenLabs (voz). CRÉDITOS: 1 crédito = 1 segundo de vídeo. PERSONAGENS: @handle para consistência visual entre cenas. STORYBOARD: planeje cenas e gere em sequência.`;
+      const msgs=_helpMsgs.slice(-8).map(m=>({role:m.role==='u'?'user':'assistant',content:m.text}));
+      msgs.push({role:'user',content:q});
+      const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':claudeKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:400,system:sysP,messages:msgs})});
+      const d=await r.json();
+      const reply=d.content?.[0]?.text;
+      if(reply){pushHelp('a',reply);if(sub)sub.textContent='Online · Claude';return;}
+    }catch(e){console.log('Claude help error:',e);}
+    finally{if(sub)sub.textContent='Online · responde na hora';}
+  }
+  const gemKey=CFG.GEMINI_API_KEY||'';
+  if(gemKey){
+    if(sub)sub.textContent='Pensando…';
+    try{
+      const hist=_helpMsgs.slice(-6).map(m=>({role:m.role==='u'?'user':'model',parts:[{text:m.text}]}));
+      hist.push({role:'user',parts:[{text:q}]});
+      const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${gemKey}`,
+        {method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({contents:hist,systemInstruction:{parts:[{text:`Assistente do Hollywood Studio AI. Responda em ${S.lang==='pt'?'português':'English'}. Planos: Básico R$99, Premium R$199, Avançado R$349. Modelos: Seedance, Kling, Veo, Flux, Suno, ElevenLabs.`}]}})});
+      const d=await r.json();
+      const reply=d.candidates?.[0]?.content?.parts?.[0]?.text;
+      if(reply){pushHelp('a',reply);if(sub)sub.textContent='Online · Gemini';return;}
+    }catch(e){console.log('Gemini help error:',e);}
+    finally{if(sub)sub.textContent='Online · responde na hora';}
+  }
+  pushHelp('a',helpFAQ(q));
 }
+
 function helpFAQ(q){
   q=q.toLowerCase();
   const PT={
