@@ -2274,8 +2274,7 @@ function userMenu(){
     <button class="up-item" onclick="closeUserPop();go('gallery')">${I('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/>')}<span>${pt?'Minha galeria':'My gallery'}</span></button>
     ${S.user.admin?`<button class="up-item" onclick="closeUserPop();go('admin')">${I('<path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/>')}<span>Admin</span></button>`:''}
     <div class="up-sep"></div>
-    <button class="up-item" onclick="openChangePassword()">${I('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v4M12 16h.01"/>')}<span>${pt?'Alterar senha':'Change password'}</span></button>
-    <button class="up-item danger" onclick="confirmDeleteAccount()">${I('<path d="M3 6h18M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/>')}<span style="color:var(--err)">${pt?'Excluir minha conta':'Delete my account'}</span></button>
+    <button class="up-item" onclick="openAccountSettings()">${I('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8.6 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.16.38.39.72.69 1H21a2 2 0 0 1 0 4h-.91a1.65 1.65 0 0 0-.69 1z"/>')}<span>${pt?'Configurações da conta':'Account settings'}</span></button>
     <div class="up-sep"></div>
     <button class="up-item danger" onclick="logoutUser()">${I('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/>')}<span>${pt?'Sair da conta':'Log out'}</span></button>`;
   pop.classList.add('open');
@@ -7384,6 +7383,36 @@ async function checkHeygenStatus(videoId){
 }
 
 
+function openAccountSettings(){
+  var pt=S.lang==='pt';
+  closeUserPop();
+  var existing=document.getElementById('accountSettingsOverlay');
+  if(existing)existing.remove();
+  var overlay=document.createElement('div');
+  overlay.className='overlay open show';
+  overlay.id='accountSettingsOverlay';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:9998;display:flex;align-items:center;justify-content:center;padding:18px';
+  overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
+  var modal=document.createElement('div');
+  modal.className='modal modal-card';
+  modal.style.cssText='max-width:520px;width:96%;background:var(--panel);border:1px solid var(--line-2);border-radius:16px;padding:24px;box-shadow:0 30px 80px rgba(0,0,0,.45)';
+  modal.innerHTML='<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px">'
+    +'<div><h3 style="margin:0 0 4px">'+(pt?'Configurações da conta':'Account settings')+'</h3>'
+    +'<div style="font-size:12px;color:var(--ink-3)">'+escapeHtml((S.user&&S.user.email)||'')+'</div></div>'
+    +'<button class="modal-close" style="position:static" onclick="document.getElementById(&#39;accountSettingsOverlay&#39;).remove()">×</button></div>'
+    +'<div style="display:grid;gap:8px">'
+    +'<button class="up-item" onclick="document.getElementById(&#39;accountSettingsOverlay&#39;).remove();openChangePassword()"><span>🔐</span><span>'+(pt?'Alterar senha':'Change password')+'</span></button>'
+    +'<button class="up-item" onclick="document.getElementById(&#39;accountSettingsOverlay&#39;).remove();go(&#39;analytics&#39;)"><span>📊</span><span>'+(pt?'Estatísticas de uso':'Usage analytics')+'</span></button>'
+    +'<button class="up-item" onclick="document.getElementById(&#39;accountSettingsOverlay&#39;).remove();go(&#39;plans&#39;)"><span>🎟</span><span>'+(pt?'Assinatura e planos':'Subscription and plans')+'</span></button>'
+    +'<div class="up-sep"></div>'
+    +'<button class="up-item danger" onclick="confirmDeleteAccount()"><span>🗑</span><span style="color:var(--err)">'+(pt?'Excluir minha conta':'Delete my account')+'</span></button>'
+    +'<div style="font-size:11.5px;color:var(--ink-4);line-height:1.45;padding:4px 2px 0">'+(pt?'A exclusão fica aqui para evitar cliques acidentais no menu principal.':'Deletion lives here to avoid accidental clicks in the main profile menu.')+'</div>'
+    +'</div>';
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+}
+
+
 
 function openChangePassword(){
   var pt=S.lang==='pt';
@@ -7393,13 +7422,13 @@ function openChangePassword(){
   if(existing)existing.remove();
   // Build overlay via createElement to avoid any HTML parsing issues
   var overlay=document.createElement('div');
-  overlay.className='overlay show';
+  overlay.className='overlay open show';
   overlay.id='changePwOverlay';
   overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center';
   overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
 
   var modal=document.createElement('div');
-  modal.style.cssText='background:var(--panel);border-radius:16px;padding:28px;width:90%;max-width:420px;position:relative';
+  modal.style.cssText='background:var(--panel);border:1px solid var(--line-2);border-radius:16px;padding:28px;width:90%;max-width:420px;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.45)';
 
   var closeBtn=document.createElement('button');
   closeBtn.textContent='×';
@@ -7407,8 +7436,11 @@ function openChangePassword(){
   closeBtn.onclick=function(){overlay.remove();};
 
   var title=document.createElement('h3');
-  title.style.cssText='margin:0 0 20px;font-size:18px';
-  title.textContent=pt?'Alterar Senha':'Change Password';
+  title.style.cssText='margin:0 0 8px;font-size:18px';
+  title.textContent=pt?'Alterar senha':'Change password';
+  var note=document.createElement('p');
+  note.style.cssText='margin:0 0 18px;color:var(--ink-3);font-size:12.5px;line-height:1.5';
+  note.textContent=pt?'Defina uma nova senha para este login local.':'Set a new password for this local login.';
 
   function makeField(labelText, id, placeholder){
     var wrap=document.createElement('div');
@@ -7428,7 +7460,7 @@ function openChangePassword(){
     return wrap;
   }
 
-  var f1=makeField(pt?'Senha atual (opcional se nunca definiu)':'Current password (optional)',  'pwCurrent', '••••••••');
+  var f1=makeField(pt?'Senha atual (deixe vazio se nunca definiu)':'Current password (leave blank if never set)',  'pwCurrent', '••••••••');
   var f2=makeField(pt?'Nova senha (mínimo 6 caracteres)':'New password (min. 6 chars)', 'pwNew',     '••••••••');
   var f3=makeField(pt?'Confirmar nova senha':'Confirm new password',            'pwConfirm', '••••••••');
 
@@ -7436,14 +7468,16 @@ function openChangePassword(){
   btn.className='btn btn-primary';
   btn.style.cssText='width:100%;margin-top:8px;padding:12px';
   btn.textContent=pt?'Alterar senha':'Change password';
-  btn.onclick=function(){doChangePassword();};
+  btn.onclick=function(e){e.preventDefault();doChangePassword();};
 
   modal.appendChild(closeBtn);
   modal.appendChild(title);
+  modal.appendChild(note);
   modal.appendChild(f1);
   modal.appendChild(f2);
   modal.appendChild(f3);
   modal.appendChild(btn);
+  [f1,f2,f3].forEach(function(w){var inp=w.querySelector('input');if(inp)inp.onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();doChangePassword();}};});
   overlay.appendChild(modal);
   // Defer append to avoid the current click event hitting the overlay
   setTimeout(function(){
@@ -10848,7 +10882,7 @@ var PUBLIC_GALLERY_SEED = [
 
 /* Final global exposure after all function declarations */
 (function(){
-  var names=['sendToStudio','sendGalleryToStudio','sendModelToStudio','galFavToggle','toggleFavorite','runCouncil','runJudge','openDirectorFavOpinion','editChar','openChangePassword','doChangePassword','previewTemplate','loadTemplate','applyAdminUserAction','betaToast'];
+  var names=['sendToStudio','sendGalleryToStudio','sendModelToStudio','galFavToggle','toggleFavorite','runCouncil','runJudge','openDirectorFavOpinion','editChar','openAccountSettings','openChangePassword','doChangePassword','previewTemplate','loadTemplate','applyAdminUserAction','confirmDeleteAccount','betaToast'];
   names.forEach(function(name){try{if(typeof eval(name)==='function')window[name]=eval(name);}catch(e){}});
 })();
 
