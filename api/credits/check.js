@@ -7,8 +7,11 @@
  * verificar se créditos foram adicionados (via webhook).
  */
 
+import { setCors, handleOptions } from '../_lib/cors.js';
+
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', process.env.SITE_URL || '*');
+  setCors(req, res);
+  if (handleOptions(req, res)) return;
 
   const { email, uid } = req.query;
   if (!email && !uid) return res.status(400).json({ error: 'Missing email or uid' });

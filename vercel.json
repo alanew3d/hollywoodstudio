@@ -1,41 +1,32 @@
 {
   "version": 2,
   "builds": [
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "config.js",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "admin-patch.js",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "assets/**",
-      "use": "@vercel/static"
-    }
+    { "src": "api/**/*.js", "use": "@vercel/node" },
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "config.js", "use": "@vercel/static" },
+    { "src": "admin-patch.js", "use": "@vercel/static" },
+    { "src": "hsai-core.js", "use": "@vercel/static" },
+    { "src": "GUIA_COMPLETO.html", "use": "@vercel/static" },
+    { "src": "robots.txt", "use": "@vercel/static" },
+    { "src": "sitemap.xml", "use": "@vercel/static" },
+    { "src": "llms.txt", "use": "@vercel/static" },
+    { "src": "manifest.json", "use": "@vercel/static" },
+    { "src": "assets/**", "use": "@vercel/static" }
   ],
+  "functions": {
+    "api/**/*.js": { "memory": 256, "maxDuration": 15 }
+  },
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
     { "src": "/assets/(.*)", "dest": "/assets/$1" },
+    { "src": "/robots.txt", "dest": "/robots.txt" },
+    { "src": "/sitemap.xml", "dest": "/sitemap.xml" },
+    { "src": "/llms.txt", "dest": "/llms.txt" },
+    { "src": "/manifest.json", "dest": "/manifest.json" },
+    { "src": "/guia", "dest": "/GUIA_COMPLETO.html" },
     { "src": "/(.*)", "dest": "/index.html" }
   ],
   "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET,POST,OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization" }
-      ]
-    },
     {
       "source": "/assets/(.*)",
       "headers": [
@@ -43,9 +34,19 @@
       ]
     },
     {
+      "source": "/(robots.txt|sitemap.xml|llms.txt|manifest.json)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
+    {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" }
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
       ]
     }
   ]

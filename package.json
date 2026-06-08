@@ -1,8 +1,9 @@
 {
   "name": "hollywoodstudio-ai",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Hollywood Studio AI — Produção audiovisual cinematográfica com IA",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vercel dev",
     "deploy": "vercel --prod"

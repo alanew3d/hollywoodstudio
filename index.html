@@ -29,6 +29,8 @@
 {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Hollywood Studio AI","applicationCategory":"MultimediaApplication","operatingSystem":"Web","description":"Plataforma de produção audiovisual com IA para gerar vídeo, imagem e áudio cinematográficos.","url":"https://hollywoodstudio.ai/","offers":{"@type":"Offer","price":"99","priceCurrency":"BRL"},"author":{"@type":"Organization","name":"Hollywood Studio AI"}}
 </script>
 <script src="/config.js"></script>
+<script>console.log("Hollywood Studio AI loaded - build ok");</script>
+<link rel="manifest" href="/manifest.json">
 <script>
 /* ════════ HOLLYWOOD STUDIO AI — Script #0 (data layer + helpers) ════════ */
 /* Rewritten with template literals to avoid quote-escaping issues */
@@ -1570,6 +1572,28 @@ input[type=range]{accent-color:var(--accent)}
 .view>div[style*="linear-gradient(135deg,#081408"],
 .view>div[style*="linear-gradient(135deg,#0d1a2a"],
 .view>div[style*="background:#0a0a14"]{display:none!important}
+
+/* Premium refinements v3.1 */
+.btn{transition:transform .15s var(--ease),box-shadow .15s var(--ease)}
+.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.18)}
+.card,.plan,.dc-card{box-shadow:0 1px 0 var(--line),0 8px 28px rgba(0,0,0,.12)}
+.nav-item.active,.nav-item.on{background:var(--accent-dim);border-left:2px solid var(--accent)}
+input:focus,textarea:focus{outline:2px solid var(--accent-dim);outline-offset:1px}
+@media(max-width:768px){.main{padding:0 12px 24px!important}}
+
+/* ── Premium refinements v3.1 ── */
+.btn{transition:transform .15s var(--ease),box-shadow .15s var(--ease),background .15s}
+.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.18)}
+.btn:active:not(:disabled){transform:translateY(0)}
+.btn-primary:hover:not(:disabled){filter:brightness(1.06)}
+.card,.plan,.dc-card,.modal-card{box-shadow:0 1px 0 var(--line),0 8px 28px rgba(0,0,0,.12)}
+.nav-item.active,.nav-item.on{background:var(--accent-dim);border-left:2px solid var(--accent)}
+.topbar .credits-pill{font-weight:600;letter-spacing:.02em}
+.view-head h1.serif{letter-spacing:-.02em}
+.view-head p{max-width:640px;line-height:1.65}
+.toast{backdrop-filter:blur(8px)}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--accent-dim);outline-offset:1px}
+@media(max-width:768px){.main{padding:0 12px 24px!important}}
 #academyQ,.academy textarea{background:var(--panel-2)!important;color:var(--ink)!important}
 </style>
 </head>
@@ -1590,8 +1614,13 @@ input[type=range]{accent-color:var(--accent)}
       <div class="tabs"><button id="tabLogin" class="on" onclick="authTab('login')">Entrar</button><button id="tabReg" onclick="authTab('reg')">Criar conta</button></div>
       <div class="field"><span class="label">E-mail</span><input class="input" id="auEmail" type="email" placeholder="voce@estudio.com"></div>
       <div class="field"><span class="label">Senha</span><input class="input" id="auPass" type="password" placeholder="••••••••"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:4px 0 10px;font-size:12px">
+        <label style="display:flex;align-items:center;gap:6px;color:var(--ink-3);cursor:pointer"><input type="checkbox" id="auRemember" style="accent-color:var(--accent)"> <span id="auRememberLbl">Lembrar-me</span></label>
+        <a href="#" onclick="event.preventDefault();if(typeof openForgotPassword==='function')openForgotPassword()" style="color:var(--accent);text-decoration:none" id="auForgotLbl">Esqueci minha senha</a>
+      </div>
       <div class="field hide" id="auNameField"><span class="label">Nome / Estúdio</span><input class="input" id="auName" placeholder="Seu nome ou produtora"></div>
       <button class="btn btn-primary" style="width:100%;margin-top:6px" id="authBtn" onclick="doAuth()">Entrar no estúdio</button>
+      <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px" onclick="exploreAsGuest();setTimeout(function(){go('plans');},400)">Ver planos antes de entrar</button>
       <div style="display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--ink-4);font-size:11px"><span style="flex:1;height:1px;background:var(--line)"></span>ou<span style="flex:1;height:1px;background:var(--line)"></span></div>
       <div id="gbtnOfficial" style="display:flex;justify-content:center"></div>
       <div id="gHelpLine" style="display:none;text-align:center;margin-top:8px"><a href="#" onclick="event.preventDefault();googleHelp()" style="font-size:11.5px;color:var(--ink-3);text-decoration:underline">Login com Google não conecta? Toque aqui</a></div>
@@ -1741,7 +1770,7 @@ input[type=range]{accent-color:var(--accent)}
 /* ════════ CONFIG (overridden by config.js if present) ════════ */
 const CFG = window.HSAI_CONFIG || {
   API_KEY:'', API_BASE:'https://api.atlascloud.ai', PROVIDER:'atlascloud',
-  ADMIN_USER:'admin', ADMIN_PASS:'hw2026!', COMMUNITY_ENABLED:true, FREE_CREDITS:3,
+  ADMIN_USER:'admin', ADMIN_PASS:'CHANGE_ME', COMMUNITY_ENABLED:true, FREE_CREDITS:3,
   PROVIDERS:{
     atlascloud:{ base:'https://api.atlascloud.ai',                key:'' },
     fal:       { base:'https://fal.run',                          key:'' },
@@ -2877,7 +2906,7 @@ async function runCreate(){
   if(!prompt){toast(S.lang==='pt'?'Escreva um prompt':'Write a prompt','err');return;}
   if(!requireAccount('generate'))return;
   const dur=S.cmode==='video'?(S._dur||6):0;
-  if(S.cmode==='video'&&S.credits<dur){toast(S.lang==='pt'?'Créditos insuficientes':'Not enough credits','err');go('plans');return;}
+  if(S.cmode==='video'&&S.credits<dur){if(typeof openCreditLimitModal==='function')openCreditLimitModal();else{toast(S.lang==='pt'?'Créditos insuficientes':'Not enough credits','err');go('plans');}return;}
   const btn=document.getElementById('cGenBtn');btn.disabled=true;
   const stages=S.cmode==='audio'?(S.lang==='pt'?['Analisando','Gerando áudio','Mixando','Finalizando']:['Analyzing','Generating audio','Mixing','Finalizing']):(S.cmode==='image'?STAGES_IMG():STAGES_VID());
   const ctrl=runProgress(stage,`${S.lang==='pt'?'Gerando em':'Generating on'} ${m.name}`,stages,S.cmode==='image'?10:7);
@@ -3456,9 +3485,16 @@ function galleryHasUrl(url){if(!url)return false;const k=String(url).split('?')[
 function saveUsers(u){localStorage.setItem('hsai_users',JSON.stringify(u));}
 function userKey(suf){const uid=(S.user&&S.user.uid)||'guest';return 'hsai_'+uid+'_'+suf;}
 function upsertUser(info){
-  const u=loadUsers();const FREE=(CFG.FREE_CREDITS!=null?CFG.FREE_CREDITS:0);
-  if(!u[info.uid]){u[info.uid]={uid:info.uid,email:info.email||'',name:hsaiFixName(info.name||info.email||info.uid),picture:info.picture||'',credits:info.admin?9999:FREE,role:info.admin?'admin':'user',createdAt:Date.now(),google:!!info.google};}
-  else {const r=u[info.uid];if(info.email)r.email=info.email;if(info.name)r.name=hsaiFixName(info.name);if(info.picture)r.picture=info.picture;if(info.admin)r.role='admin';}
+  const u=loadUsers();
+  const trialCfg=CFG.trialSettings||{};
+  const FREE=info.admin?9999:(CFG.FREE_CREDITS!=null?CFG.FREE_CREDITS:(trialCfg.credits!=null?trialCfg.credits:0));
+  if(!u[info.uid]){
+    const grantTrial=trialCfg.enabled!==false&&FREE>0&&!info.admin;
+    u[info.uid]={uid:info.uid,email:info.email||'',name:hsaiFixName(info.name||info.email||info.uid),picture:info.picture||'',credits:FREE,role:info.admin?'admin':'user',createdAt:Date.now(),google:!!info.google,trialGranted:grantTrial,creditSource:grantTrial?'trial':'none'};
+    if(grantTrial&&typeof trackSignal==='function')trackSignal({type:'trial_granted',source:'auth',metadata:{credits:FREE}});
+  } else {
+    const r=u[info.uid];if(info.email)r.email=info.email;if(info.name)r.name=hsaiFixName(info.name);if(info.picture)r.picture=info.picture;if(info.admin){r.role='admin';r.credits=9999;}
+  }
   saveUsers(u);return u[info.uid];
 }
 function loadUserState(){
@@ -3625,7 +3661,7 @@ function integrationsCard(){
   const ep=([k,name,route])=>`<div class="field"><span class="label">${k} <span style="color:var(--ink-4);font-weight:400">· ${name}</span></span>
       <input class="input" id="cfg_${k}" value="${escapeAttr(CFG[k]||'')}" placeholder="${escapeAttr((base?base.replace(/\/$/,'')+route:'https://SEU-BACKEND'+route))}"></div>`;
   return `<div class="card" style="grid-column:1/-1"><span class="label">${S.lang==='pt'?'Integrações — chaves de geração & endpoints':'Integrations — generation keys & endpoints'}</span>
-    <p style="font-size:12px;color:var(--ink-3);margin:4px 0 12px">${S.lang==='pt'?'As <b>bases dos provedores já vêm preenchidas</b> — você só cola a chave. Para os endpoints, informe a <b>base do seu backend</b> e clique em <b>Preencher endpoints</b> (ou ative o proxy). Salva neste navegador e vale na hora; para produção, <b>Copiar snippet</b> → config.js.':'Provider <b>bases come pre-filled</b> — just paste the key. For endpoints, set your <b>backend base</b> and click <b>Fill endpoints</b> (or enable proxy). Saved in this browser & live; for production, <b>Copy snippet</b> → config.js.'}</p>
+    <p style="font-size:12px;color:var(--ink-3);margin:4px 0 12px">${S.lang==='pt'?'⚠️ <b>Produção:</b> configure chaves reais nas <b>Vercel Environment Variables</b> ou backend seguro — não commite sk_live_ no GitHub. As bases dos provedores já vêm preenchidas; cole a chave aqui só para teste local.':'⚠️ <b>Production:</b> set real keys in <b>Vercel Environment Variables</b> or secure backend — never commit sk_live_ to GitHub. Provider bases are pre-filled; paste keys here for local testing only.'}</p>
 
     <div style="font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin:6px 0">${S.lang==='pt'?'Provedores de geração — cole só as chaves':'Generation providers — paste only the keys'}</div>
     ${prov('atlascloud','Atlas Cloud')}${prov('fal','fal.ai')}${prov('modelark','ModelArk · BytePlus')}
@@ -3754,7 +3790,7 @@ function fullConfigJS(){
 window.HSAI_CONFIG = {
   PROVIDER: ${J(CFG.PROVIDER||'atlascloud')},
   ADMIN_USER: ${J(CFG.ADMIN_USER||'admin')},
-  ADMIN_PASS: ${J(CFG.ADMIN_PASS||'hw2026!')},
+  ADMIN_PASS: ${J(CFG.ADMIN_PASS||'CHANGE_ME')},
   ADMIN_EMAIL: ${J(CFG.ADMIN_EMAIL||'mail@hollywoodstudio.ai')},
 
   PROVIDERS: {
@@ -4954,8 +4990,17 @@ function viewPlans(){
     <button class="btn btn-ghost btn-sm" style="width:100%" onclick="buyCredits(${t.cr},${t.price})">${S.lang==='pt'?'Comprar':'Buy'}</button></div>`).join('');
   return `
   <div class="view-head"><div class="kicker">${t('plans')}</div><h1 class="serif">${S.lang==='pt'?'Planos & Créditos':'Plans & Credits'}</h1>
-    <p>${S.lang==='pt'?'O sistema é baseado em <b>créditos</b> — válidos para vídeo, imagem e áudio (cada modelo tem seu custo, mostrado antes de gerar). Assine um plano mensal ou compre créditos avulsos. Pague com Stripe ou PayPal.':'The system is <b>credit-based</b> — valid for video, image and audio (each model has its cost, shown before generating). Subscribe monthly or buy one-time credits. Pay with Stripe or PayPal.'}</p></div>
+    <p>${S.lang==='pt'?'Da ideia ao corte final. O sistema é baseado em <b>créditos</b> — válidos para vídeo, imagem e áudio. <b>Créditos grátis são para testar. Produção real exige plano ou compra aprovada.</b>':'From idea to final cut. <b>Credit-based</b> for video, image and audio. <b>Free credits are for testing. Real production requires a plan or approved purchase.</b>'}</p></div>
 
+  <div class="card" style="margin-bottom:18px;border:1.5px solid var(--accent);background:linear-gradient(135deg,var(--accent-dim),transparent)">
+    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+      <div style="font-size:2.2em">🎬</div>
+      <div style="flex:1;min-width:240px">
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:4px">${S.lang==='pt'?'Acesso Beta Fundador':'Founder Beta Access'}</div>
+        <h3 class="serif" style="margin:0 0 6px;font-size:20px">${S.lang==='pt'?'Vagas limitadas — preço fundador':'Limited spots — founder pricing'}</h3>
+        <p style="font-size:12.5px;color:var(--ink-3);line-height:1.6;margin-bottom:12px">${S.lang==='pt'?'Créditos de boas-vindas para testar · bônus no primeiro pacote · suporte direto · acesso antecipado a novos módulos.':'Welcome credits to test · bonus on first pack · direct support · early access to new modules.'}</p>
+        <button class="btn btn-primary btn-sm" onclick="buyPlan('premium',300)">${S.lang==='pt'?'Garantir acesso fundador':'Secure founder access'}</button>
+      </div>
     </div>
   </div>
   <div class="plans">${cards}</div>
@@ -4998,7 +5043,7 @@ function buyCredits(cr,price){
   document.getElementById('coFeat').innerHTML=`<li style="padding:4px 0">✓ ${cr} ${S.lang==='pt'?'créditos para vídeo, imagem ou áudio':'credits for video, image or audio'}</li><li style="padding:4px 0">✓ ${S.lang==='pt'?'não expiram com o mês':'don\'t expire monthly'}</li>`;
   const PAY=CFG.PAY||{stripe:true,paypal:true,pix:false};const tuLink=(CFG.STRIPE_TOPUPS||{})['t'+cr];
   const sb=document.getElementById('coStripe');sb.style.display=PAY.stripe?'':'none';sb.textContent=S.lang==='pt'?'Pagar com cartão (Stripe)':'Pay with card (Stripe)';
-  sb.onclick=()=>{ if(tuLink){if(S.user&&S.user.uid){const _pr=recordPaymentPending(S.user.uid,`+${cr} créditos`,price,'Stripe',cr);window._pendingPayId=_pr&&_pr.id;document.getElementById('coConfirmBtn').style.display='';document.getElementById('coNote').textContent=S.lang==='pt'?'Complete o pagamento e clique Confirmar.':'Complete payment and click Confirm.';};window.open(tuLink,'_blank');} else {if(S.user&&S.user.uid)recordPayment(S.user.uid,`+${cr} créditos (demo)`,price,'Demo',cr);S.credits+=cr;updateCredits();toast(`+${cr} ${S.lang==='pt'?'créditos (demo — configure o link Stripe em Pagamentos)':'credits (demo — set Stripe link in Payments)'}`,'ok');closeModal('checkoutModal');} };
+  sb.onclick=()=>{ if(tuLink){if(S.user&&S.user.uid){const _pr=recordPaymentPending(S.user.uid,`+${cr} créditos`,price,'Stripe',cr);window._pendingPayId=_pr&&_pr.id;document.getElementById('coConfirmBtn').style.display='';document.getElementById('coNote').textContent=S.lang==='pt'?'Complete o pagamento. Créditos após confirmação do webhook.':'Complete payment. Credits after webhook confirmation.';};window.open(tuLink,'_blank');} else {toast(S.lang==='pt'?'Pacote ainda não configurado. Solicite acesso antecipado.':'Top-up not configured yet. Request early access.','err');} };
   const px=document.getElementById('coPix');if(px){px.style.display=(PAY.pix&&CFG.PIX)?'':'none';px.textContent=S.lang==='pt'?'Pagar com Pix':'Pay with Pix';
     px.onclick=()=>{ if(/^https?:\/\//.test(CFG.PIX)){window.open(CFG.PIX,'_blank');}else{navigator.clipboard.writeText(CFG.PIX);toast(S.lang==='pt'?'Chave Pix copiada':'Pix key copied','ok');} };}
   const pp=document.getElementById('coPaypal');pp.style.display=PAY.paypal?'':'none';pp.onclick=()=>{window.open('https://www.paypal.com/paypalme/'+(CFG.PAYPAL||'').split('@')[0]+'/'+price,'_blank');};
@@ -5169,18 +5214,28 @@ function recordPaymentPending(uid,plan,amount,method,credits){
   u[uid].payments.unshift(p);saveUsers(u);return p;
 }
 function confirmPendingPayment(){
-  if(!S.user||!S.user.uid){toast('Login necessário','err');return;}
-  const payId=window._pendingPayId;
-  const u=loadUsers();const r=u[S.user.uid];if(!r)return;
-  const p=r.payments&&r.payments.find(x=>x.id===payId);
-  if(!p){toast(S.lang==='pt'?'Pagamento não encontrado. Contate o suporte.':'Payment not found. Contact support.','err');return;}
-  p.status='paid';
-  r.credits=(r.credits||0)+(p.credits||0);
-  u[S.user.uid]=r;saveUsers(u);
-  loadUserState();updateCredits();
-  toast(S.lang==='pt'?`✅ +${p.credits} créditos adicionados!`:`✅ +${p.credits} credits added!`,'ok');
-  closeModal('checkoutModal');
-  window._pendingPayId=null;
+  if(!S.user||!S.user.uid){toast(S.lang==='pt'?'Login necessário':'Login required','err');return;}
+  /* Créditos pagos só via webhook Stripe ou ação Admin — usuário não auto-aprova */
+  if(S.user.admin){
+    const payId=window._pendingPayId;
+    const u=loadUsers();const r=u[S.user.uid];if(!r)return;
+    const p=r.payments&&r.payments.find(x=>x.id===payId);
+    if(!p){toast(S.lang==='pt'?'Pagamento não encontrado.':'Payment not found.','err');return;}
+    p.status='paid';r.credits=(r.credits||0)+(p.credits||0);u[S.user.uid]=r;saveUsers(u);
+    loadUserState();updateCredits();
+    toast(S.lang==='pt'?`✅ Admin: +${p.credits} créditos`:`✅ Admin: +${p.credits} credits`,'ok');
+    closeModal('checkoutModal');window._pendingPayId=null;return;
+  }
+  toast(S.lang==='pt'?'Compra em aprovação. Créditos serão adicionados após confirmação do pagamento (webhook Stripe).':'Purchase pending. Credits added after payment confirmation (Stripe webhook).','info');
+  fetch('/api/credits/check?uid='+encodeURIComponent(S.user.uid||'')+'&email='+encodeURIComponent(S.user.email||''))
+    .then(r=>r.json()).then(d=>{
+      if(d.ok&&d.credits>0&&d.consumed){
+        const u=loadUsers();if(u[S.user.uid]){u[S.user.uid].credits=(u[S.user.uid].credits||0)+d.credits;saveUsers(u);}
+        loadUserState();updateCredits();
+        toast(S.lang==='pt'?`✅ +${d.credits} créditos confirmados!`:`✅ +${d.credits} credits confirmed!`,'ok');
+        closeModal('checkoutModal');
+      }
+    }).catch(()=>{});
 }
 function buyPlan(id,secs){
   if(isGuest())return showAuthGate('default');
@@ -5195,7 +5250,7 @@ function buyPlan(id,secs){
   const sb=document.getElementById('coStripe');
   sb.style.display=PAY.stripe?'':'none';
   sb.textContent=S.lang==='pt'?'Pagar com cartão (Stripe)':'Pay with card (Stripe)';
-  sb.onclick=()=>{ if(stripe){if(S.user&&S.user.uid){const _pr=recordPaymentPending(S.user.uid,p.name,p.price,'Stripe',p.secs);window._pendingPayId=_pr&&_pr.id;document.getElementById('coConfirmBtn').style.display='';document.getElementById('coNote').textContent=S.lang==='pt'?'Complete o pagamento e clique Confirmar abaixo.':'Complete the payment and click Confirm below.';}window.open(stripe,'_blank');} else {if(S.user&&S.user.uid)recordPayment(S.user.uid,p.name+' (demo)',p.price,'Demo',p.secs);S.credits+=secs;updateCredits();toast(`+${secs}s ${S.lang==='pt'?'creditados (demo — configure o link Stripe)':'credited (demo — set Stripe link)'}`,'ok');closeModal('checkoutModal');} };
+  sb.onclick=()=>{ if(stripe){if(S.user&&S.user.uid){const _pr=recordPaymentPending(S.user.uid,p.name,p.price,'Stripe',p.secs);window._pendingPayId=_pr&&_pr.id;document.getElementById('coConfirmBtn').style.display='';document.getElementById('coNote').textContent=S.lang==='pt'?'Complete o pagamento. Créditos após confirmação do webhook.':'Complete payment. Credits after webhook confirmation.';}window.open(stripe,'_blank');} else {toast(S.lang==='pt'?'Plano ainda não configurado. Solicite acesso antecipado.':'Plan not configured yet. Request early access.','err');} };
   const pp=document.getElementById('coPaypal');
   pp.style.display=PAY.paypal?'':'none';
   pp.onclick=()=>{ window.open('https://www.paypal.com/paypalme/'+(CFG.PAYPAL||'').split('@')[0]+'/'+p.price,'_blank'); };
@@ -6737,7 +6792,7 @@ function googleHelp(){
 }
 function googleSignIn(){
   if(!CFG.GOOGLE_CLIENT_ID){
-    toast(S.lang==='pt'?'Configure GOOGLE_CLIENT_ID em config.js (veja instruções).':'Set GOOGLE_CLIENT_ID in config.js (see instructions).','err');
+    toast(S.lang==='pt'?'Login com Google ainda não configurado. Configure Auth/Google no backend ou Supabase.':'Google login not configured yet. Set up Auth/Google in backend or Supabase.','err');
     return;
   }
   if(!window.google||!google.accounts){toast('Google SDK…','err');return;}
@@ -6751,7 +6806,7 @@ function onGoogle(resp){
     upsertUser(S.user);
     // Sessão real: se houver backend, valida o token no servidor e guarda a sessão.
     if(CFG.AUTH_ENDPOINT){
-      fetch(CFG.AUTH_ENDPOINT.replace(/\/$/,'')+'/auth/google',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({credential:resp.credential})})
+      fetch('/api/auth/google',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({credential:resp.credential})})
         .then(r=>r.json()).then(d=>{if(d.token){localStorage.setItem('hsai_token',d.token);if(d.user)S.user={...S.user,...d.user};if(d.user&&d.user.credits!=null){const u=loadUsers();if(u[S.user.uid]){u[S.user.uid].credits=d.user.credits;saveUsers(u);}}}})
         .catch(()=>{}).finally(finishAuth);
     } else { finishAuth(); }
@@ -6926,7 +6981,7 @@ render=function(){_origRender();if(S.view==='agents')drawClips();
 
 /* ── sendToStudio: central function to load content into Studio ── */
 function sendToStudio(opts){
-  /* opts: { prompt, modelId, mediaUrl, mediaType, title } */
+  /* opts: { prompt, modelId, mediaUrl, mediaType, title, source, metadata } */
   var pt=S.lang==='pt';
   opts=opts||{};
   var prompt=opts.prompt||'';
@@ -6934,6 +6989,8 @@ function sendToStudio(opts){
   var mediaUrl=opts.mediaUrl||null;
   var mediaType=(opts.mediaType||'').toLowerCase();
   if(!mediaType&&mediaUrl)mediaType=/\.(mp4|mov|webm|m4v)($|\?)/i.test(mediaUrl)?'video':'image';
+  if(typeof trackSignal==='function')trackSignal({type:'user_sent_to_studio',source:opts.source||'unknown',action:'sendToStudio',metadata:{modelId:modelId,hasMedia:!!mediaUrl}});
+  if(typeof saveProjectState==='function')saveProjectState({prompt:prompt,model:modelId,mediaUrl:mediaUrl,mediaType:mediaType,source:opts.source||'',metadata:opts.metadata||{},references:mediaUrl?[mediaUrl]:[]});
 
   var m=modelId&&Array.isArray(MODELS)?MODELS.find(function(x){return x.id===modelId;}):null;
   if(m){
@@ -7524,7 +7581,7 @@ function doChangePassword(){
   users[uid]=u;
   localStorage.setItem('hsai_users',JSON.stringify(users));
   var ov=document.getElementById('changePwOverlay');if(ov)ov.remove();
-  toast(pt?'✓ Senha alterada com sucesso!':'✓ Password changed!','ok');
+  toast(pt?'✓ Senha alterada! Integração completa: Supabase/Auth.':'✓ Password changed! Full integration: Supabase/Auth.','ok');
 }
 function confirmDeleteAccount(){
   var pt=S.lang==='pt';
@@ -7547,7 +7604,8 @@ function confirmDeleteAccount(){
   ['gal','chars','favs','agents','storyboards'].forEach(function(k){
     localStorage.removeItem('hsai_'+uid+'_'+k);
   });
-  toast(pt?'Conta excluída.':'Account deleted.','ok');
+  fetch('/api/account/delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:uid})}).catch(function(){});
+  toast(pt?'Conta excluída localmente. Exclusão completa: integração Supabase/backend seguro.':'Account deleted locally. Full deletion: Supabase/secure backend integration.','ok');
   setTimeout(function(){logoutUser();},1500);
 }
 
@@ -10887,5 +10945,7 @@ var PUBLIC_GALLERY_SEED = [
 })();
 
 </script>
+<script src="/hsai-core.js"></script>
+<script src="/admin-patch.js"></script>
 </body>
 </html>

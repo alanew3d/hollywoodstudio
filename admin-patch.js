@@ -40,18 +40,21 @@
 
   // ── 2. Salvar config no servidor ────────────────────────────────────────
   window.saveConfigToServer = async function () {
-    const adminPass = (window.CFG && window.CFG.ADMIN_PASS) || 'hw2026!';
     const token = prompt('Senha admin para salvar no servidor:', '');
     if (!token) return;
 
-    // Coleta config atual (usa função existente do HTML se disponível)
+    // Coleta config atual sem uso de eval()
     let cfgData = {};
     if (typeof window.fullConfigJS === 'function') {
-      // Extrai do JS gerado
       const js = window.fullConfigJS();
       try {
-        const match = js.match(/window\.HSAI_CONFIG\s*=\s*(\{[\s\S]*?\});?\s*$/);
-        if (match) cfgData = eval('(' + match[1] + ')'); // eslint-disable-line
+        // Extrai o objeto literal entre a primeira '{' e a última '}' do bloco HSAI_CONFIG
+        const match = js.match(/window\.HSAI_CONFIG\s*=\s*(\{[\s\S]*\})\s*;?\s*$/m);
+        if (match) cfgData = JSON.parse(match[1]
+          .replace(/\/\*[\s\S]*?\*\//g, '')   // remove comentários /* */
+          .replace(/\/\/[^\n]*/g, '')          // remove comentários //
+          .replace(/,\s*([\]}])/g, '$1')       // remove trailing commas
+        );
       } catch {}
     }
     if (!cfgData || !Object.keys(cfgData).length) {
