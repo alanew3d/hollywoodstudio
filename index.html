@@ -4,13 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>diretor.ai — Decida Melhor</title>
-<meta name="description" content="diretor.ai — O sistema de decisão estratégica. Perspectivas históricas, empresariais e criativas aplicadas à sua decisão.">
-<meta name="theme-color" content="#C8A84B">
-<meta property="og:title" content="diretor.ai — Decida Melhor">
-<meta property="og:description" content="Tome decisões melhores com múltiplas inteligências. Não é coaching. É um sistema de decisão.">
-<meta property="og:url" content="https://diretor.ai">
-<meta property="og:type" content="website">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⬡</text></svg>">
 <meta name="description" content="diretor.ai — O sistema de decisão estratégica. Perspectivas históricas, empresariais e criativas aplicadas à sua decisão. Não é coaching. É um diretor de estratégia.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -394,93 +387,6 @@ body{background:var(--bg);color:var(--tx);font-family:var(--fB);font-weight:300;
 .safe-fallback-h{font-family:var(--fD);font-size:24px;font-weight:700;color:var(--tx)}
 .safe-fallback-s{font-size:14px;color:var(--tx3);max-width:400px;line-height:1.7}
 
-
-/* ═══ TRIAL SYSTEM ═══ */
-.trial-banner{position:fixed;top:54px;left:0;right:0;z-index:300;background:linear-gradient(90deg,rgba(200,168,75,.15) 0%,rgba(200,168,75,.08) 100%);border-bottom:.5px solid var(--bdr);padding:8px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;display:none}
-.trial-banner.show{display:flex}
-.trial-banner-txt{font-size:12px;color:var(--tx2);font-family:var(--fM)}.trial-banner-txt b{color:var(--gold);font-weight:600}
-.trial-days{font-family:var(--fD);font-size:18px;font-weight:700;color:var(--gold);min-width:28px;text-align:center}
-.trial-bar{flex:1;max-width:200px;height:4px;background:var(--bdd);border-radius:2px;overflow:hidden}.trial-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .5s}
-.trial-upgrade{font-size:11px;font-family:var(--fM);padding:6px 14px;border-radius:6px;background:var(--gold);color:#000;border:none;font-weight:700;cursor:pointer;white-space:nowrap}
-.trial-cancel{font-size:11px;color:var(--tx4);font-family:var(--fM);cursor:pointer;text-decoration:underline;background:none;border:none}
-
-/* ═══ SIMULATOR ═══ */
-.sim-panel{background:var(--bg3);border:.5px solid var(--bdd);border-radius:12px;padding:18px;margin-top:10px;display:none;animation:pgIn .35s var(--ease)}
-[data-theme="dark"] .sim-panel{background:var(--bg2)}.sim-panel.show{display:block}
-.sim-title{font-family:var(--fD);font-size:17px;font-weight:700;color:var(--tx);margin-bottom:4px;letter-spacing:-.01em}
-.sim-sub{font-size:11px;color:var(--tx4);font-family:var(--fM);margin-bottom:16px}
-.sim-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-@media(max-width:580px){.sim-grid{grid-template-columns:1fr}}
-.sim-row{display:flex;flex-direction:column;gap:4px}
-.sim-lbl{font-size:9px;font-family:var(--fM);color:var(--tx4);letter-spacing:.12em;text-transform:uppercase;font-weight:500;display:flex;justify-content:space-between;align-items:center}
-.sim-val{font-family:var(--fM);font-size:11px;color:var(--gold);font-weight:600}
-.sim-range{width:100%;accent-color:var(--gold)}
-.sim-output{background:var(--gl);border:.5px solid var(--bdd);border-radius:10px;padding:14px;margin-top:10px}
-.sim-out-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:12px}
-.sim-metric{background:var(--bg3);border:.5px solid var(--bdd);border-radius:8px;padding:10px}
-[data-theme="dark"] .sim-metric{background:var(--bg2)}
-.sim-metric-lbl{font-size:9px;font-family:var(--fM);color:var(--tx4);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
-.sim-metric-val{font-family:var(--fD);font-size:22px;font-weight:700;color:var(--tx)}
-.sim-metric-val.ok{color:var(--ok)}.sim-metric-val.wn{color:var(--wn)}.sim-metric-val.al{color:var(--al)}
-.sim-metric-delta{font-size:10px;font-family:var(--fM);margin-top:2px}
-.sim-ask-btn{width:100%;padding:10px;border-radius:8px;background:var(--gold-g);border:.5px solid var(--bdr);color:var(--gold);font-family:var(--fB);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:10px}.sim-ask-btn:hover{background:var(--gold);color:#000}
-
-/* ═══ DIAGNOSTIC ═══ */
-.diag-panel{background:var(--bg3);border:.5px solid var(--bdd);border-radius:12px;overflow:hidden;margin-top:10px;display:none;animation:pgIn .35s var(--ease)}
-[data-theme="dark"] .diag-panel{background:var(--bg2)}.diag-panel.show{display:block}
-.diag-progress{height:3px;background:var(--bdd)}.diag-prog-fill{height:100%;background:var(--gold);transition:width .4s var(--ease)}
-.diag-body{padding:20px}
-.diag-step{display:none;animation:pgIn .3s var(--ease)}.diag-step.on{display:block}
-.diag-q{font-family:var(--fD);font-size:17px;font-weight:700;color:var(--tx);margin-bottom:4px;letter-spacing:-.01em;line-height:1.3}
-.diag-hint{font-size:12px;color:var(--tx4);font-family:var(--fM);margin-bottom:16px}
-.diag-opts{display:flex;flex-direction:column;gap:6px}
-.diag-opt{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:8px;border:.5px solid var(--bdd);cursor:pointer;transition:all .2s;background:transparent;width:100%;text-align:left;font-family:var(--fB);font-size:13px;color:var(--tx2);font-weight:300}
-.diag-opt:hover{background:var(--gl2);border-color:var(--bdm);color:var(--tx)}.diag-opt.sel{background:var(--gold-g);border-color:var(--bdr);color:var(--gold)}
-.diag-opt-ico{font-size:16px;flex-shrink:0}
-.diag-nav{display:flex;justify-content:space-between;margin-top:16px;align-items:center}
-.diag-nav-btn{font-size:12px;font-family:var(--fM);padding:8px 16px;border-radius:6px;border:.5px solid var(--bdd);background:transparent;color:var(--tx3);cursor:pointer;transition:all .2s}.diag-nav-btn:hover{background:var(--gl2);border-color:var(--bdm);color:var(--tx)}
-.diag-nav-btn.pri{background:var(--gold);border-color:var(--gold);color:#000;font-weight:700}.diag-nav-btn.pri:hover{background:var(--gold2)}
-.diag-counter{font-size:10px;font-family:var(--fM);color:var(--tx4)}
-.diag-result{display:none;animation:pgIn .4s var(--ease)}.diag-result.show{display:block}
-.diag-res-hdr{background:var(--gold-g);border:.5px solid var(--bdr);border-radius:10px;padding:16px;margin-bottom:14px}
-.diag-res-title{font-family:var(--fD);font-size:20px;font-weight:700;color:var(--tx);margin-bottom:6px}
-.diag-res-sub{font-size:12px;color:var(--tx3);font-family:var(--fM)}
-.diag-urgency{display:flex;flex-direction:column;gap:8px}
-.diag-urg-item{background:var(--gl);border-radius:8px;padding:12px 14px;border:.5px solid var(--bdd)}
-.diag-urg-item.high{border-left:3px solid var(--al);padding-left:11px}
-.diag-urg-item.med{border-left:3px solid var(--wn);padding-left:11px}
-.diag-urg-item.low{border-left:3px solid var(--ok);padding-left:11px}
-.diag-urg-title{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:3px}
-.diag-urg-txt{font-size:12px;color:var(--tx3);line-height:1.6;font-weight:300}
-.diag-urg-badge{font-size:9px;font-family:var(--fM);padding:2px 7px;border-radius:3px;font-weight:600;margin-bottom:5px;display:inline-block;letter-spacing:.06em}
-.diag-urg-badge.high{background:var(--al-g);color:var(--al);border:.5px solid var(--al-b)}
-.diag-urg-badge.med{background:var(--wn-g);color:var(--wn);border:.5px solid var(--wn-b)}
-.diag-urg-badge.low{background:var(--ok-g);color:var(--ok);border:.5px solid var(--ok-b)}
-
-/* ═══ ADVERSÁRIO ═══ */
-.adv-panel{background:var(--bg3);border:.5px solid var(--bdd);border-radius:12px;padding:18px;margin-top:10px;display:none;animation:pgIn .35s var(--ease)}
-[data-theme="dark"] .adv-panel{background:var(--bg2)}.adv-panel.show{display:block}
-.adv-rb{background:rgba(224,90,90,.04);border:.5px solid var(--al-b);border-radius:12px;padding:14px;margin-bottom:8px;animation:rIn .3s var(--ease)}
-.adv-hdr{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.adv-ph{width:40px;height:40px;border-radius:50%;background:var(--al-g);border:1.5px solid var(--al-b);display:flex;align-items:center;justify-content:center;font-family:var(--fD);font-size:14px;font-weight:700;color:var(--al);flex-shrink:0}
-.adv-badge{font-size:10px;font-family:var(--fM);padding:3px 8px;border-radius:3px;background:var(--al-g);color:var(--al);border:.5px solid var(--al-b);font-weight:600}
-.adv-txt{font-size:13px;color:var(--tx2);line-height:1.8;font-weight:300;font-style:italic}
-.adv-def{background:var(--ok-g);border:.5px solid var(--ok-b);border-radius:10px;padding:14px;margin-top:12px}
-.adv-def-lbl{font-size:9px;font-family:var(--fM);color:var(--ok);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px;font-weight:500}
-.adv-def-txt{font-size:13px;color:var(--tx2);line-height:1.75;font-weight:300}
-
-/* ═══ MAP ═══ */
-.map-panel{background:var(--bg3);border:.5px solid var(--bdd);border-radius:12px;overflow:hidden;margin-top:10px;display:none;animation:pgIn .35s var(--ease)}
-[data-theme="dark"] .map-panel{background:var(--bg2)}.map-panel.show{display:block}
-#mapContainer{height:340px;width:100%;background:var(--bg4)}
-.map-toolbar{display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:.5px solid var(--bdd);flex-wrap:wrap}
-.map-btn{font-size:10px;font-family:var(--fM);letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:6px;border:.5px solid var(--bdd);background:transparent;color:var(--tx3);cursor:pointer;transition:all .18s}.map-btn:hover{background:var(--gl2);border-color:var(--bdm);color:var(--tx)}.map-btn.on{background:var(--gold-g);border-color:var(--bdr);color:var(--gold)}
-.map-regions{display:flex;flex-wrap:wrap;gap:5px;padding:10px 14px;border-top:.5px solid var(--bdd)}
-.map-chip{font-size:11px;font-family:var(--fM);padding:4px 10px;border-radius:20px;border:.5px solid var(--bdd);background:transparent;color:var(--tx3);display:flex;align-items:center;gap:5px}
-.map-chip .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.map-chip .rm{cursor:pointer;color:var(--al);font-size:10px;background:none;border:none;padding:0}
-.map-send{width:calc(100% - 28px);margin:0 14px 12px;padding:10px;border-radius:8px;background:var(--gold-g);border:.5px solid var(--bdr);color:var(--gold);font-family:var(--fB);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}.map-send:hover{background:var(--gold);color:#000}
-
 </style>
 
 <!-- Supabase JS Client -->
@@ -488,13 +394,9 @@ body{background:var(--bg);color:var(--tx);font-family:var(--fB);font-weight:300;
 <script>
 // CONFIGURAR: substitua pelas suas chaves do Supabase
 // Obter em: app.supabase.com → Settings → API
-// ═══════════════════════════════════════════════════════
-// ⚙️  CONFIGURAR ANTES DE PUBLICAR — editar estas 2 linhas
-// Obter em: app.supabase.com → Settings → API
-// ═══════════════════════════════════════════════════════
-const SUPABASE_URL = 'https://SEUPROJETO.supabase.co';   // ← substituir
-const SUPABASE_ANON_KEY = 'SUAANON_KEY_AQUI';             // ← substituir (anon/public key)
-const BACKEND_URL = ''; // deixar vazio — usa /api do mesmo domínio no Vercel
+const SUPABASE_URL = 'https://SEUPROJETO.supabase.co';
+const SUPABASE_ANON_KEY = 'SUAANON_KEY_AQUI';
+const BACKEND_URL = ''; // deixe vazio para usar /api (mesmo domínio Vercel)
 
 let _supabase = null;
 function getSupabaseClient() {
@@ -514,22 +416,6 @@ function hasBackend() {
 <body>
 
 <!-- HDR -->
-
-<!-- TRIAL BANNER -->
-<div class="trial-banner" id="trialBanner">
-  <div style="display:flex;align-items:center;gap:10px">
-    <div class="trial-days" id="trialDays">7</div>
-    <div>
-      <div class="trial-banner-txt"><b>Trial gratuito ativo</b> — <span id="trialDaysLeft">7 dias restantes</span></div>
-      <div class="trial-bar" style="margin-top:4px"><div class="trial-fill" id="trialFill" style="width:100%"></div></div>
-    </div>
-  </div>
-  <div style="display:flex;align-items:center;gap:10px">
-    <button class="trial-cancel" onclick="showCancelTrial()">Cancelar trial</button>
-    <button class="trial-upgrade" onclick="go('plans')">Assinar agora →</button>
-  </div>
-</div>
-
 <header class="hdr">
   <div class="hdr-l">
     <div class="logo" onclick="go('landing')">diretor<em>.</em><span class="logo-ai">ai</span></div>
@@ -649,7 +535,6 @@ function hasBackend() {
     <div class="demo-pills">
       <button class="dpill dpill-ok" onclick="runDemo('startup')">✦ Demo: Lançar MVP</button>
       <button class="dpill dpill-wn" onclick="runDemo('pivot')">✦ Demo: Pivotar?</button>
-      <button class="dpill" style="border:.5px solid var(--pu-b);background:var(--pu-g);color:var(--pu)" onclick="startDiagnostic()">⚡ Diagnóstico rápido</button>
     </div>
   </div>
   <div class="cl">
@@ -715,55 +600,11 @@ function hasBackend() {
         </div>
         <div id="respCont"></div>
         <div class="docs-bar" id="docsBar" style="display:none">
-          <button class="doc-btn primary" onclick="genRoadmap()">📋 Plano de ação</button>
-          <button class="doc-btn" onclick="toggleSim()">📊 Simulador</button>
-          <button class="doc-btn" onclick="toggleAdv()">⚔ Adversário</button>
-          <button class="doc-btn" onclick="toggleMap()">🗺 Mapa regional</button>
-          <button class="doc-btn" onclick="exportDoc('pdf')">↓ PDF <span class="soon-badge">em breve</span></button>
+          <button class="doc-btn primary" onclick="genRoadmap()">📋 Gerar Plano de Ação</button>
+          <button class="doc-btn" onclick="exportDoc('pdf')">↓ Export PDF <span class="soon-badge">em breve</span></button>
+          <button class="doc-btn" onclick="exportDoc('pptx')">↓ Export PPTX <span class="soon-badge">em breve</span></button>
         </div>
         <div class="rp" id="roadmapPanel"></div>
-
-        <!-- SIMULATOR PANEL -->
-        <div class="sim-panel" id="simPanel">
-          <div class="sim-title">Simulador de Cenário</div>
-          <div class="sim-sub">Ajuste as variáveis do seu negócio — os mentores analisam cada cenário em tempo real</div>
-          <div class="sim-grid" id="simGrid"></div>
-          <div class="sim-output" id="simOutput"></div>
-          <button class="sim-ask-btn" onclick="simAskMentors()">▶ Analisar este cenário com o conselho</button>
-        </div>
-
-        <!-- DIAGNOSTIC PANEL -->
-        <div class="diag-panel" id="diagPanel">
-          <div class="diag-progress"><div class="diag-prog-fill" id="diagProgFill" style="width:10%"></div></div>
-          <div class="diag-body">
-            <div id="diagSteps"></div>
-            <div class="diag-result" id="diagResult"></div>
-          </div>
-        </div>
-
-        <!-- ADVERSARY PANEL -->
-        <div class="adv-panel" id="advPanel">
-          <div class="sim-title">⚔ Modo Adversário</div>
-          <div class="sim-sub">Um mentor assume o papel de advogado do diabo — ataca sua decisão com os melhores argumentos contra ela</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px" id="advMentors"></div>
-          <div id="advContent"></div>
-          <button class="sim-ask-btn" id="advRunBtn" onclick="runAdversary()" style="margin-top:0">⚔ Atacar minha decisão</button>
-        </div>
-
-        <!-- MAP PANEL -->
-        <div class="map-panel" id="mapPanel">
-          <div class="map-toolbar" id="mapToolbar">
-            <span style="font-size:11px;color:var(--tx3);font-family:var(--fM)">Clique no mapa para marcar regiões de interesse:</span>
-            <button class="map-btn on" id="mapMode-mark" onclick="setMapMode('mark')">📍 Marcar</button>
-            <button class="map-btn" id="mapMode-compare" onclick="setMapMode('compare')">⟷ Comparar</button>
-            <button class="map-btn" id="mapMode-heat" onclick="setMapMode('heat')">🔥 Calor</button>
-            <button class="map-btn" onclick="clearMapMarkers()">✕ Limpar</button>
-          </div>
-          <div id="mapContainer"></div>
-          <div class="map-regions" id="mapRegions"></div>
-          <button class="map-send" onclick="mapAskMentors()">▶ Analisar estas regiões com o conselho</button>
-        </div>
-
         <div class="dec-bar" id="decBar" style="display:none">
           <div style="flex:1">
             <div class="dec-mt">Decisão Conclusiva</div>
@@ -781,13 +622,6 @@ function hasBackend() {
 <div class="page" id="page-plans">
   <div class="plans-w">
     <div class="plans-title">Planos diretor.ai</div>
-    <div style="background:var(--ok-g);border:.5px solid var(--ok-b);border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-      <div>
-        <div style="font-size:14px;font-weight:600;color:var(--ok);margin-bottom:3px">★ Trial gratuito de 7 dias em todos os planos</div>
-        <div style="font-size:12px;color:var(--tx3);font-weight:300">Cancele antes dos 7 dias e não será cobrado nada. Sem pegadinhas.</div>
-      </div>
-      <div style="font-size:11px;font-family:var(--fM);color:var(--tx4);text-align:right">Acesso imediato<br>após assinatura</div>
-    </div>
     <div class="plans-sub">Tome decisões estratégicas melhores todos os meses. Cancele quando quiser.</div>
 
     <div class="pay-note">
@@ -816,7 +650,7 @@ function hasBackend() {
           <li>Acesso inicial à comunidade</li>
         </ul>
         <!-- SUBSTITUA LINK_MERCADO_PAGO_INICIADO pela URL real -->
-        <a class="plan-btn" href="https://LINK_MERCADO_PAGO_INICIADO" target="_blank">Começar trial gratuito →</a>
+        <a class="plan-btn" href="https://LINK_MERCADO_PAGO_INICIADO" target="_blank">Assinar Iniciado</a>
       </div>
 
       <!-- DIRETOR (destaque) -->
@@ -838,7 +672,7 @@ function hasBackend() {
           <li>Comunidade e assistente de comentários</li>
         </ul>
         <!-- SUBSTITUA LINK_MERCADO_PAGO_DIRETOR pela URL real -->
-        <a class="plan-btn" href="https://LINK_MERCADO_PAGO_DIRETOR" target="_blank">Começar trial gratuito →</a>
+        <a class="plan-btn" href="https://LINK_MERCADO_PAGO_DIRETOR" target="_blank">Assinar Diretor</a>
       </div>
 
       <!-- GRANDE MESTRE -->
@@ -858,7 +692,7 @@ function hasBackend() {
           <li>Suporte prioritário</li>
         </ul>
         <!-- SUBSTITUA LINK_MERCADO_PAGO_GRANDE_MESTRE pela URL real -->
-        <a class="plan-btn" href="https://LINK_MERCADO_PAGO_GRANDE_MESTRE" target="_blank">Começar trial gratuito →</a>
+        <a class="plan-btn" href="https://LINK_MERCADO_PAGO_GRANDE_MESTRE" target="_blank">Assinar Grande Mestre</a>
       </div>
     </div>
 
@@ -1784,13 +1618,7 @@ function buildAdminDashboard(){
   const usg=document.getElementById('usageStatsGrid');if(usg){usg.innerHTML='';[{l:'API Calls restantes',v:'87.160',s:'de 100.000/mês',c:'var(--ok)',pct:87},{l:'Sessões este mês',v:'8.240',s:'↑ 14% vs mês anterior',c:'var(--bl)',pct:82},{l:'Imagens geradas',v:'1.240',s:'DALL-E 3',c:'var(--pu)',pct:62},{l:'Vídeos gerados',v:'67',s:'Atlas Cloud',c:'var(--wn)',pct:22}].forEach(s=>{const c=document.createElement('div');c.className='stat-card';c.innerHTML=`<div class="stat-lbl">${s.l}</div><div class="stat-val">${s.v}</div><div class="stat-sub">${s.s}</div><div class="stat-bar"><div class="stat-fill" style="width:${s.pct}%;background:${s.c}"></div></div>`;usg.appendChild(c);});}
   const uul=document.getElementById('userUsageLog');if(uul){uul.innerHTML='';MOCK_USERS.forEach(u=>{const planCls=u.plan==='Grande Mestre'?'upb-mestre':u.plan==='Diretor'?'upb-diretor':u.plan==='Iniciado'?'upb-iniciado':'upb-free';const d=document.createElement('div');d.className='ul-item';d.innerHTML=`<div class="ul-user">${u.name}</div><div class="ul-plan"><span class="user-plan-badge ${planCls}">${u.plan}</span></div><div class="ul-action">${u.sessions} sessões · ${u.credits} créditos usados</div><div class="ul-time">ativo: ${u.lastActive}</div>`;uul.appendChild(d);});}
   // Users table
-  const tbl=document.getElementById('usersTable');if(tbl){// Export CSV button
-  const exportBtn = document.createElement('button');
-  exportBtn.className='ab b';exportBtn.style.cssText='margin-bottom:10px;float:right';
-  exportBtn.textContent='↓ Exportar CSV';
-  exportBtn.onclick = exportUsersCSV;
-  tbl.parentNode.insertBefore(exportBtn, tbl);
-  tbl.innerHTML=`<tr><th>Nome</th><th>Email</th><th>Plano</th><th>Sessões</th><th>Créditos</th><th>Último acesso</th><th>Ações</th></tr>`;MOCK_USERS.forEach(u=>{const planCls=u.plan==='Grande Mestre'?'upb-mestre':u.plan==='Diretor'?'upb-diretor':u.plan==='Iniciado'?'upb-iniciado':'upb-free';const tr=document.createElement('tr');tr.innerHTML=`<td>${u.name}</td><td style="color:var(--tx4);font-family:var(--fM);font-size:11px">${u.email}</td><td><span class="user-plan-badge ${planCls}">${u.plan}</span></td><td>${u.sessions}</td><td>${u.credits}</td><td>${u.lastActive}</td><td><button class="user-act-btn" onclick="showToast('Editando ${u.name}...')">Editar</button><button class="user-act-btn" onclick="showToast('Email enviado para ${u.name}')">Email</button><button class="user-act-btn" onclick="showToast('Plano alterado para ${u.name}')">Plano</button></td>`;tbl.appendChild(tr);});}
+  const tbl=document.getElementById('usersTable');if(tbl){tbl.innerHTML=`<tr><th>Nome</th><th>Email</th><th>Plano</th><th>Sessões</th><th>Créditos</th><th>Último acesso</th><th>Ações</th></tr>`;MOCK_USERS.forEach(u=>{const planCls=u.plan==='Grande Mestre'?'upb-mestre':u.plan==='Diretor'?'upb-diretor':u.plan==='Iniciado'?'upb-iniciado':'upb-free';const tr=document.createElement('tr');tr.innerHTML=`<td>${u.name}</td><td style="color:var(--tx4);font-family:var(--fM);font-size:11px">${u.email}</td><td><span class="user-plan-badge ${planCls}">${u.plan}</span></td><td>${u.sessions}</td><td>${u.credits}</td><td>${u.lastActive}</td><td><button class="user-act-btn" onclick="showToast('Editando ${u.name}...')">Editar</button><button class="user-act-btn" onclick="showToast('Email enviado para ${u.name}')">Email</button><button class="user-act-btn" onclick="showToast('Plano alterado para ${u.name}')">Plano</button></td>`;tbl.appendChild(tr);});}
   // Plan rows
   const pr=document.getElementById('planRows');if(pr&&!pr.innerHTML){PLANS_DATA.forEach((p,i)=>{const d=document.createElement('div');d.className='pr-i';d.innerHTML=`<div class="pr-n">${p.name}</div><div class="pr-p">R$${p.price}/mês</div><input class="pr-l" placeholder="https://buy.stripe.com/..."><div class="tsw on" id="psw-${i}" onclick="this.classList.toggle('on')"></div>`;pr.appendChild(d);});}
   // Blocked terms
@@ -1972,8 +1800,7 @@ function loadAll(){
   try{USERS=JSON.parse(localStorage.getItem('dir_users')||'[]')}catch(e){USERS=[]}
   try{const cu=localStorage.getItem('dir_current_user');currentUser=cu?JSON.parse(cu):null}catch(e){currentUser=null}
   if(currentUser){
-    renderTrialBanner(currentUser);
-    const planId=currentUser.plan||'free'||currentUser.trialActive&&'trial';
+    const planId=currentUser.plan||'free';
     currentPlan=PLANS.find(p=>p.id===planId)||null;
     try{sessionHistory=JSON.parse(localStorage.getItem('dir_hist_'+currentUser.email)||'[]')}catch(e){sessionHistory=[]}
   }
@@ -2005,8 +1832,7 @@ function doLogin(){
   const planId=currentUser.plan||'free';
   currentPlan=PLANS.find(p=>p.id===planId)||null;
   try{sessionHistory=JSON.parse(localStorage.getItem('dir_hist_'+em)||'[]')}catch(e){sessionHistory=[];}
-  saveCurrentUser();updateAuth();go('council');if(!user.trialStart&&user.plan==='free'){user.trialStart=new Date().toISOString();user.trialActive=true;user.plan='trial';USERS[USERS.findIndex(u=>u.email===em)]={...user};saveUsers();}
-showToast('✓ Bem-vindo! Trial de 7 dias gratuito ativo.');
+  saveCurrentUser();updateAuth();go('council');showToast('✓ Bem-vindo, '+user.name.split(' ')[0]+'!');
 }
 function doReg(){
   const nm=(document.getElementById('rname')?.value||'').trim();
@@ -2034,7 +1860,7 @@ function logout(){currentUser=null;currentPlan=null;sessionHistory=[];localStora
 function doAdminLogin(){
   const p=document.getElementById('apass')?.value||'';
   const err=document.getElementById('aerr');
-  if(p===adminPass || p===adminPass.toLowerCase() || (document.getElementById('aemail')?.value||'').toLowerCase().includes('admin')&&p.length>3){
+  if(p===adminPass||(document.getElementById('aemail')?.value||'').includes('admin')&&p.length>3){
     adminLogged=true;if(err)err.classList.remove('show');buildAdminAll();showToast('✓ Admin liberado');setTimeout(()=>go('admin'),400);
   }else{if(err){err.textContent='Credenciais incorretas. Demo: admin2026';err.classList.add('show');}}
 }
@@ -2294,22 +2120,8 @@ function buildUsersAdmin(){
 function getUserPlanLim(planId){if(planId==='free')return 3;const p=PLANS.find(x=>x.id===planId);return p?p.limDecisions:'?';}
 function changeUserPlan(i,newPlan){
   USERS[i].plan=newPlan;saveUsers();
-  if(currentUser&&currentUser.email===USERS[i].email){
-    currentUser.plan=newPlan;
-    currentPlan=PLANS.find(p=>p.id===newPlan)||null;
-    saveCurrentUser();updateAuth();
-  }
-  // Sync to Supabase if backend available
-  if(hasBackend()&&adminLogged){
-    const LIMITS={free:3,iniciado:5,diretor:999,grande_mestre:9999};
-    fetch((BACKEND_URL||'')+'/api/admin?action=set_plan',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+(currentUser?._token||'')},
-      body:JSON.stringify({user_email:USERS[i].email,plan:newPlan,decisions_limit:LIMITS[newPlan]||3})
-    }).catch(()=>{});
-  }
-  buildUsersAdmin();
-  showToast('✓ Plano de '+USERS[i].name+' → '+newPlan+(hasBackend()?' (sincronizado)':' (demo)'));
+  if(currentUser&&currentUser.email===USERS[i].email){currentUser.plan=newPlan;currentPlan=PLANS.find(p=>p.id===newPlan)||null;saveCurrentUser();updateAuth();}
+  buildUsersAdmin();showToast('✓ Plano de '+USERS[i].name+' alterado para '+newPlan);
 }
 function resetUserDecisions(i){USERS[i].decisionsUsed=0;USERS[i].decisionsMonth=new Date().getMonth();saveUsers();buildUsersAdmin();showToast('✓ Uso zerado para '+USERS[i].name);}
 function deleteUser(i){if(!confirm('Excluir '+USERS[i].name+'?'))return;USERS.splice(i,1);saveUsers();buildUsersAdmin();showToast('Usuário removido');}
@@ -2585,25 +2397,6 @@ function safeInit(){
 }
 
 
-
-function exportUsersCSV() {
-  if (!USERS || !USERS.length) { showToast('Nenhum usuário para exportar'); return; }
-  const headers = ['Nome','Email','Empresa','Plano','Decisões usadas','Criado em'];
-  const rows = USERS.map(u => [
-    u.name || '', u.email || '', u.company || '',
-    u.plan || 'free', u.decisionsUsed || 0,
-    u.createdAt ? new Date(u.createdAt).toLocaleDateString('pt-BR') : ''
-  ]);
-  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('
-');
-  const blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8;'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'diretor-ai-usuarios-'+new Date().toISOString().slice(0,10)+'.csv';
-  a.click(); URL.revokeObjectURL(url);
-  showToast('✓ CSV exportado — '+USERS.length+' usuários');
-}
-
 // ─── START ───
 safeInit();
 restoreSession();
@@ -2689,9 +2482,7 @@ async function doReg() {
     USERS.push(newUser); saveUsers();
     currentUser={...newUser}; currentPlan=null; sessionHistory=[];
     saveCurrentUser(); updateAuth(); go('council');
-    currentUser.trialStart=new Date().toISOString();currentUser.trialActive=true;currentUser.plan='trial';
-    const ui2=USERS.findIndex(u=>u.email===em);if(ui2>=0)USERS[ui2]={...currentUser};saveUsers();saveCurrentUser();
-    showToast('✓ Conta criada! Trial de 7 dias gratuito ativado.');
+    showToast('✓ Conta criada! Bem-vindo, ' + nm.split(' ')[0] + '! (modo demo)');
   }
 }
 
@@ -2754,8 +2545,7 @@ Pergunta: ${q}`;
       return data.content;
     } catch (e) {
       if (e.message.includes('Limite')) throw e;
-      console.warn('Backend failed, using demo response:', e.message);
-      showToast('⚡ IA temporariamente indisponível — usando resposta demo');
+      console.warn('Backend failed, falling back to local:', e.message);
       return localReply(m, q);
     }
   }
@@ -2798,605 +2588,5 @@ async function restoreSession() {
 }
 </script>
 
-
-<script>
-
-/* ═══════════════════════════════════════════════════════
-   DIRETOR.AI v3 — TRIAL + SIMULATOR + DIAGNOSTIC + ADVERSARY + MAP
-═══════════════════════════════════════════════════════ */
-
-/* ─── TRIAL SYSTEM ─── */
-const TRIAL_DAYS = 7;
-
-function initTrial(user) {
-  if (!user) return;
-  // Set trial start if not set
-  if (!user.trialStart) {
-    user.trialStart = new Date().toISOString();
-    user.trialActive = true;
-    user.plan = user.plan || 'trial';
-    updateUserInStorage(user);
-  }
-  renderTrialBanner(user);
-}
-
-function updateUserInStorage(user) {
-  if (!user) return;
-  currentUser = user;
-  saveCurrentUser();
-  const idx = (window.USERS || []).findIndex(u => u.email === user.email);
-  if (idx >= 0) { USERS[idx] = { ...USERS[idx], ...user }; saveUsers(); }
-}
-
-function getTrialDaysLeft(user) {
-  if (!user || !user.trialStart) return TRIAL_DAYS;
-  const start = new Date(user.trialStart);
-  const now = new Date();
-  const diff = Math.floor((now - start) / (1000 * 60 * 60 * 24));
-  return Math.max(0, TRIAL_DAYS - diff);
-}
-
-function isTrialActive(user) {
-  if (!user) return false;
-  if (!user.trialActive) return false;
-  return getTrialDaysLeft(user) > 0;
-}
-
-function isPaidPlan(user) {
-  if (!user) return false;
-  return ['iniciado', 'diretor', 'grande_mestre'].includes(user.plan);
-}
-
-function renderTrialBanner(user) {
-  const banner = document.getElementById('trialBanner');
-  if (!banner) return;
-  if (!user || (!isTrialActive(user) && !isPaidPlan(user))) { banner.classList.remove('show'); return; }
-  if (isPaidPlan(user)) { banner.classList.remove('show'); return; }
-  const days = getTrialDaysLeft(user);
-  banner.classList.add('show');
-  const daysEl = document.getElementById('trialDays'); if (daysEl) daysEl.textContent = days;
-  const leftEl = document.getElementById('trialDaysLeft'); if (leftEl) leftEl.textContent = days + (days === 1 ? ' dia restante' : ' dias restantes');
-  const fill = document.getElementById('trialFill'); if (fill) fill.style.width = Math.round(days / TRIAL_DAYS * 100) + '%';
-  // Adjust layout for banner
-  const banner_offset = '88px';
-  const council = document.getElementById('page-council');
-  if (council) council.style.paddingTop = banner_offset;
-}
-
-function showCancelTrial() {
-  if (!confirm('Cancelar o trial? Seu acesso será encerrado e você não será cobrado.')) return;
-  if (currentUser) {
-    currentUser.trialActive = false;
-    currentUser.plan = 'free';
-    updateUserInStorage(currentUser);
-    document.getElementById('trialBanner')?.classList.remove('show');
-    showToast('✓ Trial cancelado. Nenhuma cobrança será feita.');
-    go('landing');
-  }
-}
-
-// Override getUserPlanConfig to include trial
-const _origGetUserPlanConfig = typeof getUserPlanConfig !== 'undefined' ? getUserPlanConfig : null;
-function getUserPlanConfig() {
-  if (currentUser && isTrialActive(currentUser)) {
-    // Trial = plano Diretor completo por 7 dias
-    return { id: 'trial', limDecisions: 50, limMentors: 5, allMentors: true, pdfExport: false, fullDecision: true, name: 'Trial' };
-  }
-  if (_origGetUserPlanConfig) return _origGetUserPlanConfig();
-  const planId = currentUser?.plan || 'free';
-  if (planId === 'free') return { limDecisions: 3, limMentors: 3, allMentors: false, pdfExport: false, fullDecision: false, id: 'free' };
-  return (window.PLANS || []).find(p => p.id === planId) || { limDecisions: 3, limMentors: 3, allMentors: false, pdfExport: false, fullDecision: false, id: 'free' };
-}
-
-/* ─── SIMULATOR ─── */
-let simVars = {
-  preco: { label: 'Preço do produto', unit: 'R$', min: 10, max: 2000, value: 197, step: 10, format: v => 'R$ ' + v.toLocaleString('pt-BR') },
-  clientes: { label: 'Clientes / mês', unit: '', min: 1, max: 5000, value: 50, step: 5, format: v => v.toLocaleString('pt-BR') },
-  custo: { label: 'Custo unitário', unit: 'R$', min: 0, max: 1000, value: 60, step: 5, format: v => 'R$ ' + v.toLocaleString('pt-BR') },
-  churn: { label: 'Churn mensal', unit: '%', min: 0, max: 50, value: 8, step: 1, format: v => v + '%' },
-  cac: { label: 'Custo de aquisição', unit: 'R$', min: 0, max: 2000, value: 150, step: 10, format: v => 'R$ ' + v.toLocaleString('pt-BR') },
-  ticket: { label: 'Ticket médio', unit: 'R$', min: 10, max: 5000, value: 350, step: 10, format: v => 'R$ ' + v.toLocaleString('pt-BR') },
-};
-
-function buildSimGrid() {
-  const grid = document.getElementById('simGrid');
-  if (!grid) return;
-  grid.innerHTML = '';
-  Object.entries(simVars).forEach(([key, v]) => {
-    const row = document.createElement('div');
-    row.className = 'sim-row';
-    row.innerHTML = `<div class="sim-lbl">${v.label}<span class="sim-val" id="sv-${key}">${v.format(v.value)}</span></div>
-    <input type="range" class="sim-range" min="${v.min}" max="${v.max}" value="${v.value}" step="${v.step}"
-      oninput="simUpdate('${key}',+this.value)">`;
-    grid.appendChild(row);
-  });
-  calcSimOutput();
-}
-
-function simUpdate(key, val) {
-  simVars[key].value = val;
-  const el = document.getElementById('sv-' + key);
-  if (el) el.textContent = simVars[key].format(val);
-  calcSimOutput();
-}
-
-function calcSimOutput() {
-  const v = simVars;
-  const mrr = v.preco.value * v.clientes.value;
-  const margem = ((v.preco.value - v.custo.value) / v.preco.value * 100);
-  const lucroMensal = (v.preco.value - v.custo.value) * v.clientes.value;
-  const ltv = margem > 0 ? Math.round((v.preco.value - v.custo.value) / (v.churn.value / 100)) : 0;
-  const ltvCac = v.cac.value > 0 ? (ltv / v.cac.value).toFixed(1) : '∞';
-  const payback = v.cac.value > 0 && (v.preco.value - v.custo.value) > 0 ? Math.ceil(v.cac.value / (v.preco.value - v.custo.value)) : '—';
-  const arr = mrr * 12;
-
-  const margemClass = margem < 20 ? 'al' : margem < 40 ? 'wn' : 'ok';
-  const ltvCacNum = parseFloat(ltvCac);
-  const ltvCacClass = ltvCacNum < 1 ? 'al' : ltvCacNum < 3 ? 'wn' : 'ok';
-
-  const out = document.getElementById('simOutput');
-  if (!out) return;
-  out.innerHTML = `
-    <div style="font-size:9px;font-family:var(--fM);color:var(--tx4);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px;font-weight:500">Projeção do cenário atual</div>
-    <div class="sim-out-grid">
-      <div class="sim-metric"><div class="sim-metric-lbl">MRR</div><div class="sim-metric-val">R$${mrr.toLocaleString('pt-BR')}</div><div class="sim-metric-delta" style="color:var(--tx4)">ARR: R$${arr.toLocaleString('pt-BR')}</div></div>
-      <div class="sim-metric"><div class="sim-metric-lbl">Margem</div><div class="sim-metric-val ${margemClass}">${Math.round(margem)}%</div><div class="sim-metric-delta" style="color:var(--tx4)">Lucro: R$${lucroMensal.toLocaleString('pt-BR')}/mês</div></div>
-      <div class="sim-metric"><div class="sim-metric-lbl">LTV</div><div class="sim-metric-val">R$${ltv.toLocaleString('pt-BR')}</div><div class="sim-metric-delta" style="color:var(--tx4)">Payback: ${payback} meses</div></div>
-      <div class="sim-metric"><div class="sim-metric-lbl">LTV/CAC</div><div class="sim-metric-val ${ltvCacClass}">${ltvCac}</div><div class="sim-metric-delta" style="color:${ltvCacNum<3?'var(--wn)':'var(--ok)'}">CAC: R$${v.cac.value}</div></div>
-    </div>
-    <div style="font-size:11px;color:var(--tx4);font-family:var(--fM);border-top:.5px solid var(--bdd);padding-top:8px;margin-top:2px">
-      ${margem < 20 ? '⚠️ Margem abaixo de 20% — modelo frágil' : margem < 40 ? '△ Margem razoável — há espaço para otimizar' : '✓ Margem saudável'}
-      ${ltvCacNum < 1 ? ' · ✗ LTV/CAC < 1 — empresa queima caixa por cliente' : ltvCacNum < 3 ? ' · △ LTV/CAC < 3 — padrão mínimo de sustentabilidade' : ' · ✓ LTV/CAC saudável'}
-    </div>`;
-}
-
-function toggleSim() {
-  const p = document.getElementById('simPanel');
-  if (!p) return;
-  const showing = p.classList.contains('show');
-  [document.getElementById('simPanel'),document.getElementById('advPanel'),document.getElementById('mapPanel'),document.getElementById('diagPanel')].forEach(x=>x?.classList.remove('show'));
-  if (!showing) { p.classList.add('show'); buildSimGrid(); p.scrollIntoView({behavior:'smooth',block:'nearest'}); }
-}
-
-async function simAskMentors() {
-  if (!selM.length) { showToast('Selecione mentores no conselho primeiro'); return; }
-  const v = simVars;
-  const mrr = v.preco.value * v.clientes.value;
-  const margem = Math.round((v.preco.value - v.custo.value) / v.preco.value * 100);
-  const ltv = margem > 0 ? Math.round((v.preco.value - v.custo.value) / (v.churn.value / 100)) : 0;
-  const q = `CENÁRIO FINANCEIRO DO MEU NEGÓCIO:\n• Preço: R$${v.preco.value} · Clientes/mês: ${v.clientes.value} · MRR: R$${mrr.toLocaleString('pt-BR')}\n• Margem: ${margem}% · LTV: R$${ltv.toLocaleString('pt-BR')} · CAC: R$${v.cac.value} · Churn: ${v.churn.value}%\n\nCom base nesses números reais, qual sua análise e a principal recomendação estratégica?`;
-  document.getElementById('qTa').value = q;
-  autoRz(document.getElementById('qTa'));
-  document.getElementById('simPanel').classList.remove('show');
-  await submitQ();
-}
-
-/* ─── DIAGNOSTIC ─── */
-const DIAG_QUESTIONS = [
-  { q: 'Qual é o principal desafio do seu negócio agora?', hint: 'Seja específico — isso define a urgência das recomendações', opts: [
-    { ico: '📉', txt: 'Crescimento estagnado ou queda de receita', tag: 'crescimento' },
-    { ico: '💸', txt: 'Problema de fluxo de caixa ou margem', tag: 'financeiro' },
-    { ico: '👥', txt: 'Dificuldade em contratar ou manter equipe', tag: 'pessoas' },
-    { ico: '🎯', txt: 'Não sei qual direção estratégica tomar', tag: 'estrategia' },
-    { ico: '⚙️', txt: 'Operação desorganizada ou ineficiente', tag: 'operacao' },
-  ]},
-  { q: 'Em que fase está sua empresa?', hint: 'Isso muda completamente as prioridades', opts: [
-    { ico: '🌱', txt: 'Ideia ou validando o modelo', tag: 'pre' },
-    { ico: '🚀', txt: 'Primeiros clientes e receita', tag: 'early' },
-    { ico: '📈', txt: 'Crescendo, precisa escalar', tag: 'growth' },
-    { ico: '🏢', txt: 'Empresa estabelecida, buscando reinvenção', tag: 'mature' },
-  ]},
-  { q: 'Qual decisão você tem adiado que sabe que precisa tomar?', hint: 'O custo do adiamento é sempre maior que parece', opts: [
-    { ico: '💰', txt: 'Precificar corretamente meu produto/serviço', tag: 'precif' },
-    { ico: '🤝', txt: 'Demitir alguém ou resolver conflito na equipe', tag: 'pessoas' },
-    { ico: '🔄', txt: 'Pivotar ou abandonar algo que não funciona', tag: 'pivot' },
-    { ico: '📣', txt: 'Definir e executar estratégia de marketing', tag: 'mkt' },
-    { ico: '🏦', txt: 'Captar investimento ou ajustar modelo financeiro', tag: 'capital' },
-  ]},
-  { q: 'Como está sua relação com os números do negócio?', hint: 'Muitos empresários tomam decisões sem dados — isso muda tudo', opts: [
-    { ico: '📊', txt: 'Monitoro métricas regularmente, sei onde estou', tag: 'dados_ok' },
-    { ico: '🤷', txt: 'Sei o faturamento mas não sei margem real', tag: 'dados_med' },
-    { ico: '😰', txt: 'Trabalho no feeling, não tenho controle financeiro', tag: 'dados_nao' },
-  ]},
-  { q: 'O que você mais precisa agora?', hint: 'Isso define o tipo de perspectiva que será mais útil', opts: [
-    { ico: '🧭', txt: 'Clareza sobre para onde ir', tag: 'direcao' },
-    { ico: '⚡', txt: 'Ação imediata — o que fazer esta semana', tag: 'acao' },
-    { ico: '🧱', txt: 'Estrutura — processos que sustentem o crescimento', tag: 'estrutura' },
-    { ico: '🛡️', txt: 'Proteção — reduzir riscos antes de avançar', tag: 'risco' },
-  ]},
-];
-
-let diagStep = 0;
-let diagAnswers = [];
-
-function startDiagnostic() {
-  diagStep = 0; diagAnswers = [];
-  const panel = document.getElementById('diagPanel');
-  if (!panel) return;
-  [document.getElementById('simPanel'),document.getElementById('advPanel'),document.getElementById('mapPanel')].forEach(x=>x?.classList.remove('show'));
-  panel.classList.add('show');
-  buildDiagStep();
-  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function buildDiagStep() {
-  const stepsEl = document.getElementById('diagSteps');
-  const resEl = document.getElementById('diagResult');
-  if (!stepsEl || !resEl) return;
-  stepsEl.style.display = 'block'; resEl.classList.remove('show');
-
-  const q = DIAG_QUESTIONS[diagStep];
-  if (!q) { showDiagResult(); return; }
-
-  const pct = Math.round((diagStep / DIAG_QUESTIONS.length) * 100);
-  const fill = document.getElementById('diagProgFill');
-  if (fill) fill.style.width = pct + '%';
-
-  stepsEl.innerHTML = `
-    <div class="diag-step on">
-      <div class="diag-q">${q.q}</div>
-      <div class="diag-hint">${q.hint}</div>
-      <div class="diag-opts">
-        ${q.opts.map((o, i) => `<button class="diag-opt" id="dopt-${i}" onclick="diagSelect(${i},'${o.tag}')">
-          <span class="diag-opt-ico">${o.ico}</span>${o.txt}
-        </button>`).join('')}
-      </div>
-      <div class="diag-nav">
-        <button class="diag-nav-btn" onclick="diagBack()" ${diagStep === 0 ? 'disabled style="opacity:.4"' : ''}>← Voltar</button>
-        <span class="diag-counter">${diagStep + 1} / ${DIAG_QUESTIONS.length}</span>
-        <button class="diag-nav-btn" id="diagNext" onclick="diagNext()" disabled>Próximo →</button>
-      </div>
-    </div>`;
-
-  // Re-select if answer exists
-  const existing = diagAnswers[diagStep];
-  if (existing !== undefined) {
-    const btn = document.getElementById('dopt-' + existing.idx);
-    if (btn) { btn.classList.add('sel'); document.getElementById('diagNext').disabled = false; }
-  }
-}
-
-function diagSelect(idx, tag) {
-  document.querySelectorAll('.diag-opt').forEach(b => b.classList.remove('sel'));
-  document.getElementById('dopt-' + idx)?.classList.add('sel');
-  diagAnswers[diagStep] = { idx, tag };
-  const next = document.getElementById('diagNext');
-  if (next) { next.disabled = false; next.textContent = diagStep === DIAG_QUESTIONS.length - 1 ? 'Ver diagnóstico →' : 'Próximo →'; }
-}
-
-function diagNext() {
-  if (!diagAnswers[diagStep]) { showToast('Selecione uma opção'); return; }
-  diagStep++;
-  if (diagStep >= DIAG_QUESTIONS.length) { showDiagResult(); return; }
-  buildDiagStep();
-}
-
-function diagBack() {
-  if (diagStep > 0) { diagStep--; buildDiagStep(); }
-}
-
-async function showDiagResult() {
-  const fill = document.getElementById('diagProgFill');
-  if (fill) fill.style.width = '100%';
-  const stepsEl = document.getElementById('diagSteps');
-  const resEl = document.getElementById('diagResult');
-  if (!stepsEl || !resEl) return;
-  stepsEl.style.display = 'none';
-
-  const tags = diagAnswers.map(a => a?.tag || '').filter(Boolean);
-  const challenge = DIAG_QUESTIONS[0].opts[diagAnswers[0]?.idx || 0];
-  const stage = DIAG_QUESTIONS[1].opts[diagAnswers[1]?.idx || 0];
-  const delayed = DIAG_QUESTIONS[2].opts[diagAnswers[2]?.idx || 0];
-  const needData = tags.includes('dados_nao') || tags.includes('dados_med');
-
-  // Generate urgencies
-  const urgencies = [];
-  if (tags.includes('financeiro') || tags.includes('dados_nao') || tags.includes('capital')) {
-    urgencies.push({ level: 'high', title: 'Controle financeiro antes de qualquer decisão', txt: 'Sem saber sua margem real e fluxo de caixa, cada decisão estratégica é um chute. Isso precisa ser resolvido esta semana, não este mês.', badge: '🚨 Urgente' });
-  }
-  if (tags.includes('precif') || (tags.includes('crescimento') && tags.includes('early'))) {
-    urgencies.push({ level: 'high', title: 'Validar precificação com dados reais', txt: 'O preço errado destrói negócios saudáveis e impede que negócios ruins se recuperem. Use o simulador de cenário para ver o impacto imediato de cada ajuste de preço.', badge: '🚨 Urgente' });
-  }
-  if (tags.includes('pessoas') || tags.includes('estrategia')) {
-    urgencies.push({ level: 'med', title: 'Decisão de equipe adiada = custo oculto crescente', txt: 'Cada semana sem resolver conflitos ou posições erradas custa mais do que o salário. Decida esta semana.', badge: '⚠️ Importante' });
-  }
-  if (tags.includes('pivot') || tags.includes('direcao')) {
-    urgencies.push({ level: 'med', title: 'Definir direção estratégica com prazo fixo', txt: 'Indecisão estratégica é uma decisão implícita de manter o rumo atual. Defina um prazo — 30 dias — para tomar a decisão de pivotar ou persistir.', badge: '⚠️ Importante' });
-  }
-  if (tags.includes('estrutura') || tags.includes('operacao') || tags.includes('mature')) {
-    urgencies.push({ level: 'low', title: 'Documentar 3 processos críticos', txt: 'Negócios que dependem de pessoas específicas para funcionar têm um ponto de falha enorme. Identifique os 3 processos mais críticos e documente-os.', badge: '✓ Próximo passo' });
-  }
-  if (!urgencies.length) {
-    urgencies.push({ level: 'med', title: delayed?.txt || 'Decisão adiada identificada', txt: 'Com base nas suas respostas, a decisão mais urgente é a que você mesmo reconhece estar adiando. Use o conselho de mentores para analisá-la agora.', badge: '⚠️ Importante' });
-  }
-
-  // Build recommended mentors
-  const mentorMap = { financeiro: ['buffett','drucker'], crescimento: ['bezos','gates','sam'], pessoas: ['mandela','horowitz'], estrategia: ['suntzu','thiel','napoleon'], operacao: ['musk','drucker'], capital: ['thiel','naval','buffett'], precif: ['jobs','thiel'], pivot: ['thiel','jobs','bezos'] };
-  const recMentors = new Set();
-  tags.forEach(tag => { (mentorMap[tag] || []).forEach(m => recMentors.add(m)); });
-  const recArr = [...recMentors].slice(0, 4);
-
-  resEl.innerHTML = `
-    <div class="diag-res-hdr">
-      <div class="diag-res-title">Diagnóstico concluído</div>
-      <div class="diag-res-sub">${stage?.txt || ''} · Desafio principal: ${challenge?.txt?.substring(0,50) || ''}...</div>
-    </div>
-    <div style="font-size:9px;font-family:var(--fM);color:var(--gold3);letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px;font-weight:500">As 3 decisões mais urgentes para você agora</div>
-    <div class="diag-urgency">
-      ${urgencies.slice(0, 3).map(u => `<div class="diag-urg-item ${u.level}"><span class="diag-urg-badge ${u.level}">${u.badge}</span><div class="diag-urg-title">${u.title}</div><div class="diag-urg-txt">${u.txt}</div></div>`).join('')}
-    </div>
-    <div style="margin-top:14px;padding:12px 14px;background:var(--bl-g);border:.5px solid var(--bl-b);border-radius:8px">
-      <div style="font-size:11px;font-family:var(--fM);color:var(--bl);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;font-weight:500">Mentores recomendados para seu perfil</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
-        ${recArr.map(id => { const m = M.find(x => x.id === id); if (!m) return ''; return `<button onclick="selFromDiag('${id}')" style="font-size:11px;font-family:var(--fM);padding:4px 10px;border-radius:20px;border:.5px solid var(--bl-b);background:var(--bg3);color:var(--bl);cursor:pointer">${m.ini} ${m.n.split(' ')[0]}</button>`; }).join('')}
-      </div>
-    </div>
-    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-      <button class="sim-ask-btn" style="flex:1;min-width:200px" onclick="diagToCouncil()">▶ Levar ao conselho agora</button>
-      <button class="dca" onclick="document.getElementById('diagPanel').classList.remove('show')">Fechar</button>
-    </div>`;
-  resEl.classList.add('show');
-
-  // If Claude is available, enhance with AI
-  if (useApi && selM.length) {
-    // silently enhance
-  }
-}
-
-function selFromDiag(id) {
-  if (!selM.includes(id) && selM.length < 8) { selM.push(id); updateSel(); renderM(); updateQI(); }
-  showToast('✓ ' + (M.find(x => x.id === id)?.n || id) + ' adicionado ao conselho');
-}
-
-function diagToCouncil() {
-  const tags = diagAnswers.map(a => a?.tag || '').filter(Boolean);
-  const challenge = DIAG_QUESTIONS[0].opts[diagAnswers[0]?.idx || 0];
-  const delayed = DIAG_QUESTIONS[2].opts[diagAnswers[2]?.idx || 0];
-  const q = `Com base no meu diagnóstico:\n• Principal desafio: ${challenge?.txt || ''}\n• Decisão que estou adiando: ${delayed?.txt || ''}\n\nQual é a recomendação mais prática e imediata que você me daria para esta semana?`;
-  document.getElementById('qTa').value = q;
-  autoRz(document.getElementById('qTa'));
-  document.getElementById('diagPanel').classList.remove('show');
-  focusQ();
-}
-
-/* ─── ADVERSARY MODE ─── */
-const ADV_MENTORS = [
-  { id: 'adv_thiel', n: 'Peter Thiel', ini: 'PT', style: 'Contrariano radical' },
-  { id: 'adv_horowitz', n: 'Ben Horowitz', ini: 'BH', style: 'Realista brutal' },
-  { id: 'adv_napoleon', n: 'Napoleão', ini: 'NB', style: 'Estrategista implacável' },
-  { id: 'adv_suntzu', n: 'Sun Tzu', ini: 'ST', style: 'Questionador de premissas' },
-];
-let selectedAdvMentor = 'adv_thiel';
-
-function toggleAdv() {
-  const p = document.getElementById('advPanel');
-  if (!p) return;
-  const showing = p.classList.contains('show');
-  [document.getElementById('simPanel'),document.getElementById('mapPanel'),document.getElementById('diagPanel')].forEach(x=>x?.classList.remove('show'));
-  if (!showing) {
-    p.classList.add('show');
-    buildAdvPanel();
-    p.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  } else { p.classList.remove('show'); }
-}
-
-function buildAdvPanel() {
-  const el = document.getElementById('advMentors');
-  if (!el) return;
-  el.innerHTML = ADV_MENTORS.map(m => `
-    <button onclick="selAdvMentor('${m.id}',this)" style="display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--fM);padding:6px 12px;border-radius:20px;border:.5px solid ${selectedAdvMentor===m.id?'var(--al-b)':'var(--bdd)'};background:${selectedAdvMentor===m.id?'var(--al-g)':'transparent'};color:${selectedAdvMentor===m.id?'var(--al)':'var(--tx3)'};cursor:pointer">
-      <span style="font-size:13px;font-family:var(--fD);font-weight:700">${m.ini}</span>${m.n}<span style="font-size:9px;opacity:.6">· ${m.style}</span>
-    </button>`).join('');
-  document.getElementById('advContent').innerHTML = '<div style="font-size:12px;color:var(--tx4);font-family:var(--fM);padding:14px 0">Descreva sua decisão acima e clique em "Atacar minha decisão" — o mentor selecionado atacará com os melhores argumentos contra.</div>';
-}
-
-function selAdvMentor(id, btn) {
-  selectedAdvMentor = id;
-  document.querySelectorAll('#advMentors button').forEach(b => {
-    b.style.borderColor = 'var(--bdd)'; b.style.background = 'transparent'; b.style.color = 'var(--tx3)';
-  });
-  if (btn) { btn.style.borderColor = 'var(--al-b)'; btn.style.background = 'var(--al-g)'; btn.style.color = 'var(--al)'; }
-}
-
-async function runAdversary() {
-  const q = document.getElementById('qTa')?.value?.trim();
-  if (!q || q.length < 20) { showToast('Descreva sua decisão no campo principal primeiro (mín. 20 caracteres)'); return; }
-
-  const advMeta = ADV_MENTORS.find(m => m.id === selectedAdvMentor) || ADV_MENTORS[0];
-  const realMentor = M.find(x => x.n === advMeta.n) || M.find(x => x.n.includes(advMeta.n.split(' ')[0]));
-
-  const el = document.getElementById('advContent');
-  el.innerHTML = '<div class="tyb"><div style="font-size:13px;font-weight:700;color:var(--al);font-family:var(--fD);margin-right:8px">⚔ ' + advMeta.n + '</div><div class="tyd"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>';
-
-  const advSystem = `Você é ${advMeta.n} no papel de advogado do diabo. Sua missão é atacar a decisão apresentada com os argumentos mais fortes e honestos contra ela. Seja direto, específico e rigoroso. Identifique as 3-4 falhas ou riscos mais sérios. Não seja destrutivo — seja cirúrgico. Termine com a pergunta mais importante que o empresário precisa responder antes de seguir em frente. Responda em português brasileiro. Máx 4 parágrafos.`;
-
-  let attackTxt = '';
-  if (useApi) {
-    try {
-      attackTxt = await claudeReply({ p: advSystem, n: advMeta.n, r: { def: '' } }, q, '', '');
-    } catch(e) { attackTxt = ''; }
-  }
-
-  if (!attackTxt) {
-    const attacks = [
-      `Você está assumindo que o mercado quer isso — mas qual é a evidência real, não a sua percepção? A maioria das decisões que parecem óbvias por dentro são completamente invisíveis por fora.\n\nO timing é questionável. Você está entrando quando os líderes já consolidaram posição ou quando o mercado está saturando. Qual dado concreto te diz que agora é o momento certo?\n\nO custo de execução real geralmente é 3x maior que o estimado inicial. Você tem caixa suficiente para errar uma vez e corrigir? Porque você vai errar — a questão é se vai sobreviver ao erro.\n\nA pergunta que você precisa responder antes de qualquer coisa: se daqui a 12 meses isso não funcionar, o que terá sido desperdiçado e você estará disposto a aceitar isso?`,
-      `A lógica faz sentido no papel. O problema é que no papel não existem concorrentes reagindo, clientes mudando de comportamento, equipe executando mal e mercado se comportando diferente do esperado.\n\nVocê está resolvendo o problema que acha que existe ou o problema que o cliente realmente tem? Porque às vezes esses são completamente diferentes — e construir a solução errada com excelência é o maior desperdício de capital e tempo.\n\nQual é o seu plano B? Não uma variação do plano A — um plano genuinamente diferente se a premissa central estiver errada?\n\nPergunta fundamental: qual é a menor versão desta decisão que te daria evidência real, em 30 dias, de que você está certo ou errado?`,
-    ];
-    attackTxt = attacks[Math.floor(Math.random() * attacks.length)];
-  }
-
-  const defensePrompts = ['Como eu me defendo desta crítica?', 'Qual mentor daria a perspectiva oposta?', 'Como ajustar minha decisão com base nesses ataques?'];
-  el.innerHTML = `
-    <div class="adv-rb">
-      <div class="adv-hdr">
-        <div class="adv-ph">${advMeta.ini}</div>
-        <div><div style="font-size:13px;font-weight:700;color:var(--tx);font-family:var(--fD)">${advMeta.n}</div><span class="adv-badge">⚔ Advogado do Diabo · ${advMeta.style}</span></div>
-      </div>
-      <div class="adv-txt">${attackTxt.split('\n\n').map(p=>`<p style="margin-bottom:10px">${p}</p>`).join('')}</div>
-    </div>
-    <div class="adv-def">
-      <div class="adv-def-lbl">Como usar isso</div>
-      <div class="adv-def-txt">Estes são os argumentos que seu maior crítico usaria. Construa sua resposta a cada um antes de executar.</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
-        ${defensePrompts.map(p=>`<button class="dca" onclick="document.getElementById('qTa').value='${p.replace(/'/g,"\\'")}';focusQ()">${p}</button>`).join('')}
-      </div>
-    </div>`;
-}
-
-/* ─── MAP MODULE ─── */
-let mapInstance = null;
-let mapMarkers = [];
-let mapRegions = [];
-let mapMode = 'mark';
-const mapColors = ['#C8A84B','#4A90D9','#3DB87A','#E05A5A','#9B7BD4','#E0A840'];
-
-function toggleMap() {
-  const p = document.getElementById('mapPanel');
-  if (!p) return;
-  const showing = p.classList.contains('show');
-  [document.getElementById('simPanel'),document.getElementById('advPanel'),document.getElementById('diagPanel')].forEach(x=>x?.classList.remove('show'));
-  if (!showing) {
-    p.classList.add('show');
-    p.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    setTimeout(initMap, 200);
-  } else { p.classList.remove('show'); }
-}
-
-function setMapMode(mode) {
-  mapMode = mode;
-  ['mark','compare','heat'].forEach(m => {
-    const btn = document.getElementById('mapMode-' + m);
-    if (btn) btn.classList.toggle('on', m === mode);
-  });
-}
-
-function initMap() {
-  if (mapInstance) { mapInstance.invalidateSize(); return; }
-  if (!window.L) {
-    // Load Leaflet
-    const link = document.createElement('link');
-    link.rel = 'stylesheet'; link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-    document.head.appendChild(link);
-    const script = document.createElement('script');
-    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-    script.onload = () => { setTimeout(createMap, 100); };
-    document.head.appendChild(script);
-  } else { createMap(); }
-}
-
-function createMap() {
-  if (mapInstance || !window.L) return;
-  const container = document.getElementById('mapContainer');
-  if (!container) return;
-  // Set dark tile based on theme
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  mapInstance = L.map('mapContainer', { zoomControl: true, attributionControl: false }).setView([-14.24, -51.93], 4);
-  // Use CartoDB Positron (clean, works dark/light)
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    maxZoom: 18, subdomains: 'abcd'
-  }).addTo(mapInstance);
-  mapInstance.on('click', onMapClick);
-}
-
-function onMapClick(e) {
-  const lat = e.latlng.lat.toFixed(2);
-  const lng = e.latlng.lng.toFixed(2);
-  if (mapMode === 'mark') addMapMarker(lat, lng);
-  else if (mapMode === 'compare') addMapMarker(lat, lng, true);
-}
-
-function addMapMarker(lat, lng, isCompare) {
-  if (!mapInstance || !window.L) return;
-  const name = prompt('Nome desta região/mercado:', 'Região ' + (mapRegions.length + 1));
-  if (!name) return;
-  const color = mapColors[mapRegions.length % mapColors.length];
-  const icon = L.divIcon({
-    html: `<div style="width:24px;height:24px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#000">${mapRegions.length+1}</div>`,
-    className: '', iconSize: [24, 24], iconAnchor: [12, 12]
-  });
-  const marker = L.marker([lat, lng], { icon }).addTo(mapInstance);
-  marker.bindPopup(`<strong>${name}</strong><br><span style="font-size:11px;color:#666">${lat}, ${lng}</span>`);
-  mapMarkers.push(marker);
-  mapRegions.push({ name, lat, lng, color });
-  renderMapChips();
-}
-
-function renderMapChips() {
-  const el = document.getElementById('mapRegions');
-  if (!el) return;
-  if (!mapRegions.length) { el.innerHTML = '<span style="font-size:11px;color:var(--tx4);font-family:var(--fM)">Clique no mapa para marcar regiões de interesse</span>'; return; }
-  el.innerHTML = mapRegions.map((r, i) => `
-    <div class="map-chip">
-      <div class="dot" style="background:${r.color}"></div>
-      <span>${r.name}</span>
-      <button class="rm" onclick="removeMapRegion(${i})">✕</button>
-    </div>`).join('');
-}
-
-function removeMapRegion(i) {
-  if (mapMarkers[i]) { mapMarkers[i].remove(); }
-  mapMarkers.splice(i, 1); mapRegions.splice(i, 1);
-  renderMapChips();
-}
-
-function clearMapMarkers() {
-  mapMarkers.forEach(m => m.remove());
-  mapMarkers = []; mapRegions = [];
-  renderMapChips();
-}
-
-async function mapAskMentors() {
-  if (!selM.length) { showToast('Selecione mentores no conselho primeiro'); return; }
-  if (!mapRegions.length) { showToast('Marque ao menos uma região no mapa'); return; }
-  const regStr = mapRegions.map(r => r.name).join(', ');
-  const q = `ANÁLISE GEOGRÁFICA E REGIONAL:\nRegiões de interesse marcadas no mapa: ${regStr}\n\nCom base nestas regiões específicas, qual é sua análise estratégica para expansão, priorização de mercado ou alocação de recursos? Considere diferenças culturais, econômicas e logísticas entre essas regiões.`;
-  document.getElementById('qTa').value = q;
-  autoRz(document.getElementById('qTa'));
-  document.getElementById('mapPanel').classList.remove('show');
-  await submitQ();
-}
-
-/* ─── TRIAL STRIPE INTEGRATION ─── */
-function onPlanClick(e, planId, link) {
-  if (!link || link.includes('LINK_MERCADO_PAGO') || link.includes('LINK_STRIPE')) {
-    e.preventDefault();
-    const wa = (window.CONFIG?.wa) || 'https://wa.me/SEUNUMEROAQUI';
-    const msg = encodeURIComponent('Quero assinar o plano ' + planId + ' do diretor.ai — trial de 7 dias gratuito');
-    window.open(wa + '?text=' + msg, '_blank');
-    showToast('Redirecionando para WhatsApp — trial 7 dias gratuito');
-    return;
-  }
-  // Start trial tracking when clicking payment link
-  if (currentUser && !currentUser.trialStart) {
-    currentUser.trialStart = new Date().toISOString();
-    currentUser.trialActive = true;
-    currentUser.plan = 'trial';
-    updateUserInStorage(currentUser);
-    renderTrialBanner(currentUser);
-  }
-}
-
-/* ─── INIT PATCH ─── */
-const _origSafeInit = typeof safeInit !== 'undefined' ? safeInit : null;
-function safeInit() {
-  try {
-    if (_origSafeInit) _origSafeInit();
-    // Init trial if user logged in
-    if (currentUser) {
-      if (currentUser.trialActive || (!currentUser.plan || currentUser.plan === 'free')) {
-        if (!currentUser.trialStart && currentUser.plan !== 'free') initTrial(currentUser);
-        renderTrialBanner(currentUser);
-      }
-    }
-    renderMapChips();
-  } catch(err) {
-    console.error('safeInit v3 error:', err);
-    const fb = document.getElementById('safeFallback');
-    if (fb) fb.classList.add('show');
-  }
-}
-
-
-</script>
 </body>
 </html>
