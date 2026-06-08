@@ -1,12 +1,16 @@
 {
-  "name": "diretor-ai",
-  "version": "1.0.0",
+  "name": "hollywoodstudio-ai",
+  "version": "3.0.0",
+  "description": "Hollywood Studio AI — Produção audiovisual cinematográfica com IA",
   "private": true,
-  "dependencies": {
-    "@anthropic-ai/sdk": "^0.20.0",
-    "@supabase/supabase-js": "^2.39.0",
-    "stripe": "^14.21.0",
-    "resend": "^3.2.0"
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
   },
-  "engines": { "node": ">=18" }
+  "dependencies": {
+    "stripe": "^14.0.0"
+  },
+  "engines": {
+    "node": "20.x"
+  }
 }
