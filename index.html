@@ -1363,7 +1363,7 @@ svg.sedges path{stroke:var(--accent);stroke-width:2;fill:none;opacity:.6}
 /* ── Modal / auth ── */
 .overlay{position:fixed;inset:0;z-index:300;background:rgba(5,5,7,.78);backdrop-filter:blur(8px);
   display:grid;place-items:center;padding:20px;opacity:0;pointer-events:none;transition:.25s}
-.overlay.open{opacity:1;pointer-events:auto}
+.overlay.open,.overlay.show{opacity:1;pointer-events:auto}
 .modal{background:var(--elev);border:1px solid var(--line-2);border-radius:var(--r-lg);max-width:440px;width:100%;
   padding:30px;box-shadow:0 40px 90px rgba(0,0,0,.6);max-height:88vh;overflow-y:auto}
 .modal h2{font-family:var(--serif);font-size:24px;font-weight:500;margin-bottom:6px}
@@ -10844,6 +10844,12 @@ var PUBLIC_GALLERY_SEED = [
     app.classList.add('sidebar-collapsed');
   }
   if(typeof syncSidebarToggle==='function')syncSidebarToggle();
+})();
+
+/* Final global exposure after all function declarations */
+(function(){
+  var names=['sendToStudio','sendGalleryToStudio','sendModelToStudio','galFavToggle','toggleFavorite','runCouncil','runJudge','openDirectorFavOpinion','editChar','openChangePassword','doChangePassword','previewTemplate','loadTemplate','applyAdminUserAction','betaToast'];
+  names.forEach(function(name){try{if(typeof eval(name)==='function')window[name]=eval(name);}catch(e){}});
 })();
 
 </script>
