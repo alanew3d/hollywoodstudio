@@ -852,8 +852,8 @@ a{color:inherit;text-decoration:none}
 /* ── App shell ── */
 #app{display:grid;grid-template-columns:var(--sidebar-w,248px) 1fr;grid-template-rows:60px 1fr;
   height:100vh;grid-template-areas:"side top" "side main";transition:grid-template-columns .25s ease}
-#app.sidebar-collapsed{--sidebar-w:56px}
-#app.sidebar-collapsed .sidebar{--sidebar-w:56px}
+#app.sidebar-collapsed{--sidebar-w:72px}
+#app.sidebar-collapsed .sidebar{--sidebar-w:72px}
 .topbar{grid-area:top;display:flex;align-items:center;gap:18px;padding:0 36px;
   border-bottom:1px solid var(--line);background:var(--bg-2);z-index:30}
 .sidebar{grid-area:side;background:var(--bg-2);border-right:1px solid var(--line);
@@ -1569,6 +1569,28 @@ input[type=range]{accent-color:var(--accent)}
 
 /* Sidebar spacing — conteúdo nunca cola no menu */
 #app:not(.sidebar-collapsed) .main{padding-left:16px}
+
+/* ── Layout fullscreen (no sidebar) for criar view ── */
+body.layout-fullscreen #app{grid-template-columns:0 1fr!important}
+body.layout-fullscreen .sidebar{display:none!important}
+body.layout-fullscreen .main{padding-left:0!important;margin-left:0!important;width:100%!important;max-width:100%!important}
+body.layout-fullscreen .topbar{display:none!important}
+
+/* ── Simple Create page layout ── */
+.sc-page{min-height:100vh;background:var(--bg);display:flex;flex-direction:column;align-items:center;padding:0 16px 80px}
+.sc-topbar{width:100%;max-width:800px;display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line);margin-bottom:8px}
+.sc-logo{font-weight:800;font-size:16px;letter-spacing:-.5px;color:var(--ink)}
+.sc-topbar-right{display:flex;align-items:center;gap:10px}
+.sc-card{width:100%;max-width:800px;background:var(--panel);border-radius:20px;padding:20px;border:1px solid var(--line-2);box-shadow:0 4px 40px rgba(0,0,0,.08);margin-bottom:16px}
+.sc-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.sc-suite-cta{width:100%;max-width:800px;text-align:center;margin-top:40px;padding:24px;background:var(--panel-2);border-radius:16px;border:1px solid var(--line)}
+.sc-select{background:var(--panel-2);border:1px solid var(--line-2);border-radius:8px;padding:7px 10px;color:var(--ink);font-size:13px;cursor:pointer;outline:none;transition:border-color .15s}
+.sc-select:hover,.sc-select:focus{border-color:var(--accent)}
+.sc-compact-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.sc-hero-wrap{width:100%;max-width:800px;padding:28px 0 16px;text-align:center}
+.sc-hero-wrap h1{font-size:clamp(22px,4vw,36px);font-weight:800;line-height:1.2;margin:0 0 10px}
+.sc-hero-wrap .sub{font-size:15px;color:var(--ink-3);margin:0 0 4px}
+.sc-hero-wrap .impact{font-size:13px;color:var(--accent);font-weight:700;letter-spacing:.5px;margin-bottom:8px}
 #app.sidebar-collapsed .sidebar .brand{padding-top:18px!important;padding-bottom:18px!important}
 #app.sidebar-collapsed .sidebar .brand-icon{width:40px!important;height:40px!important;margin:0 auto!important;pointer-events:none}
 #app.sidebar-collapsed #sidebarToggleBtn{top:auto!important;bottom:6px!important;right:8px!important;transform:none!important;background:var(--panel)!important;border:1px solid var(--line)!important;box-shadow:0 6px 18px rgba(0,0,0,.16)}
@@ -2620,6 +2642,8 @@ function go(v){
   S.view=v;
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.id===v));
   document.getElementById('topTitle').textContent=topTitle(v);
+  if(v==='criar'||v==='create'){document.body.classList.add('layout-fullscreen');}
+  else{document.body.classList.remove('layout-fullscreen');}
   render();document.getElementById('main').scrollTop=0;
 }
 function topTitle(v){
@@ -2629,6 +2653,8 @@ function topTitle(v){
 
 /* ════════ RENDER ROUTER ════════ */
 function render(){
+  if(S.view==='criar'||S.view==='create'){document.body.classList.add('layout-fullscreen');}
+  else{document.body.classList.remove('layout-fullscreen');}
   const m=document.getElementById('main');
   const R={home:viewHome,criar:viewSimpleCreate,studio:viewStudio,images:viewImages,audio:viewAudio,characters:viewCharacters,storyboard:viewStoryboard,favorites:viewFavoritesPage,editing:viewEditing,batch:viewBatch,agents:viewAgents,docs:viewDocs,spaces:viewSpaces,
     flow:viewFlow,council:viewCouncil,analytics:viewAnalytics,opportunities:viewOpportunities,public:viewPublic,models:viewModelsCatalog,
@@ -2880,31 +2906,130 @@ function viewHome(){
 
 /* ════════ SIMPLE CREATE ════════ */
 var _scType='video',_scFormat='16:9',_scDuration='8s',_scQuality='Equilibrado',_scStyle='Cinemático',_scModel=null,_scRef=null,_scOrigPrompt=null;
+
+var _scDirectorPrompts={
+  cinematico:'plano cinematográfico, câmera em movimento suave, profundidade de campo rasa, iluminação volumétrica, color grading de cinema, estética visual premium, 4K',
+  publicitario:'estética de comercial premium, produto em destaque, iluminação de produto profissional, movimento elegante, visual de marca, corte dinâmico, 4K',
+  luxo:'atmosfera de luxo exclusivo, materiais premium, iluminação dourada, movimento lento e suave, paleta elegante, exclusividade visual, ultra HD',
+  viral:'abertura de impacto nos primeiros 3 segundos, ritmo rápido, cortes dinâmicos, visual chamativo, formato vertical 9:16, trending aesthetic',
+  narrativo:'narrativa visual clara, progressão emocional, personagem central, conflito e resolução implícitos, ambiente envolvente, storytelling visual',
+  produto:'produto em destaque, close-up detalhado, iluminação de produto impecável, background clean, movimento orbital elegante, visual de e-commerce premium',
+  musical:'sincronizado ao ritmo, visual abstrato e emocional, cores vibrantes, movimento expressivo, estética de videoclipe, energia e impacto visual',
+  editorial:'composição fotográfica rigorosa, paleta editorial refinada, enquadramento de moda/arte, luz natural ou controlada, estética de revista premium',
+  fotografo:'lente específica (35mm/50mm/85mm), abertura rasa, composição por terços, luz natural direcional, momento decisivo, profundidade atmosférica',
+  social:'formato vertical 9:16, gancho nos 2 primeiros segundos, texto legível, ritmo acelerado, estética de reels, visual limpo e direto'
+};
+
+function _scLocalEnhance(prompt,mediaType,director,aspectRatio,duration){
+  var pt=typeof S!=='undefined'&&S.lang==='pt';
+  var dirDetails=_scDirectorPrompts[director]||(mediaType==='video'
+    ?'plano cinematográfico, iluminação volumétrica, câmera em travelling suave, profundidade de campo, color grading profissional, 4K'
+    :'composição profissional, iluminação dramática, alta resolução, detalhes nítidos, qualidade de estúdio');
+  var suffix='';
+  if(mediaType==='video'){
+    var dur=duration||8;
+    suffix=', duração '+dur+'s, formato '+(aspectRatio||'16:9');
+  }else{
+    suffix=', formato '+(aspectRatio||'1:1')+', ultra HD';
+  }
+  var typeWord=mediaType==='video'
+    ?(pt?'Vídeo cinematográfico realista de ':'Realistic cinematic video of ')
+    :(pt?'Imagem profissional de ':'Professional image of ');
+  return typeWord+prompt+', '+dirDetails+suffix+(pt?', sem aparência artificial':', photorealistic quality');
+}
+
+function _scGenerateLocalStoryboard(prompt,settings){
+  var pt=typeof S!=='undefined'&&S.lang==='pt';
+  var dur=settings.duration||8;
+  var aspect=settings.aspectRatio||'16:9';
+  var style=settings.style||'cinematico';
+  var sceneDur=Math.round(dur/3);
+  return{
+    title:prompt.split(' ').slice(0,6).join(' ')+'...',
+    summary:prompt,
+    format:aspect,
+    totalDuration:dur,
+    style:style,
+    scenes:[
+      {number:1,title:pt?'Abertura / Estabelecimento':'Opening / Establishing',
+       description:pt?'Cena de abertura que estabelece o ambiente e contexto.':'Opening scene establishing environment and context.',
+       prompt:prompt+(pt?', abertura, plano geral, estabelecimento de cena':', opening shot, wide angle, scene establishment'),
+       duration:sceneDur,camera:pt?'Plano geral / Wide shot':'Wide shot',notes:pt?'Establish the world and tone':'Establish the world and tone'},
+      {number:2,title:pt?'Desenvolvimento / Ação Principal':'Development / Main Action',
+       description:pt?'Cena principal com o elemento de destaque.':'Main scene featuring the key element.',
+       prompt:prompt+(pt?', close-up, detalhe, movimento de câmera suave, foco no elemento principal':', close-up, detail, smooth camera movement, focus on main element'),
+       duration:sceneDur,camera:pt?'Close-up / Travelling':'Close-up / Tracking',notes:pt?'Highlight the main subject':'Highlight the main subject'},
+      {number:3,title:pt?'Conclusão / Impacto Final':'Conclusion / Final Impact',
+       description:pt?'Cena final com impacto visual e resolução.':'Final scene with visual impact and resolution.',
+       prompt:prompt+(pt?', plano final, impacto visual, atmosfera '+style:', final shot, visual impact, '+style+' atmosphere'),
+       duration:Math.max(1,dur-(sceneDur*2)),camera:pt?'Plano médio / Fechamento':'Medium shot / Closing',notes:pt?'Leave a lasting impression':'Leave a lasting impression'}
+    ]
+  };
+}
+
+function _scRenderStoryboard(sb,pt){
+  if(!sb)return'';
+  var html='<div style="display:grid;gap:16px">';
+  html+='<div style="background:var(--panel-2);border-radius:12px;padding:16px">';
+  html+='<div style="font-size:12px;letter-spacing:1px;color:var(--ink-4);margin-bottom:6px">'+(pt?'PROJETO':'PROJECT')+'</div>';
+  html+='<div style="font-weight:700;font-size:16px">'+escapeHtml(sb.title)+'</div>';
+  html+='<div style="font-size:12px;color:var(--ink-3);margin-top:4px">'+escapeHtml(sb.summary)+'</div>';
+  html+='<div style="display:flex;gap:12px;margin-top:8px;font-size:11px;color:var(--ink-4)">';
+  html+='<span>📐 '+sb.format+'</span><span>⏱ '+sb.totalDuration+'s</span><span>🎨 '+sb.style+'</span>';
+  html+='</div></div>';
+  (sb.scenes||[]).forEach(function(scene){
+    html+='<div style="background:var(--panel-2);border-radius:12px;padding:16px;border-left:3px solid var(--accent)">';
+    html+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">';
+    html+='<span style="background:var(--accent);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">'+scene.number+'</span>';
+    html+='<span style="font-weight:600;font-size:14px">'+escapeHtml(scene.title)+'</span>';
+    html+='<span style="font-size:11px;color:var(--ink-4);margin-left:auto">⏱ '+scene.duration+'s</span></div>';
+    html+='<div style="font-size:12px;color:var(--ink-3);margin-bottom:8px">'+escapeHtml(scene.description)+'</div>';
+    html+='<div style="background:var(--bg);border-radius:8px;padding:10px;font-size:11px;color:var(--ink-2);font-family:var(--mono);margin-bottom:8px">'+escapeHtml(scene.prompt)+'</div>';
+    html+='<div style="font-size:11px;color:var(--ink-4)">📷 '+escapeHtml(scene.camera)+'</div>';
+    html+='<button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="scSendSceneToStudio('+(scene.number-1)+')">'+(pt?'→ Enviar ao Studio':'→ Send to Studio')+'</button>';
+    html+='</div>';
+  });
+  html+='<button class="btn btn-primary" onclick="scSendToStudio()">'+(pt?'🎬 Transformar storyboard em vídeo':'🎬 Convert storyboard to video')+'</button>';
+  html+='</div>';
+  return html;
+}
+
+function scSendSceneToStudio(idx){
+  var raw=localStorage.getItem('hsai_sc_storyboard');
+  if(!raw)return scSendToStudio();
+  try{
+    var data=JSON.parse(raw);
+    var scene=data.storyboard&&data.storyboard.scenes&&data.storyboard.scenes[idx];
+    if(scene){data.prompt=scene.prompt;localStorage.setItem('hsai_sc_storyboard',JSON.stringify(data));}
+  }catch(e){}
+  scSendToStudio();
+}
+
+function scGetSettings(){
+  var typeEl=document.getElementById('scTypeSelect');
+  var aspectEl=document.getElementById('scAspectSelect');
+  var styleEl=document.getElementById('scStyleSelect');
+  var qualEl=document.getElementById('scQualSelect');
+  var durEl=document.getElementById('scDurSelect');
+  var promptEl=document.getElementById('scPrompt');
+  return{
+    mediaType: typeEl?typeEl.value:_scType,
+    aspectRatio: aspectEl?aspectEl.value:_scFormat,
+    style: styleEl?styleEl.value:(_scStyle||'cinematico').toLowerCase(),
+    quality: qualEl?qualEl.value:(_scQuality==='Rápido'?'fast':(_scQuality==='Premium'?'premium':'balanced')),
+    duration: durEl?durEl.value:(_scDuration||'8').replace('s',''),
+    prompt: promptEl?(promptEl.value||'').trim():''
+  };
+}
 function viewSimpleCreate(){
   var pt=S.lang==='pt';
-  var types=[
-    {id:'video',label:'Vídeo',ic:'🎬'},
-    {id:'image',label:'Imagem',ic:'🖼️'},
-    {id:'avatar',label:'Avatar',ic:'👤'},
-    {id:'storyboard',label:'Storyboard',ic:'🎞️'},
-    {id:'prompt',label:'Prompt',ic:'✍️'},
-    {id:'social',label:'Social',ic:'📱'},
-    {id:'product',label:'Produto',ic:'✨'},
-    {id:'realestate',label:'Imóvel',ic:'🏠'},
-    {id:'music',label:'Música',ic:'🎵'}
-  ];
-  var formats=['9:16','16:9','1:1','4:5'];
-  var durations=['5s','8s','10s','15s'];
-  var qualities=['Rápido','Equilibrado','Premium'];
-  var styles=['Cinemático','Realista','Comercial','Viral','Luxo'];
   var suggestions=[
     pt?'vídeo de produto premium com luz de estúdio':'premium product video with studio lighting',
     pt?'cena cinematográfica ao entardecer numa cidade':'cinematic sunset scene in a city',
     pt?'anúncio de moda com modelo e fundo branco':'fashion ad with model on white background',
-    pt?'clipe musical com neons e câmera dinâmica':'music video with neons and dynamic camera',
-    pt?'tour imóvel de luxo com golden hour':'luxury real estate tour at golden hour',
-    pt?'herói salva criança em cena de ação épica':'hero saves child in epic action scene'
+    pt?'clipe musical com neons e câmera dinâmica':'music video with neons and dynamic camera'
   ];
+
   var recResult=recommendModelForIntent({mediaType:_scType,style:_scStyle,quality:_scQuality==='Rápido'?'rapido':(_scQuality==='Premium'?'premium':'standard'),duration:parseInt(_scDuration)||8});
   var rec=recResult.model;
 
@@ -2912,7 +3037,7 @@ function viewSimpleCreate(){
   var trialBanner='';
   if(!isGuest()&&S.credits>=0&&S.credits<=3){
     var cred=S.credits;
-    trialBanner='<div class="sc-trial-banner">'
+    trialBanner='<div class="sc-trial-banner" style="width:100%;max-width:800px;margin-bottom:10px">'
       +'<span style="font-size:22px">🎬</span>'
       +'<div style="flex:1;min-width:160px">'
       +'<div style="font-size:13px;font-weight:700;color:var(--accent)">'+(pt?'Você tem '+cred+' crédito'+(cred===1?'':'s')+' de trial':'You have '+cred+' trial credit'+(cred===1?'':'s'))+'</div>'
@@ -2922,140 +3047,146 @@ function viewSimpleCreate(){
       +'</div>';
   }
 
-  // Demo items
-  var demoHtml=(DEMO_REEL||[]).slice(0,6).map(function(d,i){
+  // Demo items (compact: 2 videos + 2 images)
+  var demoHtml=(DEMO_REEL||[]).slice(0,4).map(function(d,i){
     return '<div class="sc-demo-item" onclick="scUseDemoPrompt('+i+')" title="'+(pt?'Usar prompt':'Use prompt')+'">'
       +'<video src="'+d.url+'" muted loop autoplay playsinline preload="none" class="sc-demo-thumb" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'"></video>'
-      +'<div style="padding:8px 10px">'
-      +'<div style="font-size:10px;color:var(--ink-4);margin-bottom:4px">'+escapeHtml(d.model||'')+'</div>'
-      +'<button class="btn btn-ghost btn-sm" style="width:100%;font-size:11px;padding:4px 8px" onclick="event.stopPropagation();scUseDemoPrompt('+i+')">'+(pt?'Usar prompt':'Use prompt')+'</button>'
+      +'<div style="padding:6px 8px">'
+      +'<button class="btn btn-ghost btn-sm" style="width:100%;font-size:10px;padding:3px 6px" onclick="event.stopPropagation();scUseDemoPrompt('+i+')">'+(pt?'Usar prompt':'Use prompt')+'</button>'
       +'</div></div>';
   }).join('');
 
-  var imgDemoHtml=REEL_IMGS.slice(0,6).map(function(url,i){
+  var imgDemoHtml=REEL_IMGS.slice(0,4).map(function(url,i){
     return '<div class="sc-demo-item" title="'+(pt?'Criar parecido':'Create similar')+'">'
       +'<img src="'+url+'" class="sc-demo-thumb" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=\'https://picsum.photos/seed/sc'+i+'/400/224\'">'
-      +'<div style="padding:8px 10px">'
-      +'<button class="btn btn-ghost btn-sm" style="width:100%;font-size:11px;padding:4px 8px" onclick="scUseAsRef(\''+url+'\',\'image\')">'+(pt?'Criar parecido':'Create similar')+'</button>'
+      +'<div style="padding:6px 8px">'
+      +'<button class="btn btn-ghost btn-sm" style="width:100%;font-size:10px;padding:3px 6px" onclick="scUseAsRef(\''+url+'\',\'image\')">'+(pt?'Criar parecido':'Create similar')+'</button>'
       +'</div></div>';
   }).join('');
 
-  var stepsHtml='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:6px">'
-    +'<div class="sc-step"><div class="sc-step-num">01</div><h4>'+(pt?'Digite sua ideia':'Type your idea')+'</h4><p>'+(pt?'Descreva a cena, produto ou personagem':'Describe the scene, product or character')+'</p></div>'
-    +'<div class="sc-step"><div class="sc-step-num">02</div><h4>'+(pt?'Receba sugestão':'Get a suggestion')+'</h4><p>'+(pt?'A IA recomenda o melhor modelo para você':'AI recommends the best model for you')+'</p></div>'
-    +'<div class="sc-step"><div class="sc-step-num">03</div><h4>'+(pt?'Monte antes de gastar':'Plan before spending')+'</h4><p>'+(pt?'Ajuste e refine sem usar créditos':'Refine without spending credits')+'</p></div>'
-    +'<div class="sc-step"><div class="sc-step-num">04</div><h4>'+(pt?'Gere e publique':'Generate and publish')+'</h4><p>'+(pt?'Exporte, edite e compartilhe':'Export, edit and share')+'</p></div>'
-    +'</div>';
+  // Top bar right side
+  var topRight=isGuest()
+    ?'<button class="btn btn-primary btn-sm" onclick="go(\'plans\')">'+(pt?'Entrar':'Sign in')+'</button>'
+    :'<span style="font-size:12px;color:var(--ink-3)">'+(S.credits||0)+' '+(pt?'créditos':'credits')+'</span>'
+     +'<button class="btn btn-ghost btn-sm" onclick="go(\'studio\')">'+(pt?'Studio Suite →':'Studio Suite →')+'</button>';
 
-  var whyHtml='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">'
-    +'<div class="sc-why-card"><div class="sc-ic">🎯</div><h4>'+(pt?'Monte antes de gastar':'Plan before spending')+'</h4><p>'+(pt?'Refine prompt e referências antes de usar créditos.':'Refine prompt and references before spending credits.')+'</p></div>'
-    +'<div class="sc-why-card"><div class="sc-ic">⚡</div><h4>'+(pt?'Modo rápido e Studio':'Quick mode and Studio')+'</h4><p>'+(pt?'Crie rápido ou vá ao Studio Completo para controle total.':'Create fast or go to Full Studio for total control.')+'</p></div>'
-    +'<div class="sc-why-card"><div class="sc-ic">🎬</div><h4>'+(pt?'Multimodelo':'Multi-model')+'</h4><p>'+(pt?'Seedance, Kling, Veo, Flux e mais — escolha o ideal.':'Seedance, Kling, Veo, Flux and more — pick the best.')+'</p></div>'
-    +'<div class="sc-why-card"><div class="sc-ic">📎</div><h4>'+(pt?'Referência visual':'Visual reference')+'</h4><p>'+(pt?'Anexe imagens de referência para guiar a geração.':'Attach reference images to guide generation.')+'</p></div>'
-    +'<div class="sc-why-card"><div class="sc-ic">✨</div><h4>'+(pt?'Enhance de prompt':'Prompt enhance')+'</h4><p>'+(pt?'A IA melhora seu prompt automaticamente.':'AI enhances your prompt automatically.')+'</p></div>'
-    +'<div class="sc-why-card"><div class="sc-ic">🔗</div><h4>'+(pt?'Tudo conectado':'Everything connected')+'</h4><p>'+(pt?'Galeria, pós-produção e publicação em um só lugar.':'Gallery, post-production and publishing in one place.')+'</p></div>'
-    +'</div>';
+  return '<div class="sc-page">'
 
-  return trialBanner
-  + `<div class="sc-hero">
-    <div style="font-size:11px;letter-spacing:2px;font-weight:700;color:var(--accent);margin-bottom:10px;opacity:.85">HOLLYWOOD STUDIO AI</div>
-    <h1>${pt?'O que vamos <em style="font-style:normal;color:var(--accent)">criar</em> hoje?':'What are we <em style="font-style:normal;color:var(--accent)">creating</em> today?'}</h1>
-    <p class="sub">${pt?'Seu Google da criação em tempo real. Crie vídeos e imagens com os modelos generativos mais poderosos.':'Your real-time creation engine. Make videos and images with the most powerful generative models.'}</p>
-    <div class="impact">${pt?'Agora você é o diretor.':'Now you\'re the director.'}</div>
-  </div>
+  // Minimal top bar
+  +'<div class="sc-topbar">'
+  +'<div class="sc-logo">Hollywood Studio AI</div>'
+  +'<div class="sc-topbar-right">'+topRight+'</div>'
+  +'</div>'
 
-  <!-- Type selector -->
-  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
-    ${types.map(function(tp){return '<button class="btn '+ (_scType===tp.id?'btn-primary':'btn-ghost') +' sc-type-btn" id="scType_'+tp.id+'" style="padding:8px 14px;font-size:13px" onclick="scSetType(\''+tp.id+'\')">'+tp.ic+' '+tp.label+'</button>';}).join('')}
-  </div>
+  // Hero
+  +trialBanner
+  +'<div class="sc-hero-wrap">'
+  +'<h1>'+(pt?'O que vamos <em style="font-style:normal;color:var(--accent)">criar</em> hoje?':'What are we <em style="font-style:normal;color:var(--accent)">creating</em> today?')+'</h1>'
+  +'<p class="sub">'+(pt?'Crie vídeos e imagens com IA em segundos. Agora você é o diretor.':'Create videos and images with AI in seconds. Now you\'re the director.')+'</p>'
+  +'</div>'
 
-  <!-- Main prompt card -->
-  <div class="sc-prompt-area" style="margin-bottom:14px">
-    <div style="position:relative">
-      <textarea class="sc-prompt-field" id="scPrompt"
-        placeholder="${pt?'Descreva sua ideia para vídeo ou imagem...':'Describe your idea for video or image...'}"
-        oninput="scUpdateRecommendation()"></textarea>
-      <button class="btn btn-ghost btn-sm" style="position:absolute;right:10px;bottom:10px;font-size:12px;padding:5px 12px" onclick="scEnhance()">✨ ${pt?'Enhance':'Enhance'}</button>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap">
-      <button class="btn btn-ghost btn-sm" onclick="scAttachRef()" style="font-size:12px">📎 ${pt?'Referência':'Reference'}</button>
-      <input type="file" id="scRefInput" accept="image/*" style="display:none" onchange="scOnRefFile(this)">
-      <div id="scRefPreview" style="display:none"></div>
-    </div>
-    <div id="scEnhanceUndo" style="display:none;margin-top:8px"></div>
-  </div>
+  // Main creation card
+  +'<div class="sc-card">'
 
-  <!-- Suggestion chips -->
-  <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">
-    ${suggestions.map(function(sg){return '<button class="btn btn-ghost" style="padding:5px 12px;font-size:12px;border-radius:20px" onclick="document.getElementById(\'scPrompt\').value=\''+sg.replace(/'/g,"\\'")+'\'">'+sg.slice(0,40)+'…</button>';}).join('')}
-  </div>
+  // Textarea
+  +'<textarea class="sc-prompt-field" id="scPrompt" placeholder="'+(pt?'Descreva sua ideia...':'Describe your idea...')+'" oninput="scUpdateRecommendation()" style="width:100%;resize:vertical"></textarea>'
 
-  <!-- Quick settings -->
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:14px">
-    <div>
-      <div style="font-size:11px;font-weight:700;color:var(--ink-3);margin-bottom:6px;letter-spacing:.5px">${pt?'FORMATO':'FORMAT'}</div>
-      <div class="seg" style="flex-wrap:wrap;gap:4px">${formats.map(function(f){return '<button class="'+(_scFormat===f?'on':'')+'" onclick="scSetFormat(\''+f+'\')">'+f+'</button>';}).join('')}</div>
-    </div>
-    <div id="scDurRow" style="display:${_scType==='video'?'':'none'}">
-      <div style="font-size:11px;font-weight:700;color:var(--ink-3);margin-bottom:6px;letter-spacing:.5px">${pt?'DURAÇÃO':'DURATION'}</div>
-      <div class="seg" style="flex-wrap:wrap;gap:4px">${durations.map(function(d){return '<button class="'+(_scDuration===d?'on':'')+'" onclick="scSetDuration(\''+d+'\')">'+d+'</button>';}).join('')}</div>
-    </div>
-    <div>
-      <div style="font-size:11px;font-weight:700;color:var(--ink-3);margin-bottom:6px;letter-spacing:.5px">${pt?'ESTILO':'STYLE'}</div>
-      <div class="seg" style="flex-wrap:wrap;gap:4px">${styles.map(function(s){return '<button class="'+(_scStyle===s?'on':'')+'" onclick="scSetStyle(\''+s+'\')">'+s+'</button>';}).join('')}</div>
-    </div>
-    <div>
-      <div style="font-size:11px;font-weight:700;color:var(--ink-3);margin-bottom:6px;letter-spacing:.5px">${pt?'QUALIDADE':'QUALITY'}</div>
-      <div class="seg" style="flex-wrap:wrap;gap:4px">${qualities.map(function(q){return '<button class="'+(_scQuality===q?'on':'')+'" onclick="scSetQuality(\''+q+'\')">'+q+'</button>';}).join('')}</div>
-    </div>
-  </div>
+  // Ref preview + undo bar
+  +'<div id="scRefPreview" style="display:none;margin-top:8px"></div>'
+  +'<input type="file" id="scRefInput" class="hide" style="display:none" accept="image/*,video/*" onchange="scOnRefFile(this)">'
+  +'<div id="scEnhanceUndo" style="display:none;margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"></div>'
 
-  <!-- Model recommendation -->
-  <div id="scModelRec" style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-    <div>
-      <div style="font-size:10px;font-weight:700;color:var(--ink-4);letter-spacing:1px;margin-bottom:3px">${pt?'MODELO RECOMENDADO':'RECOMMENDED MODEL'}</div>
-      <div style="font-size:14px;font-weight:700" id="scRecModelName">${rec?rec.name:'Seedance Fast'}</div>
-      <div style="font-size:12px;color:var(--ink-3);margin-top:2px" id="scRecReason">${recResult.reason}</div>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      <span style="font-size:12px;color:var(--ink-3)">~${rec?rec.estimatedCredits:3} ${pt?'créditos':'credits'}</span>
-      <button class="btn btn-ghost btn-sm" onclick="scChooseModel()">${pt?'🎬 Escolher modelo':'🎬 Choose model'}</button>
-    </div>
-  </div>
+  // Compact settings row
+  +'<div class="sc-compact-row">'
+  +'<select class="sc-select" id="scTypeSelect" onchange="scSetType(this.value)">'
+  +'<option value="video"'+ (_scType==='video'?' selected':'')+'>🎬 '+(pt?'Vídeo':'Video')+'</option>'
+  +'<option value="image"'+ (_scType==='image'?' selected':'')+'>🖼 '+(pt?'Imagem':'Image')+'</option>'
+  +'</select>'
+  +'<select class="sc-select" id="scAspectSelect">'
+  +'<option value="16:9"'+(_scFormat==='16:9'?' selected':'')+'">16:9</option>'
+  +'<option value="9:16"'+(_scFormat==='9:16'?' selected':'')+'">9:16</option>'
+  +'<option value="1:1"'+(_scFormat==='1:1'?' selected':'')+'">1:1</option>'
+  +'<option value="4:5"'+(_scFormat==='4:5'?' selected':'')+'">4:5</option>'
+  +'</select>'
+  +'<select class="sc-select" id="scStyleSelect">'
+  +'<option value="cinematico"'+(_scStyle==='Cinemático'?' selected':'')+'>'+(pt?'Cinemático':'Cinematic')+'</option>'
+  +'<option value="realista"'+(_scStyle==='Realista'?' selected':'')+'>'+(pt?'Realista':'Realistic')+'</option>'
+  +'<option value="comercial"'+(_scStyle==='Comercial'?' selected':'')+'>'+(pt?'Comercial':'Commercial')+'</option>'
+  +'<option value="luxo"'+(_scStyle==='Luxo'?' selected':'')+'>'+(pt?'Luxo':'Luxury')+'</option>'
+  +'<option value="viral"'+(_scStyle==='Viral'?' selected':'')+'>Viral</option>'
+  +'</select>'
+  +'<select class="sc-select" id="scQualSelect">'
+  +'<option value="balanced"'+(_scQuality==='Equilibrado'?' selected':'')+'>'+(pt?'Equilibrado':'Balanced')+'</option>'
+  +'<option value="fast"'+(_scQuality==='Rápido'?' selected':'')+'>'+(pt?'Rápido':'Fast')+'</option>'
+  +'<option value="premium"'+(_scQuality==='Premium'?' selected':'')+'>Premium</option>'
+  +'</select>'
+  +'<select class="sc-select" id="scDurSelect" style="display:'+(_scType==='video'?'':'none')+'">'
+  +'<option value="5"'+(_scDuration==='5s'?' selected':'')+'>5s</option>'
+  +'<option value="8"'+(_scDuration==='8s'||_scDuration==='8'?' selected':'')+'>8s</option>'
+  +'<option value="10"'+(_scDuration==='10s'?' selected':'')+'>10s</option>'
+  +'<option value="15"'+(_scDuration==='15s'?' selected':'')+'>15s</option>'
+  +'</select>'
+  +'<select class="sc-select" id="scDirectorSelect">'
+  +'<option value="">'+(pt?'Direção criativa':'Creative direction')+'</option>'
+  +'<option value="cinematico">🎬 '+(pt?'Cinemático':'Cinematic')+'</option>'
+  +'<option value="publicitario">📺 '+(pt?'Publicitário':'Commercial')+'</option>'
+  +'<option value="luxo">💎 Luxo</option>'
+  +'<option value="viral">🔥 Viral</option>'
+  +'<option value="narrativo">📖 '+(pt?'Narrativo':'Narrative')+'</option>'
+  +'<option value="produto">🛍 Produto</option>'
+  +'<option value="musical">🎵 Musical</option>'
+  +'<option value="editorial">📸 Editorial</option>'
+  +'<option value="fotografo">📷 '+(pt?'Fotógrafo':'Photographer')+'</option>'
+  +'<option value="social">📱 Social Media</option>'
+  +'</select>'
+  +'</div>'
 
-  <!-- Action buttons -->
-  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px">
-    <button class="btn btn-primary" style="padding:13px 24px;font-size:14px" onclick="scCreate('video')">🎬 ${pt?'Criar Vídeo':'Create Video'}</button>
-    <button class="btn btn-primary" style="padding:13px 24px;font-size:14px" onclick="scCreate('image')">🖼 ${pt?'Criar Imagem':'Create Image'}</button>
-    <button class="btn btn-ghost" style="padding:13px 18px" onclick="scEnhance()">✨ Enhance</button>
-    <button class="btn btn-ghost" style="padding:13px 18px" onclick="scStoryboard()">📋 Storyboard</button>
-    <button class="btn btn-ghost" style="padding:13px 18px" onclick="scChooseModel()">🎬 ${pt?'Modelo':'Model'}</button>
-    <button class="btn btn-ghost" style="padding:13px 18px" onclick="scOpenStudio()">⚙️ ${pt?'Studio Completo':'Full Studio'}</button>
-  </div>
+  // Model recommendation (compact)
+  +'<div id="scModelRec" class="sc-model-rec" style="font-size:12px;color:var(--ink-3);margin:6px 0;display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
+  +'<span>🎛 <span id="scRecModelName">'+(rec?rec.name:'Seedance Fast')+'</span></span>'
+  +'<span style="color:var(--ink-4)" id="scRecReason">'+recResult.reason+'</span>'
+  +'<button class="btn btn-ghost btn-sm" onclick="scChooseModel()" style="font-size:11px;padding:3px 8px">'+(pt?'Trocar':'Change')+'</button>'
+  +'</div>'
 
-  <!-- Demo: Vídeos -->
-  <div style="margin-bottom:28px">
-    <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--ink-4);margin-bottom:10px;text-transform:uppercase">${pt?'Crie vídeos como este':'Create videos like this'}</div>
-    <div class="sc-demo-track">${demoHtml||'<div style="color:var(--ink-4);font-size:13px;padding:20px">'+(pt?'Exemplos carregando...':'Loading examples...')+'</div>'}</div>
-  </div>
+  // Action buttons
+  +'<div class="sc-actions">'
+  +'<button class="btn btn-primary" style="padding:11px 20px;font-size:14px" onclick="scCreate(\'video\')">🎬 '+(pt?'Criar Vídeo':'Create Video')+'</button>'
+  +'<button class="btn btn-primary" style="padding:11px 20px;font-size:14px" onclick="scCreate(\'image\')">🖼 '+(pt?'Criar Imagem':'Create Image')+'</button>'
+  +'<button class="btn btn-ghost" style="padding:11px 16px" onclick="scEnhance()">✨ Enhance</button>'
+  +'<button class="btn btn-ghost" style="padding:11px 16px" onclick="scStoryboard()">📋 Storyboard</button>'
+  +'<button class="btn btn-ghost" style="padding:11px 16px" onclick="scAttachRef()">📎 '+(pt?'Referência':'Ref')+'</button>'
+  +'<button class="btn btn-ghost" style="padding:11px 16px" onclick="go(\'models\')">🎛 '+(pt?'Modelos':'Models')+'</button>'
+  +'<button class="btn btn-ghost" style="padding:11px 16px" onclick="scSendToStudio()">⚙️ Studio</button>'
+  +'</div>'
+  +'</div>'  // end .sc-card
 
-  <!-- Demo: Imagens -->
-  <div style="margin-bottom:32px">
-    <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--ink-4);margin-bottom:10px;text-transform:uppercase">${pt?'Crie imagens como estas':'Create images like these'}</div>
-    <div class="sc-demo-track">${imgDemoHtml}</div>
-  </div>
+  // Suggestion chips
+  +'<div style="width:100%;max-width:800px;display:flex;flex-wrap:wrap;gap:6px;margin-top:12px">'
+  +suggestions.map(function(sg){return '<button class="btn btn-ghost" style="padding:5px 12px;font-size:12px;border-radius:20px" onclick="document.getElementById(\'scPrompt\').value=\''+sg.replace(/'/g,"\\'")+'\';scUpdateRecommendation()">'+sg.slice(0,42)+'…</button>';}).join('')
+  +'</div>'
 
-  <!-- Como funciona -->
-  <div style="margin-bottom:28px">
-    <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--ink-4);margin-bottom:12px;text-transform:uppercase">${pt?'Como funciona':'How it works'}</div>
-    ${stepsHtml}
-  </div>
+  // Demo: Videos (compact)
+  +'<div style="width:100%;max-width:800px;margin-top:28px">'
+  +'<div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--ink-4);margin-bottom:10px;text-transform:uppercase">'+(pt?'Crie vídeos como este':'Create videos like this')+'</div>'
+  +'<div class="sc-demo-track">'+(demoHtml||'<div style="color:var(--ink-4);font-size:13px;padding:20px">'+(pt?'Exemplos carregando...':'Loading examples...')+'</div>')+'</div>'
+  +'</div>'
 
-  <!-- Por que usar -->
-  <div style="margin-bottom:28px">
-    <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--ink-4);margin-bottom:12px;text-transform:uppercase">${pt?'Por que usar?':'Why use it?'}</div>
-    ${whyHtml}
-  </div>`;
+  // Demo: Images (compact)
+  +'<div style="width:100%;max-width:800px;margin-top:20px">'
+  +'<div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--ink-4);margin-bottom:10px;text-transform:uppercase">'+(pt?'Crie imagens como estas':'Create images like these')+'</div>'
+  +'<div class="sc-demo-track">'+imgDemoHtml+'</div>'
+  +'</div>'
+
+  // Studio Suite CTA
+  +'<div class="sc-suite-cta">'
+  +'<div style="font-size:14px;color:var(--ink-2);margin-bottom:12px">'+(pt?'Quer controlar modelos, referências, storyboard e pós-produção?':'Want to control models, references, storyboard and post-production?')+'</div>'
+  +'<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">'
+  +'<button class="btn btn-primary" onclick="go(\'studio\')">'+(pt?'Abrir Studio Suite →':'Open Studio Suite →')+'</button>'
+  +'<button class="btn btn-ghost" onclick="go(\'council\')">'+(pt?'Ver Conselho Criativo':'Creative Council')+'</button>'
+  +'</div>'
+  +'</div>'
+
+  +'</div>';  // end .sc-page
 }
 
 function afterSimpleCreate(){
@@ -3069,14 +3200,23 @@ function afterSimpleCreate(){
   }
 }
 
-function scSetType(t){_scType=t;render();}
-function scSetFormat(f){_scFormat=f;render();}
-function scSetDuration(d){_scDuration=d;render();}
-function scSetQuality(q){_scQuality=q;render();}
-function scSetStyle(s){_scStyle=s;render();}
+function scSetType(t){
+  _scType=t;
+  var sel=document.getElementById('scTypeSelect');
+  if(sel&&sel.value!==t)sel.value=t;
+  var durSel=document.getElementById('scDurSelect');
+  if(durSel)durSel.style.display=t==='video'?'':'none';
+  scUpdateRecommendation();
+}
+function scSetFormat(f){_scFormat=f;}
+function scSetDuration(d){_scDuration=d;}
+function scSetQuality(q){_scQuality=q;}
+function scSetStyle(s){_scStyle=s;}
 
 function scUpdateRecommendation(){
-  var rec=recommendModelForIntent({mediaType:_scType,style:_scStyle,quality:_scQuality==='Rápido'?'rapido':(_scQuality==='Premium'?'premium':'standard'),duration:parseInt(_scDuration)||8});
+  var s=scGetSettings();
+  var qualMap={fast:'rapido',premium:'premium',balanced:'standard'};
+  var rec=recommendModelForIntent({mediaType:s.mediaType,style:s.style,quality:qualMap[s.quality]||'standard',duration:parseInt(s.duration)||8});
   var nm=document.getElementById('scRecModelName');
   var nr=document.getElementById('scRecReason');
   if(nm&&rec.model)nm.textContent=rec.model.name;
@@ -3144,37 +3284,50 @@ function scCreate(type){
   scSendToStudio();
 }
 function scSendToStudio(){
-  var prompt=(document.getElementById('scPrompt')||{}).value||'';
-  if(!prompt.trim()){toast(S.lang==='pt'?'Digite uma ideia primeiro':'Enter an idea first','err');return;}
-  sendToStudio({prompt:prompt,modelId:_scModel,source:'simple-create',mediaType:_scType,
-    aspectRatio:_scFormat,duration:parseInt(_scDuration)||8,style:_scStyle,quality:_scQuality});
-  setTimeout(function(){var el=document.getElementById('cPrompt');if(el&&prompt)el.value=prompt;},350);
+  var s=scGetSettings();
+  if(!s.prompt.trim()){toast(S.lang==='pt'?'Digite uma ideia primeiro':'Enter an idea first','err');return;}
+  sendToStudio({prompt:s.prompt,modelId:_scModel,source:'simple-create',mediaType:s.mediaType,
+    aspectRatio:s.aspectRatio,duration:parseInt(s.duration)||8,style:s.style,quality:s.quality});
+  setTimeout(function(){var el=document.getElementById('cPrompt');if(el&&s.prompt)el.value=s.prompt;},350);
 }
 async function scEnhance(){
-  var pt=S.lang==='pt';
-  var el=document.getElementById('scPrompt');
-  if(!el)return;
-  var txt=(el.value||'').trim();
-  if(!txt){toast(pt?'Digite algo para melhorar':'Type something to enhance','err');return;}
-  _scOrigPrompt=txt;
-  el.disabled=true;
-  toast(pt?'✨ Melhorando prompt...':'✨ Enhancing prompt...','info');
-  var enhanced=null;
-  try{
-    var res=await fetch('/api/enhance',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:txt,style:_scStyle,model:_scModel})});
-    if(res.ok){var d=await res.json();if(d.enhanced)enhanced=d.enhanced;}
-  }catch(e){}
-  if(!enhanced){
-    var extras=_scType==='video'
-      ?(pt?'plano cinematográfico, câmera em movimento suave, iluminação volumétrica, 4K, color grading profissional':'cinematic shot, smooth camera movement, volumetric lighting, 4K, professional color grading')
-      :(pt?'composição profissional, iluminação dramática, alta resolução, detalhes nítidos':'professional composition, dramatic lighting, high resolution, sharp details');
-    enhanced=txt+' — '+extras;
+  var promptEl=document.getElementById('scPrompt');
+  if(!promptEl||!promptEl.value.trim()){
+    toast(S.lang==='pt'?'Digite uma ideia para melhorar':'Enter an idea to enhance','err');
+    return;
   }
-  el.value=enhanced;el.disabled=false;
+  _scOrigPrompt=promptEl.value;
+  var s=scGetSettings();
+  var director=(document.getElementById('scDirectorSelect')||{}).value||'';
+  var pt=S.lang==='pt';
+  promptEl.disabled=true;
+  var oldVal=promptEl.value;
+  promptEl.value=pt?'✨ Melhorando seu prompt...':'✨ Enhancing your prompt...';
+  var enhanced=null;
+  if(typeof HsaiBackend!=='undefined'&&!isGuest()){
+    try{
+      var d=await HsaiBackend.enhancePrompt(s.prompt,director||s.style,null);
+      if(d.ok&&d.enhanced)enhanced=d.enhanced;
+    }catch(e){}
+  }
+  if(!enhanced){
+    try{
+      var res=await fetch('/api/enhance',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:oldVal,style:director||s.style,model:_scModel})});
+      if(res.ok){var rd=await res.json();if(rd.enhanced)enhanced=rd.enhanced;}
+    }catch(e){}
+  }
+  if(!enhanced){
+    enhanced=_scLocalEnhance(oldVal,s.mediaType,director||s.style,s.aspectRatio,parseInt(s.duration)||8);
+  }
+  promptEl.value=enhanced;
+  promptEl.disabled=false;
   var undoArea=document.getElementById('scEnhanceUndo');
   if(undoArea){
     undoArea.style.display='';
-    undoArea.innerHTML='<button class="btn btn-ghost btn-sm" onclick="scUndoEnhance()">'+(pt?'↩ Voltar ao original':'↩ Revert to original')+'</button> <button class="btn btn-ghost btn-sm" onclick="scSendToStudio()">'+(pt?'Enviar ao Studio':'Send to Studio')+'</button>';
+    undoArea.innerHTML=
+      '<button class="btn btn-ghost btn-sm" onclick="scUndoEnhance()">'+(pt?'↩ Original':'↩ Revert')+'</button> '+
+      '<button class="btn btn-primary btn-sm" onclick="scCreate(\'video\')">'+(pt?'🎬 Criar Vídeo':'🎬 Create Video')+'</button> '+
+      '<button class="btn btn-ghost btn-sm" onclick="scSendToStudio()">'+(pt?'⚙️ Studio':'⚙️ Studio')+'</button>';
   }
   toast(pt?'✅ Prompt melhorado!':'✅ Prompt enhanced!','ok');
 }
@@ -3188,16 +3341,23 @@ function scUndoEnhance(){
   }
 }
 function scStoryboard(){
-  var prompt=(document.getElementById('scPrompt')||{}).value||'';
+  var s=scGetSettings();
+  var prompt=s.prompt;
   if(!prompt.trim()){toast(S.lang==='pt'?'Digite uma ideia primeiro':'Enter an idea first','err');return;}
-  localStorage.setItem('hsai_sc_storyboard',JSON.stringify({prompt:prompt,mediaType:_scType,aspectRatio:_scFormat}));
+  var pt=S.lang==='pt';
+  var storyboard=_scGenerateLocalStoryboard(prompt,s);
+  var saveData=Object.assign({},s,{storyboard:storyboard});
+  localStorage.setItem('hsai_sc_storyboard',JSON.stringify(saveData));
   go('storyboard');
   setTimeout(function(){
-    var el=document.getElementById('storyboardBrief')||document.getElementById('sbBrief')||document.querySelector('[id*="toryboard"] textarea,[id*="toryboard"] input');
-    if(el)el.value=prompt;
+    var briefEl=document.getElementById('storyboardBrief')||document.getElementById('sbBrief')||document.querySelector('#storyboardPanel textarea,#sbPanel textarea');
+    if(briefEl)briefEl.value=prompt;
+    var storyboardOutput=document.getElementById('storyboardOutput')||document.getElementById('sbOutput')||document.getElementById('storyOut');
+    if(storyboardOutput)storyboardOutput.innerHTML=_scRenderStoryboard(storyboard,pt);
     if(typeof generateStoryboard==='function')generateStoryboard(prompt);
-    else if(typeof initStoryboard==='function')initStoryboard({prompt:prompt});
-  },400);
+    else if(typeof initStoryboard==='function')initStoryboard(s);
+  },500);
+  toast(pt?'📋 Storyboard criado! Edite e refine.':'📋 Storyboard created! Edit and refine.','ok');
 }
 function scShowNoCreditsModal(){
   var pt=S.lang==='pt';
