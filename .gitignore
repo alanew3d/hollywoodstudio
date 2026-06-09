@@ -1,2 +1,6 @@
 .vercel
-.env*
+.env
+.env.local
+.env.*.local
+# Allow .env.example (template sem valores reais)
+!.env.example
