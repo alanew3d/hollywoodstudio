@@ -2411,7 +2411,13 @@ function userMenu(){
 }
 function closeUserPop(){const p=document.getElementById('userPop');if(p)p.classList.remove('open');}
 function logoutUser(){
-  if(confirm(S.lang==='pt'?'Sair da conta?':'Log out?')){localStorage.removeItem('hsai_user');location.reload();}
+  if(confirm(S.lang==='pt'?'Sair da conta?':'Log out?')){
+    localStorage.removeItem('hsai_user');
+    localStorage.removeItem('hsai_token');
+    localStorage.removeItem('hsai_sb_token');
+    if(typeof HsaiBackend!=='undefined')HsaiBackend.clearToken();
+    location.reload();
+  }
 }
 document.addEventListener('click',e=>{if(!e.target.closest('.user-wrap'))closeUserPop();});
 
@@ -4259,18 +4265,29 @@ function viewCustom(id){
     ${s.html}`;
 }
 /* ════════ end auto-builder ════════ */
-function enhancePrompt(brief){
+async function enhancePrompt(brief){
   const stage=document.getElementById('previewStage');if(!brief){toast(S.lang==='pt'?'Escreva uma ideia':'Write an idea','err');return;}
-  const extra=S.lang==='pt'?'plano cinematográfico, lente 35mm, profundidade de campo rasa, iluminação volumétrica, color grading de cinema, movimento de câmera suave, alta realismo 4k':'cinematic shot, 35mm lens, shallow depth of field, volumetric lighting, film color grading, smooth camera movement, high realism 4k';
-  const out=`${brief} — ${extra}`;
+  const pt=S.lang==='pt';
+  const extra=pt?'plano cinematográfico, lente 35mm, profundidade de campo rasa, iluminação volumétrica, color grading de cinema, movimento de câmera suave, alta realismo 4k':'cinematic shot, 35mm lens, shallow depth of field, volumetric lighting, film color grading, smooth camera movement, high realism 4k';
+  let out=`${brief} — ${extra}`;
+
+  // Tentar melhorar via API backend real
+  if(typeof HsaiBackend!=='undefined'&&!isGuest()){
+    if(stage)stage.innerHTML=`<div style="padding:20px;text-align:center;color:var(--ink-3)">${pt?'✨ Aprimorando prompt com IA...':'✨ Enhancing prompt with AI...'}</div>`;
+    try{
+      const d=await HsaiBackend.enhancePrompt(brief,null,S.model||null);
+      if(d.ok&&d.enhanced)out=d.enhanced;
+    }catch(e){}
+  }
+
   const llm=chatLLM();const J=s=>JSON.stringify(s).replace(/"/g,'&quot;');
-  if(stage)stage.innerHTML=`<div style="width:100%;padding:6px"><div class="label">${S.lang==='pt'?'Prompt aprimorado':'Enhanced prompt'} · ${llm.name}</div>
+  if(stage)stage.innerHTML=`<div style="width:100%;padding:6px"><div class="label">${pt?'Prompt aprimorado':'Enhanced prompt'} · ${llm.name}</div>
     <div class="card" style="padding:14px;font-size:13px;line-height:1.6;color:var(--ink-2)">${escapeHtml(out)}</div>
     <div class="row" style="margin-top:10px;flex-wrap:wrap">
-      <button class="btn btn-ghost btn-sm" onclick="navigator.clipboard.writeText(${J(out)});toast('${S.lang==='pt'?'Copiado':'Copied'}','ok')">${S.lang==='pt'?'Copiar':'Copy'}</button>
-      <a class="btn btn-primary btn-sm" id="openLLM" href="#" target="_blank" rel="noopener">${S.lang==='pt'?'Abrir no':'Open in'} ${llm.name} ↗</a>
-      <button class="btn btn-ghost btn-sm" onclick="setCmode('video');document.getElementById('cPrompt').value=${J(out)};">→ ${S.lang==='pt'?'Usar no Vídeo':'Use in Video'}</button>
-      <button class="btn btn-ghost btn-sm" onclick="setCmode('image');document.getElementById('cPrompt').value=${J(out)};">→ ${S.lang==='pt'?'Usar na Imagem':'Use in Image'}</button>
+      <button class="btn btn-ghost btn-sm" onclick="navigator.clipboard.writeText(${J(out)});toast('${pt?'Copiado':'Copied'}','ok')">${pt?'Copiar':'Copy'}</button>
+      <a class="btn btn-primary btn-sm" id="openLLM" href="#" target="_blank" rel="noopener">${pt?'Abrir no':'Open in'} ${llm.name} ↗</a>
+      <button class="btn btn-ghost btn-sm" onclick="setCmode('video');document.getElementById('cPrompt').value=${J(out)};">→ ${pt?'Usar no Vídeo':'Use in Video'}</button>
+      <button class="btn btn-ghost btn-sm" onclick="setCmode('image');document.getElementById('cPrompt').value=${J(out)};">→ ${pt?'Usar na Imagem':'Use in Image'}</button>
     </div></div>`;
   const a=stage&&document.getElementById('openLLM');if(a)a.href=llm.open(out);
 }
@@ -5283,6 +5300,10 @@ function buyCredits(cr,price){
 /* ════════ WELCOME EMAIL (novo usuário) ════════ */
 async function sendUserWelcomeEmail(user){
   if(!user||!user.email||user.email==='admin') return;
+  // Usar backend Resend seguro (sem API keys no frontend)
+  if(typeof HsaiBackend!=='undefined'){
+    HsaiBackend.api&&HsaiBackend.api('email/send',{method:'POST',body:{template:'welcome'}}).catch(()=>{});
+  }
   const apiKey = getApiKey('brevo');
   if(!apiKey) return;
   const pt = S.lang==='pt';
@@ -5465,9 +5486,31 @@ function confirmPendingPayment(){
       }
     }).catch(()=>{});
 }
-function buyPlan(id,secs){
+async function buyPlan(id,secs){
   if(isGuest())return showAuthGate('default');
   const p=PLANS.find(x=>x.id===id);if(!p)return;
+
+  // Tentar Checkout Session via backend (Stripe real)
+  if(typeof HsaiBackend!=='undefined' && !isGuest()){
+    const pt=S.lang==='pt';
+    const loadBtn=document.getElementById('coStripe');
+    try{
+      if(loadBtn)loadBtn.textContent=pt?'Preparando checkout...':'Preparing checkout...';
+      const d=await HsaiBackend.createCheckout(id,null);
+      if(d.checkoutUrl){
+        window.open(d.checkoutUrl,'_blank');
+        toast(pt?'Checkout Stripe aberto. Créditos entram após confirmação.':'Stripe Checkout opened. Credits arrive after confirmation.','info');
+        if(loadBtn)loadBtn.textContent=pt?'Pagar com cartão (Stripe)':'Pay with card (Stripe)';
+        return;
+      }
+      if(d.fallback||d.status==='beta'){
+        // Backend sem Stripe configurado — usar link direto se disponível
+        toast(pt?'Checkout Stripe não configurado — usando link direto.':'Stripe Checkout not configured — using direct link.','info');
+      }
+    }catch(e){}
+    if(loadBtn)loadBtn.textContent=pt?'Pagar com cartão (Stripe)':'Pay with card (Stripe)';
+  }
+
   document.getElementById('coTitle').textContent=S.lang==='pt'?'Contratar plano':'Subscribe to plan';
   document.getElementById('coSub').textContent=S.lang==='pt'?'Revise e finalize a contratação.':'Review and complete the subscription.';
   document.getElementById('coName').textContent=p.name;
@@ -5935,8 +5978,30 @@ async function runCouncil(judge){
   const q=document.getElementById('councilQ').value.trim();
   if(!q){toast(S.lang==='pt'?'Escreva uma pergunta':'Write a question','err');return;}
   const out=document.getElementById('councilOut');
-  out.innerHTML=`<div class="card" style="padding:14px;color:var(--accent)">${S.lang==='pt'?'Consultando':'Consulting'} ${S.councilAIs.length} ${S.lang==='pt'?'modelos…':'models…'}</div>`;
+  const pt=S.lang==='pt';
+  out.innerHTML=`<div class="card" style="padding:14px;color:var(--accent)">${pt?'Consultando':'Consulting'} ${S.councilAIs.length} ${pt?'modelos…':'models…'}</div>`;
   let data;
+
+  // Usar backend seguro (sem API keys no browser)
+  if(typeof HsaiBackend!=='undefined'&&!isGuest()){
+    try{
+      const d=await HsaiBackend.creativeBoard(q,[],(S.councilAIs||[]).join(', '));
+      if(d.ok&&d.result){
+        const r=d.result;
+        const responses=(S.councilAIs||[]).slice(0,3).map(function(id,i){
+          const dir=COUNCIL.find(function(c){return c.id===id;})||{name:id,style:''};
+          return {id:id,text:r.narrativa||r.conceito||q};
+        });
+        data={responses,judge:judge?{verdict:r.conceito+'\n\n'+r.proximos_passos?.join(' → '),consensus:r.conceito,divergence:r.riscos,unique:r.estética}:null};
+        // Mostrar resultado
+        if(data){
+          _renderCouncilData(data);
+          return;
+        }
+      }
+    }catch(e){}
+  }
+
   try{
     if(CFG.COUNCIL_ENDPOINT){
       const r=await fetch(CFG.COUNCIL_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},
@@ -6002,6 +6067,20 @@ async function runCouncil(judge){
   out.innerHTML=html;
 }
 function runJudge(){runCouncil(true);}
+function _renderCouncilData(data){
+  const out=document.getElementById('councilOut');if(!out)return;
+  let html='<div class="council-grid">';
+  (data.responses||[]).forEach(r=>{const a=COUNCIL.find(x=>x.id===r.id)||{name:r.id,c:'#888'};
+    html+=`<div class="ai-resp" style="border-top-color:${a.c}"><div class="rh"><span class="d" style="background:${a.c}"></span>${a.name}</div><p>${escapeHtml(r.text)}</p></div>`;});
+  html+='</div>';
+  if(data.judge){const v=data.judge;
+    html+=`<div class="verdict"><h3 class="serif">⚖️ ${S.lang==='pt'?'Veredito':'Verdict'}</h3>
+      <div class="vrow"><span class="vk ok">${S.lang==='pt'?'Consenso':'Consensus'}</span><span>${escapeHtml(v.consensus||v.verdict||'')}</span></div>
+      <div class="vrow"><span class="vk warn">${S.lang==='pt'?'Divergência':'Divergence'}</span><span>${escapeHtml(v.divergence||v.unique||'')}</span></div>
+      <div class="vrow" style="border:none"><span class="vk info">${S.lang==='pt'?'Síntese':'Synthesis'}</span><span>${escapeHtml(v.verdict||v.synthesis||'')}</span></div></div>`;
+  }
+  out.innerHTML=html;
+}
 function simCouncil(q,judge){
   var pt=S.lang==='pt';
   var dirAngles={
@@ -7098,13 +7177,24 @@ function onGoogle(resp){
     const p=JSON.parse(atob(resp.credential.split('.')[1]));
     S.user={uid:'g_'+p.sub,email:p.email,name:hsaiFixName(p.name||p.email.split('@')[0]),admin:false,picture:p.picture,google:true};
     upsertUser(S.user);
-    // Sessão real: se houver backend, valida o token no servidor e guarda a sessão.
-    if(CFG.AUTH_ENDPOINT){
-      fetch('/api/auth/google',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({credential:resp.credential})})
-        .then(r=>r.json()).then(d=>{if(d.token){localStorage.setItem('hsai_token',d.token);if(d.user)S.user={...S.user,...d.user};if(d.user&&d.user.credits!=null){const u=loadUsers();if(u[S.user.uid]){u[S.user.uid].credits=d.user.credits;saveUsers(u);}}}})
-        .catch(()=>{}).finally(finishAuth);
-    } else { finishAuth(); }
-  }catch(e){toast('Google auth error','err');}
+    // Sessão real: validar token no servidor e sincronizar créditos
+    fetch('/api/auth/google',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({credential:resp.credential})})
+      .then(r=>r.json()).then(d=>{
+        if(d.token){
+          localStorage.setItem('hsai_token',d.token);
+          if(typeof HsaiBackend!=='undefined')HsaiBackend.setToken(d.token);
+        }
+        if(d.user){S.user={...S.user,...d.user};}
+        if(d.user&&d.user.credits!=null){
+          S.credits=d.user.credits;
+          const u=loadUsers();if(u[S.user.uid]){u[S.user.uid].credits=d.user.credits;saveUsers(u);}
+        }
+        if(d.user&&d.user.admin)S.user.admin=true;
+        // Sincronizar com backend
+        if(typeof HsaiBackend!=='undefined')HsaiBackend.onLogin(d.token||'').catch(()=>{});
+      })
+      .catch(()=>{}).finally(finishAuth);
+  }catch(e){toast('Google auth error: '+e.message,'err');}
 }
 
 
@@ -7344,9 +7434,23 @@ window.galFavToggle = function galFavToggle(idx){
   if(already){
     removeFavorite(fid);
     toast(pt?'Removido dos favoritos':'Removed from favorites');
+    // Sincronizar com backend
+    if(typeof HsaiBackend!=='undefined'&&!isGuest()){
+      HsaiBackend.deleteFavorite(fid).catch(()=>{});
+    }
   } else {
     addFavorite(g);
     toast(pt?'★ Adicionado aos favoritos':'★ Added to favorites','ok');
+    // Sincronizar com backend
+    if(typeof HsaiBackend!=='undefined'&&!isGuest()){
+      HsaiBackend.saveFavorite({
+        itemId:fid,itemType:'gallery',
+        title:g.title||g.prompt||'',
+        prompt:g.prompt||'',
+        mediaUrl:g.url||g.mediaUrl||'',
+        metadata:{model:g.model,type:g.type,date:g.date}
+      }).catch(()=>{});
+    }
   }
   var btn=document.getElementById('galFavBtn_'+idx);
   if(btn){btn.textContent=already?'☆':'★';btn.style.color=already?'var(--ink-4)':'var(--accent)';}
@@ -7792,10 +7896,25 @@ function openAccountSettings(tabId){
         +'</div>';
     }
     if(t==='subscription'){
+      var u2=loadUsers()[S.user&&S.user.uid]||{};
+      var plan2=u2.plan||'free';
+      var planNames={free:pt?'Gratuito':'Free',creator:'Creator',pro:'Pro',studio:'Studio',basico:pt?'Básico':'Basic'};
+      return '<div style="display:grid;gap:10px" id="subscriptionTabContent">'
+        +'<div style="background:var(--panel-2);border-radius:12px;padding:16px">'
+        +'<div style="font-size:11px;letter-spacing:1px;font-weight:700;color:var(--ink-4);margin-bottom:8px">PLANO ATUAL / CURRENT PLAN</div>'
+        +'<div style="font-size:24px;font-weight:700;color:var(--accent)">'+(planNames[plan2]||plan2)+'</div>'
+        +'<div style="font-size:12px;color:var(--ink-3);margin-top:4px">'+(pt?'Créditos: ':'Credits: ')+S.credits+'</div>'
+        +'</div>'
+        +'<button class="btn btn-primary" onclick="document.getElementById(\'accountSettingsOverlay\').remove();go(\'plans\')">'+(pt?'🎟 Assinar / Atualizar plano':'🎟 Subscribe / Upgrade')+'</button>'
+        +'<button class="btn btn-ghost" id="payHistBtn" onclick="loadPaymentHistory()" style="justify-content:flex-start;gap:8px">📋 '+(pt?'Histórico de pagamentos':'Payment history')+'</button>'
+        +'<div id="payHistList" style="display:none;background:var(--panel-2);border-radius:10px;padding:12px;font-size:12px;color:var(--ink-2)"></div>'
+        +'</div>';
+    }
+    if(t==='data'){
       return '<div style="display:grid;gap:10px">'
-        +'<div style="background:var(--panel-2);border-radius:12px;padding:16px;font-size:13px;color:var(--ink-2);line-height:1.6">'+(pt?'Gerencie sua assinatura, histórico de pagamentos e próximas cobranças.':'Manage your subscription, payment history and upcoming charges.')+'</div>'
-        +'<button class="btn btn-primary" onclick="document.getElementById(\'accountSettingsOverlay\').remove();go(\'plans\')">'+(pt?'🎟 Ver planos e assinaturas':'🎟 View plans & subscriptions')+'</button>'
-        +'<div style="background:var(--panel-2);border-radius:10px;padding:12px;font-size:12px;color:var(--ink-4)">'+(pt?'Histórico de pagamentos disponível após integração com Stripe/Supabase.':'Payment history available after Stripe/Supabase integration.')+'</div>'
+        +'<div style="background:var(--panel-2);border-radius:12px;padding:16px;font-size:13px;color:var(--ink-2);line-height:1.6">'+(pt?'Exporte ou exclua seus dados pessoais.':'Export or delete your personal data.')+'</div>'
+        +'<button class="btn btn-ghost" style="justify-content:flex-start;gap:8px" onclick="exportMyData()">📦 '+(pt?'Exportar meus dados (JSON)':'Export my data (JSON)')+'</button>'
+        +'<button class="btn btn-ghost" style="justify-content:flex-start;gap:8px" onclick="openSupportTicket(\'conta\')">📩 '+(pt?'Abrir chamado de suporte':'Open support ticket')+'</button>'
         +'</div>';
     }
     if(t==='delete'){
@@ -7818,6 +7937,7 @@ function openAccountSettings(tabId){
     {id:'profile',label:pt?'Perfil':'Profile',ic:'👤'},
     {id:'credits',label:pt?'Créditos':'Credits',ic:'⚡'},
     {id:'subscription',label:pt?'Assinatura':'Subscription',ic:'🎟'},
+    {id:'data',label:pt?'Dados':'Data',ic:'📦'},
     {id:'security',label:pt?'Segurança':'Security',ic:'🔐'},
     {id:'delete',label:pt?'Excluir':'Delete',ic:'🗑'}
   ];
@@ -7846,7 +7966,108 @@ function openAccountSettings(tabId){
 }
 window.buildAccountModal=function(tabId){return openAccountSettings(tabId),'';};
 
+/* ─── Funções de conta integradas com HsaiBackend ─── */
+async function loadPaymentHistory(){
+  var btn=document.getElementById('payHistBtn');
+  var list=document.getElementById('payHistList');
+  if(!btn||!list)return;
+  var pt=S.lang==='pt';
+  btn.disabled=true;btn.textContent=(pt?'Carregando...':'Loading...');
+  try{
+    if(typeof HsaiBackend!=='undefined'){
+      var d=await HsaiBackend.getPaymentHistory();
+      if(d.ok&&d.payments&&d.payments.length){
+        list.innerHTML=d.payments.map(function(p){
+          return '<div style="border-bottom:1px solid var(--line);padding:8px 0;display:flex;justify-content:space-between"><span>'+
+            escapeHtml(p.plan_id||'créditos')+'</span><span style="color:var(--accent)">R$ '+(+(p.amount||0)).toFixed(2)+'</span><span style="color:var(--ink-3);font-size:11px">'+new Date(p.created_at).toLocaleDateString()+'</span></div>';
+        }).join('');
+        list.style.display='';
+      } else {
+        list.innerHTML='<div style="color:var(--ink-3);font-size:12px">'+(pt?'Nenhum pagamento encontrado.':'No payments found.')+'</div>';
+        list.style.display='';
+      }
+    } else {
+      list.innerHTML='<div style="color:var(--ink-3);font-size:12px">'+(pt?'Histórico disponível após integração com Supabase.':'History available after Supabase integration.')+'</div>';
+      list.style.display='';
+    }
+  }catch(e){
+    list.innerHTML='<div style="color:var(--ink-3);font-size:12px">'+e.message+'</div>';
+    list.style.display='';
+  }
+  btn.disabled=false;btn.textContent='📋 '+(pt?'Histórico de pagamentos':'Payment history');
+}
 
+async function exportMyData(){
+  var pt=S.lang==='pt';
+  toast(pt?'Exportando dados...':'Exporting data...','info');
+  try{
+    var data;
+    if(typeof HsaiBackend!=='undefined'&&!isGuest()){
+      var d=await HsaiBackend.exportAccount();
+      data=d;
+    } else {
+      // Exportar dados locais
+      data={
+        exportedAt:new Date().toISOString(),
+        user:S.user,
+        gallery:S.gallery||[],
+        favorites:typeof getFavorites==='function'?getFavorites():[],
+        note:pt?'Dados locais (Supabase não configurado)':'Local data (Supabase not configured)'
+      };
+    }
+    var json=JSON.stringify(data,null,2);
+    var blob=new Blob([json],{type:'application/json'});
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='hollywoodstudio-data-'+new Date().toISOString().slice(0,10)+'.json';
+    a.click();
+    setTimeout(function(){URL.revokeObjectURL(a.href);},2000);
+    toast(pt?'✅ Dados exportados!':'✅ Data exported!','ok');
+  }catch(e){toast(e.message,'err');}
+}
+
+async function openSupportTicket(prefillCategory){
+  var pt=S.lang==='pt';
+  var cats=[pt?'Pagamento':'Payment',pt?'Créditos':'Credits',pt?'Erro de geração':'Generation error','Upload','Login',pt?'Conta':'Account',pt?'Sugestão':'Suggestion',pt?'Comercial':'Commercial',pt?'Parcerias':'Partnerships'];
+  var catOptions=cats.map(function(c){return '<option'+(c===prefillCategory?' selected':'')+'>'+c+'</option>';}).join('');
+  var html='<div class="overlay open show" id="supportOverlay" onclick="if(event.target.id===\'supportOverlay\')document.getElementById(\'supportOverlay\').remove()" style="z-index:10000">'
+    +'<div class="modal modal-card" style="max-width:480px;width:96%;padding:24px">'
+    +'<h3 style="margin:0 0 16px">📩 '+(pt?'Abrir chamado de suporte':'Open support ticket')+'</h3>'
+    +'<div style="display:grid;gap:12px">'
+    +'<select class="input" id="supCat">'+catOptions+'</select>'
+    +'<input class="input" id="supSubj" placeholder="'+(pt?'Assunto':'Subject')+'" maxlength="120">'
+    +'<textarea class="input" id="supMsg" placeholder="'+(pt?'Descreva o problema...':'Describe the issue...')+'" rows="4" style="resize:vertical"></textarea>'
+    +'<div style="display:flex;gap:8px;justify-content:flex-end">'
+    +'<button class="btn btn-ghost" onclick="document.getElementById(\'supportOverlay\').remove()">'+(pt?'Cancelar':'Cancel')+'</button>'
+    +'<button class="btn btn-primary" onclick="submitSupportTicket()">'+(pt?'Enviar chamado':'Submit ticket')+'</button>'
+    +'</div></div></div></div>';
+  document.body.insertAdjacentHTML('beforeend',html);
+}
+
+async function submitSupportTicket(){
+  var pt=S.lang==='pt';
+  var cat=document.getElementById('supCat')&&document.getElementById('supCat').value||'Geral';
+  var subj=document.getElementById('supSubj')&&document.getElementById('supSubj').value.trim()||'';
+  var msg=document.getElementById('supMsg')&&document.getElementById('supMsg').value.trim()||'';
+  if(!subj||!msg){toast(pt?'Preencha assunto e mensagem':'Fill subject and message','err');return;}
+  var btn=document.querySelector('#supportOverlay .btn-primary');
+  if(btn){btn.disabled=true;btn.textContent=pt?'Enviando...':'Sending...';}
+  try{
+    if(typeof HsaiBackend!=='undefined'&&!isGuest()){
+      var d=await HsaiBackend.openTicket(cat,subj,msg);
+      if(d.ok){
+        toast(pt?'✅ Chamado #'+d.ticketId+' registrado!':'✅ Ticket #'+d.ticketId+' submitted!','ok');
+        var o=document.getElementById('supportOverlay');if(o)o.remove();
+        return;
+      }
+    }
+    // Fallback: copiar para clipboard
+    var text='[SUPORTE] '+cat+'\n'+subj+'\n\n'+msg;
+    navigator.clipboard.writeText(text).catch(()=>{});
+    toast(pt?'Texto copiado — cole em suporte@hollywoodstudio.ai':'Text copied — paste to suporte@hollywoodstudio.ai','info');
+    var o=document.getElementById('supportOverlay');if(o)o.remove();
+  }catch(e){toast(e.message,'err');if(btn){btn.disabled=false;btn.textContent=pt?'Enviar chamado':'Submit ticket';}}
+}
 
 function openChangePassword(){
   var pt=S.lang==='pt';
@@ -11376,6 +11597,261 @@ var PUBLIC_GALLERY_SEED = [
 (function(){
   var names=['sendToStudio','sendGalleryToStudio','sendModelToStudio','galFavToggle','toggleFavorite','runCouncil','runJudge','openDirectorFavOpinion','editChar','openAccountSettings','openChangePassword','doChangePassword','previewTemplate','loadTemplate','applyAdminUserAction','confirmDeleteAccount','betaToast'];
   names.forEach(function(name){try{if(typeof eval(name)==='function')window[name]=eval(name);}catch(e){}});
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   HSAI BACKEND MODULE — Integração real com api/index.js
+   Funciona com ou sem Supabase configurado (fallback gracioso).
+   ═══════════════════════════════════════════════════════════════ */
+window.HsaiBackend = (function() {
+  'use strict';
+
+  // ── Token JWT (Supabase) ──────────────────────────────────────────────────
+  function getToken() { return localStorage.getItem('hsai_sb_token') || localStorage.getItem('hsai_token') || ''; }
+  function setToken(t) { if (t) localStorage.setItem('hsai_sb_token', t); }
+  function clearToken() { localStorage.removeItem('hsai_sb_token'); localStorage.removeItem('hsai_token'); }
+
+  function authHeaders() {
+    const t = getToken();
+    return t ? { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + t }
+             : { 'Content-Type': 'application/json' };
+  }
+
+  async function api(path, opts) {
+    const method = (opts && opts.method) || 'GET';
+    const body   = (opts && opts.body) ? JSON.stringify(opts.body) : undefined;
+    try {
+      const r = await fetch('/api/' + path, { method, headers: authHeaders(), body });
+      const d = await r.json().catch(() => ({}));
+      return d;
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
+  }
+
+  // ── Auth ──────────────────────────────────────────────────────────────────
+  async function getSession() {
+    return api('auth/session');
+  }
+
+  async function verifyGoogleToken(credential) {
+    return api('auth/google', { method: 'POST', body: { credential } });
+  }
+
+  // ── Créditos ──────────────────────────────────────────────────────────────
+  async function getBalance() {
+    return api('credits/balance');
+  }
+
+  async function useCredits(amount, feature, description) {
+    return api('credits/use', {
+      method: 'POST',
+      body: { amount: amount || 1, feature: feature || 'generation', description: description || '' },
+    });
+  }
+
+  async function getCreditHistory() {
+    return api('credits/history');
+  }
+
+  // ── Payments ──────────────────────────────────────────────────────────────
+  async function createCheckout(planId, creditPack) {
+    return api('payments/checkout', {
+      method: 'POST',
+      body: { planId, creditPack, successUrl: location.origin + '?payment=success', cancelUrl: location.origin + '?payment=cancel' },
+    });
+  }
+
+  async function getPaymentHistory() {
+    return api('payments/history');
+  }
+
+  // ── Favoritos ─────────────────────────────────────────────────────────────
+  async function getFavorites() {
+    return api('favorites/list');
+  }
+
+  async function saveFavorite(item) {
+    return api('favorites/save', { method: 'POST', body: item });
+  }
+
+  async function deleteFavorite(itemId) {
+    return api('favorites/delete', { method: 'POST', body: { itemId } });
+  }
+
+  // ── Galeria ───────────────────────────────────────────────────────────────
+  async function getGallery(visibility) {
+    return api('gallery/list' + (visibility ? '?visibility=' + visibility : ''));
+  }
+
+  async function saveGalleryItem(item) {
+    return api('gallery/save', { method: 'POST', body: item });
+  }
+
+  // ── Projetos ──────────────────────────────────────────────────────────────
+  async function getProjects() {
+    return api('projects/list');
+  }
+
+  async function saveProject(project) {
+    return api('projects/save', { method: 'POST', body: project });
+  }
+
+  async function deleteProject(id) {
+    return api('projects/delete', { method: 'POST', body: { id } });
+  }
+
+  // ── Uploads ───────────────────────────────────────────────────────────────
+  async function getUploads() {
+    return api('uploads/list');
+  }
+
+  async function registerUpload(fileUrl, fileType, title, metadata) {
+    return api('uploads/register', {
+      method: 'POST',
+      body: { fileUrl, fileType: fileType || 'image', title: title || '', metadata: metadata || {} },
+    });
+  }
+
+  // ── IA ────────────────────────────────────────────────────────────────────
+  async function enhancePrompt(prompt, style, model) {
+    return api('ai/enhance-prompt', {
+      method: 'POST',
+      body: { prompt, style, model, lang: (typeof S !== 'undefined' ? S.lang : 'pt') },
+    });
+  }
+
+  async function creativeBoard(idea, references, style) {
+    return api('ai/creative-board', {
+      method: 'POST',
+      body: { idea, references: references || [], style, lang: (typeof S !== 'undefined' ? S.lang : 'pt') },
+    });
+  }
+
+  async function socialCaption(prompt, platform, tone) {
+    return api('ai/social-caption', {
+      method: 'POST',
+      body: { prompt, platform: platform || 'instagram', tone: tone || 'profissional', lang: (typeof S !== 'undefined' ? S.lang : 'pt') },
+    });
+  }
+
+  async function generateStoryboard(brief, scenes, style) {
+    return api('ai/storyboard', {
+      method: 'POST',
+      body: { brief, scenes: scenes || 5, style: style || 'cinematográfico', lang: (typeof S !== 'undefined' ? S.lang : 'pt') },
+    });
+  }
+
+  // ── Suporte ───────────────────────────────────────────────────────────────
+  async function openTicket(category, subject, message, metadata) {
+    return api('support/ticket', {
+      method: 'POST',
+      body: { category, subject, message, metadata },
+    });
+  }
+
+  // ── Conta ─────────────────────────────────────────────────────────────────
+  async function exportAccount() {
+    return api('account/export');
+  }
+
+  async function deleteAccount() {
+    return api('account/delete', { method: 'POST', body: { confirm: 'EXCLUIR' } });
+  }
+
+  // ── Health ────────────────────────────────────────────────────────────────
+  async function health() {
+    return api('health');
+  }
+
+  // ── Sync: sincronizar dados locais com backend ────────────────────────────
+  async function syncCredits() {
+    const d = await getBalance();
+    if (d.ok && typeof d.balance === 'number' && typeof S !== 'undefined') {
+      S.credits = d.balance;
+      if (typeof updateCredits === 'function') updateCredits();
+    }
+    return d;
+  }
+
+  async function syncFavorites() {
+    const d = await getFavorites();
+    if (d.ok && Array.isArray(d.favorites)) {
+      localStorage.setItem('hsai_favorites_remote', JSON.stringify(d.favorites));
+    }
+    return d;
+  }
+
+  // Chamado após login bem-sucedido
+  async function onLogin(token) {
+    if (token) setToken(token);
+    try {
+      await Promise.allSettled([syncCredits(), syncFavorites()]);
+    } catch {}
+  }
+
+  return {
+    getToken, setToken, clearToken,
+    getSession, verifyGoogleToken,
+    getBalance, useCredits, getCreditHistory,
+    createCheckout, getPaymentHistory,
+    getFavorites, saveFavorite, deleteFavorite,
+    getGallery, saveGalleryItem,
+    getProjects, saveProject, deleteProject,
+    getUploads, registerUpload,
+    enhancePrompt, creativeBoard, socialCaption, generateStoryboard,
+    openTicket, exportAccount, deleteAccount,
+    health, syncCredits, syncFavorites, onLogin,
+  };
+})();
+
+/* ─── Hooks de integração automática ─────────────────────────────────────── */
+
+// Sincronizar créditos do backend ao carregar, se tiver token
+(function() {
+  const token = localStorage.getItem('hsai_sb_token') || localStorage.getItem('hsai_token');
+  if (token && typeof HsaiBackend !== 'undefined') {
+    HsaiBackend.syncCredits().catch(() => {});
+  }
+})();
+
+// Verificar pagamento aprovado na URL (?payment=success)
+(function() {
+  const params = new URLSearchParams(location.search);
+  if (params.get('payment') === 'success') {
+    history.replaceState({}, '', location.pathname);
+    setTimeout(function() {
+      if (typeof HsaiBackend !== 'undefined') {
+        HsaiBackend.syncCredits().then(function(d) {
+          if (typeof toast === 'function') {
+            if (d.ok) {
+              toast((typeof S !== 'undefined' && S.lang === 'pt')
+                ? '✅ Pagamento confirmado! Créditos atualizados.'
+                : '✅ Payment confirmed! Credits updated.', 'ok');
+            } else {
+              toast((typeof S !== 'undefined' && S.lang === 'pt')
+                ? 'Pagamento processado. Créditos serão adicionados em instantes.'
+                : 'Payment processed. Credits will be added shortly.', 'info');
+            }
+          }
+        });
+      } else if (typeof toast === 'function') {
+        toast((typeof S !== 'undefined' && S.lang === 'pt')
+          ? '✅ Pagamento confirmado! Atualizando créditos...'
+          : '✅ Payment confirmed! Updating credits...', 'ok');
+      }
+    }, 800);
+  }
+  if (params.get('payment') === 'cancel') {
+    history.replaceState({}, '', location.pathname);
+    setTimeout(function() {
+      if (typeof toast === 'function') {
+        toast((typeof S !== 'undefined' && S.lang === 'pt')
+          ? 'Pagamento cancelado.'
+          : 'Payment cancelled.', 'err');
+      }
+    }, 500);
+  }
 })();
 
 </script>
