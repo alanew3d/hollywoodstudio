@@ -223,13 +223,12 @@ function viewFavoritesPage(){
   const popular = demos.map(d => ({...d, likes: getLikeCount(d.id), isSaved: isFavorite(d.id)}))
                        .sort((a,b) => b.likes - a.likes).slice(0,12);
 
-  return `
-  <div style="background:linear-gradient(135deg,#1a1200,#1a1a1a);border-radius:16px;padding:28px;margin-bottom:22px;display:flex;align-items:center;gap:18px"><div style="font-size:46px;line-height:1">⭐</div><div><div class="kicker" style="margin:0 0 3px;color:rgba(255,255,255,.55)">${S.lang==='pt'?'COLEÇÃO':'COLLECTION'}</div><h1 class="serif" style="margin:0 0 5px;font-size:24px;color:#fff">${S.lang==='pt'?'Favoritos':'Favorites'}</h1><p style="margin:0;font-size:12.5px;color:rgba(255,255,255,.65);max-width:520px">${S.lang==='pt'?'Suas criações preferidas — reutilize, analise com Director\'s Eye ou publique.':'Your favorite creations — reuse, analyze with Director\'s Eye or publish.'}</p></div></div>
-  <div style="border-radius:14px;overflow:hidden;margin-bottom:20px;height:130px;background:linear-gradient(135deg,#1a0a2e,#2e1a1a);position:relative"><div style="position:absolute;inset:0;display:flex;align-items:center;padding:0 28px;gap:18px"><div style="font-size:46px;line-height:1">⭐</div><div><div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.5);margin-bottom:4px">${S.lang==='pt'?'CRIAÇÃO':'CREATION'}</div><div style="font-size:22px;font-weight:700;color:#fff">${S.lang==='pt'?'Favoritos':'Favorites'}</div><div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:3px">${S.lang==='pt'?'Suas gerações favoritas e análise de estilo':'Your favorite generations and style analysis'}</div></div></div></div><div class="view-head">
-    <div class="kicker">${pt?'Referências':'References'}</div>
-    <h1 class="serif">${pt?"Favoritos & Director's Eye":"Favorites & Director's Eye"}</h1>
-    <p style="max-width:580px">${pt?"Salve demos que inspiram, analise padrões com o Director's Eye e identifique sua assinatura cinematográfica.":"Save inspiring demos, analyze patterns with Director's Eye and identify your cinematic signature."}</p>
-  </div>
+  return areaHeader({
+    kicker: pt?'COLEÇÃO':'COLLECTION',
+    title: pt?"Favoritos & Director's Eye":"Favorites & Director's Eye",
+    desc: pt?'Salve demos que inspiram, analise padrões com o Director\'s Eye e identifique sua assinatura cinematográfica.':'Save inspiring demos, analyze patterns with Director\'s Eye and identify your cinematic signature.',
+    area:'favorites'
+  })+`
 
   <div class="dc-card" style="margin-bottom:22px;border:1.5px solid var(--accent);background:linear-gradient(135deg,var(--accent-dim),transparent)">
     <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap">
@@ -881,7 +880,7 @@ a{color:inherit;text-decoration:none}
 .sidebar-collapsed .sidebar .brand-icon{display:flex!important}
 .sidebar-collapsed .sidebar .brand > div:first-child{flex:none}
 
-.main{padding:0 4px 0 0;grid-area:main;overflow-y:auto;position:relative;background:
+.main{padding:4px 4px 32px 0;grid-area:main;overflow-y:auto;position:relative;background:
   radial-gradient(1100px 480px at 78% -8%,rgba(212,168,87,.05),transparent 60%) ,var(--bg)}
 
 /* ── Mobile: sidebar vira drawer ── */
@@ -1566,17 +1565,36 @@ input[type=range]{accent-color:var(--accent)}
 }
 
 
-/* UX fixes: clean image banners, sidebar spacing and readable form areas */
-#app:not(.sidebar-collapsed) .main{padding-left:14px}
+/* ══ UX FIXES + BANNER SYSTEM ══ */
+
+/* Sidebar spacing — conteúdo nunca cola no menu */
+#app:not(.sidebar-collapsed) .main{padding-left:16px}
 #app.sidebar-collapsed .sidebar .brand{padding-top:18px!important;padding-bottom:18px!important}
 #app.sidebar-collapsed .sidebar .brand-icon{width:40px!important;height:40px!important;margin:0 auto!important;pointer-events:none}
 #app.sidebar-collapsed #sidebarToggleBtn{top:auto!important;bottom:6px!important;right:8px!important;transform:none!important;background:var(--panel)!important;border:1px solid var(--line)!important;box-shadow:0 6px 18px rgba(0,0,0,.16)}
+
+/* .page-banner — faixa visual slim, sem texto pesado */
+.page-banner{
+  border-radius:14px;overflow:hidden;
+  height:90px;position:relative;
+  margin-bottom:20px;
+  background:var(--panel-2);
+  border:1px solid var(--line)}
+.page-banner img{width:100%;height:100%;object-fit:cover;display:block}
+.page-banner .pb-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(10,10,14,.55) 0%,transparent 50%,rgba(10,10,14,.3) 100%)}
+.page-banner .pb-icon{
+  position:absolute;right:20px;top:50%;transform:translateY(-50%);
+  font-size:48px;opacity:.25;line-height:1;pointer-events:none}
+.page-banner .pb-tag{
+  position:absolute;top:10px;left:14px;
+  font-size:9px;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(255,255,255,.5);font-weight:700}
+@media(max-width:600px){.page-banner{height:64px}.page-banner .pb-icon{font-size:32px}}
+
+/* Remover o banner escuro antigo com texto dentro quando já existe .view-head */
 .area-banner-ov{display:none!important}
-.view>div[style*="linear-gradient(135deg,#1a1200"],
-.view>div[style*="linear-gradient(135deg,#1a0a2e"],
-.view>div[style*="linear-gradient(135deg,#081408"],
-.view>div[style*="linear-gradient(135deg,#0d1a2a"],
-.view>div[style*="background:#0a0a14"]{display:none!important}
 
 /* ══ PREMIUM VISUAL v3.2 — visible in 10s ══ */
 
@@ -2632,6 +2650,56 @@ function refreshPreviewHead(){
   h.innerHTML=studioHeadHTML();
   const pm=document.getElementById('prevModel');if(pm)pm.textContent=(modelById(S.model)||{}).name||'';
 }
+/* ════════ AREA HEADER HELPER ════════
+   Usage: areaHeader({kicker, title, desc, actions, area})
+   Returns: .view-head (title+desc outside) + .page-banner (visual only)
+   area: string key for palette/icon — see AREA_THEMES below
+*/
+const AREA_THEMES={
+  home:      {icon:'🎬',gradient:'135deg,#0a0a0c,#14101c'},
+  studio:    {icon:'🎬',gradient:'135deg,#0a0a0c,#0d1020'},
+  gallery:   {icon:'🖼️',gradient:'135deg,#0a0a12,#12081a'},
+  public:    {icon:'🌍',gradient:'135deg,#081212,#0a1a12'},
+  favorites: {icon:'⭐',gradient:'135deg,#14120a,#1a100a'},
+  inspo:     {icon:'🎨',gradient:'135deg,#0a0814,#14081a'},
+  templates: {icon:'⚡',gradient:'135deg,#080e1a,#0a0e20'},
+  models:    {icon:'🤖',gradient:'135deg,#080a14,#0a1018'},
+  uploads:   {icon:'📁',gradient:'135deg,#0a0c10,#101420'},
+  contactsheet:{icon:'📋',gradient:'135deg,#080c14,#0c1020'},
+  batch:     {icon:'🔁',gradient:'135deg,#0a0c10,#0c1018'},
+  posprodu:  {icon:'🎞️',gradient:'135deg,#1a0a2e,#0a1a2e'},
+  council:   {icon:'🎭',gradient:'135deg,#0a0a1a,#1a0a0a'},
+  plans:     {icon:'🎟',gradient:'135deg,#14120a,#120a14'},
+  admin:     {icon:'🛡️',gradient:'135deg,#0a0c0a,#141810'},
+  account:   {icon:'👤',gradient:'135deg,#0c0a14,#140c0a'},
+  instagram: {icon:'📸',gradient:'135deg,#1a0820,#200818'},
+  tube:      {icon:'▶️',gradient:'135deg,#200a0a,#100a0a'},
+  news:      {icon:'📰',gradient:'135deg,#0a0c10,#101410'},
+  academy:   {icon:'🎓',gradient:'135deg,#0a0c14,#0c1018'},
+  festivals: {icon:'🏆',gradient:'135deg,#140e08,#1a1208'},
+  opportunities:{icon:'💼',gradient:'135deg,#080e10,#0a1214'},
+  docs:      {icon:'📄',gradient:'135deg,#080a0e,#0a0c12'},
+  storyboard:{icon:'🎬',gradient:'135deg,#0a0a10,#100a10'},
+  analytics: {icon:'📊',gradient:'135deg,#080c14,#0a1018'},
+  flow:      {icon:'✨',gradient:'135deg,#0a0814,#14080a'},
+  agents:    {icon:'🤖',gradient:'135deg,#080a10,#0a0e18'}
+};
+function areaHeader(opts){
+  var t=AREA_THEMES[opts.area]||{icon:'🎬',gradient:'135deg,#0a0a0c,#14101c'};
+  var head='<div class="view-head">'
+    +(opts.kicker?'<div class="kicker">'+opts.kicker+'</div>':'')
+    +'<h1 class="serif">'+opts.title+'</h1>'
+    +(opts.desc?'<p style="max-width:640px">'+opts.desc+'</p>':'')
+    +(opts.actions?'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">'+opts.actions+'</div>':'')
+    +'</div>';
+  var banner='<div class="page-banner" style="background:linear-gradient('+t.gradient+')">'
+    +'<div class="pb-overlay"></div>'
+    +'<div class="pb-icon">'+t.icon+'</div>'
+    +(opts.tag?'<div class="pb-tag">'+opts.tag+'</div>':'')
+    +'</div>';
+  return head+banner;
+}
+
 /* ════════ HOME ════════ */
 function viewHome(){
   var pt=S.lang==='pt';
@@ -4463,12 +4531,12 @@ let _sbMsgs=[];
 function viewStoryboard(){
   const pt=S.lang==='pt';
   const sbs=getStoryboards();
-  return `
-  <div class="view-head">
-    <div class="kicker">${pt?'Pré-Produção':'Pre-Production'}</div>
-    <h1 class="serif">🎬 Storyboard</h1>
-    <p style="max-width:640px">${pt?'Planeje seu projeto cinematográfico com IA. Gere storyboards completos com cenas detalhadas, prompts particionados e timeline visual — prontos para o Estúdio.':'Plan your cinematic project with AI. Generate complete storyboards with detailed scenes, partitioned prompts and visual timeline — ready for the Studio.'}</p>
-  </div>
+  return areaHeader({
+    kicker:pt?'Pré-Produção':'Pre-Production',
+    title:'🎬 Storyboard',
+    desc:pt?'Planeje seu projeto cinematográfico com IA. Gere storyboards completos com cenas detalhadas, prompts particionados e timeline visual — prontos para o Estúdio.':'Plan your cinematic project with AI. Generate complete storyboards with detailed scenes, partitioned prompts and visual timeline.',
+    area:'storyboard'
+  })+`
 
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:24px">
     <div class="dc-card sb-menu-card" onclick="viewStoryboardGenerator()">
@@ -4733,9 +4801,11 @@ function viewAcademy(){
       <div class="cover"><img src="${illusFB(m.cover+3)}" loading="lazy" onerror="this.onerror=null;this.src='${m.img||illus(m.cover+3)}'" referrerpolicy="no-referrer"><span class="badge ${m.free?'free':'soon'}">${m.free?(S.lang==='pt'?'Grátis':'Free'):(S.lang==='pt'?'Em breve':'Soon')}</span></div>
       <div class="mbody"><h4>${m.t[S.lang]}</h4><p>${m.d[S.lang]}</p><div class="lessons">${m.lessons} ${S.lang==='pt'?'aulas':'lessons'}</div></div>
     </div>`).join('');
-  return `
-  <div class="view-head"><div class="kicker">${t('learn')}</div><h1 class="serif">${t('academy')}</h1>
-    <p>${S.lang==='pt'?'Módulos gratuitos com conteúdo de IA sobre criação de imagem e vídeo, dicas por modelo, otimização, atendimento e negócio. Os módulos em vídeo serão lançados em breve.':'Free modules with AI content on image and video creation, per-model tips, optimization, client work and business. Video modules launching soon.'}</p></div>
+  return areaHeader({
+    kicker:t('learn'),title:t('academy'),
+    desc:S.lang==='pt'?'Módulos gratuitos com conteúdo de IA sobre criação de imagem e vídeo, dicas por modelo, otimização, atendimento e negócio.':'Free modules with AI content on image and video creation, per-model tips, optimization, client work and business.',
+    area:'academy'
+  })+`
   <div class="card" style="margin-bottom:22px;display:flex;align-items:center;gap:14px">
     <div style="flex:1"><span class="label" style="margin:0">${S.lang==='pt'?'Notícias · IA & Audiovisual':'News · AI & Audiovisual'}</span>
       <div style="font-size:13px;color:var(--ink-2);margin-top:4px">${S.lang==='pt'?'Lançamentos de modelos, ferramentas, novelas verticais e tendências — agora numa seção própria.':'Model launches, tools, vertical dramas and trends — now in its own section.'}</div></div>
@@ -4804,9 +4874,11 @@ function newsCard(n,i){return `<div class="card news-card" style="padding:0;over
   </div></div>`;}
 function newsHTML(){return NEWS.map((n,i)=>newsCard(n,i)).join('');}
 function viewNews(){
-  return `
-  <div class="view-head"><div class="kicker">${t('learn')}</div><h1 class="serif">${t('news')}</h1>
-    <p>${S.lang==='pt'?'Notícias do universo de IA e do audiovisual — lançamentos de modelos, ferramentas, novelas verticais e tendências. Clique para abrir a matéria com a fonte.':'News from the AI and audiovisual world — model launches, tools, vertical dramas and trends. Click to open the article with its source.'}</p></div>
+  return areaHeader({
+    kicker:t('learn'),title:t('news'),
+    desc:S.lang==='pt'?'Notícias do universo de IA e do audiovisual — lançamentos de modelos, ferramentas, novelas verticais e tendências.':'News from the AI and audiovisual world — model launches, tools, vertical dramas and trends.',
+    area:'news'
+  })+`
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
     <span class="label" style="margin:0">${NEWS.length} ${S.lang==='pt'?'matérias':'articles'}</span>
     <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="loadNews()">↻ ${S.lang==='pt'?'Atualizar':'Refresh'}</button>
@@ -4885,9 +4957,11 @@ function viewFestivals(){
     <div class="desc">${f.d[S.lang]}</div>
     <div class="frow"><span class="deadline">${S.lang==='pt'?'Prazo':'Deadline'}: ${f.deadline}</span>
       <a class="pb-btn" href="${f.url}" target="_blank" rel="noopener">${S.lang==='pt'?'Inscrição / site →':'Submit / site →'}</a></div></div>`).join('');
-  return `
-  <div class="view-head"><div class="kicker">${t('discover')}</div><h1 class="serif">${t('festivals')}</h1>
-    <p>${S.lang==='pt'?'Festivais, concursos e premiações abertos a obras audiovisuais — muitos já aceitando trabalhos feitos com IA. Use como meta e vitrine para o portfólio.':'Festivals, contests and awards open to AV works — many already accepting AI-made pieces. Use as goal and portfolio showcase.'}</p></div>
+  return areaHeader({
+    kicker:t('discover'),title:t('festivals'),
+    desc:S.lang==='pt'?'Festivais, concursos e premiações abertos a obras audiovisuais — muitos já aceitando trabalhos feitos com IA. Use como meta e vitrine.':'Festivals, contests and awards open to AV works — many already accepting AI-made pieces.',
+    area:'festivals'
+  })+`
   <div class="fest-filters">${fb}</div>
   <div class="fest-grid">${cards}</div>`;
 }
@@ -4899,11 +4973,11 @@ function afterGeminiAvatar(){
 
 /* ════════ GALLERY ════════ */
 function viewGallery(){
-  return `
-  <div class="view-head"><div class="kicker">${t('discover')}</div><h1 class="serif">${t('gallery')}</h1>
-    <p>${S.lang==='pt'?'Suas gerações. Clique para reabrir o prompt. Ajuste o tamanho das miniaturas e filtre por tipo.':'Your generations. Click to reopen the prompt. Adjust thumbnail size and filter by type.'}</p>
-
-  </div>
+  return areaHeader({
+    kicker:t('discover'),title:t('gallery'),
+    desc:S.lang==='pt'?'Suas gerações. Clique para reabrir o prompt. Ajuste o tamanho das miniaturas e filtre por tipo.':'Your generations. Click to reopen the prompt. Adjust thumbnail size and filter by type.',
+    area:'gallery'
+  })+`
   <div class="gal-bar">
     <div class="seg">${['all','video','image'].map(f=>`<button class="${S.galFilter===f?'on':''}" onclick="S.galFilter='${f}';afterGallery()">${f==='all'?(S.lang==='pt'?'Tudo':'All'):(f==='video'?(S.lang==='pt'?'Vídeos':'Videos'):(S.lang==='pt'?'Imagens':'Images'))}</button>`).join('')}</div>
     <div style="display:flex;align-items:center;gap:10px;margin-left:auto"><span style="font-size:11px;color:var(--ink-3)">${S.lang==='pt'?'Tamanho':'Size'}</span>
@@ -5139,9 +5213,12 @@ function viewPlans(){
     <div style="font-size:12px;color:var(--ink-3);margin:4px 0 12px">${S.lang==='pt'?'crédito avulso':'one-time credits'}</div>
     <div class="serif" style="font-size:18px;color:var(--accent);margin-bottom:12px">${fmtMoney(t.price)}</div>
     <button class="btn btn-ghost btn-sm" style="width:100%" onclick="buyCredits(${t.cr},${t.price})">${S.lang==='pt'?'Comprar':'Buy'}</button></div>`).join('');
-  return `
-  <div class="view-head"><div class="kicker">${t('plans')}</div><h1 class="serif">${S.lang==='pt'?'Planos & Créditos':'Plans & Credits'}</h1>
-    <p>${S.lang==='pt'?'Da ideia ao corte final. O sistema é baseado em <b>créditos</b> — válidos para vídeo, imagem e áudio. <b>Créditos grátis são para testar. Produção real exige plano ou compra aprovada.</b>':'From idea to final cut. <b>Credit-based</b> for video, image and audio. <b>Free credits are for testing. Real production requires a plan or approved purchase.</b>'}</p></div>
+  return areaHeader({
+    kicker:t('plans'),
+    title:S.lang==='pt'?'Planos & Créditos':'Plans & Credits',
+    desc:S.lang==='pt'?'Da ideia ao corte final. Sistema baseado em créditos — válidos para vídeo, imagem e áudio. <b>Créditos grátis são para testar. Produção real exige plano.</b>':'From idea to final cut. Credit-based for video, image and audio. <b>Free credits are for testing. Real production requires a plan.</b>',
+    area:'plans'
+  })+`
 
   <div class="card" style="margin-bottom:18px;border:1.5px solid var(--accent);background:linear-gradient(135deg,var(--accent-dim),transparent)">
     <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
@@ -5498,17 +5575,19 @@ function openShareMenu(pid){
 function viewPublic(){
   const pub=loadPublic();
   const liked=JSON.parse(localStorage.getItem(userKey('liked'))||'[]');
-  return `
-  <div class="view-head"><div class="kicker">COMUNIDADE</div>
-    <h1 class="serif">${S.lang==='pt'?'Galeria Pública':'Public Gallery'}</h1>
-    <p style="font-size:13.5px;color:var(--ink-2);max-width:620px">${S.lang==='pt'?'Trabalhos criados com IA pela comunidade. Curta, copie o prompt ou compartilhe.':'AI-created works by the community. Like, copy the prompt or share.'}</p>
-    <div style="display:flex;gap:20px;margin-top:10px;flex-wrap:wrap">
-      <span>🎨 <b>${pub.length}</b> ${S.lang==='pt'?'criações':'creations'}</span>
-      <span>❤️ <b>${pub.reduce((a,b)=>a+(b.likes||0),0).toLocaleString()}</b> ${S.lang==='pt'?'curtidas':'likes'}</span>
-      <span>👁 <b>${pub.reduce((a,b)=>a+(b.views||0),0).toLocaleString()}</b> ${S.lang==='pt'?'views':'views'}</span>
-      <span>👤 <b>${[...new Set(pub.map(p=>p.uid))].length}</b> ${S.lang==='pt'?'criadores':'creators'}</span>
-    </div>
-  </div>
+  const statsBar='<div style="display:flex;gap:20px;flex-wrap:wrap;font-size:13px">'
+    +'<span>🎨 <b>'+pub.length+'</b> '+(S.lang==='pt'?'criações':'creations')+'</span>'
+    +'<span>❤️ <b>'+pub.reduce((a,b)=>a+(b.likes||0),0).toLocaleString()+'</b> '+(S.lang==='pt'?'curtidas':'likes')+'</span>'
+    +'<span>👁 <b>'+pub.reduce((a,b)=>a+(b.views||0),0).toLocaleString()+'</b> views</span>'
+    +'<span>👤 <b>'+(new Set(pub.map(p=>p.uid))).size+'</b> '+(S.lang==='pt'?'criadores':'creators')+'</span>'
+    +'</div>';
+  return areaHeader({
+    kicker:'COMUNIDADE',
+    title:S.lang==='pt'?'Galeria Pública':'Public Gallery',
+    desc:S.lang==='pt'?'Trabalhos criados com IA pela comunidade. Curta, copie o prompt ou compartilhe.':'AI-created works by the community. Like, copy the prompt or share.',
+    actions:statsBar,
+    area:'public'
+  })+`
   ${pub.length?`<div class="public-feed">
     ${pub.map(p=>{
       const isLiked=liked.includes(p.id);
@@ -5581,11 +5660,12 @@ function viewModelsCatalog(){
   ];
   const filter=S.modelCatFilter||'all';
   const list=MODELS.filter(m=>filter==='all'||m.cat===filter);
-  return `
-  <div class="view-head"><div class="kicker">${S.lang==='pt'?'CATÁLOGO':'CATALOG'}</div>
-    <h1 class="serif">${S.lang==='pt'?'Modelos disponíveis':'Available models'}</h1>
-    <p style="font-size:13.5px;color:var(--ink-2);max-width:680px">${S.lang==='pt'?`Total de ${MODELS.length} modelos. Texto → Vídeo, Imagem → Vídeo, Texto → Imagem e mais — com preços por segundo/imagem ao lado.`:`Total of ${MODELS.length} models with per-second/per-image pricing.`}</p>
-  </div>
+  return areaHeader({
+    kicker:S.lang==='pt'?'CATÁLOGO':'CATALOG',
+    title:S.lang==='pt'?'Modelos disponíveis':'Available models',
+    desc:S.lang==='pt'?`Total de ${MODELS.length} modelos. Texto → Vídeo, Imagem → Vídeo, Texto → Imagem e mais — com preços por segundo/imagem.`:`Total of ${MODELS.length} models. Text → Video, Image → Video, Text → Image and more.`,
+    area:'models'
+  })+`
   <div class="seg" style="margin-bottom:8px">${cats.map(c=>`<button class="${filter===c.id?'on':''}" onclick="S.modelCatFilter='${c.id}';render()">${c.label} ${c.id==='all'?MODELS.length:MODELS.filter(m=>m.cat===c.id).length}</button>`).join('')}</div>
   <div class="model-cat-grid">
     ${list.map(m=>{
@@ -5611,12 +5691,11 @@ function viewModelsCatalog(){
   </div>`;
 }
 function viewAdmin(){
-  return `
-  <div class="view-head"><div class="kicker">${t('admin')}</div>
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-      <h1 class="serif" style="margin:0">${S.lang==='pt'?'Painel admin':'Admin panel'}</h1>
-    </div>
-  </div>
+  return areaHeader({
+    kicker:t('admin'),title:S.lang==='pt'?'Painel admin':'Admin panel',
+    desc:S.lang==='pt'?'Configuração do estúdio, créditos, publicações e chaves de API.':'Studio configuration, credits, publications and API keys.',
+    area:'admin'
+  })+`
   <!-- Community Toggle -->
   <div class="card" style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
     <div>
@@ -5815,9 +5894,12 @@ function viewCouncil(){
   const search=(S.councilSearch||'').toLowerCase();
   const shown=search?filtered.filter(a=>a.name.toLowerCase().includes(search)):filtered;
   const togs=shown.map(a=>'<div class="ai-tog '+(S.councilAIs.includes(a.id)?'on':'')+'" onclick="togAI(&#39;'+a.id+'&#39;)" title="'+a.style+'"><span class="d" style="background:'+a.c+'"></span>'+a.name+'</div>').join('');
-  return `
-  <div class="view-head"><div class="kicker">${t('intelligence')}</div><h1 class="serif">${S.lang==='pt'?'Conselho de Diretores':'Directors Council'}</h1>
-    <p>${S.lang==='pt'?'Apresente uma ideia criativa ao conselho. Cada diretor responde com a sua visão unica -- baseada no conhecimento real de sua obra, estetica e forma de pensar. O <b>Veredito</b> e a sintese criativa do conselho, como um briefing coletivo.':'Present a creative idea to the council. Each director responds with their unique vision — based on real knowledge of their work, aesthetic and thinking. The <b>Verdict</b> is the creative synthesis of the council, like a collective brief.'}</p></div>
+  return areaHeader({
+    kicker:t('intelligence'),
+    title:S.lang==='pt'?'Conselho de Diretores':'Directors Council',
+    desc:S.lang==='pt'?'Apresente uma ideia ao conselho. Cada diretor responde com sua visão única. O Veredito é a síntese criativa coletiva.':'Present an idea to the council. Each director responds with their unique vision. The Verdict is the collective creative synthesis.',
+    area:'council'
+  })+`
   <div class="card" style="margin-bottom:18px">
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
       <span class="label" style="margin:0">${S.lang==='pt'?'Diretores & Artistas':'Directors & Artists'}</span>
@@ -5950,9 +6032,11 @@ function viewAnalytics(){
   const spentR$=S.gallery.reduce((s,g)=>s+(g.valueR$||0),0);
   const groups=[...new Set(S.gallery.map(g=>g.group||'Geral'))];
   const gopts=['all',...groups].map(g=>`<option value="${g}">${g==='all'?(S.lang==='pt'?'Todos os grupos':'All groups'):g}</option>`).join('');
-  return `
-  <div class="view-head"><div class="kicker">${t('manage')}</div><h1 class="serif">${t('analytics')}</h1>
-    <p>${S.lang==='pt'?'Custo por geração em créditos e em R$, agrupado por projeto. Selecione gerações para calcular o total gasto.':'Cost per generation in credits and R$, grouped by project. Select generations to compute total spent.'}</p></div>
+  return areaHeader({
+    kicker:t('manage'),title:t('analytics'),
+    desc:S.lang==='pt'?'Custo por geração em créditos e em R$, agrupado por projeto. Selecione gerações para calcular o total gasto.':'Cost per generation in credits and R$, grouped by project. Select generations to compute total spent.',
+    area:'analytics'
+  })+`
   <div class="kpis">
     <div class="kpi"><div class="kl">${S.lang==='pt'?'Créditos disponíveis':'Available credits'}</div><div class="kv gold">${S.credits}s</div></div>
     <div class="kpi"><div class="kl">${S.lang==='pt'?'Gasto total':'Total spent'}</div><div class="kv">${fmtMoney(spentR$)}</div></div>
@@ -6017,9 +6101,11 @@ function viewOpportunities(){
   const tabs=`<div class="opp-tabs">
     <button class="${_opp==='jobs'?'on':''}" onclick="_opp='jobs';render()">${S.lang==='pt'?'Vagas & Freelas':'Jobs & Freelance'}</button>
     <button class="${_opp==='forum'?'on':''}" onclick="_opp='forum';render()">${S.lang==='pt'?'Fórum':'Forum'}</button></div>`;
-  if(_opp==='forum') return `
-    <div class="view-head"><div class="kicker">${t('community')}</div><h1 class="serif">${t('opportunities')}</h1></div>${tabs}
-    ${forumHTML()}`;
+  if(_opp==='forum') return areaHeader({
+    kicker:t('community'),title:t('opportunities'),
+    desc:S.lang==='pt'?'Vagas, freelas e fórum para criadores audiovisuais com IA.':'Jobs, freelance and forum for AI audiovisual creators.',
+    area:'opportunities'
+  })+`${tabs}${forumHTML()}`;
   const filters=[['all',S.lang==='pt'?'Todos':'All'],['freela','Freela'],['remote',S.lang==='pt'?'Remoto':'Remote'],['full','CLT/PJ'],['video','Vídeo IA'],['image','Imagem IA'],['prompt','Prompt']];
   const fchips=filters.map(([k,l])=>`<button class="seg-btn pb-btn" style="${S.jobFilter===k?'border-color:var(--accent-dim);color:var(--accent)':''}" onclick="S.jobFilter='${k}';render()">${l}</button>`).join(' ');
   const q=S.jobQuery.toLowerCase();
@@ -6044,9 +6130,11 @@ const cards=shown.map(j=>`<div class="job-card">
     <div class="co">${escapeHtml(j.co)} · <span style="color:var(--ink-4)">${S.lang==='pt'?'via':'via'} ${escapeHtml(j.src||'web')}</span></div>
     <div class="jtags">${j.tags.map(x=>`<span class="tag">${escapeHtml(x)}</span>`).join('')}</div>
     <div class="jbot"><span class="sal">${escapeHtml(j.sal)}</span><a class="pb-btn" href="${jobLink(j)}" target="_blank" rel="noopener">${S.lang==='pt'?'Ver vaga →':'View job →'}</a></div></div>`).join('');
-  return `
-  <div class="view-head"><div class="kicker">${t('community')}</div><h1 class="serif">${t('opportunities')}</h1>
-    <p>${S.lang==='pt'?'Vagas, freelas e projetos de criação com IA, agregados de <b>fontes externas</b> (LinkedIn, Indeed, Behance, Upwork…). As vagas não são oferecidas por nós — clique para ir ao site de origem.':'Jobs, freelance and AI creation projects aggregated from <b>external sources</b> (LinkedIn, Indeed, Behance, Upwork…). Jobs are not offered by us — click to go to the origin site.'}</p></div>${tabs}
+  return areaHeader({
+    kicker:t('community'),title:t('opportunities'),
+    desc:S.lang==='pt'?'Vagas, freelas e projetos de criação com IA agregados de fontes externas. Clique para ir ao site de origem.':'Jobs, freelance and AI creation projects from external sources. Click to go to the origin site.',
+    area:'opportunities'
+  })+`${tabs}
   <div class="opp-bar">
     <input placeholder="${S.lang==='pt'?'Buscar por cargo, empresa, ferramenta…':'Search by role, company, tool…'}" value="${escapeAttr(S.jobQuery)}" oninput="S.jobQuery=this.value;S.jobsShown=9;clearTimeout(window._oppSearchTimer);window._oppSearchTimer=setTimeout(render,250)">
     <button class="btn btn-ghost btn-sm" onclick="loadJobsFromWeb()">↻ ${S.lang==='pt'?'Atualizar da web':'Update from web'}</button>
@@ -6121,10 +6209,12 @@ let _edClips=[];
 let _ytQ='', _ytItems=[];
 const YT_AI_FILTER='ultra realistic AI generated cinematic';
 function viewTube(){
-  return `
-  <div style="border-radius:14px;overflow:hidden;margin-bottom:20px;height:140px;background:url(https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1200&q=80) center/cover no-repeat"></div><div><div class="kicker" style="margin:0 0 3px;color:rgba(255,255,255,.55)">${S.lang==='pt'?'APRENDER':'LEARN'}</div><h1 class="serif" style="margin:0 0 5px;font-size:24px;color:#fff">${S.lang==='pt'?'YouTube':'YouTube'}</h1><p style="margin:0;font-size:12.5px;color:rgba(255,255,255,.65);max-width:520px">${S.lang==='pt'?'Tutoriais e masterclasses de criação com IA — para evoluir rápido.':'Tutorials and AI creation masterclasses — to grow fast.'}</p></div></div>
-  <div class="view-head"><div class="kicker">${S.lang==='pt'?'DESCOBRIR':'DISCOVER'}</div><h1 class="serif">YouTube</h1>
-    <p>${S.lang==='pt'?'Pesquise vídeos no YouTube sem sair da plataforma. A busca inicial já vem filtrada para vídeos ultrarrealistas feitos com IA.':'Search YouTube without leaving the platform. The initial search is pre-filtered for ultra-realistic AI videos.'}</p></div>
+  return areaHeader({
+    kicker:S.lang==='pt'?'DESCOBRIR':'DISCOVER',
+    title:'YouTube',
+    desc:S.lang==='pt'?'Pesquise vídeos no YouTube sem sair da plataforma. A busca inicial vem filtrada para vídeos ultrarrealistas feitos com IA.':'Search YouTube without leaving the platform. Initial search is pre-filtered for ultra-realistic AI videos.',
+    area:'tube'
+  })+`
   <div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:8px">
     <input class="input" id="ytInput" style="flex:1;min-width:220px" placeholder="${S.lang==='pt'?'Buscar no YouTube…':'Search YouTube…'}" onkeydown="if(event.key==='Enter')ytSearch()">
     <button class="btn btn-primary" onclick="ytSearch()">${S.lang==='pt'?'Buscar':'Search'}</button>
@@ -6173,12 +6263,12 @@ function viewInspo(){
   _inspoSeeds=INSPO_SEED.concat(pub);
   const srcF=S.inspoSrc||'all';
   const seeds=srcF==='all'?_inspoSeeds:_inspoSeeds.filter(function(s){return s.src===srcF;});
-  return `
-  <div style="border-radius:14px;overflow:hidden;margin-bottom:20px;height:120px;display:flex;gap:3px">
-    ${_inspoSeeds.slice(0,6).map(function(s){return '<div style="flex:1;background:url('+s.url+') center/cover;min-width:0"></div>';}).join('')}
-  </div>
-  <div class="view-head"><div class="kicker">${S.lang==='pt'?'INSPIRAÇÃO':'INSPIRATION'}</div><h1 class="serif">${t('inspo')}</h1>
-    <p>${S.lang==='pt'?'Mural de imagens ultrarrealistas feitas com IA — para inspirar. Clique para ver o prompt, reutilizar no Estúdio ou publicar as suas na Galeria Pública.':'A wall of ultra-realistic AI images — for inspiration. Click to view the prompt, reuse in Studio or publish yours to the Public Gallery.'}</p></div>
+  return areaHeader({
+    kicker:S.lang==='pt'?'INSPIRAÇÃO':'INSPIRATION',
+    title:t('inspo'),
+    desc:S.lang==='pt'?'Mural de imagens ultrarrealistas feitas com IA — para inspirar. Clique para ver o prompt, reutilizar no Estúdio ou publicar as suas na Galeria Pública.':'A wall of ultra-realistic AI images — for inspiration. Click to view the prompt, reuse in Studio or publish yours to the Public Gallery.',
+    area:'inspo'
+  })+`
 
   <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
     <button class="btn btn-sm ${(S.inspoSrc||'all')==='all'?'btn-primary':'btn-ghost'}" onclick="S.inspoSrc='all';render()">Todos</button>
@@ -6320,8 +6410,12 @@ function loadImg(src){return new Promise((res,rej)=>{const i=new Image();i.onloa
 function loadScript(url){return new Promise((res,rej)=>{if([...document.scripts].some(s=>s.src===url))return res();const s=document.createElement('script');s.src=url;s.onload=res;s.onerror=()=>rej(new Error('script '+url));document.head.appendChild(s);});}
 function viewBatch(){
   const o=_bxOps;const cropChips=['none','1:1','4:5','16:9','9:16','3:2','2:3'];
-  return `
-  <div style="background:linear-gradient(135deg,#081408,#1a1a1a);border-radius:16px;padding:28px;margin-bottom:22px;display:flex;align-items:center;gap:18px"><div style="font-size:46px;line-height:1">🖼</div><div><div class="kicker" style="margin:0 0 3px;color:rgba(255,255,255,.55)">${S.lang==='pt'?'FERRAMENTAS':'TOOLS'}</div><h1 class="serif" style="margin:0 0 5px;font-size:24px;color:#fff">${S.lang==='pt'?'Edição em Lote':'Batch Editing'}</h1><p style="margin:0;font-size:12.5px;color:rgba(255,255,255,.65);max-width:520px">${S.lang==='pt'?'Edite uma imagem ou centenas de uma vez — remova fundo, redimensione, .zip.':'Edit one image or hundreds at once — remove background, resize, download .zip.'}</p></div></div>
+  return areaHeader({
+    kicker:S.lang==='pt'?'FERRAMENTAS':'TOOLS',
+    title:S.lang==='pt'?'Edição em Lote':'Batch Editing',
+    desc:S.lang==='pt'?'Edite uma imagem ou centenas de uma vez — remova fundo, redimensione, converta e baixe em .zip.':'Edit one image or hundreds at once — remove background, resize, convert and download as .zip.',
+    area:'batch'
+  })+`
   <div class="view-head"><div class="kicker">${S.lang==='pt'?'FERRAMENTAS':'TOOLS'}</div><h1 class="serif">${t('batch')}</h1>
     <p>${S.lang==='pt'?'Edite uma imagem ou centenas de uma vez. Remova fundo, redimensione, recorte, ajuste cor, faça upscale, aplique marca d\'água e baixe tudo em .zip — direto no navegador.':'Edit one image or hundreds at once. Remove background, resize, crop, color-adjust, upscale, watermark and download everything as .zip — right in the browser.'}</p></div>
   <div class="bx-wrap">
@@ -6851,9 +6945,11 @@ async function postReply(id){
 /* ════════ DOCS — PPTX & PDF generated with Claude ════════ */
 let _docType='pptx';
 function viewDocs(){
-  return `
-  <div class="view-head"><div class="kicker">${t('create')}</div><h1 class="serif">${t('docs')}</h1>
-    <p>${S.lang==='pt'?'Gere apresentações (PowerPoint) e PDFs elaborados — pitch decks, propostas comerciais, storyboards em documento. O conteúdo é redigido por IA a partir do seu briefing e baixado pronto.':'Generate elaborated presentations (PowerPoint) and PDFs — pitch decks, proposals, document storyboards. Content is written by AI from your brief and downloaded ready.'}</p></div>
+  return areaHeader({
+    kicker:t('create'),title:t('docs'),
+    desc:S.lang==='pt'?'Gere apresentações (PowerPoint) e PDFs elaborados — pitch decks, propostas comerciais, storyboards em documento.':'Generate presentations (PowerPoint) and PDFs — pitch decks, proposals, document storyboards.',
+    area:'docs'
+  })+`
   <div class="grid" style="grid-template-columns:1fr 320px;align-items:start">
     <div class="card">
       <span class="label">${S.lang==='pt'?'Tipo de documento':'Document type'}</span>
@@ -7950,37 +8046,33 @@ function addCustomCouncilMember(){
 
 function viewPosProdu(){
   var pt=S.lang==='pt';
-  return ''
-    // Banner: timeline editor aesthetic
-    +'<div style="position:relative;border-radius:16px;overflow:hidden;margin-bottom:24px;height:160px;background:linear-gradient(135deg,#1a0a2e,#0a1a2e)">'
-    +'<div style="position:absolute;inset:0;background:linear-gradient(90deg,#0a0a14 0%,transparent 40%,transparent 60%,#0a0a14 100%);z-index:2"></div>'
-    // Timeline tracks
-    +'<div style="position:absolute;inset:0;padding:24px 0;display:flex;flex-direction:column;gap:8px;z-index:1">'
-    +['#E8C56A','#5A8DEE','#E86A8A','#6AE8B4','#E8A06A'].map(function(c,i){
-      return '<div style="display:flex;align-items:center;height:18px;gap:3px;padding:0 20px">'
-        +'<div style="width:60px;font-size:9px;color:rgba(255,255,255,.3);flex-shrink:0">'+(i===0?'V1':i===1?'V2':i===2?'A1':i===3?'A2':'GFX')+'</div>'
-        +Array.from({length:20},function(_,j){
-          var w=Math.floor(Math.random()*80)+20;
+  // Build animated timeline banner (purely visual, no title text inside)
+  var timelineBanner=''
+    +'<div style="position:relative;border-radius:14px;overflow:hidden;margin-bottom:20px;height:90px;background:linear-gradient(135deg,#1a0a2e,#0a1a2e)">'
+    +'<div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,10,20,.5) 0%,transparent 40%,transparent 60%,rgba(10,10,20,.5) 100%);z-index:2"></div>'
+    +'<div style="position:absolute;inset:0;padding:12px 0;display:flex;flex-direction:column;gap:5px;z-index:1">'
+    +['#E8C56A','#5A8DEE','#E86A8A','#6AE8B4'].map(function(c,i){
+      return '<div style="display:flex;align-items:center;height:14px;gap:2px;padding:0 18px">'
+        +'<div style="width:32px;font-size:8px;color:rgba(255,255,255,.25);flex-shrink:0">'+(i===0?'V1':i===1?'V2':i===2?'A1':'GFX')+'</div>'
+        +Array.from({length:18},function(_,j){
+          var w=Math.floor(Math.random()*60)+15;
           var gap=j%3===0;
-          return gap?'<div style="width:'+Math.floor(Math.random()*20+5)+'px"></div>'
-            :'<div style="height:100%;width:'+w+'px;background:'+c+';opacity:'+(0.5+Math.random()*0.5).toFixed(2)+';border-radius:3px;flex-shrink:0"></div>';
+          return gap?'<div style="width:'+Math.floor(Math.random()*14+4)+'px"></div>'
+            :'<div style="height:100%;width:'+w+'px;background:'+c+';opacity:'+(0.45+Math.random()*0.45).toFixed(2)+';border-radius:2px;flex-shrink:0"></div>';
         }).join('')
         +'</div>';
     }).join('')
     +'</div>'
-    // Playhead
-    +'<div style="position:absolute;top:0;bottom:0;left:38%;width:2px;background:rgba(255,255,255,.8);z-index:3"></div>'
-    // Text overlay
-    +'<div style="position:absolute;bottom:0;left:0;right:0;padding:16px 24px;background:linear-gradient(transparent,rgba(10,10,20,.9));z-index:4;display:flex;align-items:flex-end;justify-content:space-between">'
-    +'<div>'
-    +'<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:4px">'+(pt?'CRIAÇÃO':'CREATION')+'</div>'
-    +'<div style="font-size:22px;font-weight:700;color:#fff;font-family:var(--serif)">'+(pt?'Pós-Produção':'Post Production')+'</div>'
-    +'</div>'
-    +'<div style="font-size:11px;color:rgba(255,255,255,.4)">'+(pt?'Edição · Transição IA · Upscale · Plugin Adobe':'Editing · AI Transition · Upscale · Adobe Plugin')+'</div>'
-    +'</div>'
-    +'</div>'
-    // View head description only
-    +'<p style="max-width:660px;font-size:13.5px;color:var(--ink-2);margin:0 0 16px">'+(pt?'Ferramentas de edição, transição IA entre clipes, upscale e integração com Adobe. Em expansão contínua.':'Editing tools, AI transition between clips, upscale and Adobe integration. Continuously expanding.')+'</p>'
+    +'<div style="position:absolute;top:0;bottom:0;left:38%;width:2px;background:rgba(255,255,255,.7);z-index:3"></div>'
+    +'<div class="pb-tag">'+(pt?'CRIAÇÃO':'CREATION')+'</div>'
+    +'<div class="pb-icon" style="font-size:36px;opacity:.2">🎞️</div>'
+    +'</div>';
+  return areaHeader({
+    kicker:pt?'CRIAÇÃO':'CREATION',
+    title:pt?'Pós-Produção':'Post Production',
+    desc:pt?'Ferramentas de edição, transição IA entre clipes, upscale e integração com Adobe. Em expansão contínua.':'Editing tools, AI transition between clips, upscale and Adobe integration. Continuously expanding.',
+    area:'posprodu'
+  })+timelineBanner
 
     // ── Quick action grid: recommended editors + tools
     +'<div style="background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:22px">'
@@ -8336,12 +8428,12 @@ function viewUploadGallery(){
   var filter=S.uploadFilter||'all';
   var shown=filter==='all'?gallery:gallery.filter(function(x){return x.type===filter;});
 
-  var bannerHtml='<div style="border-radius:14px;overflow:hidden;margin-bottom:20px;height:110px;background:linear-gradient(135deg,#0a1a2a,#1a2a3a);display:flex;align-items:center;padding:0 28px;gap:18px">'
-    +'<div style="font-size:46px;line-height:1">📁</div>'
-    +'<div><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:4px">'+( pt?'MÍDIA':'MEDIA')+'</div>'
-    +'<div style="font-size:22px;font-weight:700;color:#fff">'+(pt?'Meus Uploads':'My Uploads')+'</div>'
-    +'<div style="font-size:12px;color:rgba(255,255,255,.5)">'+(pt?'Imagens, vídeos e áudios reutilizáveis em qualquer geração':'Images, videos and audio reusable in any generation')+'</div>'
-    +'</div></div>';
+  var bannerHtml=areaHeader({
+    kicker:pt?'MÍDIA':'MEDIA',
+    title:pt?'Meus Uploads':'My Uploads',
+    desc:pt?'Imagens, vídeos e áudios reutilizáveis em qualquer geração do Estúdio.':'Images, videos and audio reusable in any Studio generation.',
+    area:'uploads'
+  });
 
   var filterBar='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;align-items:center">'
     +'<button class="btn btn-sm '+(filter==='all'?'btn-primary':'btn-ghost')+'" onclick="S.uploadFilter=\'all\';render()">'+(pt?'Todos':'All')+' ('+gallery.length+')</button>'
@@ -8821,20 +8913,16 @@ function viewInstagram(){
   var cfg=getIGConfig();
   var connected=!!(cfg.accessToken&&cfg.userId);
 
-  var banner='<div style="border-radius:16px;overflow:hidden;margin-bottom:22px;height:160px;position:relative">'
-    +'<div style="position:absolute;inset:0;background:linear-gradient(45deg,#405DE6,#5851DB,#833AB4,#C13584,#E1306C,#FD1D1D,#F56040,#F77737,#FCAF45,#FFDC80);opacity:.9"></div>'
-    +'<div style="position:absolute;inset:0;display:flex;align-items:center;padding:0 28px;gap:18px">'
-    +'<div style="font-size:50px;line-height:1">📸</div>'
-    +'<div>'
-    +'<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:4px">COMUNIDADE</div>'
-    +'<div style="font-size:24px;font-weight:700;color:#fff">Instagram Hub</div>'
-    +'<div style="font-size:12px;color:rgba(255,255,255,.8);margin-top:3px">'+(pt?'Publique, compartilhe e gerencie seu conteúdo IA direto no Instagram':'Publish, share and manage your AI content directly on Instagram')+'</div>'
-    +'</div>'
-    +'<div style="margin-left:auto;text-align:right">'
-    +(connected?'<div style="background:rgba(255,255,255,.2);border-radius:20px;padding:4px 12px;font-size:11px;color:#fff">● '+(pt?'Conectado':'Connected')+' @'+escapeHtml(cfg.username||'')+'</div>'
-      :'<div style="background:rgba(255,255,255,.2);border-radius:20px;padding:4px 12px;font-size:11px;color:#fff">○ '+(pt?'Não conectado':'Not connected')+'</div>')
-    +'</div>'
-    +'</div></div>';
+  var statusBadge=connected
+    ?'<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(95,184,122,.15);border:1px solid rgba(95,184,122,.3);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--ok)">● '+(pt?'Conectado':'Connected')+' @'+escapeHtml(cfg.username||'')+'</span>'
+    :'<span style="display:inline-flex;align-items:center;gap:5px;background:var(--panel-2);border:1px solid var(--line);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--ink-3)">○ '+(pt?'Não conectado':'Not connected')+'</span>';
+  var banner=areaHeader({
+    kicker:'COMUNIDADE',
+    title:'Instagram Hub',
+    desc:(pt?'Publique, compartilhe e gerencie seu conteúdo IA direto no Instagram.':'Publish, share and manage your AI content directly on Instagram.'),
+    actions:statusBadge,
+    area:'instagram'
+  });
 
     // ── Section 1: Connect cards ──
   var userCfg=JSON.parse(localStorage.getItem('hsai_ig_user_'+((S.user&&S.user.uid)||'guest'))||'{}');
@@ -10078,15 +10166,12 @@ function viewContactSheet() {
   var perPage = _cs.cols * _cs.rows;
   var totalPages = Math.max(1, Math.ceil(itemCount / perPage));
 
-  var banner = '<div style="border-radius:14px;overflow:hidden;margin-bottom:20px;height:130px;background:#0a0a14;position:relative">'
-    + '<div style="position:absolute;inset:0;background:linear-gradient(135deg,#0d1a2a 0%,#1a0d2a 50%,#0a1a0d 100%)"></div>'
-    + '<div style="position:absolute;inset:0;display:flex;align-items:center;padding:0 28px;gap:18px">'
-    + '<div style="font-size:48px;line-height:1">🗂</div>'
-    + '<div>'
-    + '<div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.4);margin-bottom:4px">'+( pt?'CRIAÇÃO':'CREATION')+'</div>'
-    + '<div style="font-size:22px;font-weight:700;color:#fff">Contact Sheet</div>'
-    + '<div style="font-size:12px;color:rgba(255,255,255,.6)">'+( pt?'Organize '+itemCount+' imagens em folhas de contato — estilo Adobe Bridge':'Arrange '+itemCount+' images into contact sheets — Adobe Bridge style')+'</div>'
-    + '</div></div></div>';
+  var banner = areaHeader({
+    kicker:pt?'CRIAÇÃO':'CREATION',
+    title:'Contact Sheet',
+    desc:pt?'Organize '+itemCount+' imagens em folhas de contato — estilo Adobe Bridge.':'Arrange '+itemCount+' images into contact sheets — Adobe Bridge style.',
+    area:'contactsheet'
+  });
 
   // ── Controls panel ──
   var controls = '<div class="card" style="margin-bottom:16px">'
@@ -10810,14 +10895,12 @@ function viewTemplates(){
   var pt=S.lang==='pt';
   var selCat=S.templateCat||'all';
 
-  var banner='<div style="border-radius:14px;overflow:hidden;margin-bottom:20px;height:140px;background:linear-gradient(135deg,#0d1a2a,#1a0d2a);position:relative">'
-    +'<div style="position:absolute;inset:0;display:flex;align-items:center;padding:0 28px;gap:18px">'
-    +'<div style="font-size:48px;line-height:1">⚡</div>'
-    +'<div>'
-    +'<div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.4);margin-bottom:4px">'+(pt?'CRIAÇÃO':'CREATION')+'</div>'
-    +'<div style="font-size:22px;font-weight:700;color:#fff">'+(pt?'Templates de Campanha':'Campaign Templates')+'</div>'
-    +'<div style="font-size:12px;color:rgba(255,255,255,.6)">'+(pt?'Gere em 3 cliques: escolha o template, personalize e gere.':'Generate in 3 clicks: pick template, customize, generate.')+'</div>'
-    +'</div></div></div>';
+  var banner=areaHeader({
+    kicker:pt?'CRIAÇÃO':'CREATION',
+    title:pt?'Templates de Campanha':'Campaign Templates',
+    desc:pt?'Gere em 3 cliques: escolha o template, personalize e gere direto no Estúdio.':'Generate in 3 clicks: pick template, customize and generate in Studio.',
+    area:'templates'
+  });
 
   // Category filter
   var cats='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px">'
