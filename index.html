@@ -2908,48 +2908,105 @@ function viewSimpleCreate(){
   var recResult=recommendModelForIntent({mediaType:_scType,style:_scStyle,quality:_scQuality==='Rápido'?'rapido':(_scQuality==='Premium'?'premium':'standard'),duration:parseInt(_scDuration)||8});
   var rec=recResult.model;
 
-  return `<div class="view-head">
-    <div class="kicker" style="color:var(--accent)">${pt?'CRIAR AGORA':'CREATE NOW'}</div>
-    <h1 class="serif" style="font-size:clamp(24px,5vw,42px)">${pt?'O que vamos criar hoje?':'What are we creating today?'}</h1>
-    <p style="max-width:580px;font-size:15px;color:var(--ink-2);line-height:1.7">${pt?'Seu buscador criativo para gerar vídeos, imagens, prompts, storyboards e campanhas com os modelos generativos mais poderosos.':'Your creative engine to generate videos, images, prompts, storyboards and campaigns with the most powerful generative models.'}</p>
-    <div style="font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.5px;margin-top:4px">${pt?'Agora você é o diretor.':'Now you\'re the director.'}</div>
+  // Trial banner
+  var trialBanner='';
+  if(!isGuest()&&S.credits>=0&&S.credits<=3){
+    var cred=S.credits;
+    trialBanner='<div class="sc-trial-banner">'
+      +'<span style="font-size:22px">🎬</span>'
+      +'<div style="flex:1;min-width:160px">'
+      +'<div style="font-size:13px;font-weight:700;color:var(--accent)">'+(pt?'Você tem '+cred+' crédito'+(cred===1?'':'s')+' de trial':'You have '+cred+' trial credit'+(cred===1?'':'s'))+'</div>'
+      +'<div style="font-size:12px;color:var(--ink-3);margin-top:2px">'+(pt?'Monte e teste sua ideia. Para gerar em produção, escolha um plano.':'Build and test your idea. To generate in production, choose a plan.')+'</div>'
+      +'</div>'
+      +'<button class="btn btn-ghost btn-sm" onclick="go(\'plans\')">'+(pt?'Ver planos':'View plans')+'</button>'
+      +'</div>';
+  }
+
+  // Demo items
+  var demoHtml=(DEMO_REEL||[]).slice(0,6).map(function(d,i){
+    return '<div class="sc-demo-item" onclick="scUseDemoPrompt('+i+')" title="'+(pt?'Usar prompt':'Use prompt')+'">'
+      +'<video src="'+d.url+'" muted loop autoplay playsinline preload="none" class="sc-demo-thumb" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'"></video>'
+      +'<div style="padding:8px 10px">'
+      +'<div style="font-size:10px;color:var(--ink-4);margin-bottom:4px">'+escapeHtml(d.model||'')+'</div>'
+      +'<button class="btn btn-ghost btn-sm" style="width:100%;font-size:11px;padding:4px 8px" onclick="event.stopPropagation();scUseDemoPrompt('+i+')">'+(pt?'Usar prompt':'Use prompt')+'</button>'
+      +'</div></div>';
+  }).join('');
+
+  var imgDemoHtml=REEL_IMGS.slice(0,6).map(function(url,i){
+    return '<div class="sc-demo-item" title="'+(pt?'Criar parecido':'Create similar')+'">'
+      +'<img src="'+url+'" class="sc-demo-thumb" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=\'https://picsum.photos/seed/sc'+i+'/400/224\'">'
+      +'<div style="padding:8px 10px">'
+      +'<button class="btn btn-ghost btn-sm" style="width:100%;font-size:11px;padding:4px 8px" onclick="scUseAsRef(\''+url+'\',\'image\')">'+(pt?'Criar parecido':'Create similar')+'</button>'
+      +'</div></div>';
+  }).join('');
+
+  var stepsHtml='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:6px">'
+    +'<div class="sc-step"><div class="sc-step-num">01</div><h4>'+(pt?'Digite sua ideia':'Type your idea')+'</h4><p>'+(pt?'Descreva a cena, produto ou personagem':'Describe the scene, product or character')+'</p></div>'
+    +'<div class="sc-step"><div class="sc-step-num">02</div><h4>'+(pt?'Receba sugestão':'Get a suggestion')+'</h4><p>'+(pt?'A IA recomenda o melhor modelo para você':'AI recommends the best model for you')+'</p></div>'
+    +'<div class="sc-step"><div class="sc-step-num">03</div><h4>'+(pt?'Monte antes de gastar':'Plan before spending')+'</h4><p>'+(pt?'Ajuste e refine sem usar créditos':'Refine without spending credits')+'</p></div>'
+    +'<div class="sc-step"><div class="sc-step-num">04</div><h4>'+(pt?'Gere e publique':'Generate and publish')+'</h4><p>'+(pt?'Exporte, edite e compartilhe':'Export, edit and share')+'</p></div>'
+    +'</div>';
+
+  var whyHtml='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">'
+    +'<div class="sc-why-card"><div class="sc-ic">🎯</div><h4>'+(pt?'Monte antes de gastar':'Plan before spending')+'</h4><p>'+(pt?'Refine prompt e referências antes de usar créditos.':'Refine prompt and references before spending credits.')+'</p></div>'
+    +'<div class="sc-why-card"><div class="sc-ic">⚡</div><h4>'+(pt?'Modo rápido e Studio':'Quick mode and Studio')+'</h4><p>'+(pt?'Crie rápido ou vá ao Studio Completo para controle total.':'Create fast or go to Full Studio for total control.')+'</p></div>'
+    +'<div class="sc-why-card"><div class="sc-ic">🎬</div><h4>'+(pt?'Multimodelo':'Multi-model')+'</h4><p>'+(pt?'Seedance, Kling, Veo, Flux e mais — escolha o ideal.':'Seedance, Kling, Veo, Flux and more — pick the best.')+'</p></div>'
+    +'<div class="sc-why-card"><div class="sc-ic">📎</div><h4>'+(pt?'Referência visual':'Visual reference')+'</h4><p>'+(pt?'Anexe imagens de referência para guiar a geração.':'Attach reference images to guide generation.')+'</p></div>'
+    +'<div class="sc-why-card"><div class="sc-ic">✨</div><h4>'+(pt?'Enhance de prompt':'Prompt enhance')+'</h4><p>'+(pt?'A IA melhora seu prompt automaticamente.':'AI enhances your prompt automatically.')+'</p></div>'
+    +'<div class="sc-why-card"><div class="sc-ic">🔗</div><h4>'+(pt?'Tudo conectado':'Everything connected')+'</h4><p>'+(pt?'Galeria, pós-produção e publicação em um só lugar.':'Gallery, post-production and publishing in one place.')+'</p></div>'
+    +'</div>';
+
+  return trialBanner
+  + `<div class="sc-hero">
+    <div style="font-size:11px;letter-spacing:2px;font-weight:700;color:var(--accent);margin-bottom:10px;opacity:.85">HOLLYWOOD STUDIO AI</div>
+    <h1>${pt?'O que vamos <em style="font-style:normal;color:var(--accent)">criar</em> hoje?':'What are we <em style="font-style:normal;color:var(--accent)">creating</em> today?'}</h1>
+    <p class="sub">${pt?'Seu Google da criação em tempo real. Crie vídeos e imagens com os modelos generativos mais poderosos.':'Your real-time creation engine. Make videos and images with the most powerful generative models.'}</p>
+    <div class="impact">${pt?'Agora você é o diretor.':'Now you\'re the director.'}</div>
   </div>
 
   <!-- Type selector -->
   <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
-    ${types.map(function(tp){return '<button class="btn '+ (_scType===tp.id?'btn-primary':'btn-ghost') +'" style="padding:8px 14px;font-size:13px" onclick="scSetType(\''+tp.id+'\')">'+tp.ic+' '+tp.label+'</button>';}).join('')}
+    ${types.map(function(tp){return '<button class="btn '+ (_scType===tp.id?'btn-primary':'btn-ghost') +' sc-type-btn" id="scType_'+tp.id+'" style="padding:8px 14px;font-size:13px" onclick="scSetType(\''+tp.id+'\')">'+tp.ic+' '+tp.label+'</button>';}).join('')}
   </div>
 
-  <!-- Main prompt area -->
-  <div style="position:relative;margin-bottom:10px">
-    <textarea class="input" id="scPrompt" style="min-height:130px;font-size:15px;padding:16px 16px 44px;border-radius:12px;resize:vertical"
-      placeholder="${pt?'Descreva o que você quer criar: um vídeo de produto, uma cena cinematográfica, um anúncio, um clipe musical...':'Describe what you want to create: a product video, a cinematic scene, an ad, a music clip...'}"
-      oninput="scUpdateRecommendation()"></textarea>
-    <button class="btn btn-ghost btn-sm" style="position:absolute;right:10px;bottom:10px;font-size:12px;padding:5px 12px" onclick="scEnhancePrompt()">✨ ${pt?'Melhorar prompt':'Enhance prompt'}</button>
+  <!-- Main prompt card -->
+  <div class="sc-prompt-area" style="margin-bottom:14px">
+    <div style="position:relative">
+      <textarea class="sc-prompt-field" id="scPrompt"
+        placeholder="${pt?'Descreva sua ideia para vídeo ou imagem...':'Describe your idea for video or image...'}"
+        oninput="scUpdateRecommendation()"></textarea>
+      <button class="btn btn-ghost btn-sm" style="position:absolute;right:10px;bottom:10px;font-size:12px;padding:5px 12px" onclick="scEnhance()">✨ ${pt?'Enhance':'Enhance'}</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" onclick="scAttachRef()" style="font-size:12px">📎 ${pt?'Referência':'Reference'}</button>
+      <input type="file" id="scRefInput" accept="image/*" style="display:none" onchange="scOnRefFile(this)">
+      <div id="scRefPreview" style="display:none"></div>
+    </div>
+    <div id="scEnhanceUndo" style="display:none;margin-top:8px"></div>
   </div>
 
   <!-- Suggestion chips -->
-  <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px">
-    ${suggestions.map(function(s){return '<button class="btn btn-ghost" style="padding:5px 12px;font-size:12px;border-radius:20px" onclick="document.getElementById(\'scPrompt\').value=\''+s.replace(/'/g,"\\'")+'\'">'+s.slice(0,40)+'…</button>';}).join('')}
+  <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">
+    ${suggestions.map(function(sg){return '<button class="btn btn-ghost" style="padding:5px 12px;font-size:12px;border-radius:20px" onclick="document.getElementById(\'scPrompt\').value=\''+sg.replace(/'/g,"\\'")+'\'">'+sg.slice(0,40)+'…</button>';}).join('')}
   </div>
 
   <!-- Quick settings -->
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:18px">
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:14px">
     <div>
       <div style="font-size:11px;font-weight:700;color:var(--ink-3);margin-bottom:6px;letter-spacing:.5px">${pt?'FORMATO':'FORMAT'}</div>
       <div class="seg" style="flex-wrap:wrap;gap:4px">${formats.map(function(f){return '<button class="'+(_scFormat===f?'on':'')+'" onclick="scSetFormat(\''+f+'\')">'+f+'</button>';}).join('')}</div>
     </div>
-    <div>
+    <div id="scDurRow" style="display:${_scType==='video'?'':'none'}">
       <div style="font-size:11px;font-weight:700;color:var(--ink-3);margin-bottom:6px;letter-spacing:.5px">${pt?'DURAÇÃO':'DURATION'}</div>
       <div class="seg" style="flex-wrap:wrap;gap:4px">${durations.map(function(d){return '<button class="'+(_scDuration===d?'on':'')+'" onclick="scSetDuration(\''+d+'\')">'+d+'</button>';}).join('')}</div>
     </div>
     <div>
-      <div style="font-size:11px;font-weight:700;color:var(--ink-3);margin-bottom:6px;letter-spacing:.5px">${pt?'QUALIDADE':'QUALITY'}</div>
-      <div class="seg" style="flex-wrap:wrap;gap:4px">${qualities.map(function(q){return '<button class="'+(_scQuality===q?'on':'')+'" onclick="scSetQuality(\''+q+'\')">'+q+'</button>';}).join('')}</div>
-    </div>
-    <div>
       <div style="font-size:11px;font-weight:700;color:var(--ink-3);margin-bottom:6px;letter-spacing:.5px">${pt?'ESTILO':'STYLE'}</div>
       <div class="seg" style="flex-wrap:wrap;gap:4px">${styles.map(function(s){return '<button class="'+(_scStyle===s?'on':'')+'" onclick="scSetStyle(\''+s+'\')">'+s+'</button>';}).join('')}</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink-3);margin-bottom:6px;letter-spacing:.5px">${pt?'QUALIDADE':'QUALITY'}</div>
+      <div class="seg" style="flex-wrap:wrap;gap:4px">${qualities.map(function(q){return '<button class="'+(_scQuality===q?'on':'')+'" onclick="scSetQuality(\''+q+'\')">'+q+'</button>';}).join('')}</div>
     </div>
   </div>
 
@@ -2967,15 +3024,50 @@ function viewSimpleCreate(){
   </div>
 
   <!-- Action buttons -->
-  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px">
-    <button class="btn btn-primary" style="padding:14px 32px;font-size:15px;flex:1;min-width:160px" onclick="scGenerate()">${pt?'⚡ Gerar agora':'⚡ Generate now'}</button>
-    <button class="btn btn-ghost" style="padding:14px 18px" onclick="scEnhancePrompt()">✨ ${pt?'Melhorar prompt':'Enhance'}</button>
-    <button class="btn btn-ghost" style="padding:14px 18px" onclick="scChooseModel()">🎬 ${pt?'Escolher modelo':'Choose model'}</button>
-    <button class="btn btn-ghost" style="padding:14px 18px" onclick="scOpenStudio()">⚙️ ${pt?'Studio Completo':'Full Studio'}</button>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px">
+    <button class="btn btn-primary" style="padding:13px 24px;font-size:14px" onclick="scCreate('video')">🎬 ${pt?'Criar Vídeo':'Create Video'}</button>
+    <button class="btn btn-primary" style="padding:13px 24px;font-size:14px" onclick="scCreate('image')">🖼 ${pt?'Criar Imagem':'Create Image'}</button>
+    <button class="btn btn-ghost" style="padding:13px 18px" onclick="scEnhance()">✨ Enhance</button>
+    <button class="btn btn-ghost" style="padding:13px 18px" onclick="scStoryboard()">📋 Storyboard</button>
+    <button class="btn btn-ghost" style="padding:13px 18px" onclick="scChooseModel()">🎬 ${pt?'Modelo':'Model'}</button>
+    <button class="btn btn-ghost" style="padding:13px 18px" onclick="scOpenStudio()">⚙️ ${pt?'Studio Completo':'Full Studio'}</button>
+  </div>
+
+  <!-- Demo: Vídeos -->
+  <div style="margin-bottom:28px">
+    <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--ink-4);margin-bottom:10px;text-transform:uppercase">${pt?'Crie vídeos como este':'Create videos like this'}</div>
+    <div class="sc-demo-track">${demoHtml||'<div style="color:var(--ink-4);font-size:13px;padding:20px">'+(pt?'Exemplos carregando...':'Loading examples...')+'</div>'}</div>
+  </div>
+
+  <!-- Demo: Imagens -->
+  <div style="margin-bottom:32px">
+    <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--ink-4);margin-bottom:10px;text-transform:uppercase">${pt?'Crie imagens como estas':'Create images like these'}</div>
+    <div class="sc-demo-track">${imgDemoHtml}</div>
+  </div>
+
+  <!-- Como funciona -->
+  <div style="margin-bottom:28px">
+    <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--ink-4);margin-bottom:12px;text-transform:uppercase">${pt?'Como funciona':'How it works'}</div>
+    ${stepsHtml}
+  </div>
+
+  <!-- Por que usar -->
+  <div style="margin-bottom:28px">
+    <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--ink-4);margin-bottom:12px;text-transform:uppercase">${pt?'Por que usar?':'Why use it?'}</div>
+    ${whyHtml}
   </div>`;
 }
 
-function afterSimpleCreate(){}
+function afterSimpleCreate(){
+  // Re-attach ref preview if _scRef is set
+  if(_scRef){
+    var preview=document.getElementById('scRefPreview');
+    if(preview){
+      preview.innerHTML='<div style="position:relative;display:inline-block"><img src="'+_scRef+'" style="max-height:72px;max-width:110px;border-radius:8px;object-fit:cover"><button onclick="scRemoveRef()" style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:#333;border:none;color:#fff;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;line-height:1">×</button></div>';
+      preview.style.display='';
+    }
+  }
+}
 
 function scSetType(t){_scType=t;render();}
 function scSetFormat(f){_scFormat=f;render();}
