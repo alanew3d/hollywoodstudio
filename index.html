@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="no-referrer">
 <title>Hollywood Studio AI — Crie vídeos, imagens e campanhas com IA</title>
-<meta name="description" content="Seu estúdio criativo com IA para gerar vídeos, imagens, prompts, storyboards e campanhas usando modelos generativos poderosos. Comece com uma ideia e dirija todo o workflow.">
+<meta name="description" content="Seu estúdio criativo com IA para gerar vídeos, imagens, prompts, storyboards e campanhas usando modelos generativos poderosos. Digite uma ideia e comece.">
 <meta name="keywords" content="IA generativa, geração de vídeo IA, text to video, image to video, Seedance, Kling, Veo, Sora, Flux, Runway, produção audiovisual IA, vídeo cinematográfico, VFX IA, CGI, chroma key, geração de imagem IA, criação de conteúdo, AI video generator, hollywood studio ai">
 <meta name="author" content="Hollywood Studio AI">
 <meta name="robots" content="index, follow, max-image-preview:large">
@@ -15,7 +15,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Hollywood Studio AI">
 <meta property="og:title" content="Hollywood Studio AI — Agora você é o diretor">
-<meta property="og:description" content="Digite uma ideia e transforme em vídeo, imagem, storyboard ou campanha com IA. O seu estúdio criativo em tempo real.">
+<meta property="og:description" content="Crie vídeos e imagens com IA em tempo real. Digite uma ideia, anexe referências e escolha entre modo rápido ou Studio completo.">
 <meta property="og:url" content="https://hollywoodstudio.ai/">
 <meta property="og:image" content="https://hollywoodstudio.ai/assets/logos/logo-hero.png">
 <meta property="og:locale" content="pt_BR">
@@ -1695,6 +1695,32 @@ input:focus,textarea:focus,select:focus{
   .main{padding:0 10px 24px!important}}
 
 #academyQ,.academy textarea{background:var(--panel-2)!important;color:var(--ink)!important}
+
+/* ── Simple Create ── */
+.sc-hero{text-align:center;padding:40px 20px 24px}
+.sc-hero h1{font-size:clamp(24px,5vw,48px);font-weight:800;margin:0 0 12px}
+.sc-hero .sub{font-size:clamp(13px,2vw,16px);color:var(--ink-3);max-width:640px;margin:0 auto 8px;line-height:1.6}
+.sc-hero .impact{font-size:clamp(14px,2vw,17px);font-weight:600;color:var(--accent);margin-bottom:28px}
+.sc-prompt-area{background:var(--panel);border-radius:16px;padding:20px;border:1px solid var(--line-2)}
+.sc-prompt-field{width:100%;min-height:110px;background:var(--bg);border:1.5px solid var(--line-2);border-radius:12px;padding:14px 16px 44px;font-size:15px;color:var(--ink);resize:vertical;font-family:inherit;line-height:1.6;transition:border-color .2s;box-sizing:border-box}
+.sc-prompt-field:focus{border-color:var(--accent);outline:none}
+.sc-type-btn{padding:7px 14px;border-radius:20px;border:1px solid var(--line-2);background:none;cursor:pointer;font-size:13px;color:var(--ink-3);transition:all .15s}
+.sc-type-btn.active,.sc-type-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.sc-pill-btn{padding:5px 12px;border-radius:20px;border:1px solid var(--line-2);background:none;cursor:pointer;font-size:12px;color:var(--ink-3)}
+.sc-pill-btn.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent)}
+.sc-model-rec{background:var(--panel-2);border-radius:12px;padding:14px 16px;border:1px solid var(--line-2);margin-top:12px}
+.sc-demo-track{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin}
+.sc-demo-item{flex-shrink:0;width:200px;background:var(--panel-2);border-radius:12px;overflow:hidden;cursor:pointer;border:1px solid var(--line-2)}
+.sc-demo-thumb{width:100%;height:112px;object-fit:cover;background:var(--panel-3)}
+.sc-step{background:var(--panel-2);border-radius:12px;padding:20px;text-align:center}
+.sc-step .sc-step-num{font-size:24px;font-weight:800;color:var(--accent);margin-bottom:6px}
+.sc-step h4{font-size:13px;font-weight:700;margin:0 0 4px}
+.sc-step p{font-size:12px;color:var(--ink-3);margin:0;line-height:1.5}
+.sc-why-card{background:var(--panel-2);border-radius:12px;padding:16px;border:1px solid var(--line-2)}
+.sc-why-card .sc-ic{font-size:26px;margin-bottom:8px}
+.sc-why-card h4{font-size:13px;font-weight:700;margin:0 0 4px}
+.sc-why-card p{font-size:12px;color:var(--ink-3);line-height:1.55;margin:0}
+.sc-trial-banner{background:linear-gradient(135deg,rgba(212,168,87,.12),rgba(212,168,87,.05));border:1px solid rgba(212,168,87,.3);border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 </style>
 </head>
 <body data-theme="light">
@@ -2853,7 +2879,7 @@ function viewHome(){
 }
 
 /* ════════ SIMPLE CREATE ════════ */
-var _scType='video',_scFormat='16:9',_scDuration='8s',_scQuality='Equilibrado',_scStyle='Cinemático',_scModel=null;
+var _scType='video',_scFormat='16:9',_scDuration='8s',_scQuality='Equilibrado',_scStyle='Cinemático',_scModel=null,_scRef=null,_scOrigPrompt=null;
 function viewSimpleCreate(){
   var pt=S.lang==='pt';
   var types=[
