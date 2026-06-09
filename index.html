@@ -3042,6 +3042,125 @@ function scGenerate(){
   sendToStudio({prompt:prompt,modelId:_scModel,source:'simple-create'});
 }
 
+/* ── Additional Simple Create helpers ── */
+function scCreate(type){
+  if(type)scSetType(type);
+  var prompt=(document.getElementById('scPrompt')||{}).value||'';
+  if(!prompt.trim()){toast(S.lang==='pt'?'Digite uma ideia primeiro':'Enter an idea first','err');return;}
+  if(isGuest()){showQuickModal('<div style="text-align:center;padding:8px"><div style="font-size:28px;margin-bottom:12px">🔐</div><h3>'+(S.lang==='pt'?'Faça login para gerar':'Sign in to generate')+'</h3><p style="font-size:14px;color:var(--ink-2);margin:8px 0 18px">'+(S.lang==='pt'?'Crie uma conta gratuita para usar os modelos de IA.':'Create a free account to use AI models.')+'</p><button class="btn btn-primary" onclick="document.getElementById(\'scQuickModal\').remove();go(\'plans\')">'+(S.lang==='pt'?'Criar conta':'Create account')+'</button></div>');return;}
+  if(!S.credits||S.credits<1){scShowNoCreditsModal();return;}
+  scSendToStudio();
+}
+function scSendToStudio(){
+  var prompt=(document.getElementById('scPrompt')||{}).value||'';
+  if(!prompt.trim()){toast(S.lang==='pt'?'Digite uma ideia primeiro':'Enter an idea first','err');return;}
+  sendToStudio({prompt:prompt,modelId:_scModel,source:'simple-create',mediaType:_scType,
+    aspectRatio:_scFormat,duration:parseInt(_scDuration)||8,style:_scStyle,quality:_scQuality});
+  setTimeout(function(){var el=document.getElementById('cPrompt');if(el&&prompt)el.value=prompt;},350);
+}
+async function scEnhance(){
+  var pt=S.lang==='pt';
+  var el=document.getElementById('scPrompt');
+  if(!el)return;
+  var txt=(el.value||'').trim();
+  if(!txt){toast(pt?'Digite algo para melhorar':'Type something to enhance','err');return;}
+  _scOrigPrompt=txt;
+  el.disabled=true;
+  toast(pt?'✨ Melhorando prompt...':'✨ Enhancing prompt...','info');
+  var enhanced=null;
+  try{
+    var res=await fetch('/api/enhance',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:txt,style:_scStyle,model:_scModel})});
+    if(res.ok){var d=await res.json();if(d.enhanced)enhanced=d.enhanced;}
+  }catch(e){}
+  if(!enhanced){
+    var extras=_scType==='video'
+      ?(pt?'plano cinematográfico, câmera em movimento suave, iluminação volumétrica, 4K, color grading profissional':'cinematic shot, smooth camera movement, volumetric lighting, 4K, professional color grading')
+      :(pt?'composição profissional, iluminação dramática, alta resolução, detalhes nítidos':'professional composition, dramatic lighting, high resolution, sharp details');
+    enhanced=txt+' — '+extras;
+  }
+  el.value=enhanced;el.disabled=false;
+  var undoArea=document.getElementById('scEnhanceUndo');
+  if(undoArea){
+    undoArea.style.display='';
+    undoArea.innerHTML='<button class="btn btn-ghost btn-sm" onclick="scUndoEnhance()">'+(pt?'↩ Voltar ao original':'↩ Revert to original')+'</button> <button class="btn btn-ghost btn-sm" onclick="scSendToStudio()">'+(pt?'Enviar ao Studio':'Send to Studio')+'</button>';
+  }
+  toast(pt?'✅ Prompt melhorado!':'✅ Prompt enhanced!','ok');
+}
+function scUndoEnhance(){
+  if(_scOrigPrompt!==null){
+    var el=document.getElementById('scPrompt');
+    if(el)el.value=_scOrigPrompt;
+    _scOrigPrompt=null;
+    var u=document.getElementById('scEnhanceUndo');
+    if(u)u.style.display='none';
+  }
+}
+function scStoryboard(){
+  var prompt=(document.getElementById('scPrompt')||{}).value||'';
+  if(!prompt.trim()){toast(S.lang==='pt'?'Digite uma ideia primeiro':'Enter an idea first','err');return;}
+  localStorage.setItem('hsai_sc_storyboard',JSON.stringify({prompt:prompt,mediaType:_scType,aspectRatio:_scFormat}));
+  go('storyboard');
+  setTimeout(function(){
+    var el=document.getElementById('storyboardBrief')||document.getElementById('sbBrief')||document.querySelector('[id*="toryboard"] textarea,[id*="toryboard"] input');
+    if(el)el.value=prompt;
+    if(typeof generateStoryboard==='function')generateStoryboard(prompt);
+    else if(typeof initStoryboard==='function')initStoryboard({prompt:prompt});
+  },400);
+}
+function scShowNoCreditsModal(){
+  var pt=S.lang==='pt';
+  showQuickModal('<div style="text-align:center;padding:8px"><div style="font-size:32px;margin-bottom:12px">🎬</div>'
+    +'<h3 style="margin:0 0 8px">'+(pt?'Projeto pronto para gerar':'Project ready to generate')+'</h3>'
+    +'<p style="font-size:13px;color:var(--ink-2);line-height:1.6;margin:0 0 18px">'+(pt?'Seu projeto está montado. Para gerar em alta qualidade, escolha um plano ou compre créditos.':'Your project is ready. To generate in high quality, choose a plan or buy credits.')+'</p>'
+    +'<div style="display:grid;gap:8px">'
+    +'<button class="btn btn-primary" onclick="document.getElementById(\'scQuickModal\').remove();go(\'plans\')">'+(pt?'🎟 Ver planos':'🎟 View plans')+'</button>'
+    +'<button class="btn btn-ghost" onclick="document.getElementById(\'scQuickModal\').remove();scSendToStudio()">'+(pt?'⚙️ Abrir Studio Completo':'⚙️ Open Full Studio')+'</button>'
+    +'<button class="btn btn-ghost" onclick="document.getElementById(\'scQuickModal\').remove()">'+(pt?'Continuar editando':'Keep editing')+'</button>'
+    +'</div></div>');
+}
+function scUseModel(modelId){
+  _scModel=modelId;
+  toast((S.lang==='pt'?'Modelo selecionado: ':'Model selected: ')+modelId,'ok');
+}
+function scAttachRef(){
+  var input=document.getElementById('scRefInput');
+  if(input)input.click();
+}
+function scOnRefFile(input){
+  var file=input.files&&input.files[0];
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    _scRef=e.target.result;
+    var preview=document.getElementById('scRefPreview');
+    if(preview){
+      preview.innerHTML='<div style="position:relative;display:inline-block"><img src="'+_scRef+'" style="max-height:72px;max-width:110px;border-radius:8px;object-fit:cover"><button onclick="scRemoveRef()" style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:#333;border:none;color:#fff;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;line-height:1">×</button></div>';
+      preview.style.display='';
+    }
+    toast(S.lang==='pt'?'📎 Referência adicionada':'📎 Reference added','ok');
+  };
+  reader.readAsDataURL(file);
+}
+function scRemoveRef(){
+  _scRef=null;
+  var preview=document.getElementById('scRefPreview');
+  if(preview){preview.innerHTML='';preview.style.display='none';}
+  var input=document.getElementById('scRefInput');
+  if(input)input.value='';
+}
+function scUseDemoPrompt(idx){
+  var d=(DEMO_REEL||[])[idx];
+  if(!d)return;
+  var el=document.getElementById('scPrompt');
+  if(el){el.value=d.prompt||'';scUpdateRecommendation();}
+  toast(S.lang==='pt'?'Prompt carregado!':'Prompt loaded!','ok');
+}
+function scUseAsRef(url,type){
+  _scRef=url;
+  afterSimpleCreate();
+  toast(S.lang==='pt'?'Imagem como referência!':'Image set as reference!','ok');
+}
+
 function viewStudio(){
   return `
   ${reel('Generative cinema',S.lang==='pt'?'Da direção ao take final':'From direction to final take')}
@@ -6050,7 +6169,7 @@ function viewModelsCatalog(){
         '<div class="mc-foot">'+
           '<div><div class="mc-price">'+(costRate?fmtUSD(costRate)+(isVid?'<small>/s</small>':'<small>/img</small>'):'—')+'</div></div>'+
           '<div style="display:flex;gap:6px">'+
-            '<button class="btn btn-ghost btn-sm" onclick="scFromModel(\''+m.id+'\')">'+( pt?'Usar no Criar':'Use in Create')+'</button>'+
+            '<button class="btn btn-ghost btn-sm" onclick="scFromModel(\''+m.id+'\')">'+( pt?'✨ Experimentar':'✨ Try it')+'</button>'+
             '<button class="btn btn-primary btn-sm" onclick="sendModelToStudio(\''+m.id+'\')">'+( pt?'Estúdio':'Studio')+'</button>'+
           '</div>'+
         '</div>'+
