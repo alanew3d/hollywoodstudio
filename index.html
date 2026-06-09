@@ -26,7 +26,10 @@
 <meta name="twitter:description" content="Produza conteúdo cinematográfico com IA: Seedance, Kling, Veo, Sora, Flux e mais.">
 <meta name="twitter:image" content="https://hollywoodstudio.ai/assets/logos/logo-hero.png">
 <script type="application/ld+json" id="ldjson">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Hollywood Studio AI","applicationCategory":"MultimediaApplication","operatingSystem":"Web","description":"Plataforma de produção audiovisual com IA para gerar vídeo, imagem e áudio cinematográficos.","url":"https://hollywoodstudio.ai/","offers":{"@type":"Offer","price":"99","priceCurrency":"BRL"},"author":{"@type":"Organization","name":"Hollywood Studio AI"}}
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Hollywood Studio AI","applicationCategory":"MultimediaApplication","operatingSystem":"Web","description":"Plataforma de workflow audiovisual com IA — da ideia ao corte final. Gere vídeos, imagens e áudio cinematográficos com Seedance, Kling, Veo, Sora, Flux e mais.","url":"https://hollywoodstudio.ai/","offers":[{"@type":"Offer","name":"Básico","price":"99","priceCurrency":"BRL"},{"@type":"Offer","name":"Premium","price":"299","priceCurrency":"BRL"}],"author":{"@type":"Organization","name":"Hollywood Studio AI","url":"https://hollywoodstudio.ai/"},"screenshot":"https://hollywoodstudio.ai/assets/logos/logo-hero.png","featureList":"Geração de vídeo com IA, Texto para vídeo, Imagem para vídeo, Geração de imagem, Áudio com IA, Storyboard, Pós-produção, Galeria, Templates"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"O que é o Hollywood Studio AI?","acceptedAnswer":{"@type":"Answer","text":"Hollywood Studio AI é uma plataforma de workflow audiovisual com IA que permite criar vídeos, imagens e áudio cinematográficos usando modelos como Seedance, Kling, Veo, Sora e Flux, tudo em um único lugar organizado."}},{"@type":"Question","name":"Preciso saber programar para usar?","acceptedAnswer":{"@type":"Answer","text":"Não. A plataforma é visual e intuitiva. Você descreve sua cena em texto e a IA gera o conteúdo. Templates prontos aceleram o processo para quem está começando."}},{"@type":"Question","name":"Como funcionam os créditos?","acceptedAnswer":{"@type":"Answer","text":"Créditos representam segundos de vídeo ou imagens geradas. Novos usuários recebem créditos de teste. Para produção real, adquira um plano mensal ou pacote avulso de créditos."}},{"@type":"Question","name":"Quais modelos de IA estão disponíveis?","acceptedAnswer":{"@type":"Answer","text":"Mais de 30 modelos: Seedance 2.0, Kling 3.0, Veo 3, Sora 2, Flux Pro, Seedream, Nano Banana, Suno, HeyGen e outros, com novos modelos adicionados continuamente."}},{"@type":"Question","name":"Posso usar o conteúdo gerado comercialmente?","acceptedAnswer":{"@type":"Answer","text":"Sim, desde que respeitadas as políticas de uso de cada modelo de IA. Para uso comercial, recomendamos o plano Premium que inclui uso comercial explícito."}}]}
 </script>
 <script src="/config.js"></script>
 <script>console.log("Hollywood Studio AI loaded - build ok");</script>
@@ -1519,6 +1522,8 @@ input[type=range]{accent-color:var(--accent)}
 .inspo-card img{width:100%;display:block}
 .inspo-card figcaption{position:absolute;left:0;right:0;bottom:0;padding:18px 10px 9px;font-size:11px;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.72));opacity:0;transition:.15s}
 .inspo-card:hover figcaption{opacity:1}
+.inspo-actions{position:absolute;top:8px;right:8px;display:flex;gap:4px;opacity:0;transition:opacity .2s}
+.inspo-card:hover .inspo-actions{opacity:1}
 .gal-foot button.gal-del-foot:hover{border-color:#d8392b;color:#d8392b;background:rgba(216,57,43,.10)}
 .gal-acts button svg{width:15px;height:15px}
 .ar-rail{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
@@ -1573,27 +1578,104 @@ input[type=range]{accent-color:var(--accent)}
 .view>div[style*="linear-gradient(135deg,#0d1a2a"],
 .view>div[style*="background:#0a0a14"]{display:none!important}
 
-/* Premium refinements v3.1 */
-.btn{transition:transform .15s var(--ease),box-shadow .15s var(--ease)}
-.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.18)}
-.card,.plan,.dc-card{box-shadow:0 1px 0 var(--line),0 8px 28px rgba(0,0,0,.12)}
-.nav-item.active,.nav-item.on{background:var(--accent-dim);border-left:2px solid var(--accent)}
-input:focus,textarea:focus{outline:2px solid var(--accent-dim);outline-offset:1px}
-@media(max-width:768px){.main{padding:0 12px 24px!important}}
+/* ══ PREMIUM VISUAL v3.2 — visible in 10s ══ */
 
-/* ── Premium refinements v3.1 ── */
-.btn{transition:transform .15s var(--ease),box-shadow .15s var(--ease),background .15s}
-.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.18)}
-.btn:active:not(:disabled){transform:translateY(0)}
-.btn-primary:hover:not(:disabled){filter:brightness(1.06)}
-.card,.plan,.dc-card,.modal-card{box-shadow:0 1px 0 var(--line),0 8px 28px rgba(0,0,0,.12)}
-.nav-item.active,.nav-item.on{background:var(--accent-dim);border-left:2px solid var(--accent)}
-.topbar .credits-pill{font-weight:600;letter-spacing:.02em}
-.view-head h1.serif{letter-spacing:-.02em}
-.view-head p{max-width:640px;line-height:1.65}
-.toast{backdrop-filter:blur(8px)}
-input:focus,textarea:focus,select:focus{outline:2px solid var(--accent-dim);outline-offset:1px}
-@media(max-width:768px){.main{padding:0 12px 24px!important}}
+/* Buttons */
+.btn{transition:transform .14s var(--ease),box-shadow .14s var(--ease),filter .14s}
+.btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.22)}
+.btn:active:not(:disabled){transform:translateY(0);box-shadow:none}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#1a1200;font-weight:600;letter-spacing:.01em}
+.btn-primary:hover:not(:disabled){filter:brightness(1.08)}
+
+/* Cards */
+.card,.plan,.dc-card,.modal-card{
+  box-shadow:0 0 0 1px var(--line),0 6px 28px rgba(0,0,0,.14);
+  transition:box-shadow .2s,transform .2s}
+.card:hover,.dc-card:hover{box-shadow:0 0 0 1px var(--line-2),0 12px 36px rgba(0,0,0,.22);transform:translateY(-1px)}
+.plan.featured{border:1.5px solid var(--accent)!important;box-shadow:0 0 0 1px var(--accent),0 12px 36px rgba(212,168,87,.14)}
+
+/* Sidebar active state — gold left bar */
+.nav-item.active,.nav-item.on{
+  background:linear-gradient(90deg,var(--accent-dim) 0%,transparent 100%);
+  border-left:2.5px solid var(--accent);
+  color:var(--accent)}
+.nav-item.active svg,.nav-item.on svg{stroke:var(--accent)}
+
+/* Topbar */
+.topbar{box-shadow:0 1px 0 var(--line),0 4px 16px rgba(0,0,0,.08)}
+.credits-pill{background:linear-gradient(135deg,var(--accent-dim),transparent);border:1px solid var(--accent-dim);font-weight:600;letter-spacing:.02em}
+
+/* View heads */
+.view-head h1.serif{letter-spacing:-.02em;line-height:1.15}
+.view-head .kicker{letter-spacing:2px;font-weight:700;color:var(--accent);font-size:10px}
+.view-head p{max-width:640px;line-height:1.7;color:var(--ink-2)}
+
+/* Inputs */
+input:focus,textarea:focus,select:focus{
+  outline:2px solid var(--accent-dim);outline-offset:1px;
+  border-color:var(--accent-dim)!important}
+
+/* Toasts */
+.toast{backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.08);font-weight:500}
+
+/* Model cards hover */
+.mc-card{transition:box-shadow .2s,transform .2s}
+.mc-card:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,.22)}
+
+/* Gal items overlay */
+.gal-acts{opacity:0;transition:opacity .2s}
+.gal-item:hover .gal-acts{opacity:1}
+
+/* Inspo cards */
+.inspo-card img{transition:transform .3s var(--ease)}
+.inspo-card:hover img{transform:scale(1.04)}
+
+/* Share buttons */
+.share-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:7px;
+  font-size:12px;border:1px solid var(--line-2);background:var(--panel);cursor:pointer;
+  transition:background .15s,border-color .15s;color:var(--ink-2)}
+.share-btn:hover{background:var(--elev);border-color:var(--line-2);color:var(--ink)}
+
+/* Neural workflow strip */
+.neural-strip{display:flex;gap:6px;flex-wrap:wrap;align-items:center;
+  background:linear-gradient(90deg,var(--panel-2),var(--panel));
+  border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:16px}
+.neural-node{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--ink-3);padding:4px 8px;
+  border-radius:6px;background:var(--panel);border:1px solid var(--line)}
+.neural-node.active{color:var(--accent);border-color:var(--accent-dim);background:var(--accent-dim)}
+.neural-node.rec{color:var(--ok);border-color:rgba(95,184,122,.3);background:rgba(95,184,122,.08);
+  cursor:pointer;animation:pulse-rec 2s infinite}
+@keyframes pulse-rec{0%,100%{opacity:1}50%{opacity:.7}}
+.neural-arrow{color:var(--ink-4);font-size:14px;flex-shrink:0}
+
+/* Home hero */
+.hsai-hero{
+  background:linear-gradient(135deg,#0a0a0c 0%,#14101c 50%,#0c0f14 100%);
+  border-radius:18px;padding:48px 40px 44px;margin-bottom:24px;
+  border:1px solid var(--line);position:relative;overflow:hidden}
+.hsai-hero::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 50% at 70% 50%,rgba(212,168,87,.07) 0%,transparent 70%);
+  pointer-events:none}
+.hsai-hero h1{font-family:var(--serif);font-size:clamp(26px,4vw,42px);
+  font-weight:300;line-height:1.18;color:#fff;margin:0 0 12px}
+.hsai-hero h1 em{font-style:normal;color:var(--accent);font-weight:500}
+.hsai-hero p{font-size:15px;color:rgba(255,255,255,.62);line-height:1.7;
+  max-width:540px;margin:0 0 24px}
+.hsai-steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:22px}
+.hsai-step{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+  border-radius:10px;padding:12px 14px}
+.hsai-step .s-num{font-size:11px;color:var(--accent);font-weight:700;margin-bottom:4px;letter-spacing:1px}
+.hsai-step .s-label{font-size:12.5px;color:rgba(255,255,255,.75);line-height:1.4}
+.hsai-why{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:16px 0 22px}
+.hsai-why-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.hsai-why-card .ic{font-size:26px;margin-bottom:8px}
+.hsai-why-card h4{font-size:13.5px;font-weight:700;margin:0 0 4px}
+.hsai-why-card p{font-size:12px;color:var(--ink-3);line-height:1.55;margin:0}
+
+@media(max-width:768px){
+  .hsai-hero{padding:28px 20px}
+  .main{padding:0 10px 24px!important}}
+
 #academyQ,.academy textarea{background:var(--panel-2)!important;color:var(--ink)!important}
 </style>
 </head>
@@ -1809,12 +1891,12 @@ const S = {
 
 /* ════════ i18n ════════ */
 const I18N={
-  pt:{studio:'Estúdio',images:'Imagens',audio:'Áudio',characters:'Personagens',storyboard:'Storyboard',favorites:'Favoritos',editing:'Edição',agents:'Agentes',docs:'Documentos',spaces:'Spaces',flow:'Assistente',
+  pt:{home:'Home',studio:'Estúdio',images:'Imagens',audio:'Áudio',characters:'Personagens',storyboard:'Storyboard',favorites:'Favoritos',editing:'Edição',agents:'Agentes',docs:'Documentos',spaces:'Spaces',flow:'Assistente',
     council:'Conselho Criativo',analytics:'Estatísticas',opportunities:'Oportunidades',public:'Galeria Pública',
     academy:'Academy',news:'Notícias',festivals:'Festivais',gallery:'Galeria',plans:'Planos',admin:'Admin',marketing:'Marketing',models:'Modelos',batch:'Edição em Lote',contactsheet:'Contact Sheet',templates:'Templates',uploads:'Meus Uploads',posprodu:'Pós-Produção',tube:'YouTube',instagram:'Instagram',inspo:'Inspiração',
     create:'Criação',intelligence:'Inteligência',manage:'Gestão',community:'Comunidade',learn:'Aprender',account:'Conta',
     generate:'Gerar',prompt:'Prompt',welcome:'Bem-vindo de volta','gemini-avatar':'Avatar IA'},
-  en:{studio:'Studio',images:'Images',audio:'Audio',characters:'Characters',storyboard:'Storyboard',favorites:'Favorites',editing:'Editing',agents:'Agents',docs:'Documents',spaces:'Spaces',flow:'Assistant',
+  en:{home:'Home',studio:'Studio',images:'Images',audio:'Audio',characters:'Characters',storyboard:'Storyboard',favorites:'Favorites',editing:'Editing',agents:'Agents',docs:'Documents',spaces:'Spaces',flow:'Assistant',
     council:'Conselho Criativo',analytics:'Analytics',opportunities:'Opportunities',public:'Public Gallery',
     academy:'Academy',news:'News',festivals:'Festivals',gallery:'Gallery',plans:'Plans',admin:'Admin',models:'Models',batch:'Batch Edit',contactsheet:'Contact Sheet',templates:'Templates',uploads:'My Uploads',posprodu:'Post Production',tube:'YouTube',instagram:'Instagram',inspo:'Inspiration',
     create:'Create',intelligence:'Intelligence',manage:'Manage',community:'Community',learn:'Learn',account:'Account',
@@ -2102,6 +2184,7 @@ function fmtMoney(brl){const rate=CFG.USD_RATE||0.18;
 /* ════════ NAV ════════ */
 const NAV=[
   {group:'create',items:[
+    {id:'home',ic:'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10'},
     {id:'studio',ic:'M4 5h16v14H4zM4 9h16M9 5v14'},
     {id:'storyboard',ic:'M4 3h16v4H4zM4 11h16v4H4zM4 19h10v2H4z'},
     {id:'agents',ic:'M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8L12 2zM5 17l.9 2.6L8.5 20.5l-2.6.9L5 24l-.9-2.6L1.5 20.5l2.6-.9L5 17z'},
@@ -2252,7 +2335,7 @@ function enterApp(){
   document.getElementById('app').classList.remove('hide');
   const _chip=document.getElementById('userChip');if(_chip){_chip.innerHTML=S.user.picture?`<img src="${S.user.picture}" referrerpolicy="no-referrer">`:(S.user.name||'A')[0].toUpperCase();}
   try{document.getElementById('app').classList.toggle('sidebar-collapsed',localStorage.getItem('hsai_sidebar_collapsed')==='1'&&window.innerWidth>860);}catch(e){}
-  buildNav(); go('studio'); updateCredits();
+  buildNav(); go(S.view||'home'); updateCredits();
   syncSidebarToggle();
   if(isGuest())guestBanner();
   if(!window._jobLoop){window._jobLoop=1;pollJobsLoop();}
@@ -2420,7 +2503,7 @@ function topTitle(v){
 /* ════════ RENDER ROUTER ════════ */
 function render(){
   const m=document.getElementById('main');
-  const R={studio:viewStudio,images:viewImages,audio:viewAudio,characters:viewCharacters,storyboard:viewStoryboard,favorites:viewFavoritesPage,editing:viewEditing,batch:viewBatch,agents:viewAgents,docs:viewDocs,spaces:viewSpaces,
+  const R={home:viewHome,studio:viewStudio,images:viewImages,audio:viewAudio,characters:viewCharacters,storyboard:viewStoryboard,favorites:viewFavoritesPage,editing:viewEditing,batch:viewBatch,agents:viewAgents,docs:viewDocs,spaces:viewSpaces,
     flow:viewFlow,council:viewCouncil,analytics:viewAnalytics,opportunities:viewOpportunities,public:viewPublic,models:viewModelsCatalog,
     academy:viewAcademy,news:viewNews,festivals:viewFestivals,'gemini-avatar':viewGeminiAvatar,gallery:viewGallery,uploads:viewUploadGallery,templates:viewTemplates,contactsheet:viewContactSheet,plans:viewPlans,admin:viewAdmin,marketing:viewMarketingPage,tube:viewTube,instagram:viewInstagram,inspo:viewInspo,posprodu:viewPosProdu};
   let body;
@@ -2549,6 +2632,73 @@ function refreshPreviewHead(){
   h.innerHTML=studioHeadHTML();
   const pm=document.getElementById('prevModel');if(pm)pm.textContent=(modelById(S.model)||{}).name||'';
 }
+/* ════════ HOME ════════ */
+function viewHome(){
+  var pt=S.lang==='pt';
+  var credits=isGuest()?0:S.credits;
+  var rec=typeof recommendNextActions==='function'?recommendNextActions():[];
+  var neuralHtml='';
+  if(rec.length){
+    neuralHtml='<div class="neural-strip" style="margin-bottom:18px">'
+      +'<span style="font-size:11px;font-weight:700;color:var(--ink-3);letter-spacing:1px;text-transform:uppercase;flex-shrink:0">'+(pt?'Próxima ação':'Next step')+'</span>'
+      +'<span class="neural-arrow">→</span>'
+      +rec.slice(0,2).map(function(r){
+        return '<button class="neural-node rec" onclick="go(\''+r.action+'\')" style="font-size:12px">'+r.label+'</button>';
+      }).join('<span class="neural-arrow">·</span>')
+      +'</div>';
+  }
+  var stepsHtml='<div class="hsai-steps">'
+    +'<div class="hsai-step"><div class="s-num">01</div><div class="s-label">'+(pt?'Ideia → Prompt':'Idea → Prompt')+'</div></div>'
+    +'<div class="hsai-step"><div class="s-num">02</div><div class="s-label">'+(pt?'Escolher modelo':'Choose model')+'</div></div>'
+    +'<div class="hsai-step"><div class="s-num">03</div><div class="s-label">'+(pt?'Referência visual':'Visual reference')+'</div></div>'
+    +'<div class="hsai-step"><div class="s-num">04</div><div class="s-label">'+(pt?'Gerar':'Generate')+'</div></div>'
+    +'<div class="hsai-step"><div class="s-num">05</div><div class="s-label">'+(pt?'Pós-Produção':'Post-Production')+'</div></div>'
+    +'<div class="hsai-step"><div class="s-num">06</div><div class="s-label">'+(pt?'Publicar':'Publish')+'</div></div>'
+    +'</div>';
+  var whyHtml='<div class="hsai-why">'
+    +'<div class="hsai-why-card"><div class="ic">🎯</div><h4>'+(pt?'Monte antes de gastar':'Plan before you spend')+'</h4><p>'+(pt?'Organize prompt, referências e modelo antes de usar um único crédito.':'Organize prompt, references and model before spending a single credit.')+'</p></div>'
+    +'<div class="hsai-why-card"><div class="ic">🔗</div><h4>'+(pt?'Tudo conectado':'Everything connected')+'</h4><p>'+(pt?'Galeria → Pós-Produção → Redes Sociais em um só lugar.':'Gallery → Post-Production → Social Media in one place.')+'</p></div>'
+    +'<div class="hsai-why-card"><div class="ic">🎬</div><h4>'+(pt?'Multimodelo':'Multi-model')+'</h4><p>'+(pt?'Seedance, Kling, Veo, Sora, Flux e mais — todos organizados para decidir com clareza.':'Seedance, Kling, Veo, Sora, Flux and more — all organized for clear decisions.')+'</p></div>'
+    +'<div class="hsai-why-card"><div class="ic">⚡</div><h4>'+(pt?'Workflow completo':'Complete workflow')+'</h4><p>'+(pt?'Da ideia ao corte final. Mesmo usando outras ferramentas, organize tudo aqui.':'From idea to final cut. Even if you use other tools, organize everything here.')+'</p></div>'
+    +'</div>';
+  var ctaBlock='<div style="display:flex;gap:10px;flex-wrap:wrap">'
+    +'<button class="btn btn-primary" style="padding:13px 28px;font-size:15px" onclick="go(\'studio\')">'+(pt?'🎬 Abrir o Estúdio':'🎬 Open Studio')+'</button>'
+    +'<button class="btn btn-ghost" style="padding:13px 22px" onclick="go(\'models\')">'+(pt?'Ver modelos':'View models')+'</button>'
+    +'<button class="btn btn-ghost" style="padding:13px 22px" onclick="go(\'templates\')">'+(pt?'Ver templates':'View templates')+'</button>'
+    +'</div>';
+  var creditsBadge=!isGuest()?('<div style="margin-top:16px;display:inline-flex;align-items:center;gap:8px;background:rgba(212,168,87,.1);border:1px solid rgba(212,168,87,.2);border-radius:20px;padding:6px 14px;font-size:13px;color:var(--accent)"><b>'+credits+'</b> '+(pt?'créditos disponíveis':'credits available')+'<button class="btn btn-ghost btn-sm" style="padding:2px 8px;font-size:11px;margin:0" onclick="go(\'plans\')">'+(pt?'Recarregar':'Top up')+'</button></div>'):'';
+  var demoStrip='<div style="margin-top:28px;border-top:1px solid var(--line);padding-top:22px"><div style="font-size:10px;letter-spacing:2px;font-weight:700;color:var(--ink-4);margin-bottom:12px">'+(pt?'EXEMPLOS GERADOS COM IA':'AI-GENERATED EXAMPLES')+'</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">'
+    +DEMO_REEL.map(function(d,i){
+      return '<div style="border-radius:10px;overflow:hidden;background:var(--panel-2);aspect-ratio:16/9;position:relative;cursor:pointer" onclick="reuseDemo('+i+')" title="'+(pt?'Usar prompt no Estúdio':'Use prompt in Studio')+'">'
+        +'<video src="'+d.url+'" muted loop autoplay playsinline preload="auto" style="width:100%;height:100%;object-fit:cover" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'"></video>'
+        +'<div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.7));padding:8px 10px 6px">'
+        +'<div style="font-size:10px;color:rgba(255,255,255,.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+d.model+'</div>'
+        +'</div>'
+        +'<div style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);color:#fff;font-size:9px;padding:2px 6px;border-radius:4px">'+(pt?'usar':'use')+'</div>'
+        +'</div>';
+    }).join('')
+    +'</div></div>';
+
+  return neuralHtml
+    +'<div class="hsai-hero">'
+    +'<div style="font-size:11px;letter-spacing:2px;font-weight:700;color:var(--accent);margin-bottom:12px;opacity:.85">HOLLYWOOD STUDIO AI</div>'
+    +'<h1>'+(pt?'Da <em>ideia</em> ao corte final.<br>Workflow audiovisual com <em>IA</em>.':'From <em>idea</em> to final cut.<br><em>AI</em> audiovisual workflow.')+'</h1>'
+    +'<p>'+(pt?'Organize prompts, referências e modelos. Gere vídeos, imagens e áudio cinematográficos. Conecte criação, pós-produção e redes sociais em um estúdio inteligente.':'Organize prompts, references and models. Generate cinematic video, image and audio. Connect creation, post-production and social media in one intelligent studio.')+'</p>'
+    +ctaBlock
+    +creditsBadge
+    +stepsHtml
+    +'</div>'
+    +'<div style="margin-bottom:6px"><div style="font-size:10px;letter-spacing:2px;font-weight:700;color:var(--ink-4);margin-bottom:14px">'+(pt?'POR QUE HOLLYWOOD STUDIO AI?':'WHY HOLLYWOOD STUDIO AI?')+'</div>'
+    +whyHtml+'</div>'
+    +'<div style="background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:20px">'
+    +'<div style="font-size:10px;letter-spacing:2px;font-weight:700;color:var(--ink-4);margin-bottom:10px">'+(pt?'FLUXO DE PRODUÇÃO':'PRODUCTION FLOW')+'</div>'
+    +stepsHtml
+    +'<p style="font-size:12.5px;color:var(--ink-3);margin:8px 0 0;max-width:540px">'+(pt?'Monte seu projeto antes de gastar créditos. Teste a ideia, refine o prompt e gere quando estiver pronto.':'Plan your project before spending credits. Test the idea, refine the prompt, generate when ready.')+'</p>'
+    +'</div>'
+    +demoStrip;
+}
+
 function viewStudio(){
   return `
   ${reel('Generative cinema',S.lang==='pt'?'Da direção ao take final':'From direction to final take')}
@@ -4807,6 +4957,7 @@ function afterGallery(){
         <button onclick="galFavToggle(${idx})" id="galFavBtn_${idx}" title="${S.lang==='pt'?'Favoritar':'Favorite'}" style="font-size:14px;background:none;border:1px solid var(--line);border-radius:6px;padding:3px 7px;cursor:pointer;color:${isFavorite(g)?'var(--accent)':'var(--ink-4)'}">${isFavorite(g)?'★':'☆'}</button>
         <button onclick="regenFromGallery(${idx})">${regenIc}${S.lang==='pt'?'Gerar de novo':'Generate again'}</button>
         <button onclick="${g.publicId?'unpublishItem':'publishItem'}(${idx})" title="${g.publicId?(S.lang==='pt'?'Despublicar (remover da Galeria Pública)':'Unpublish'):(S.lang==='pt'?'Publicar na Galeria Pública':'Publish to Public Gallery')}" style="${g.publicId?'color:var(--accent);font-weight:700':''}">${g.publicId?'🌍 '+(S.lang==='pt'?'Público':'Public'):'🌍 '+(S.lang==='pt'?'Publicar':'Publish')}</button>
+        <button onclick="shareGalleryItem(${idx})" title="${S.lang==='pt'?'Compartilhar':'Share'}" style="font-size:13px">↑</button>
 
         <button onclick="deleteFromGallery(${idx})" class="gal-del-foot" title="${S.lang==='pt'?'Excluir esta geração':'Delete this generation'}">${trashIc}${S.lang==='pt'?'Excluir':'Delete'}</button>
       </div></div>`;}).join('')
@@ -5269,9 +5420,11 @@ function publishItem(idx){
   if(!confirm(S.lang==='pt'?'Tornar este item PÚBLICO?\n\nSeu prompt e o resultado aparecerão na Galeria Pública para todos os usuários se inspirarem. Você pode despublicar a qualquer momento.':'Publish this item?\n\nYour prompt and the result will appear in the Public Gallery for everyone to draw inspiration from. You can unpublish anytime.'))return;
   const pub=loadPublic();
   const pid='pub_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  const communityLabels=['Demo Hollywood Studio','Projeto conceitual','Criador Beta','Inspiração editorial','Workflow exemplo'];
+  const autoLabel=communityLabels[Math.floor(Math.random()*communityLabels.length)];
   pub.unshift({id:pid,uid:(S.user&&S.user.uid)||'guest',author:(S.user&&S.user.name)||'Anônimo',avatar:(S.user&&S.user.picture)||'',
     url:item.url,type:item.type,prompt:item.prompt,model:item.model,modelId:item.modelId,ratio:item.ratio,dur:item.dur,
-    date:Date.now(),likes:0});
+    date:Date.now(),likes:0,label:autoLabel});
   savePublic(pub);
   S.gallery[idx].publicId=pid;localStorage.setItem(userKey('gal'),JSON.stringify(S.gallery));
   toast(S.lang==='pt'?'🌍 Publicado na Galeria Pública':'🌍 Published to Public Gallery','ok');
@@ -5366,7 +5519,7 @@ function viewPublic(){
       return `<article class="post">
         <header class="post-h">
           ${p.avatar?`<img src="${p.avatar}" class="post-av" referrerpolicy="no-referrer">`:`<div class="post-av" style="background:var(--accent-dim);display:grid;place-items:center;color:var(--accent);font-weight:700">${(p.author||'?')[0].toUpperCase()}</div>`}
-          <div style="flex:1;min-width:0"><b style="font-size:13.5px">${escapeHtml(p.author||'Anônimo')}</b>${p.likes>=100?'<span style="font-size:9px;background:#C13584;color:#fff;padding:1px 6px;border-radius:8px;margin-left:5px;vertical-align:middle">🔥 TREND</span>':''}<div style="font-size:11px;color:var(--ink-4)">${escapeHtml(p.model||'')} · ${new Date(p.date).toLocaleDateString()}</div></div>
+          <div style="flex:1;min-width:0"><b style="font-size:13.5px">${escapeHtml(p.author||'Anônimo')}</b>${p.likes>=100?'<span style="font-size:9px;background:#C13584;color:#fff;padding:1px 6px;border-radius:8px;margin-left:5px;vertical-align:middle">🔥 TREND</span>':''}<div style="font-size:11px;color:var(--ink-4);display:flex;align-items:center;gap:6px;flex-wrap:wrap">${escapeHtml(p.model||'')} · ${new Date(p.date).toLocaleDateString()}${p.label?`<span style="background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:9.5px;color:var(--ink-3)">${escapeHtml(p.label)}</span>`:''}</div></div>
           ${(S.user&&(S.user.uid===p.uid||S.user.admin))?`<button class="btn btn-ghost btn-sm" style="padding:4px 8px;font-size:11px" onclick="if(confirm('${S.lang==='pt'?'Despublicar?':'Unpublish?'}')){const g=S.gallery.findIndex(x=>x.publicId==='${p.id}');if(g>=0)unpublishItem(g);else{savePublic(loadPublic().filter(x=>x.id!=='${p.id}'));render();}}">✕</button>`:''}
         </header>
         <div class="post-media">${media}</div>
@@ -6033,9 +6186,14 @@ function viewInspo(){
     <button class="btn btn-sm ${(S.inspoSrc||'all')==='community'?'btn-primary':'btn-ghost'}" onclick="S.inspoSrc='community';render()">Comunidade</button>
   </div>
   <div class="inspo-masonry" id="inspoGrid">
-    ${seeds.map((s,i)=>`<figure class="inspo-card" onclick="inspoOpen(${i})">
-      <img src="${s.url}" loading="lazy" referrerpolicy="no-referrer" onerror="this.closest('.inspo-card').style.display='none'">
-      ${s.prompt?`<figcaption>${escapeHtml(s.prompt.slice(0,90))}</figcaption>`:''}
+    ${seeds.map((s,i)=>`<figure class="inspo-card" style="position:relative">
+      <img src="${s.url}" loading="lazy" referrerpolicy="no-referrer" onerror="this.closest('.inspo-card').style.display='none'" onclick="inspoOpen(${i})" style="cursor:pointer">
+      ${s.prompt?`<figcaption onclick="inspoOpen(${i})" style="cursor:pointer">${escapeHtml(s.prompt.slice(0,90))}</figcaption>`:''}
+      <div class="inspo-actions">
+        <button class="share-btn" style="padding:4px 8px;font-size:11px" onclick="event.stopPropagation();sendToStudio({prompt:${JSON.stringify(s.prompt||'')},mediaUrl:${JSON.stringify(s.url)},mediaType:'image',title:'Inspiração',source:'inspo'})" title="${S.lang==='pt'?'Usar no Estúdio':'Use in Studio'}">🎬</button>
+        <button class="share-btn" style="padding:4px 8px;font-size:11px" onclick="event.stopPropagation();copyText(${JSON.stringify(s.prompt||'')})" title="${S.lang==='pt'?'Copiar prompt':'Copy prompt'}">⧉</button>
+        <button class="share-btn" style="padding:4px 8px;font-size:11px;color:#25d366" onclick="event.stopPropagation();shareContent({platform:'whatsapp',url:${JSON.stringify(s.url)},text:'Hollywood Studio AI',source:'inspo'})" title="WhatsApp">💬</button>
+      </div>
     </figure>`).join('')}
   </div>
   <div style="text-align:center;margin-top:20px">
@@ -6107,6 +6265,46 @@ function afterInspo(){
   _inspoSeeds=INSPO_SEED.concat(pub);
 }
 function inspoOpen(i){var s=_inspoSeeds[i]||INSPO_SEED[i];if(!s)return;openImage(s.url,s.prompt,true);}
+
+/* ── shareMediaCard: inline share buttons for cards ── */
+function shareMediaCard(opts){
+  // opts: {url, prompt, title, src, small}
+  var url=opts.url||location.href;
+  var prompt=opts.prompt||'';
+  var title=opts.title||'Hollywood Studio AI';
+  var surl=JSON.stringify(url);
+  var sprompt=JSON.stringify(prompt);
+  var stitle=JSON.stringify(title);
+  var sz=opts.small?'style="padding:4px 8px;font-size:11px"':'';
+  return '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px">'
+    +(prompt?'<button class="share-btn" '+sz+' onclick="shareContent({platform:\'prompt\',prompt:'+sprompt+',source:\'card\'})" title="Copiar prompt">⧉ Prompt</button>':'')
+    +'<button class="share-btn" '+sz+' onclick="shareContent({platform:\'copy\',url:'+surl+',source:\'card\'})" title="Copiar link">🔗 Link</button>'
+    +'<button class="share-btn" '+sz+' onclick="shareContent({platform:\'whatsapp\',url:'+surl+',text:'+stitle+',source:\'card\'})" title="WhatsApp" style="color:#25d366">💬 WA</button>'
+    +'</div>';
+}
+
+/* ── shareGalleryItem: open share sheet for gallery item ── */
+function shareGalleryItem(idx){
+  var g=S.gallery[idx];if(!g)return;
+  var pt=S.lang==='pt';
+  var div=document.createElement('div');
+  div.className='overlay show';
+  div.onclick=function(e){if(e.target===div)div.remove();};
+  var url=g.url||location.href;
+  var prompt=g.prompt||'';
+  div.innerHTML='<div class="modal modal-card" style="max-width:400px;width:94%">'
+    +'<span class="modal-close" onclick="this.closest(\'.overlay\').remove()">×</span>'
+    +'<h3 style="margin:0 0 4px">'+(pt?'Compartilhar':'Share')+'</h3>'
+    +'<p style="font-size:12px;color:var(--ink-3);margin:0 0 16px">'+(pt?'Escolha como compartilhar este conteúdo:':'Choose how to share this content:')+'</p>'
+    +'<div style="display:grid;gap:8px">'
+    +(prompt?'<button class="btn btn-ghost" style="justify-content:flex-start;gap:8px" onclick="copyText('+JSON.stringify(prompt)+');this.closest(\'.overlay\').remove()">⧉ '+(pt?'Copiar prompt':'Copy prompt')+'</button>':'')
+    +'<button class="btn btn-ghost" style="justify-content:flex-start;gap:8px" onclick="shareContent({platform:\'copy\',url:'+JSON.stringify(url)+'});this.closest(\'.overlay\').remove()">🔗 '+(pt?'Copiar link':'Copy link')+'</button>'
+    +'<button class="btn" style="background:#25d366;color:#fff;justify-content:flex-start;gap:8px" onclick="shareContent({platform:\'whatsapp\',url:'+JSON.stringify(url)+',text:\'Hollywood Studio AI — workflow audiovisual com IA\'});this.closest(\'.overlay\').remove()">💬 WhatsApp</button>'
+    +'<button class="btn btn-ghost" style="justify-content:flex-start;gap:8px" onclick="shareContent({platform:\'twitter\',url:'+JSON.stringify(url)+',text:\'Hollywood Studio AI\'});this.closest(\'.overlay\').remove()">✕ Twitter/X</button>'
+    +'<button class="btn btn-ghost" style="justify-content:flex-start;gap:8px" onclick="navigator.share&&navigator.share({title:\'Hollywood Studio AI\',url:'+JSON.stringify(url)+'}).catch(()=>{});this.closest(\'.overlay\').remove()">↑ '+(pt?'Compartilhar via app':'Share via app')+'</button>'
+    +'</div></div>';
+  document.body.appendChild(div);
+}
 
 /* ════════════════ BATCH EDIT — editor de imagens individual e em lote ════════════════ */
 let _bx=[];
@@ -7440,34 +7638,117 @@ async function checkHeygenStatus(videoId){
 }
 
 
-function openAccountSettings(){
+function openAccountSettings(tabId){
   var pt=S.lang==='pt';
   closeUserPop();
   var existing=document.getElementById('accountSettingsOverlay');
   if(existing)existing.remove();
+  var tab=tabId||'profile';
   var overlay=document.createElement('div');
   overlay.className='overlay open show';
   overlay.id='accountSettingsOverlay';
-  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:9998;display:flex;align-items:center;justify-content:center;padding:18px';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:9998;display:flex;align-items:flex-start;justify-content:center;padding:18px;overflow-y:auto;-webkit-overflow-scrolling:touch';
   overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
   var modal=document.createElement('div');
   modal.className='modal modal-card';
-  modal.style.cssText='max-width:520px;width:96%;background:var(--panel);border:1px solid var(--line-2);border-radius:16px;padding:24px;box-shadow:0 30px 80px rgba(0,0,0,.45)';
-  modal.innerHTML='<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px">'
-    +'<div><h3 style="margin:0 0 4px">'+(pt?'Configurações da conta':'Account settings')+'</h3>'
-    +'<div style="font-size:12px;color:var(--ink-3)">'+escapeHtml((S.user&&S.user.email)||'')+'</div></div>'
-    +'<button class="modal-close" style="position:static" onclick="document.getElementById(&#39;accountSettingsOverlay&#39;).remove()">×</button></div>'
-    +'<div style="display:grid;gap:8px">'
-    +'<button class="up-item" onclick="document.getElementById(&#39;accountSettingsOverlay&#39;).remove();openChangePassword()"><span>🔐</span><span>'+(pt?'Alterar senha':'Change password')+'</span></button>'
-    +'<button class="up-item" onclick="document.getElementById(&#39;accountSettingsOverlay&#39;).remove();go(&#39;analytics&#39;)"><span>📊</span><span>'+(pt?'Estatísticas de uso':'Usage analytics')+'</span></button>'
-    +'<button class="up-item" onclick="document.getElementById(&#39;accountSettingsOverlay&#39;).remove();go(&#39;plans&#39;)"><span>🎟</span><span>'+(pt?'Assinatura e planos':'Subscription and plans')+'</span></button>'
-    +'<div class="up-sep"></div>'
-    +'<button class="up-item danger" onclick="confirmDeleteAccount()"><span>🗑</span><span style="color:var(--err)">'+(pt?'Excluir minha conta':'Delete my account')+'</span></button>'
-    +'<div style="font-size:11.5px;color:var(--ink-4);line-height:1.45;padding:4px 2px 0">'+(pt?'A exclusão fica aqui para evitar cliques acidentais no menu principal.':'Deletion lives here to avoid accidental clicks in the main profile menu.')+'</div>'
-    +'</div>';
+  modal.style.cssText='max-width:580px;width:96%;background:var(--panel);border:1px solid var(--line-2);border-radius:18px;padding:0;box-shadow:0 30px 80px rgba(0,0,0,.45);overflow:hidden;margin:auto';
+
+  function tabContent(t){
+    if(t==='profile'){
+      var u=S.user||{};
+      var galleryCount=S.gallery?S.gallery.length:0;
+      var favsCount=(typeof getFavorites==='function'?getFavorites():JSON.parse(localStorage.getItem('hsai_favs_'+((u.uid)||''))||'[]')).length;
+      return '<div style="display:grid;gap:12px">'
+        +'<div style="display:flex;align-items:center;gap:14px;background:var(--panel-2);border-radius:12px;padding:16px">'
+        +'<div style="width:52px;height:52px;border-radius:50%;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--accent);flex-shrink:0">'+(u.pic?'<img src="'+escapeAttr(u.pic)+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover" referrerpolicy="no-referrer">':((u.name||'?')[0].toUpperCase()))+'</div>'
+        +'<div><div style="font-weight:700;font-size:15px">'+escapeHtml(u.name||pt?'Usuário':'User')+'</div><div style="font-size:12px;color:var(--ink-3)">'+escapeHtml(u.email||'')+'</div><div style="font-size:11px;color:var(--ink-4);margin-top:2px">'+(u.admin?'👑 Admin':'👤 '+( pt?'Usuário':'User'))+'</div></div>'
+        +'</div>'
+        +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">'
+        +'<div style="background:var(--panel-2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:700;color:var(--accent)">'+S.credits+'</div><div style="font-size:11px;color:var(--ink-3)">'+(pt?'Créditos':'Credits')+'</div></div>'
+        +'<div style="background:var(--panel-2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:700">'+galleryCount+'</div><div style="font-size:11px;color:var(--ink-3)">'+(pt?'Gerações':'Generations')+'</div></div>'
+        +'<div style="background:var(--panel-2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:700">'+favsCount+'</div><div style="font-size:11px;color:var(--ink-3)">'+(pt?'Favoritos':'Favorites')+'</div></div>'
+        +'</div>'
+        +'<div style="background:var(--panel-2);border-radius:10px;padding:14px">'
+        +'<div style="font-size:11px;letter-spacing:1px;font-weight:700;color:var(--ink-4);margin-bottom:10px">IDIOMA / LANGUAGE</div>'
+        +'<div style="display:flex;gap:8px">'
+        +'<button class="btn '+(S.lang==='pt'?'btn-primary':'btn-ghost')+' btn-sm" onclick="setLang(\'pt\');setTimeout(function(){var o=document.getElementById(\'accountSettingsOverlay\');if(o)o.remove();openAccountSettings(\'profile\');},100)">PT</button>'
+        +'<button class="btn '+(S.lang==='en'?'btn-primary':'btn-ghost')+' btn-sm" onclick="setLang(\'en\');setTimeout(function(){var o=document.getElementById(\'accountSettingsOverlay\');if(o)o.remove();openAccountSettings(\'profile\');},100)">EN</button>'
+        +'</div></div></div>';
+    }
+    if(t==='credits'){
+      var plan=typeof currentPlanInfo==='function'?currentPlanInfo():null;
+      var planName=plan?plan.name:(pt?'Sem plano':'No plan');
+      var msgFree='<div style="background:rgba(212,168,87,.08);border:1px solid rgba(212,168,87,.2);border-radius:10px;padding:12px;font-size:12.5px;line-height:1.6;color:var(--ink-2);margin-top:4px">'+(pt?'Créditos grátis são para testar. Produção real exige plano ou compra aprovada.':'Free credits are for testing. Real production requires a plan or approved purchase.')+'</div>';
+      return '<div style="display:grid;gap:12px">'
+        +'<div style="display:flex;align-items:center;gap:12px;background:var(--panel-2);border-radius:12px;padding:16px">'
+        +'<div style="font-size:36px;font-weight:700;color:var(--accent);font-family:var(--mono)">'+S.credits+'</div>'
+        +'<div><div style="font-weight:600;font-size:13px">'+(pt?'Créditos disponíveis':'Available credits')+'</div><div style="font-size:12px;color:var(--ink-3)">'+(pt?'Plano atual: ':'Current plan: ')+planName+'</div></div>'
+        +'<button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="document.getElementById(\'accountSettingsOverlay\').remove();go(\'plans\')">'+(pt?'Recarregar':'Top up')+'</button>'
+        +'</div>'
+        +msgFree
+        +'<button class="btn btn-ghost" style="justify-content:flex-start;gap:8px" onclick="document.getElementById(\'accountSettingsOverlay\').remove();go(\'analytics\')">'+(pt?'📊 Ver histórico de uso':'📊 View usage history')+'</button></div>';
+    }
+    if(t==='security'){
+      return '<div style="display:grid;gap:10px">'
+        +'<button class="btn btn-ghost" style="justify-content:flex-start;padding:14px;gap:10px;font-size:13px" onclick="document.getElementById(\'accountSettingsOverlay\').remove();openChangePassword()">🔐 '+(pt?'Alterar senha':'Change password')+'</button>'
+        +'<button class="btn btn-ghost" style="justify-content:flex-start;padding:14px;gap:10px;font-size:13px" onclick="document.getElementById(\'accountSettingsOverlay\').remove();openForgotPassword()">📧 '+(pt?'Recuperar por e-mail':'Recover by email')+'</button>'
+        +'<div style="background:var(--panel-2);border-radius:10px;padding:14px;font-size:12px;color:var(--ink-3);line-height:1.6">'+(pt?'🔒 Autenticação avançada (2FA, OAuth) está preparada para integração com Supabase Auth.':'🔒 Advanced authentication (2FA, OAuth) is ready for Supabase Auth integration.')+'</div>'
+        +'</div>';
+    }
+    if(t==='subscription'){
+      return '<div style="display:grid;gap:10px">'
+        +'<div style="background:var(--panel-2);border-radius:12px;padding:16px;font-size:13px;color:var(--ink-2);line-height:1.6">'+(pt?'Gerencie sua assinatura, histórico de pagamentos e próximas cobranças.':'Manage your subscription, payment history and upcoming charges.')+'</div>'
+        +'<button class="btn btn-primary" onclick="document.getElementById(\'accountSettingsOverlay\').remove();go(\'plans\')">'+(pt?'🎟 Ver planos e assinaturas':'🎟 View plans & subscriptions')+'</button>'
+        +'<div style="background:var(--panel-2);border-radius:10px;padding:12px;font-size:12px;color:var(--ink-4)">'+(pt?'Histórico de pagamentos disponível após integração com Stripe/Supabase.':'Payment history available after Stripe/Supabase integration.')+'</div>'
+        +'</div>';
+    }
+    if(t==='delete'){
+      return '<div style="display:grid;gap:12px">'
+        +'<div style="background:rgba(216,57,43,.08);border:1px solid rgba(216,57,43,.25);border-radius:12px;padding:16px">'
+        +'<div style="font-size:14px;font-weight:700;color:#d8392b;margin-bottom:8px">⚠️ '+(pt?'Excluir conta permanentemente':'Permanently delete account')+'</div>'
+        +'<ul style="font-size:12.5px;color:var(--ink-2);line-height:1.7;padding-left:18px;margin:0 0 14px">'
+        +'<li>'+(pt?'Todos os dados locais serão removidos':'All local data will be removed')+'</li>'
+        +'<li>'+(pt?'Sua galeria e favoritos serão perdidos':'Your gallery and favorites will be lost')+'</li>'
+        +'<li>'+(pt?'Créditos restantes não são reembolsáveis':'Remaining credits are non-refundable')+'</li>'
+        +'<li>'+(pt?'Esta ação não pode ser desfeita':'This action cannot be undone')+'</li>'
+        +'</ul>'
+        +'<button class="btn" style="background:#d8392b;color:#fff;width:100%;padding:12px;font-weight:600" onclick="document.getElementById(\'accountSettingsOverlay\').remove();confirmDeleteAccount()">'+(pt?'Entendo — continuar com exclusão':'I understand — proceed with deletion')+'</button>'
+        +'</div></div>';
+    }
+    return '';
+  }
+
+  var TABS=[
+    {id:'profile',label:pt?'Perfil':'Profile',ic:'👤'},
+    {id:'credits',label:pt?'Créditos':'Credits',ic:'⚡'},
+    {id:'subscription',label:pt?'Assinatura':'Subscription',ic:'🎟'},
+    {id:'security',label:pt?'Segurança':'Security',ic:'🔐'},
+    {id:'delete',label:pt?'Excluir':'Delete',ic:'🗑'}
+  ];
+
+  function buildModal(activeTab){
+    return '<div style="padding:20px 22px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px">'
+      +'<div><h3 style="margin:0 0 2px;font-size:16px">'+(pt?'Minha Conta':'My Account')+'</h3>'
+      +'<div style="font-size:12px;color:var(--ink-3)">'+escapeHtml((S.user&&S.user.email)||'')+'</div></div>'
+      +'<button style="font-size:22px;background:none;border:none;cursor:pointer;color:var(--ink-3);line-height:1;padding:4px 8px;border-radius:6px" onclick="document.getElementById(\'accountSettingsOverlay\').remove()">×</button>'
+      +'</div>'
+      +'<div style="display:flex;border-bottom:1px solid var(--line);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none">'
+      +TABS.map(function(tb){
+        var active=tb.id===activeTab;
+        return '<button onclick="var o=document.getElementById(\'accountSettingsOverlay\');if(o){var m=o.querySelector(\'.modal\');if(m)m.innerHTML=buildAccountModal(\''+tb.id+'\');}" '
+          +'style="flex-shrink:0;padding:12px 16px;font-size:12px;border:none;background:none;cursor:pointer;border-bottom:2px solid '+(active?'var(--accent)':'transparent')+';color:'+(active?'var(--accent)':'var(--ink-3)')+';font-weight:'+(active?'700':'400')+'" '
+          +'onclick="(function(){var o=document.getElementById(\'accountSettingsOverlay\');if(o){o.remove();}openAccountSettings(\''+tb.id+'\');})()">'
+          +tb.ic+' '+tb.label+'</button>';
+      }).join('')
+      +'</div>'
+      +'<div style="padding:20px 22px 22px">'+tabContent(activeTab)+'</div>';
+  }
+
+  modal.innerHTML=buildModal(tab);
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
 }
+window.buildAccountModal=function(tabId){return openAccountSettings(tabId),'';};
 
 
 
@@ -7585,28 +7866,49 @@ function doChangePassword(){
 }
 function confirmDeleteAccount(){
   var pt=S.lang==='pt';
-  var msg=pt
-    ?'⚠️ ATENÇÃO: Esta ação é irreversível!\n\nAo excluir sua conta:\n• Todo o seu histórico de gerações será apagado\n• Seus créditos adquiridos serão perdidos (sem reembolso)\n• Personagens, favoritos e configurações serão removidos\n\nDigite CONFIRMAR para prosseguir:'
-    :'⚠️ WARNING: This action is irreversible!\n\nDeleting your account will:\n• Erase all your generation history\n• Lose all your purchased credits (no refund)\n• Remove characters, favorites and settings\n\nType CONFIRM to proceed:';
-  var input=prompt(msg);
-  var expected=pt?'CONFIRMAR':'CONFIRM';
-  if(!input||input.trim().toUpperCase()!==expected.toUpperCase()){
-    if(input!==null)toast(pt?'Confirmação incorreta -- conta mantida':'Wrong confirmation -- account kept');
-    return;
+  var ov=document.createElement('div');
+  ov.className='overlay show';
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:flex;align-items:center;justify-content:center;padding:18px';
+  ov.onclick=function(e){if(e.target===ov)ov.remove();};
+  ov.innerHTML='<div class="modal modal-card" style="max-width:440px;width:96%">'
+    +'<h3 style="margin:0 0 12px;color:#d8392b">⚠️ '+(pt?'Excluir conta':'Delete account')+'</h3>'
+    +'<ul style="font-size:13px;color:var(--ink-2);line-height:1.75;padding-left:18px;margin:0 0 16px">'
+    +'<li>'+(pt?'Todo o histórico de gerações será apagado':'All generation history will be erased')+'</li>'
+    +'<li>'+(pt?'Créditos não são reembolsáveis':'Credits are non-refundable')+'</li>'
+    +'<li>'+(pt?'Personagens, favoritos e configurações serão removidos':'Characters, favorites and settings will be removed')+'</li>'
+    +'<li>'+(pt?'Esta ação não pode ser desfeita':'This action cannot be undone')+'</li>'
+    +'</ul>'
+    +'<label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:14px;cursor:pointer">'
+    +'<input type="checkbox" id="delChk" style="width:16px;height:16px"> '+(pt?'Entendo as consequências':'I understand the consequences')+'</label>'
+    +'<div style="margin-bottom:14px"><label class="label" style="font-size:11px;display:block;margin-bottom:6px">'+(pt?'Digite EXCLUIR para confirmar:':'Type DELETE to confirm:')+'</label>'
+    +'<input class="input" id="delConfirmInput" placeholder="'+(pt?'EXCLUIR':'DELETE')+'" style="width:100%;font-size:14px;letter-spacing:1px"></div>'
+    +'<div style="display:flex;gap:8px">'
+    +'<button class="btn btn-ghost" style="flex:1" onclick="this.closest(\'.overlay\').remove()">'+(pt?'Cancelar':'Cancel')+'</button>'
+    +'<button class="btn" id="delFinalBtn" style="flex:1;background:#d8392b;color:#fff;opacity:.5;cursor:not-allowed" disabled onclick="doDeleteAccount()">'+(pt?'Excluir conta':'Delete account')+'</button>'
+    +'</div></div>';
+  document.body.appendChild(ov);
+  var chk=document.getElementById('delChk');
+  var inp=document.getElementById('delConfirmInput');
+  var btn=document.getElementById('delFinalBtn');
+  function check(){
+    var ok=chk&&chk.checked&&inp&&inp.value.toUpperCase()===(pt?'EXCLUIR':'DELETE');
+    if(btn){btn.disabled=!ok;btn.style.opacity=ok?'1':'.5';btn.style.cursor=ok?'pointer':'not-allowed';}
   }
-  // Delete account
+  if(chk)chk.onchange=check;
+  if(inp)inp.oninput=check;
+}
+function doDeleteAccount(){
+  var pt=S.lang==='pt';
   var uid=S.user&&S.user.uid;
   if(!uid)return;
-  var users=loadUsers();
+  var users=typeof loadUsers==='function'?loadUsers():{};
   delete users[uid];
   localStorage.setItem('hsai_users',JSON.stringify(users));
-  // Clear user-specific data
-  ['gal','chars','favs','agents','storyboards'].forEach(function(k){
-    localStorage.removeItem('hsai_'+uid+'_'+k);
-  });
+  ['gal','chars','favs','agents','storyboards'].forEach(function(k){localStorage.removeItem('hsai_'+uid+'_'+k);});
   fetch('/api/account/delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:uid})}).catch(function(){});
-  toast(pt?'Conta excluída localmente. Exclusão completa: integração Supabase/backend seguro.':'Account deleted locally. Full deletion: Supabase/secure backend integration.','ok');
-  setTimeout(function(){logoutUser();},1500);
+  document.querySelectorAll('.overlay').forEach(function(o){o.remove();});
+  toast(pt?'Conta excluída. Exclusão completa via Supabase após integração.':'Account deleted. Full deletion via Supabase after integration.','ok');
+  setTimeout(function(){if(typeof logoutUser==='function')logoutUser();},1600);
 }
 
 
@@ -7678,7 +7980,56 @@ function viewPosProdu(){
     +'</div>'
     +'</div>'
     // View head description only
-    +'<p style="max-width:660px;font-size:13.5px;color:var(--ink-2);margin:0 0 22px">'+(pt?'Ferramentas de edição, transição IA entre clipes, upscale e integração com Adobe. Em expansão contínua.':'Editing tools, AI transition between clips, upscale and Adobe integration. Continuously expanding.')+'</p>'
+    +'<p style="max-width:660px;font-size:13.5px;color:var(--ink-2);margin:0 0 16px">'+(pt?'Ferramentas de edição, transição IA entre clipes, upscale e integração com Adobe. Em expansão contínua.':'Editing tools, AI transition between clips, upscale and Adobe integration. Continuously expanding.')+'</p>'
+
+    // ── Quick action grid: recommended editors + tools
+    +'<div style="background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:22px">'
+    +'<div style="font-size:10px;letter-spacing:2px;font-weight:700;color:var(--ink-4);margin-bottom:14px">'+(pt?'EDITORES RECOMENDADOS AGORA':'RECOMMENDED EDITORS NOW')+'</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:16px">'
+    +[
+      {ic:'✂️',name:'CapCut Web',desc:pt?'Online, grátis, fácil':'Online, free, easy',url:'https://www.capcut.com',color:'#0fa'},
+      {ic:'📱',name:'CapCut App',desc:pt?'iOS / Android':'iOS / Android',url:'https://www.capcut.com/tools/mobile',color:'#0fa'},
+      {ic:'🎞️',name:'DaVinci Resolve',desc:pt?'Profissional, grátis':'Professional, free',url:'https://www.blackmagicdesign.com/products/davinciresolve',color:'#f09'},
+      {ic:'🎬',name:'Premiere/After Effects',desc:pt?'Adobe Creative Cloud':'Adobe Creative Cloud',url:'https://www.adobe.com/creativecloud/video.html',color:'#f60'}
+    ].map(function(e){
+      return '<a href="'+e.url+'" target="_blank" rel="noopener" style="display:flex;align-items:flex-start;gap:10px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:12px;text-decoration:none;transition:border-color .2s" onmouseover="this.style.borderColor=\'var(--accent-dim)\'" onmouseout="this.style.borderColor=\'var(--line)\'">'
+        +'<span style="font-size:24px;line-height:1">'+e.ic+'</span>'
+        +'<div><div style="font-size:13px;font-weight:700;color:var(--ink)">'+e.name+'</div><div style="font-size:11px;color:var(--ink-3)">'+e.desc+'</div></div>'
+        +'</a>';
+    }).join('')
+    +'</div>'
+    +'<div style="background:rgba(212,168,87,.07);border:1px solid rgba(212,168,87,.15);border-radius:10px;padding:12px;font-size:12.5px;color:var(--ink-2);line-height:1.6">'
+    +'💡 '+(pt?'O editor interno avançado está em desenvolvimento. Por enquanto, exporte seus assets do Hollywood Studio AI e finalize no CapCut Web/App ou em editores profissionais.':'The advanced internal editor is in development. For now, export your Hollywood Studio AI assets and finalize in CapCut Web/App or professional editors.')
+    +'</div></div>'
+
+    // ── Quick tools grid
+    +'<div style="font-size:10px;letter-spacing:2px;font-weight:700;color:var(--ink-4);margin-bottom:14px">'+(pt?'FERRAMENTAS DE PÓS-PRODUÇÃO':'POST-PRODUCTION TOOLS')+'</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:22px">'
+    +[
+      {ic:'📐',name:pt?'Upscale para 4K':'Upscale to 4K',desc:pt?'Aumentar resolução com IA':'Increase resolution with AI',tip:pt?'Use a seção Upscale abaixo':'Use the Upscale section below',action:'scrollToUpscale'},
+      {ic:'🎨',name:pt?'Correção de Cor':'Color Correction',desc:pt?'Grading cinematográfico':'Cinematic grading',tip:pt?'Exportar para CapCut ou DaVinci':'Export to CapCut or DaVinci',action:'ppTip'},
+      {ic:'🔍',name:pt?'Nitidez e Ruído':'Sharpness & Noise',desc:pt?'Limpeza de imagem':'Image cleanup',tip:pt?'Disponível via Topaz AI':'Available via Topaz AI',action:'ppTip'},
+      {ic:'📝',name:pt?'Legendas':'Subtitles',desc:pt?'Auto-transcrição':'Auto-transcription',tip:pt?'Use o CapCut ou Descript':'Use CapCut or Descript',action:'ppTip'},
+      {ic:'🖼️',name:pt?'Thumbnail':'Thumbnail',desc:pt?'Frame ideal para capa':'Best frame for cover',tip:pt?'Capturar frame da galeria':'Capture frame from gallery',action:'ppTip'},
+      {ic:'✂️',name:pt?'Corte para Redes':'Cut for Social',desc:pt?'9:16, 1:1, 4:5':'9:16, 1:1, 4:5',tip:pt?'Use o CapCut para reformatar':'Use CapCut to reformat',action:'ppTip'},
+      {ic:'💋',name:'Lip Sync',desc:pt?'Sincronização labial':'Lip synchronization',tip:pt?'Use Kling 3.0 no Estúdio':'Use Kling 3.0 in Studio',action:'ppLipSync'},
+      {ic:'🧑‍💼',name:'Avatar',desc:pt?'Apresentador digital':'Digital presenter',tip:pt?'Use HeyGen / D-ID':'Use HeyGen / D-ID',action:'ppTip'},
+      {ic:'📦',name:pt?'Pacote para Cliente':'Client Package',desc:pt?'Exportar com brand':'Export with brand',tip:pt?'Organize e baixe em lote':'Organize and batch download',action:'ppTip'},
+      {ic:'🌍',name:pt?'Exportar para Redes':'Export for Social',desc:pt?'Instagram, YouTube, TikTok':'Instagram, YouTube, TikTok',tip:pt?'Ir para Instagram ou YouTube':'Go to Instagram or YouTube',action:'ppSocial'}
+    ].map(function(card){
+      var onclick='';
+      if(card.action==='scrollToUpscale')onclick='document.querySelector(\'#transClipA\')&&document.querySelector(\'#transClipA\').scrollIntoView({behavior:\'smooth\'})';
+      else if(card.action==='ppLipSync')onclick='sendToStudio({modelId:\'kling3\',source:\'posProdu\'});toast(\''+(pt?'Kling 3.0 selecionado no Estúdio para Lip Sync':'Kling 3.0 selected in Studio for Lip Sync')+'\',\'ok\')';
+      else if(card.action==='ppSocial')onclick='go(\'instagram\')';
+      else onclick='toast(\''+card.tip+'\',\'info\')';
+      return '<div class="card" style="padding:14px;cursor:pointer;user-select:none" onclick="'+onclick+'">'
+        +'<div style="font-size:28px;margin-bottom:6px">'+card.ic+'</div>'
+        +'<div style="font-weight:700;font-size:13px;margin-bottom:3px">'+card.name+'</div>'
+        +'<div style="font-size:11.5px;color:var(--ink-3);line-height:1.45;margin-bottom:8px">'+card.desc+'</div>'
+        +'<div style="font-size:11px;color:var(--accent);font-style:italic">'+card.tip+'</div>'
+        +'</div>';
+    }).join('')
+    +'</div>'
 
     // ── Card 1: Transicao IA entre Clipes
     +'<div class="card" style="margin-bottom:18px;border:2px solid var(--accent-dim)">'
