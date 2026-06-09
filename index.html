@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="no-referrer">
-<title>Hollywood Studio AI — Geração de vídeo, imagem e áudio por IA cinematográfica</title>
-<meta name="description" content="Plataforma de produção audiovisual com IA: gere vídeos, imagens e áudio cinematográficos com Seedance, Kling, Veo, Sora, Flux e mais. Direção criativa, personagens consistentes, presets profissionais e créditos flexíveis.">
+<title>Hollywood Studio AI — Crie vídeos, imagens e campanhas com IA</title>
+<meta name="description" content="Seu estúdio criativo com IA para gerar vídeos, imagens, prompts, storyboards e campanhas usando modelos generativos poderosos. Comece com uma ideia e dirija todo o workflow.">
 <meta name="keywords" content="IA generativa, geração de vídeo IA, text to video, image to video, Seedance, Kling, Veo, Sora, Flux, Runway, produção audiovisual IA, vídeo cinematográfico, VFX IA, CGI, chroma key, geração de imagem IA, criação de conteúdo, AI video generator, hollywood studio ai">
 <meta name="author" content="Hollywood Studio AI">
 <meta name="robots" content="index, follow, max-image-preview:large">
@@ -14,8 +14,8 @@
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Hollywood Studio AI">
-<meta property="og:title" content="Hollywood Studio AI — Geração de vídeo, imagem e áudio por IA">
-<meta property="og:description" content="Produza vídeos, imagens e áudio cinematográficos com os melhores modelos de IA. Direção criativa, personagens, presets e créditos flexíveis.">
+<meta property="og:title" content="Hollywood Studio AI — Agora você é o diretor">
+<meta property="og:description" content="Digite uma ideia e transforme em vídeo, imagem, storyboard ou campanha com IA. O seu estúdio criativo em tempo real.">
 <meta property="og:url" content="https://hollywoodstudio.ai/">
 <meta property="og:image" content="https://hollywoodstudio.ai/assets/logos/logo-hero.png">
 <meta property="og:locale" content="pt_BR">
@@ -1913,12 +1913,12 @@ const I18N={
     council:'Conselho Criativo',analytics:'Estatísticas',opportunities:'Oportunidades',public:'Galeria Pública',
     academy:'Academy',news:'Notícias',festivals:'Festivais',gallery:'Galeria',plans:'Planos',admin:'Admin',marketing:'Marketing',models:'Modelos',batch:'Edição em Lote',contactsheet:'Contact Sheet',templates:'Templates',uploads:'Meus Uploads',posprodu:'Pós-Produção',tube:'YouTube',instagram:'Instagram',inspo:'Inspiração',
     create:'Criação',intelligence:'Inteligência',manage:'Gestão',community:'Comunidade',learn:'Aprender',account:'Conta',
-    generate:'Gerar',prompt:'Prompt',welcome:'Bem-vindo de volta','gemini-avatar':'Avatar IA'},
+    generate:'Gerar',prompt:'Prompt',welcome:'Bem-vindo de volta','gemini-avatar':'Avatar IA',criar:'Criar'},
   en:{home:'Home',studio:'Studio',images:'Images',audio:'Audio',characters:'Characters',storyboard:'Storyboard',favorites:'Favorites',editing:'Editing',agents:'Agents',docs:'Documents',spaces:'Spaces',flow:'Assistant',
     council:'Conselho Criativo',analytics:'Analytics',opportunities:'Opportunities',public:'Public Gallery',
     academy:'Academy',news:'News',festivals:'Festivals',gallery:'Gallery',plans:'Plans',admin:'Admin',models:'Models',batch:'Batch Edit',contactsheet:'Contact Sheet',templates:'Templates',uploads:'My Uploads',posprodu:'Post Production',tube:'YouTube',instagram:'Instagram',inspo:'Inspiration',
     create:'Create',intelligence:'Intelligence',manage:'Manage',community:'Community',learn:'Learn',account:'Account',
-    generate:'Generate',prompt:'Prompt',welcome:'Welcome back','gemini-avatar':'AI Avatar'}
+    generate:'Generate',prompt:'Prompt',welcome:'Welcome back','gemini-avatar':'AI Avatar',criar:'Create'}
 };
 
 // FEEDS CONFIG
@@ -2105,6 +2105,82 @@ const MODELS=[
 ];
 const modelById=id=>MODELS.find(m=>m.id===id)||MODELS[0];
 const videoMaxSec=id=>{const m=modelById(id);return m.durs&&m.durs.length?Math.max(...m.durs):(parseInt(m.max)||10);};
+
+/* ════════ HSAI_MODELS — catalog for Simple Create & recommendation engine ════════ */
+window.HSAI_MODELS=[
+  {id:'seedance-2',name:'Seedance 2.0',provider:'ByteDance',type:'text-to-video',categories:['text-to-video','image-to-video'],bestFor:'Vídeos cinematográficos realistas',description:'Modelo avançado para vídeos realistas com movimentos fluidos',strengths:['Alta qualidade visual','Movimento fluido','Suporta referência de imagem'],limitations:['Custo alto','Tempo de geração maior'],estimatedCredits:8,speed:'lento',quality:'premium',aspectRatios:['16:9','9:16','1:1'],maxDuration:15,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:true,isPremium:true,isActive:true,status:'beta'},
+  {id:'seedance-fast',name:'Seedance Fast',provider:'ByteDance',type:'text-to-video',categories:['text-to-video'],bestFor:'Iteração rápida e testes de conceito',description:'Versão acelerada do Seedance para drafts e variações rápidas',strengths:['Geração rápida','Bom custo-benefício','Fácil iteração'],limitations:['Qualidade ligeiramente menor'],estimatedCredits:3,speed:'rapido',quality:'standard',aspectRatios:['16:9','9:16'],maxDuration:15,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:true,status:'beta'},
+  {id:'kling-2',name:'Kling 2.0',provider:'Kuaishou',type:'text-to-video',categories:['text-to-video','image-to-video'],bestFor:'Expressão facial e personagens',description:'Excelente para vídeos com pessoas, expressões e conteúdo UGC',strengths:['Expressão facial realista','Continuidade de personagem','Gera com áudio'],limitations:['Custo médio-alto'],estimatedCredits:8,speed:'medio',quality:'premium',aspectRatios:['16:9','9:16','1:1'],maxDuration:15,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:true,isPremium:true,isActive:true,status:'beta'},
+  {id:'veo-3',name:'Veo 3',provider:'Google',type:'text-to-video',categories:['text-to-video'],bestFor:'Hero shots 4K com áudio nativo',description:'Google Veo 3 com áudio nativo e altíssima fidelidade fotográfica',strengths:['Áudio nativo','Fidelidade 4K','Física realista'],limitations:['Acesso externo','Custo premium'],estimatedCredits:12,speed:'lento',quality:'premium',aspectRatios:['16:9','9:16'],maxDuration:8,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:true,isPremium:true,isActive:true,status:'external'},
+  {id:'runway-gen4',name:'Runway Gen-4',provider:'Runway',type:'text-to-video',categories:['text-to-video','image-to-video'],bestFor:'VFX e mixed media',description:'Controle de estilo, referências e movimento de câmera avançado',strengths:['Controle de estilo','Multi-ref','VFX'],limitations:['Acesso externo'],estimatedCredits:11,speed:'medio',quality:'premium',aspectRatios:['16:9','9:16','1:1'],maxDuration:10,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:true,isPremium:true,isActive:true,status:'external'},
+  {id:'luma-dream',name:'Luma Dream Machine',provider:'Luma AI',type:'text-to-video',categories:['text-to-video','image-to-video'],bestFor:'Movimentos de câmera fluidos',description:'Excelente para cenas com câmera em movimento e visuais oníricos',strengths:['Câmera fluida','Visual onírico','Boa velocidade'],limitations:['Acesso externo'],estimatedCredits:6,speed:'medio',quality:'standard',aspectRatios:['16:9','9:16'],maxDuration:10,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:true,status:'external'},
+  {id:'hailuo-mini',name:'Hailuo MiniMax',provider:'MiniMax',type:'text-to-video',categories:['text-to-video'],bestFor:'Volume de conteúdo e testes',description:'O mais rápido e econômico — ideal para Reels e TikTok',strengths:['Muito rápido','Econômico','Alto dinamismo'],limitations:['Qualidade menor em detalhe'],estimatedCredits:3,speed:'rapido',quality:'standard',aspectRatios:['16:9','9:16'],maxDuration:10,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:true,status:'beta'},
+  {id:'wan-21',name:'Wan 2.1',provider:'Alibaba',type:'text-to-video',categories:['text-to-video','image-to-video'],bestFor:'Controle de primeiro e último frame',description:'Excelente para encadear clipes com continuidade exata',strengths:['Start+End frame','Boa qualidade','Preço justo'],limitations:['Menos vibrante'],estimatedCredits:5,speed:'medio',quality:'standard',aspectRatios:['16:9','9:16'],maxDuration:15,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:true,status:'beta'},
+  {id:'flux-dev',name:'Flux Dev',provider:'Black Forest Labs',type:'text-to-image',categories:['text-to-image'],bestFor:'Imagens de alta qualidade e detalhadas',description:'Flux Dev — qualidade premium para imagens estáticas',strengths:['Alta qualidade','Grande controle','Boa aderência'],limitations:['Mais lento que Schnell'],estimatedCredits:6,speed:'medio',quality:'premium',aspectRatios:['1:1','16:9','9:16','4:5'],maxDuration:0,supportsImageInput:false,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:true,status:'active'},
+  {id:'flux-schnell',name:'Flux Schnell',provider:'Black Forest Labs',type:'text-to-image',categories:['text-to-image'],bestFor:'Geração rápida de imagens',description:'Flux Schnell — velocidade máxima para iteração de imagens',strengths:['Muito rápido','Econômico','Boa qualidade'],limitations:['Menos detalhe que Dev'],estimatedCredits:2,speed:'rapido',quality:'standard',aspectRatios:['1:1','16:9','9:16'],maxDuration:0,supportsImageInput:false,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:true,status:'active'},
+  {id:'gpt-image-1',name:'GPT Image 1',provider:'OpenAI',type:'text-to-image',categories:['text-to-image'],bestFor:'Seguimento fiel de instruções complexas',description:'Modelo de imagem da OpenAI com ótima compreensão de texto',strengths:['Segue instruções complexas','Alta qualidade','Estilos variados'],limitations:['Acesso externo','Custo médio'],estimatedCredits:8,speed:'medio',quality:'premium',aspectRatios:['1:1','16:9','9:16'],maxDuration:0,supportsImageInput:false,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:true,status:'external'},
+  {id:'gemini-image',name:'Gemini Image',provider:'Google',type:'text-to-image',categories:['text-to-image'],bestFor:'Imagens fotorrealistas com contexto',description:'Geração de imagem do Google com alta fidelidade',strengths:['Fotorrealismo','Boa compreensão de cena'],limitations:['Acesso externo'],estimatedCredits:6,speed:'medio',quality:'standard',aspectRatios:['1:1','16:9','9:16'],maxDuration:0,supportsImageInput:false,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:true,status:'external'},
+  {id:'heygen-avatar',name:'HeyGen Avatar',provider:'HeyGen',type:'avatar',categories:['avatar','lip-sync'],bestFor:'Avatares falantes e apresentadores digitais',description:'Criação de avatares com lip sync realista e múltiplos idiomas',strengths:['Lip sync preciso','Multi-idioma','Avatares customizados'],limitations:['Acesso externo','Plano específico'],estimatedCredits:15,speed:'medio',quality:'premium',aspectRatios:['16:9','9:16','1:1'],maxDuration:300,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:false,isPremium:true,isActive:true,status:'external'},
+  {id:'krea-upscale',name:'Krea Upscale',provider:'Krea AI',type:'upscale',categories:['upscale','enhance'],bestFor:'Upscale rápido de imagens e vídeos',description:'Upscaling inteligente preservando qualidade original',strengths:['Velocidade','Preserva detalhes','Boa interface'],limitations:['Acesso externo'],estimatedCredits:4,speed:'rapido',quality:'standard',aspectRatios:['any'],maxDuration:0,supportsImageInput:true,supportsVideoInput:true,supportsPromptOnly:false,isPremium:false,isActive:true,status:'external'},
+  {id:'magnific',name:'Magnific',provider:'Magnific AI',type:'upscale',categories:['upscale','enhance'],bestFor:'Upscale de máxima qualidade com detalhes gerativos',description:'O melhor upscaler do mercado com controle criativo',strengths:['Máxima qualidade','Detalhes gerativos','Controle criativo'],limitations:['Custo alto','Acesso externo'],estimatedCredits:12,speed:'lento',quality:'premium',aspectRatios:['any'],maxDuration:0,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:false,isPremium:true,isActive:true,status:'external'},
+  {id:'sora',name:'Sora',provider:'OpenAI',type:'text-to-video',categories:['text-to-video'],bestFor:'Coerência de mundo e cenas complexas',description:'Sora da OpenAI — continuidade temporal e física realista',strengths:['Coerência de mundo','Multi-ação','Alta qualidade'],limitations:['Acesso externo','Custo premium'],estimatedCredits:10,speed:'lento',quality:'premium',aspectRatios:['16:9','9:16','1:1'],maxDuration:12,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:true,isPremium:true,isActive:true,status:'external'},
+  {id:'stable-diffusion-xl',name:'SDXL',provider:'Stability AI',type:'text-to-image',categories:['text-to-image'],bestFor:'Geração rápida e customizável de imagens',description:'SDXL — open source com LoRA e controle avançado',strengths:['Open source','Customizável','Rápido','Econômico'],limitations:['Qualidade menor que Flux'],estimatedCredits:2,speed:'rapido',quality:'standard',aspectRatios:['1:1','16:9','9:16'],maxDuration:0,supportsImageInput:false,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:true,status:'active'}
+];
+
+/* ── recommendModelForIntent ── */
+function recommendModelForIntent(opts){
+  opts=opts||{};
+  var mediaType=(opts.mediaType||'video').toLowerCase();
+  var style=(opts.style||'').toLowerCase();
+  var quality=(opts.quality||'').toLowerCase();
+  var duration=opts.duration||8;
+  var M=window.HSAI_MODELS;
+  var model,reason;
+  if(mediaType==='avatar'||mediaType==='avatar'){
+    model=M.find(function(x){return x.id==='heygen-avatar';});
+    reason='Melhor para avatares falantes e lip sync';
+  } else if(mediaType==='upscale'){
+    model=quality==='premium'?M.find(function(x){return x.id==='magnific';}):M.find(function(x){return x.id==='krea-upscale';});
+    reason='Melhor upscaler para a qualidade solicitada';
+  } else if(mediaType==='image'||mediaType==='imagem'){
+    if(style.indexOf('cinemat')>=0||style.indexOf('premium')>=0||quality==='premium'){
+      model=M.find(function(x){return x.id==='flux-dev';});
+      reason='Flux Dev — máxima qualidade para imagens cinematográficas';
+    } else if(quality==='fast'||quality==='rapido'){
+      model=M.find(function(x){return x.id==='flux-schnell';});
+      reason='Flux Schnell — geração rápida com boa qualidade';
+    } else {
+      model=M.find(function(x){return x.id==='gpt-image-1';});
+      reason='GPT Image 1 — ótima compreensão de prompt';
+    }
+  } else {
+    // Video
+    if(style.indexOf('cinemat')>=0||style.indexOf('premium')>=0||style.indexOf('luxo')>=0){
+      model=M.find(function(x){return x.id==='seedance-2';});
+      reason='Seedance 2.0 — melhor para vídeos cinematográficos premium';
+    } else if(quality==='fast'||quality==='rapido'||style.indexOf('viral')>=0||style.indexOf('social')>=0){
+      model=M.find(function(x){return x.id==='hailuo-mini';});
+      reason='Hailuo MiniMax — geração mais rápida para conteúdo social';
+    } else if(style.indexOf('realista')>=0||style.indexOf('comercial')>=0){
+      model=M.find(function(x){return x.id==='kling-2';});
+      reason='Kling 2.0 — excelente para comerciais e personagens realistas';
+    } else if(duration>=10){
+      model=M.find(function(x){return x.id==='wan-21';});
+      reason='Wan 2.1 — bom controle para vídeos mais longos';
+    } else {
+      model=M.find(function(x){return x.id==='seedance-fast';});
+      reason='Seedance Fast — equilíbrio ideal para começar';
+    }
+  }
+  if(!model)model=M.find(function(x){return x.id==='seedance-fast';});
+  return {
+    model:model,
+    reason:reason||'Modelo recomendado para seu tipo de criação',
+    estimatedCredits:model?model.estimatedCredits:3,
+    speed:model?model.speed:'medio',
+    quality:model?model.quality:'standard'
+  };
+}
 /* per-model credit cost: video = credits/second, image = credits/image, audio = flat */
 const MODEL_COST={geminiflash:8,seedance2:6,seedance2fast:3,kling3:8,klingmotion:9,klinglip:7,veo31:12,veo31lite:6,sora2:10,wan27:5,hailuo:3,happyhorse:6,grokvid:4,seedance15pro:7,higgsdop:8,geminiomni:35,nanobanana2:18,seedream45:26,fluxflex:14,flux2:24,grokimg:12,reve:16,runway:11,pixverse:4,
   seedream5:30,nanobananapro:40,gptimage2:25,fluxpro:20,suno:40,mmaudio:15,elevenvoice:10};
@@ -2202,6 +2278,7 @@ function fmtMoney(brl){const rate=CFG.USD_RATE||0.18;
 /* ════════ NAV ════════ */
 const NAV=[
   {group:'create',items:[
+    {id:'criar',ic:'M12 3l1.4 3.6L17 8l-3.6 1.4L12 13l-1.4-3.6L7 8l3.6-1.4L12 3zM5 16l.9 2.2 2.2.9-2.2.9L5 22l-.9-2.2L2 18.9l2.2-.9L5 16z'},
     {id:'home',ic:'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10'},
     {id:'studio',ic:'M4 5h16v14H4zM4 9h16M9 5v14'},
     {id:'storyboard',ic:'M4 3h16v4H4zM4 11h16v4H4zM4 19h10v2H4z'},
@@ -2527,7 +2604,7 @@ function topTitle(v){
 /* ════════ RENDER ROUTER ════════ */
 function render(){
   const m=document.getElementById('main');
-  const R={home:viewHome,studio:viewStudio,images:viewImages,audio:viewAudio,characters:viewCharacters,storyboard:viewStoryboard,favorites:viewFavoritesPage,editing:viewEditing,batch:viewBatch,agents:viewAgents,docs:viewDocs,spaces:viewSpaces,
+  const R={home:viewHome,criar:viewSimpleCreate,studio:viewStudio,images:viewImages,audio:viewAudio,characters:viewCharacters,storyboard:viewStoryboard,favorites:viewFavoritesPage,editing:viewEditing,batch:viewBatch,agents:viewAgents,docs:viewDocs,spaces:viewSpaces,
     flow:viewFlow,council:viewCouncil,analytics:viewAnalytics,opportunities:viewOpportunities,public:viewPublic,models:viewModelsCatalog,
     academy:viewAcademy,news:viewNews,festivals:viewFestivals,'gemini-avatar':viewGeminiAvatar,gallery:viewGallery,uploads:viewUploadGallery,templates:viewTemplates,contactsheet:viewContactSheet,plans:viewPlans,admin:viewAdmin,marketing:viewMarketingPage,tube:viewTube,instagram:viewInstagram,inspo:viewInspo,posprodu:viewPosProdu};
   let body;
@@ -2547,6 +2624,7 @@ function render(){
   if(S.view==='batch')afterBatch();
   if(S.view==='tube')afterTube();
   if(S.view==='inspo')afterInspo();
+  if(S.view==='criar')afterSimpleCreate();
   if(isGuest()&&S.view!=='plans')guestBanner();
 }
 
@@ -2688,7 +2766,8 @@ const AREA_THEMES={
   storyboard:{icon:'🎬',gradient:'135deg,#0a0a10,#100a10'},
   analytics: {icon:'📊',gradient:'135deg,#080c14,#0a1018'},
   flow:      {icon:'✨',gradient:'135deg,#0a0814,#14080a'},
-  agents:    {icon:'🤖',gradient:'135deg,#080a10,#0a0e18'}
+  agents:    {icon:'🤖',gradient:'135deg,#080a10,#0a0e18'},
+  criar:     {icon:'✨',gradient:'135deg,#0a0614,#140a1e'}
 };
 function areaHeader(opts){
   var t=AREA_THEMES[opts.area]||{icon:'🎬',gradient:'135deg,#0a0a0c,#14101c'};
@@ -2736,9 +2815,9 @@ function viewHome(){
     +'<div class="hsai-why-card"><div class="ic">⚡</div><h4>'+(pt?'Workflow completo':'Complete workflow')+'</h4><p>'+(pt?'Da ideia ao corte final. Mesmo usando outras ferramentas, organize tudo aqui.':'From idea to final cut. Even if you use other tools, organize everything here.')+'</p></div>'
     +'</div>';
   var ctaBlock='<div style="display:flex;gap:10px;flex-wrap:wrap">'
-    +'<button class="btn btn-primary" style="padding:13px 28px;font-size:15px" onclick="go(\'studio\')">'+(pt?'🎬 Abrir o Estúdio':'🎬 Open Studio')+'</button>'
-    +'<button class="btn btn-ghost" style="padding:13px 22px" onclick="go(\'models\')">'+(pt?'Ver modelos':'View models')+'</button>'
-    +'<button class="btn btn-ghost" style="padding:13px 22px" onclick="go(\'templates\')">'+(pt?'Ver templates':'View templates')+'</button>'
+    +'<button class="btn btn-primary" style="padding:13px 28px;font-size:15px" onclick="go(\'criar\')">'+(pt?'✨ Criar Agora →':'✨ Create Now →')+'</button>'
+    +'<button class="btn btn-ghost" style="padding:13px 22px" onclick="go(\'studio\')">'+(pt?'⚙️ Abrir Studio Completo':'⚙️ Full Studio')+'</button>'
+    +'<button class="btn btn-ghost" style="padding:13px 18px" onclick="go(\'models\')">'+(pt?'Ver modelos':'View models')+'</button>'
     +'</div>';
   var creditsBadge=!isGuest()?('<div style="margin-top:16px;display:inline-flex;align-items:center;gap:8px;background:rgba(212,168,87,.1);border:1px solid rgba(212,168,87,.2);border-radius:20px;padding:6px 14px;font-size:13px;color:var(--accent)"><b>'+credits+'</b> '+(pt?'créditos disponíveis':'credits available')+'<button class="btn btn-ghost btn-sm" style="padding:2px 8px;font-size:11px;margin:0" onclick="go(\'plans\')">'+(pt?'Recarregar':'Top up')+'</button></div>'):'';
   var demoStrip='<div style="margin-top:28px;border-top:1px solid var(--line);padding-top:22px"><div style="font-size:10px;letter-spacing:2px;font-weight:700;color:var(--ink-4);margin-bottom:12px">'+(pt?'EXEMPLOS GERADOS COM IA':'AI-GENERATED EXAMPLES')+'</div>'
@@ -2757,8 +2836,8 @@ function viewHome(){
   return neuralHtml
     +'<div class="hsai-hero">'
     +'<div style="font-size:11px;letter-spacing:2px;font-weight:700;color:var(--accent);margin-bottom:12px;opacity:.85">HOLLYWOOD STUDIO AI</div>'
-    +'<h1>'+(pt?'Da <em>ideia</em> ao corte final.<br>Workflow audiovisual com <em>IA</em>.':'From <em>idea</em> to final cut.<br><em>AI</em> audiovisual workflow.')+'</h1>'
-    +'<p>'+(pt?'Organize prompts, referências e modelos. Gere vídeos, imagens e áudio cinematográficos. Conecte criação, pós-produção e redes sociais em um estúdio inteligente.':'Organize prompts, references and models. Generate cinematic video, image and audio. Connect creation, post-production and social media in one intelligent studio.')+'</p>'
+    +'<h1>'+(pt?'O que vamos <em>criar</em> hoje?':'What are we <em>creating</em> today?')+'</h1>'
+    +'<p>'+(pt?'Seu estúdio criativo com IA para gerar vídeos, imagens, prompts, storyboards e campanhas.':'Your AI creative studio for videos, images, prompts, storyboards and campaigns.')+'</p>'
     +ctaBlock
     +creditsBadge
     +stepsHtml
@@ -2771,6 +2850,170 @@ function viewHome(){
     +'<p style="font-size:12.5px;color:var(--ink-3);margin:8px 0 0;max-width:540px">'+(pt?'Monte seu projeto antes de gastar créditos. Teste a ideia, refine o prompt e gere quando estiver pronto.':'Plan your project before spending credits. Test the idea, refine the prompt, generate when ready.')+'</p>'
     +'</div>'
     +demoStrip;
+}
+
+/* ════════ SIMPLE CREATE ════════ */
+var _scType='video',_scFormat='16:9',_scDuration='8s',_scQuality='Equilibrado',_scStyle='Cinemático',_scModel=null;
+function viewSimpleCreate(){
+  var pt=S.lang==='pt';
+  var types=[
+    {id:'video',label:'Vídeo',ic:'🎬'},
+    {id:'image',label:'Imagem',ic:'🖼️'},
+    {id:'avatar',label:'Avatar',ic:'👤'},
+    {id:'storyboard',label:'Storyboard',ic:'🎞️'},
+    {id:'prompt',label:'Prompt',ic:'✍️'},
+    {id:'social',label:'Social',ic:'📱'},
+    {id:'product',label:'Produto',ic:'✨'},
+    {id:'realestate',label:'Imóvel',ic:'🏠'},
+    {id:'music',label:'Música',ic:'🎵'}
+  ];
+  var formats=['9:16','16:9','1:1','4:5'];
+  var durations=['5s','8s','10s','15s'];
+  var qualities=['Rápido','Equilibrado','Premium'];
+  var styles=['Cinemático','Realista','Comercial','Viral','Luxo'];
+  var suggestions=[
+    pt?'vídeo de produto premium com luz de estúdio':'premium product video with studio lighting',
+    pt?'cena cinematográfica ao entardecer numa cidade':'cinematic sunset scene in a city',
+    pt?'anúncio de moda com modelo e fundo branco':'fashion ad with model on white background',
+    pt?'clipe musical com neons e câmera dinâmica':'music video with neons and dynamic camera',
+    pt?'tour imóvel de luxo com golden hour':'luxury real estate tour at golden hour',
+    pt?'herói salva criança em cena de ação épica':'hero saves child in epic action scene'
+  ];
+  var recResult=recommendModelForIntent({mediaType:_scType,style:_scStyle,quality:_scQuality==='Rápido'?'rapido':(_scQuality==='Premium'?'premium':'standard'),duration:parseInt(_scDuration)||8});
+  var rec=recResult.model;
+
+  return `<div class="view-head">
+    <div class="kicker" style="color:var(--accent)">${pt?'CRIAR AGORA':'CREATE NOW'}</div>
+    <h1 class="serif" style="font-size:clamp(24px,5vw,42px)">${pt?'O que vamos criar hoje?':'What are we creating today?'}</h1>
+    <p style="max-width:580px;font-size:15px;color:var(--ink-2);line-height:1.7">${pt?'Seu buscador criativo para gerar vídeos, imagens, prompts, storyboards e campanhas com os modelos generativos mais poderosos.':'Your creative engine to generate videos, images, prompts, storyboards and campaigns with the most powerful generative models.'}</p>
+    <div style="font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.5px;margin-top:4px">${pt?'Agora você é o diretor.':'Now you\'re the director.'}</div>
+  </div>
+
+  <!-- Type selector -->
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+    ${types.map(function(tp){return '<button class="btn '+ (_scType===tp.id?'btn-primary':'btn-ghost') +'" style="padding:8px 14px;font-size:13px" onclick="scSetType(\''+tp.id+'\')">'+tp.ic+' '+tp.label+'</button>';}).join('')}
+  </div>
+
+  <!-- Main prompt area -->
+  <div style="position:relative;margin-bottom:10px">
+    <textarea class="input" id="scPrompt" style="min-height:130px;font-size:15px;padding:16px 16px 44px;border-radius:12px;resize:vertical"
+      placeholder="${pt?'Descreva o que você quer criar: um vídeo de produto, uma cena cinematográfica, um anúncio, um clipe musical...':'Describe what you want to create: a product video, a cinematic scene, an ad, a music clip...'}"
+      oninput="scUpdateRecommendation()"></textarea>
+    <button class="btn btn-ghost btn-sm" style="position:absolute;right:10px;bottom:10px;font-size:12px;padding:5px 12px" onclick="scEnhancePrompt()">✨ ${pt?'Melhorar prompt':'Enhance prompt'}</button>
+  </div>
+
+  <!-- Suggestion chips -->
+  <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px">
+    ${suggestions.map(function(s){return '<button class="btn btn-ghost" style="padding:5px 12px;font-size:12px;border-radius:20px" onclick="document.getElementById(\'scPrompt\').value=\''+s.replace(/'/g,"\\'")+'\'">'+s.slice(0,40)+'…</button>';}).join('')}
+  </div>
+
+  <!-- Quick settings -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:18px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink-3);margin-bottom:6px;letter-spacing:.5px">${pt?'FORMATO':'FORMAT'}</div>
+      <div class="seg" style="flex-wrap:wrap;gap:4px">${formats.map(function(f){return '<button class="'+(_scFormat===f?'on':'')+'" onclick="scSetFormat(\''+f+'\')">'+f+'</button>';}).join('')}</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink-3);margin-bottom:6px;letter-spacing:.5px">${pt?'DURAÇÃO':'DURATION'}</div>
+      <div class="seg" style="flex-wrap:wrap;gap:4px">${durations.map(function(d){return '<button class="'+(_scDuration===d?'on':'')+'" onclick="scSetDuration(\''+d+'\')">'+d+'</button>';}).join('')}</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink-3);margin-bottom:6px;letter-spacing:.5px">${pt?'QUALIDADE':'QUALITY'}</div>
+      <div class="seg" style="flex-wrap:wrap;gap:4px">${qualities.map(function(q){return '<button class="'+(_scQuality===q?'on':'')+'" onclick="scSetQuality(\''+q+'\')">'+q+'</button>';}).join('')}</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink-3);margin-bottom:6px;letter-spacing:.5px">${pt?'ESTILO':'STYLE'}</div>
+      <div class="seg" style="flex-wrap:wrap;gap:4px">${styles.map(function(s){return '<button class="'+(_scStyle===s?'on':'')+'" onclick="scSetStyle(\''+s+'\')">'+s+'</button>';}).join('')}</div>
+    </div>
+  </div>
+
+  <!-- Model recommendation -->
+  <div id="scModelRec" style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <div>
+      <div style="font-size:10px;font-weight:700;color:var(--ink-4);letter-spacing:1px;margin-bottom:3px">${pt?'MODELO RECOMENDADO':'RECOMMENDED MODEL'}</div>
+      <div style="font-size:14px;font-weight:700" id="scRecModelName">${rec?rec.name:'Seedance Fast'}</div>
+      <div style="font-size:12px;color:var(--ink-3);margin-top:2px" id="scRecReason">${recResult.reason}</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span style="font-size:12px;color:var(--ink-3)">~${rec?rec.estimatedCredits:3} ${pt?'créditos':'credits'}</span>
+      <button class="btn btn-ghost btn-sm" onclick="scChooseModel()">${pt?'🎬 Escolher modelo':'🎬 Choose model'}</button>
+    </div>
+  </div>
+
+  <!-- Action buttons -->
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px">
+    <button class="btn btn-primary" style="padding:14px 32px;font-size:15px;flex:1;min-width:160px" onclick="scGenerate()">${pt?'⚡ Gerar agora':'⚡ Generate now'}</button>
+    <button class="btn btn-ghost" style="padding:14px 18px" onclick="scEnhancePrompt()">✨ ${pt?'Melhorar prompt':'Enhance'}</button>
+    <button class="btn btn-ghost" style="padding:14px 18px" onclick="scChooseModel()">🎬 ${pt?'Escolher modelo':'Choose model'}</button>
+    <button class="btn btn-ghost" style="padding:14px 18px" onclick="scOpenStudio()">⚙️ ${pt?'Studio Completo':'Full Studio'}</button>
+  </div>`;
+}
+
+function afterSimpleCreate(){}
+
+function scSetType(t){_scType=t;render();}
+function scSetFormat(f){_scFormat=f;render();}
+function scSetDuration(d){_scDuration=d;render();}
+function scSetQuality(q){_scQuality=q;render();}
+function scSetStyle(s){_scStyle=s;render();}
+
+function scUpdateRecommendation(){
+  var rec=recommendModelForIntent({mediaType:_scType,style:_scStyle,quality:_scQuality==='Rápido'?'rapido':(_scQuality==='Premium'?'premium':'standard'),duration:parseInt(_scDuration)||8});
+  var nm=document.getElementById('scRecModelName');
+  var nr=document.getElementById('scRecReason');
+  if(nm&&rec.model)nm.textContent=rec.model.name;
+  if(nr)nr.textContent=rec.reason;
+  _scModel=rec.model?rec.model.id:null;
+}
+
+function scChooseModel(){
+  S.modelCatFilter=_scType==='image'?'image':(_scType==='audio'||_scType==='music'?'audio':'video');
+  go('models');
+}
+
+function scOpenStudio(){
+  var prompt=(document.getElementById('scPrompt')||{}).value||'';
+  sendToStudio({prompt:prompt,modelId:_scModel,source:'simple-create'});
+}
+
+async function scEnhancePrompt(){
+  var pt=S.lang==='pt';
+  var el=document.getElementById('scPrompt');
+  if(!el)return;
+  var txt=(el.value||'').trim();
+  if(!txt){toast(pt?'Digite algo primeiro':'Type something first','err');return;}
+  el.disabled=true;
+  try{
+    var res=await fetch('/api/enhance',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:txt,style:_scStyle,model:_scModel})});
+    if(res.ok){var d=await res.json();if(d.enhanced)el.value=d.enhanced;toast(pt?'✨ Prompt aprimorado':'✨ Prompt enhanced','ok');}
+    else{toast(pt?'Não foi possível aprimorar':'Could not enhance','err');}
+  }catch(e){toast(pt?'Erro de conexão':'Connection error','err');}
+  finally{el.disabled=false;}
+}
+
+function showQuickModal(html){
+  var existing=document.getElementById('scQuickModal');
+  if(existing)existing.remove();
+  var el=document.createElement('div');
+  el.id='scQuickModal';
+  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+  el.onclick=function(e){if(e.target===el)el.remove();};
+  el.innerHTML='<div style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:28px 32px;max-width:440px;width:100%;position:relative">'+html+'<button style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:18px;cursor:pointer;color:var(--ink-3)" onclick="document.getElementById(\'scQuickModal\').remove()">✕</button></div>';
+  document.body.appendChild(el);
+}
+function scGenerate(){
+  var pt=S.lang==='pt';
+  var prompt=(document.getElementById('scPrompt')||{}).value||'';
+  if(!prompt.trim()){toast(pt?'Digite um prompt para gerar':'Enter a prompt to generate','err');return;}
+  if(isGuest()){
+    showQuickModal('<div style="text-align:center;padding:8px"><div style="font-size:28px;margin-bottom:12px">🔐</div><h3>'+(pt?'Faça login para gerar':'Sign in to generate')+'</h3><p style="font-size:14px;color:var(--ink-2);margin:8px 0 18px">'+(pt?'Crie uma conta gratuita para usar os modelos de IA.':'Create a free account to use AI models.')+'</p><button class="btn btn-primary" onclick="document.getElementById(\'scQuickModal\').remove();go(\'plans\')">'+(pt?'Criar conta':'Create account')+'</button></div>');
+    return;
+  }
+  if(!S.credits||S.credits<1){
+    showQuickModal('<div style="text-align:center;padding:8px"><div style="font-size:28px;margin-bottom:12px">🎬</div><h3>'+(pt?'Projeto preparado!':'Project ready!')+'</h3><p style="font-size:14px;color:var(--ink-2);margin:8px 0 18px">'+(pt?'Para gerar com modelos reais, conecte créditos/API ou escolha um plano.':'To generate with real models, connect credits/API or choose a plan.')+'</p><button class="btn btn-primary" onclick="document.getElementById(\'scQuickModal\').remove();go(\'plans\')">'+(pt?'Ver planos':'View plans')+'</button></div>');
+    return;
+  }
+  sendToStudio({prompt:prompt,modelId:_scModel,source:'simple-create'});
 }
 
 function viewStudio(){
@@ -5695,43 +5938,104 @@ function mcCaps(m){
   return chips.join('');
 }
 function viewModelsCatalog(){
-  const cats=[
-    {id:'all',label:S.lang==='pt'?'Todos':'All'},
-    {id:'video',label:S.lang==='pt'?'Vídeo':'Video'},
-    {id:'image',label:S.lang==='pt'?'Imagem':'Image'},
-    {id:'audio',label:S.lang==='pt'?'Áudio':'Audio'}
+  var pt=S.lang==='pt';
+  var cats=[
+    {id:'all',label:pt?'Todos':'All'},
+    {id:'text-to-video',label:pt?'Texto→Vídeo':'Text→Video'},
+    {id:'image-to-video',label:pt?'Img→Vídeo':'Img→Video'},
+    {id:'video',label:pt?'Vídeo (todos)':'Video (all)'},
+    {id:'image',label:pt?'Imagem':'Image'},
+    {id:'avatar',label:'Avatar'},
+    {id:'audio',label:pt?'Áudio':'Audio'},
+    {id:'upscale',label:'Upscale'},
+    {id:'lipsync',label:'Lip Sync'}
   ];
-  const filter=S.modelCatFilter||'all';
-  const list=MODELS.filter(m=>filter==='all'||m.cat===filter);
+  var sorts=[
+    {id:'recommended',label:pt?'Mais recomendado':'Most recommended'},
+    {id:'fast',label:pt?'Mais rápido':'Fastest'},
+    {id:'quality',label:pt?'Melhor qualidade':'Best quality'},
+    {id:'cost',label:pt?'Menor custo':'Lowest cost'},
+    {id:'premium',label:'Premium'}
+  ];
+  var filter=S.modelCatFilter||'all';
+  var sortBy=S.modelSort||'recommended';
+  var search=(S.modelSearch||'').toLowerCase();
+
+  function filterModel(m){
+    if(filter==='all')return true;
+    if(filter==='video')return m.cat==='video';
+    if(filter==='image')return m.cat==='image';
+    if(filter==='audio')return m.cat==='audio'||m.func==='music'||m.func==='sfx'||m.func==='voice';
+    if(filter==='avatar')return m.func==='lipsync'||m.func==='avatar'||(m.name&&m.name.toLowerCase().indexOf('avatar')>=0)||(m.name&&m.name.toLowerCase().indexOf('lipsync')>=0)||m.id==='klinglip';
+    if(filter==='upscale')return m.func==='upscale'||(m.name&&m.name.toLowerCase().indexOf('upscale')>=0);
+    if(filter==='lipsync')return m.func==='lipsync'||m.id==='klinglip';
+    if(filter==='text-to-video')return m.cat==='video'&&(!m.func||m.func==='motion'||m.func==='omni'||m.func==='camera');
+    if(filter==='image-to-video')return m.cat==='video'&&(m.refSpec&&m.refSpec.start);
+    return true;
+  }
+  function sortModels(a,b){
+    if(sortBy==='fast'){var sp={'rapido':0,'medio':1,'lento':2};return (sp[a.speed]||1)-(sp[b.speed]||1);}
+    if(sortBy==='quality'){var qp={'premium':0,'standard':1};return (qp[a.quality]||1)-(qp[b.quality]||1);}
+    if(sortBy==='cost'){return (a.estimatedCredits||5)-(b.estimatedCredits||5);}
+    if(sortBy==='premium'){return (a.isPremium===b.isPremium)?0:(a.isPremium?-1:1);}
+    // recommended: featured first
+    return ((b.featured?1:0)-(a.featured?1:0))||((a.status==='live'?0:1)-(b.status==='live'?0:1));
+  }
+
+  var list=MODELS.filter(function(m){
+    if(!filterModel(m))return false;
+    if(search){var n=(m.name||'').toLowerCase()+(m.sub||'').toLowerCase()+((m.desc&&m.desc[S.lang])||'').toLowerCase();return n.indexOf(search)>=0;}
+    return true;
+  }).sort(sortBy==='recommended'?function(a,b){return((b.featured?1:0)-(a.featured?1:0))||((a.status==='live'?0:1)-(b.status==='live'?0:1));}:function(){return 0;});
+
   return areaHeader({
-    kicker:S.lang==='pt'?'CATÁLOGO':'CATALOG',
-    title:S.lang==='pt'?'Modelos disponíveis':'Available models',
-    desc:S.lang==='pt'?`Total de ${MODELS.length} modelos. Texto → Vídeo, Imagem → Vídeo, Texto → Imagem e mais — com preços por segundo/imagem.`:`Total of ${MODELS.length} models. Text → Video, Image → Video, Text → Image and more.`,
+    kicker:pt?'CATÁLOGO':'CATALOG',
+    title:pt?'Modelos disponíveis':'Available models',
+    desc:pt?('Total de '+MODELS.length+' modelos — Texto→Vídeo, Img→Vídeo, Texto→Imagem, Avatar, Áudio e mais.'):('Total of '+MODELS.length+' models — Text→Video, Img→Video, Text→Image, Avatar, Audio and more.'),
     area:'models'
-  })+`
-  <div class="seg" style="margin-bottom:8px">${cats.map(c=>`<button class="${filter===c.id?'on':''}" onclick="S.modelCatFilter='${c.id}';render()">${c.label} ${c.id==='all'?MODELS.length:MODELS.filter(m=>m.cat===c.id).length}</button>`).join('')}</div>
-  <div class="model-cat-grid">
-    ${list.map(m=>{
-      const costRate=MODEL_COST_USD[m.id]||0;const isVid=m.cat==='video';const isImg=m.cat==='image';
-      const funcLbls={'img2vid':{pt:'Img→Vid',en:'Img→Video'},'lipsync':{pt:'Lip Sync',en:'Lip Sync'},'camera':{pt:'Câmera Ctrl',en:'Camera Ctrl'},'omni':{pt:'Omni',en:'Omni'},'ref2vid':{pt:'Ref→Vídeo',en:'Ref→Video'},'t2v':{pt:'Texto→Vídeo',en:'Text→Video'}};
-            const tag=isVid?(S.lang==='pt'?'Vídeo':'Video'):(isImg?(S.lang==='pt'?'Imagem':'Image'):(S.lang==='pt'?'Áudio':'Audio'));
-      const tagCls=isVid?'video':(isImg?'image':'audio');
-      const fbi=Math.abs(m.id.charCodeAt(0)+m.id.charCodeAt(m.id.length-1))%FALLBACK_REEL.length;
-      const reelI=m.img||FALLBACK_REEL[fbi]; // usa img específica do modelo se disponível
-      return `<article class="mc-card">
-        <div class="mc-thumb ${tagCls}"><img src="${reelI}" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.style.display='none'"><span class="mc-badge">${m.featured?'★ FEATURED':(m.status==='live'?'● LIVE':'BETA')}</span></div>
-        <div class="mc-body">
-          <span class="mc-tag ${tagCls}">${tag}</span>
-          <div class="mc-name">${escapeHtml(m.name)}</div><div style="margin-top:4px">${mcCaps(m)}</div>
-          <div class="mc-desc">${escapeHtml((m.desc&&m.desc[S.lang])||'')}</div>
-          <div class="mc-foot">
-            <div><div class="mc-price">${costRate?fmtUSD(costRate)+(isVid?'<small>/s</small>':'<small>/'+(S.lang==='pt'?'img':'img')+'</small>'):(S.lang==='pt'?'—':'—')}</div></div>
-            <button class="btn btn-primary btn-sm" onclick="sendModelToStudio('${m.id}')">${S.lang==='pt'?'Usar no Estúdio':'Use in Studio'}</button>
-          </div>
-        </div>
-      ${(p.comments&&p.comments.length)?`<div style="padding:8px 14px 10px;border-top:1px solid var(--line);background:var(--panel-2)">${p.comments.slice(0,2).map(function(c){return '<div style="font-size:12px;color:var(--ink-2);padding:2px 0">💬 '+escapeHtml(c)+'</div>';}).join('')}${p.comments.length>2?'<div style="font-size:11px;color:var(--ink-4);margin-top:2px">+ '+(p.comments.length-2)+' comentários</div>':''}</div>`:''}
-      </article>`;}).join('')}
-  </div>`;
+  })+
+  '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px">'+
+  '<input class="input" id="mcSearch" placeholder="'+(pt?'Buscar modelo...':'Search model...')+'" style="max-width:220px;padding:7px 12px;font-size:13px;flex-shrink:0" value="'+(S.modelSearch||'')+'" oninput="S.modelSearch=this.value;render()">'+
+  '<div class="seg" style="flex-wrap:wrap;gap:4px">'+
+    sorts.map(function(s){return '<button class="'+(sortBy===s.id?'on':'')+'" onclick="S.modelSort=\''+s.id+'\';render()" style="font-size:12px;padding:5px 10px">'+s.label+'</button>';}).join('')+
+  '</div></div>'+
+  '<div class="seg" style="flex-wrap:wrap;gap:4px;margin-bottom:14px">'+
+    cats.map(function(c){
+      var cnt=c.id==='all'?MODELS.length:MODELS.filter(function(m){return (function(mm){if(c.id==='video')return mm.cat==='video';if(c.id==='image')return mm.cat==='image';if(c.id==='audio')return mm.cat==='audio';if(c.id==='avatar')return mm.func==='lipsync'||mm.id==='klinglip';if(c.id==='upscale')return mm.func==='upscale';if(c.id==='lipsync')return mm.func==='lipsync'||mm.id==='klinglip';if(c.id==='text-to-video')return mm.cat==='video'&&(!mm.func||mm.func==='motion'||mm.func==='omni'||mm.func==='camera');if(c.id==='image-to-video')return mm.cat==='video'&&(mm.refSpec&&mm.refSpec.start);return true;})(m);}).length;
+      return '<button class="'+(filter===c.id?'on':'')+'" onclick="S.modelCatFilter=\''+c.id+'\';render()" style="font-size:12px">'+c.label+' <b style="opacity:.6">'+cnt+'</b></button>';
+    }).join('')+
+  '</div>'+
+  '<div class="model-cat-grid">'+
+  (list.length===0?'<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--ink-3)">'+(pt?'Nenhum modelo encontrado.':'No models found.')+'</div>':
+  list.map(function(m){
+    var costRate=MODEL_COST_USD[m.id]||0;
+    var isVid=m.cat==='video';var isImg=m.cat==='image';
+    var tag=isVid?(pt?'Vídeo':'Video'):(isImg?(pt?'Imagem':'Image'):(m.cat==='audio'?(pt?'Áudio':'Audio'):(pt?'Outro':'Other')));
+    var tagCls=isVid?'video':(isImg?'image':'audio');
+    var fbi=Math.abs(m.id.charCodeAt(0)+m.id.charCodeAt(m.id.length-1))%FALLBACK_REEL.length;
+    var reelI=m.img||FALLBACK_REEL[fbi];
+    return '<article class="mc-card">'+
+      '<div class="mc-thumb '+tagCls+'"><img src="'+reelI+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.style.display=\'none\'"><span class="mc-badge">'+(m.featured?'★ FEATURED':(m.status==='live'?'● LIVE':'BETA'))+'</span></div>'+
+      '<div class="mc-body">'+
+        '<span class="mc-tag '+tagCls+'">'+tag+'</span>'+
+        '<div class="mc-name">'+escapeHtml(m.name)+'</div>'+
+        '<div style="margin-top:4px">'+mcCaps(m)+'</div>'+
+        '<div class="mc-desc">'+escapeHtml((m.desc&&m.desc[S.lang])||'')+'</div>'+
+        '<div class="mc-foot">'+
+          '<div><div class="mc-price">'+(costRate?fmtUSD(costRate)+(isVid?'<small>/s</small>':'<small>/img</small>'):'—')+'</div></div>'+
+          '<div style="display:flex;gap:6px">'+
+            '<button class="btn btn-ghost btn-sm" onclick="scFromModel(\''+m.id+'\')">'+( pt?'Usar no Criar':'Use in Create')+'</button>'+
+            '<button class="btn btn-primary btn-sm" onclick="sendModelToStudio(\''+m.id+'\')">'+( pt?'Estúdio':'Studio')+'</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</article>';
+  }).join(''))+
+  '</div>';
+}
+function scFromModel(id){
+  _scModel=id;
+  go('criar');
 }
 function viewAdmin(){
   return areaHeader({
