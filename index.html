@@ -1608,6 +1608,10 @@ input[type=range]{accent-color:var(--accent)}
 
 /* ── Layout fullscreen (no sidebar) for criar view ── */
 body.layout-fullscreen #app{grid-template-columns:0 1fr!important;grid-template-rows:0 1fr!important}
+/* Mobile usa 1 coluna ("top"/"main") — forçar 2 colunas colapsava .main para largura 0 */
+@media(max-width:860px){
+  body.layout-fullscreen #app{grid-template-columns:1fr!important;grid-template-rows:0 1fr!important;grid-template-areas:"top" "main"!important}
+}
 body.layout-fullscreen .sidebar{display:none!important}
 body.layout-fullscreen .main{padding:0!important;margin-left:0!important;width:100%!important;max-width:100%!important;overflow-y:auto;overflow-x:hidden}
 body.layout-fullscreen .topbar{display:none!important}
@@ -1668,7 +1672,7 @@ body.layout-fullscreen .topbar{display:none!important}
 /* ── Inspirações rápidas (mosaico fixo 2×3, coluna esquerda, sem scroll) ── */
 .sc-inspo-wrap{flex-shrink:0;overflow:hidden}
 .sc-inspo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.sc-inspo-thumb{position:relative;border-radius:10px;overflow:hidden;background:var(--panel-2);border:1px solid var(--line-2);cursor:pointer;aspect-ratio:5/4;transition:border-color .2s,box-shadow .2s}
+.sc-inspo-thumb{position:relative;border-radius:13px;overflow:hidden;background:var(--panel-2);border:1px solid var(--line-2);cursor:pointer;aspect-ratio:5/4;transition:border-color .2s,box-shadow .2s}
 .sc-inspo-thumb img{width:100%;height:100%;object-fit:cover;display:block;opacity:1;transition:opacity .45s ease,transform .25s ease}
 .sc-inspo-thumb:hover img{transform:scale(1.05)}
 .sc-inspo-thumb::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.18);opacity:0;transition:opacity .2s;pointer-events:none}
@@ -1686,6 +1690,55 @@ body.layout-fullscreen .topbar{display:none!important}
 .sc-ref-thumb .sc-ref-vid{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--ink-2);gap:4px;padding:0 6px;text-align:center}
 .sc-ref-x{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.72);border:1px solid rgba(216,169,58,.5);color:#fff;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;line-height:1;padding:0}
 .sc-ref-x:hover{background:var(--hs-gold);color:var(--hs-button-text-dark)}
+
+/* ══ Preview principal inteligente — mídia vertical centralizada com backdrop desfocado ══ */
+.sc-demo-block .sc-demo-single.simple-preview-card{
+  width:min(820px,100%);aspect-ratio:auto;height:clamp(260px,34vh,390px);max-height:none;
+  border-radius:22px;overflow:hidden;margin:0 auto;background:#0b0b0e;border:1px solid var(--line-2);
+  box-shadow:0 12px 40px rgba(0,0,0,.28)}
+.simple-preview-card .simple-preview-backdrop{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  filter:blur(22px) brightness(.36) saturate(1.15);transform:scale(1.08);opacity:.8;z-index:1;pointer-events:none}
+.simple-preview-card .simple-preview-media{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:2}
+.simple-preview-card.is-landscape .simple-preview-media{object-fit:cover}
+.simple-preview-card.is-landscape .simple-preview-backdrop{display:none}
+.simple-preview-card .sc-preview-loading{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;background:rgba(5,5,5,.62);color:#f3efe2;font-size:13.5px;backdrop-filter:blur(3px)}
+@media(max-width:900px){
+  .sc-demo-block .sc-demo-single.simple-preview-card{height:clamp(230px,38vh,360px);min-height:0}
+}
+
+/* ══ Mosaico de inspirações — ações rápidas no hover (desktop) ══ */
+.sc-inspo-acts{position:absolute;inset:auto 0 0 0;z-index:3;display:flex;gap:4px;justify-content:center;padding:6px 4px;
+  background:linear-gradient(transparent,rgba(0,0,0,.74));opacity:0;transition:opacity .18s;pointer-events:none}
+.sc-inspo-acts button{background:rgba(0,0,0,.6);border:1px solid rgba(216,169,58,.5);color:#f3efe2;border-radius:7px;
+  font-size:11px;line-height:1;padding:5px 7px;cursor:pointer}
+.sc-inspo-acts button:hover{background:var(--hs-gold);color:var(--hs-button-text-dark);border-color:var(--hs-gold)}
+@media(hover:hover){.sc-inspo-thumb:hover .sc-inspo-acts{opacity:1;pointer-events:auto}}
+
+/* ══ Lightbox de mídia ══ */
+.hsai-lightbox{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.93);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:28px}
+.hsai-lightbox .lb-stage{position:relative;flex:1;min-height:0;width:100%}
+.hsai-lightbox .lb-stage img,.hsai-lightbox .lb-stage video{position:absolute;inset:0;margin:auto;width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;border-radius:12px}
+.hsai-lightbox .lb-close{position:absolute;top:16px;right:18px;z-index:5;width:40px;height:40px;border-radius:50%;
+  background:rgba(0,0,0,.6);border:1px solid rgba(216,169,58,.55);color:#fff;font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center}
+.hsai-lightbox .lb-close:hover{background:var(--hs-gold);color:var(--hs-button-text-dark)}
+.hsai-lightbox .lb-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:44px;height:44px;border-radius:50%;
+  background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.22);color:#fff;font-size:20px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center}
+.hsai-lightbox .lb-nav:hover{border-color:var(--hs-gold);color:var(--hs-gold)}
+.hsai-lightbox .lb-prev{left:16px}
+.hsai-lightbox .lb-next{right:16px}
+.hsai-lightbox .lb-prompt{max-width:720px;width:100%;font-size:12px;color:rgba(255,255,255,.66);text-align:center;
+  margin-top:10px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.hsai-lightbox .lb-acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+@media(max-width:768px){
+  .hsai-lightbox{padding:10px}
+  .hsai-lightbox .lb-acts .btn{min-height:42px;font-size:13px;flex:1 1 44%}
+  .hsai-lightbox .lb-acts{width:100%}
+  .hsai-lightbox .lb-close{top:10px;right:10px;width:44px;height:44px}
+}
+
 .sc-model-line{font-size:12px;color:var(--ink-3);display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 6px}
 .sc-select{background:var(--panel-2);border:1px solid var(--line-2);border-radius:8px;padding:7px 10px;color:var(--ink);font-size:13px;cursor:pointer;outline:none;transition:border-color .15s;max-width:160px}
 .sc-select:hover,.sc-select:focus{border-color:var(--accent)}
@@ -1707,6 +1760,12 @@ body.layout-fullscreen .topbar{display:none!important}
   .sc-gal-grid{display:flex;overflow-x:auto;gap:8px;padding-bottom:6px;scrollbar-width:thin}
   .sc-gal-cell{flex:0 0 84px;width:84px}
   .sc-inspo-grid{grid-template-columns:repeat(3,1fr);gap:6px}
+}
+/* ══ Mobile: botões de ação da home em grade 2 colunas ══ */
+@media(max-width:640px){
+  .sc-actions{display:grid;grid-template-columns:1fr 1fr}
+  .sc-actions>span{display:none}
+  .sc-actions .btn{width:100%;justify-content:center}
 }
 #app.sidebar-collapsed .sidebar .brand{flex-direction:column!important;padding:14px 4px 10px!important;gap:6px!important;align-items:center!important;justify-content:flex-start!important}
 #app.sidebar-collapsed .sidebar .brand>div:first-child{flex:none!important;width:100%!important;justify-content:center!important}
@@ -1756,7 +1815,7 @@ body.layout-fullscreen .topbar{display:none!important}
   box-shadow:0 6px 22px rgba(216,169,58,.38);filter:none}
 .btn-primary:active:not(:disabled),.btn-plans:active:not(:disabled){
   background:linear-gradient(135deg,var(--hs-gold),var(--hs-gold-dark));
-  color:var(--hs-button-text-dark);filter:none}
+  color:var(--hs-button-text-dark);filter:none;transform:translateY(1px)}
 .btn-primary:focus-visible,.btn-plans:focus-visible{outline:2px solid var(--hs-gold);outline-offset:2px}
 .btn-primary:disabled{opacity:.5;filter:none}
 /* Tema claro: hover escurece levemente — nunca se confunde com o fundo da página */
@@ -3516,7 +3575,7 @@ function viewSimpleCreate(){
 
   // Inspirações rápidas — mosaico compacto abaixo da Galeria Rápida
   +'<div class="sc-side-title" style="margin-top:14px">'+(pt?'Inspirações rápidas':'Quick inspirations')+'</div>'
-  +'<div style="flex-shrink:0;font-size:11px;color:var(--ink-4);margin:-4px 0 8px">'+(pt?'Clique para usar como referência.':'Click to use as reference.')+'</div>'
+  +'<div style="flex-shrink:0;font-size:11px;color:var(--ink-4);margin:-4px 0 8px">'+(pt?'Clique para ver no preview · 📎 anexa como referência.':'Click to view in the preview · 📎 attaches as reference.')+'</div>'
   +'<div class="sc-inspo-wrap"><div class="sc-inspo-grid" id="scHomeInspirations" onmouseenter="window._scInspPaused=true" onmouseleave="window._scInspPaused=false">'+scRenderHomeInspirations()+'</div></div>'
   +'</div>'
 
@@ -3525,7 +3584,7 @@ function viewSimpleCreate(){
 
   // Demo / resultado — botões de ação ficam ABAIXO do preview, nunca sobre a imagem
   +'<div class="sc-demo-block">'
-  +'<div class="sc-demo-single" id="scDemoZone">'
+  +'<div class="sc-demo-single simple-preview-card" id="scDemoZone">'
   +'<div class="sc-demo-stage" id="scSlideStage"></div>'
   +'<div class="sc-badge-ov"><span class="sc-slide-badge" id="scSlideBadge">🎬</span></div>'
   +'</div>'
@@ -3631,10 +3690,18 @@ function _scRenderRefPreview(){
   var inner=isVid
     ?'<div class="sc-ref-vid">🎞 '+(pt?'Vídeo de referência':'Reference video')+'</div>'
     :'<img src="'+escapeAttr(_scRef)+'" alt="">';
-  preview.innerHTML='<div class="sc-ref-strip"><div class="sc-ref-thumb">'+inner
+  preview.innerHTML='<div class="sc-ref-strip"><div class="sc-ref-thumb" style="cursor:zoom-in" onclick="scRefExpand(event)" title="'+(pt?'Expandir referência':'Expand reference')+'">'+inner
     +'<button class="sc-ref-x" onclick="scRemoveRef()" aria-label="'+(pt?'Remover referência':'Remove reference')+'" title="'+(pt?'Remover referência':'Remove reference')+'">×</button></div></div>';
   preview.style.display='';
 }
+/* Clique na miniatura de referência → abre no lightbox (o × continua removendo) */
+function scRefExpand(ev){
+  if(ev&&ev.target&&ev.target.classList&&ev.target.classList.contains('sc-ref-x'))return;
+  if(!_scRef)return;
+  var el=document.getElementById('scPrompt');
+  openMediaLightbox([{url:_scRef,prompt:el?(el.value||''):''}],0);
+}
+window.scRefExpand=scRefExpand;
 
 /* ── Inspirações rápidas (home) — mosaico de referências cinematográficas ── */
 window.HOME_INSPIRATIONS=[
@@ -3667,12 +3734,39 @@ function scRenderHomeInspirations(){
   window._scInspShown=shown;
   return shown.map(function(poolIdx,slot){
     var it=pool[poolIdx];
-    return '<div class="sc-inspo-thumb" id="scInsp'+slot+'" onclick="useHomeInspirationSlot('+slot+')" title="'+escapeAttr((pt?'Usar como referência — ':'Use as reference — ')+it.title)+'">'
+    return '<div class="sc-inspo-thumb" id="scInsp'+slot+'" onclick="useHomeInspirationSlot('+slot+')" ondblclick="event.stopPropagation();scInspExpand('+slot+')" title="'+escapeAttr(it.title)+'">'
       +'<img src="'+escapeAttr(it.mediaUrl)+'" loading="lazy" alt="'+escapeAttr(it.title)+'">'
       +'<span class="sc-inspo-badge">'+(it.type==='video'?'🎬':'🖼')+'</span>'
+      +'<div class="sc-inspo-acts">'
+      +'<button onclick="event.stopPropagation();scInspAttach('+slot+')" title="'+(pt?'Usar como referência':'Use as reference')+'">📎</button>'
+      +'<button onclick="event.stopPropagation();scInspSimilar('+slot+')" title="'+(pt?'Criar parecido':'Create similar')+'">✨</button>'
+      +'<button onclick="event.stopPropagation();scInspExpand('+slot+')" title="'+(pt?'Expandir':'Expand')+'">⛶</button>'
+      +'</div>'
       +'</div>';
   }).join('');
 }
+function scInspAttach(slot){
+  var shown=window._scInspShown||[];
+  if(typeof shown[slot]==='undefined')return;
+  useHomeInspiration(shown[slot],true);
+}
+function scInspSimilar(slot){
+  var shown=window._scInspShown||[];
+  if(typeof shown[slot]==='undefined')return;
+  useHomeInspiration(shown[slot],false);
+  var el=document.getElementById('scPrompt');
+  if(el)el.focus();
+}
+function scInspExpand(slot){
+  var shown=window._scInspShown||[];
+  if(typeof shown[slot]==='undefined')return;
+  var pool=window.HOME_INSPIRATIONS||[];
+  var items=pool.map(function(it){return{kind:it.type,url:it.mediaUrl,prompt:it.prompt,title:it.title};});
+  openMediaLightbox(items,shown[slot]);
+}
+window.scInspAttach=scInspAttach;
+window.scInspSimilar=scInspSimilar;
+window.scInspExpand=scInspExpand;
 
 /* Clique num card do mosaico: aplica a inspiração + destaque visual rápido */
 function useHomeInspirationSlot(slot){
@@ -3738,13 +3832,14 @@ function _scStartInspRotation(){
         }
       }
       tick();
-    },8000+Math.floor(Math.random()*10000));
+    },5000+Math.floor(Math.random()*3000)); // troca UMA posição a cada 5–8s
   })();
 }
 
-/* Preenche prompt + tipo/modelo/aspecto/duração e anexa a imagem como referência visual.
+/* Preenche prompt + tipo/modelo/aspecto/duração e leva o item ao PREVIEW PRINCIPAL.
+   Com attach=true também anexa a imagem como referência visual.
    NÃO gera automaticamente — o usuário revisa e clica em Criar. */
-function useHomeInspiration(i){
+function useHomeInspiration(i,attach){
   var item=(window.HOME_INSPIRATIONS||[])[i];
   if(!item)return;
   var el=document.getElementById('scPrompt');
@@ -3764,12 +3859,19 @@ function useHomeInspiration(i){
     var nm=document.getElementById('scRecModelName');if(nm&&m){nm.textContent=m.name;nm.title=m.bestFor||'';}
     var nc=document.getElementById('scRecCredits');if(nc&&m)nc.textContent=m.estimatedCredits||3;
   }
-  // Referência visual: mesmo estado (_scRef) que o fluxo de geração lê
-  _scRef=item.mediaUrl;
-  _scRenderRefPreview();
-  try{localStorage.setItem('hsai_current_reference',JSON.stringify(item));}catch(e){}
+  // Leva o item ao preview principal (pausa a rotação)
+  _scSetPreviewItem({kind:item.type==='video'?'video':'image',url:item.mediaUrl,prompt:item.prompt||'',aspectRatio:item.aspectRatio});
+  var pt=typeof S!=='undefined'&&S.lang==='pt';
+  if(attach){
+    // Referência visual: mesmo estado (_scRef) que o fluxo de geração lê
+    _scRef=item.mediaUrl;
+    _scRenderRefPreview();
+    try{localStorage.setItem('hsai_current_reference',JSON.stringify(item));}catch(e){}
+    toast(pt?'📎 Referência anexada — revise e clique em Criar':'📎 Reference attached — review and click Create','ok');
+  }else{
+    toast(pt?'✨ Inspiração no preview — revise o prompt e clique em Criar':'✨ Inspiration in preview — review the prompt and click Create','ok');
+  }
   if(el)el.focus();
-  toast(typeof S!=='undefined'&&S.lang==='pt'?'✨ Inspiração aplicada — revise e clique em Criar':'✨ Inspiration applied — review and click Create','ok');
 }
 window.useHomeInspiration=useHomeInspiration;
 window.scRenderHomeInspirations=scRenderHomeInspirations;
@@ -3789,6 +3891,57 @@ function _scBuildSlidePool(){
   for(var i=0;i<n;i++){if(demoVids[i])demos.push(demoVids[i]);if(demoImgs[i])demos.push(demoImgs[i]);}
   return user.concat(demos);
 }
+/* ── Orientação da mídia: dimensões reais quando possível → aspectRatio → tipo ── */
+function getMediaOrientation(item,onRefine){
+  function fromRatio(ar){
+    if(!ar)return null;
+    var p=String(ar).split(':');
+    var w=parseFloat(p[0]),h=parseFloat(p[1]);
+    if(!w||!h)return null;
+    if(Math.abs(w-h)<0.01)return 'square';
+    return w>h?'landscape':'portrait';
+  }
+  function fromDims(w,h){if(!w||!h)return null;if(w===h)return 'square';return w>h?'landscape':'portrait';}
+  var guess=fromRatio(item.aspectRatio)||'landscape';
+  var url=item.url||item.outputUrl||item.previewUrl||item.mediaUrl||'';
+  var isVid=/\.(mp4|mov|webm|m4v)($|\?)/i.test(url)||/^data:video\//i.test(url);
+  if(url&&onRefine){
+    if(!isVid){
+      var im=new Image();
+      im.onload=function(){var o=fromDims(im.naturalWidth,im.naturalHeight);if(o)onRefine(o);};
+      im.src=url;
+    }else{
+      var v=document.createElement('video');
+      v.onloadedmetadata=function(){var o=fromDims(v.videoWidth,v.videoHeight);if(o)onRefine(o);v.removeAttribute('src');};
+      v.muted=true;v.preload='metadata';v.src=url;
+    }
+  }
+  return guess;
+}
+function _scSetPreviewOrientation(o){
+  var card=document.getElementById('scDemoZone');
+  if(!card)return;
+  card.classList.remove('is-portrait','is-landscape','is-square');
+  card.classList.add('is-'+o);
+}
+/* Renderiza a mídia no preview principal em 2 camadas (backdrop desfocado + mídia) */
+function _scRenderPreviewMedia(s){
+  var stage=document.getElementById('scSlideStage');
+  if(!stage)return;
+  var url=s.url||'';
+  var isVideoFile=s.kind==='video'&&s.isVideoFile;
+  var token=(window._scPrevToken=(window._scPrevToken||0)+1);
+  _scSetPreviewOrientation(getMediaOrientation(s,function(o){
+    if(window._scPrevToken===token)_scSetPreviewOrientation(o); // ignora refinamento de slide antigo
+  }));
+  if(isVideoFile){
+    stage.innerHTML='<video class="simple-preview-backdrop" aria-hidden="true" muted loop autoplay playsinline preload="metadata" referrerpolicy="no-referrer" src="'+escapeAttr(url)+'"></video>'
+      +'<video class="simple-preview-media" muted loop autoplay playsinline preload="auto" referrerpolicy="no-referrer" src="'+escapeAttr(url)+'" onerror="this.style.opacity=0"></video>';
+  }else{
+    stage.innerHTML='<img class="simple-preview-backdrop" aria-hidden="true" src="'+escapeAttr(url)+'" alt="">'
+      +'<img class="simple-preview-media" src="'+escapeAttr(url)+'" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=\'https://picsum.photos/seed/scimg/960/540\'">';
+  }
+}
 function _scApplySlide(){
   var st=window._scSlides;
   if(!st||!st.pool||!st.pool.length)return;
@@ -3796,18 +3949,16 @@ function _scApplySlide(){
   if(!stage)return;
   var s=st.pool[st.i%st.pool.length];
   var pt=typeof S!=='undefined'&&S.lang==='pt';
-  if(s.kind==='video'&&s.isVideoFile){
-    stage.innerHTML='<video muted loop autoplay playsinline preload="auto" referrerpolicy="no-referrer" src="'+escapeAttr(s.url)+'" onerror="this.style.opacity=0"></video>';
-  }else{
-    stage.innerHTML='<img src="'+escapeAttr(s.url)+'" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=\'https://picsum.photos/seed/scimg/960/540\'">';
-  }
+  window._scActivePreview=s;
+  _scRenderPreviewMedia(s);
   var badge=document.getElementById('scSlideBadge');
   if(badge)badge.textContent=s.kind==='video'?'🎬 '+(pt?'Vídeo':'Video'):'🖼 '+(pt?'Imagem':'Image');
   var acts=document.getElementById('scSlideActs');
   if(acts){
     var b='<button class="btn btn-sm" onclick="scDemoSimilar()">'+(pt?'Criar parecido':'Create similar')+'</button>'
       +'<button class="btn btn-sm" onclick="scDemoUseRef()">'+(pt?'Usar como referência':'Use as reference')+'</button>'
-      +'<button class="btn btn-sm" onclick="scSlideCopyPrompt()">'+(pt?'Copiar prompt':'Copy prompt')+'</button>';
+      +'<button class="btn btn-sm" onclick="scSlideCopyPrompt()">'+(pt?'Copiar prompt':'Copy prompt')+'</button>'
+      +'<button class="btn btn-sm" onclick="scExpandPreview()">⛶ '+(pt?'Expandir':'Expand')+'</button>';
     if(s.id){
       b+='<button class="btn btn-sm" onclick="scGalleryReutilizar(\''+s.id+'\')">'+(pt?'Reutilizar':'Reuse')+'</button>'
         +'<button class="btn btn-sm" onclick="scShowResultById(\''+s.id+'\')">'+(pt?'Ver':'View')+'</button>';
@@ -3817,16 +3968,131 @@ function _scApplySlide(){
 }
 function _scStartSlides(){
   if(window._scSlideTimer){clearInterval(window._scSlideTimer);window._scSlideTimer=null;}
-  window._scSlides={pool:_scBuildSlidePool(),i:0};
+  window._scSlides={pool:_scBuildSlidePool(),i:0,pinned:false};
   _scApplySlide();
   window._scSlideTimer=setInterval(function(){
     var st=window._scSlides;
     if(!document.getElementById('scDemoZone')||!st){
       clearInterval(window._scSlideTimer);window._scSlideTimer=null;return;
     }
-    if(st.pool.length>1){st.i=(st.i+1)%st.pool.length;_scApplySlide();}
+    if(!st.pinned&&st.pool.length>1){st.i=(st.i+1)%st.pool.length;_scApplySlide();}
   },5000);
 }
+/* Fixa um item no preview principal (clique no mosaico / resultado) — pausa a rotação */
+function _scSetPreviewItem(s){
+  window._scSlides=window._scSlides||{pool:[],i:0};
+  var st=window._scSlides;
+  var idx=-1;
+  for(var i=0;i<st.pool.length;i++){if(st.pool[i].url===s.url){idx=i;break;}}
+  if(idx<0){st.pool.unshift(s);idx=0;}
+  st.i=idx;st.pinned=true;
+  _scApplySlide();
+}
+function scExpandPreview(){
+  var st=window._scSlides;
+  if(!st||!st.pool||!st.pool.length)return;
+  openMediaLightbox(st.pool,st.i%st.pool.length);
+}
+function scUseAsRef(url){
+  if(!url)return;
+  _scRef=url;
+  _scRenderRefPreview();
+  toast(typeof S!=='undefined'&&S.lang==='pt'?'📎 Referência adicionada':'📎 Reference added','ok');
+}
+window.scUseAsRef=scUseAsRef;
+
+/* ── Lightbox de mídia: mídia grande + navegação + ações rápidas ── */
+function openMediaLightbox(items,index){
+  if(!items||!items.length)return;
+  closeMediaLightbox();
+  window._lbState={items:items,i:Math.max(0,Math.min(index||0,items.length-1))};
+  var el=document.createElement('div');
+  el.className='hsai-lightbox';el.id='hsaiLightbox';
+  el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');
+  el.innerHTML='<button class="lb-close" onclick="closeMediaLightbox()" aria-label="Fechar">✕</button>'
+    +(items.length>1?'<button class="lb-nav lb-prev" onclick="lbNav(-1)" aria-label="Anterior">‹</button><button class="lb-nav lb-next" onclick="lbNav(1)" aria-label="Próximo">›</button>':'')
+    +'<div class="lb-stage" id="lbStage"></div>'
+    +'<div class="lb-prompt" id="lbPrompt"></div>'
+    +'<div class="lb-acts" id="lbActs"></div>';
+  el.addEventListener('click',function(e){if(e.target===el)closeMediaLightbox();});
+  document.body.appendChild(el);
+  document.addEventListener('keydown',_lbKey);
+  _lbRender();
+}
+function closeMediaLightbox(){
+  var el=document.getElementById('hsaiLightbox');
+  if(el)el.remove();
+  document.removeEventListener('keydown',_lbKey);
+  window._lbState=null;
+}
+function _lbKey(e){
+  if(e.key==='Escape')closeMediaLightbox();
+  else if(e.key==='ArrowLeft')lbNav(-1);
+  else if(e.key==='ArrowRight')lbNav(1);
+}
+function lbNav(d){
+  var st=window._lbState;
+  if(!st)return;
+  st.i=(st.i+d+st.items.length)%st.items.length;
+  _lbRender();
+}
+function _lbItemUrl(s){return s.url||s.mediaUrl||s.outputUrl||s.previewUrl||'';}
+function _lbRender(){
+  var st=window._lbState;
+  if(!st)return;
+  var s=st.items[st.i];
+  var pt=typeof S!=='undefined'&&S.lang==='pt';
+  var stage=document.getElementById('lbStage');
+  if(!stage)return;
+  var url=_lbItemUrl(s);
+  var isVid=(s.kind==='video'&&s.isVideoFile)||/\.(mp4|mov|webm|m4v)($|\?)/i.test(url)||/^data:video\//i.test(url);
+  stage.innerHTML=isVid
+    ?'<video src="'+escapeAttr(url)+'" controls autoplay muted loop playsinline></video>'
+    :'<img src="'+escapeAttr(url)+'" alt="'+escapeAttr(s.title||'')+'">';
+  var p=document.getElementById('lbPrompt');
+  if(p)p.textContent=s.prompt||s.title||'';
+  var a=document.getElementById('lbActs');
+  if(a)a.innerHTML='<button class="btn btn-primary btn-sm" onclick="lbUseRef()">📎 '+(pt?'Usar como referência':'Use as reference')+'</button>'
+    +'<button class="btn btn-ghost btn-sm" onclick="lbSimilar()">✨ '+(pt?'Criar parecido':'Create similar')+'</button>'
+    +'<button class="btn btn-ghost btn-sm" onclick="lbCopyPrompt()">📋 '+(pt?'Copiar prompt':'Copy prompt')+'</button>'
+    +'<button class="btn btn-ghost btn-sm" onclick="lbToStudio()">⚙️ '+(pt?'Abrir no Studio':'Open in Studio')+'</button>';
+}
+function lbUseRef(){
+  var st=window._lbState;
+  if(!st)return;
+  scUseAsRef(_lbItemUrl(st.items[st.i]));
+  closeMediaLightbox();
+}
+function lbSimilar(){
+  var st=window._lbState;
+  if(!st)return;
+  var s=st.items[st.i];
+  closeMediaLightbox();
+  if(typeof scSetType==='function')scSetType((s.kind||s.type)==='image'?'image':'video');
+  var el=document.getElementById('scPrompt');
+  if(el&&s.prompt){el.value=s.prompt;el.focus();if(typeof scUpdateRecommendation==='function')scUpdateRecommendation();}
+  showActionFeedback(typeof S!=='undefined'&&S.lang==='pt'?'✨ Prompt carregado! Ajuste e gere.':'✨ Prompt loaded! Adjust and generate.','ok');
+}
+function lbCopyPrompt(){
+  var st=window._lbState;
+  if(!st)return;
+  var pt=typeof S!=='undefined'&&S.lang==='pt';
+  var p=st.items[st.i].prompt;
+  if(!p){showActionFeedback(pt?'Este item não tem prompt público.':'This item has no public prompt.','info');return;}
+  navigator.clipboard.writeText(p).then(function(){
+    showActionFeedback(pt?'✅ Prompt copiado!':'✅ Prompt copied!','ok');
+  }).catch(function(){showActionFeedback(p.slice(0,60)+'...','info');});
+}
+function lbToStudio(){
+  var st=window._lbState;
+  if(!st)return;
+  var s=st.items[st.i];
+  closeMediaLightbox();
+  sendBriefToStudioSuite({prompt:s.prompt||undefined,referenceUrl:_lbItemUrl(s),mediaType:(s.kind||s.type)==='image'?'image':'video'});
+}
+window.openMediaLightbox=openMediaLightbox;
+window.closeMediaLightbox=closeMediaLightbox;
+window.lbNav=lbNav;window.lbUseRef=lbUseRef;window.lbSimilar=lbSimilar;window.lbCopyPrompt=lbCopyPrompt;window.lbToStudio=lbToStudio;
 function _scCurrentSlide(){
   var st=window._scSlides;
   if(!st||!st.pool||!st.pool.length)return null;
@@ -3868,11 +4134,24 @@ function scBackToDemos(){
   if(zone)zone.style.display='';
   var acts=document.getElementById('scSlideActs');
   if(acts)acts.style.display='';
+  _scStartSlides();
 }
 function scShowResultById(id){
   var item=scGalleryLoad().find(function(i){return i.id===id;});
   if(item)scShowResult(item);
 }
+/* Duplo clique numa miniatura da galeria → lightbox navegável */
+function scGalExpand(id){
+  var withMedia=scGalleryLoad().filter(function(i){return i.outputUrl||i.previewUrl;});
+  if(!withMedia.length)return;
+  var items=withMedia.map(function(i){
+    return{kind:i.mediaType==='video'?'video':'image',url:i.outputUrl||i.previewUrl,prompt:i.prompt||'',isVideoFile:i.mediaType==='video'&&!!i.outputUrl,id:i.id};
+  });
+  var idx=0;
+  for(var k=0;k<withMedia.length;k++){if(withMedia[k].id===id){idx=k;break;}}
+  openMediaLightbox(items,idx);
+}
+window.scGalExpand=scGalExpand;
 
 /* ── Direção / Mentor criativo (dropdown compacto + modal de busca + Conselho) ── */
 function _scMentorOptionsHtml(pt){
@@ -4401,8 +4680,10 @@ function scSendToStudio(){
     }catch(e){}
   }
   scRememberInteraction('create',{prompt:s.prompt,mediaType:s.mediaType});
-  sendToStudio({prompt:s.prompt,modelId:_scModel,mediaUrl:_scRef||null,source:'simple-create',mediaType:s.mediaType,
-    aspectRatio:s.aspectRatio,duration:parseInt(s.duration)||8,style:s.style,quality:s.quality});
+  var active=window._scActivePreview||null;
+  sendToStudio({prompt:s.prompt,modelId:_scModel,mediaUrl:_scRef||(active?active.url:null)||null,source:'simple-create',mediaType:s.mediaType,
+    aspectRatio:s.aspectRatio,duration:parseInt(s.duration)||8,style:s.style,quality:s.quality,
+    metadata:{activePreview:active?(active.url||null):null,activePreviewPrompt:active?(active.prompt||null):null}});
   // Record to recent gallery
   var galleryItem={
     id:'sc_'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),
@@ -4497,45 +4778,53 @@ function scTimeAgo(ts){
   return Math.floor(secs/86400)+(pt?'d atrás':'d ago');
 }
 
+/* Resultado assume o PREVIEW PRINCIPAL (com backdrop por orientação) — mantém prompt/referência */
 function scShowResult(item){
-  var res=document.getElementById('scResultBlock');
-  if(!res)return;
-  res.dataset.id=item.id;
   var pt=typeof S!=='undefined'&&S.lang==='pt';
+  var res=document.getElementById('scResultBlock');
+  if(res){res.dataset.id=item.id;res.style.display='none';res.innerHTML='';}
   var isVideo=item.mediaType==='video';
-  var previewHtml='';
-  if(item.outputUrl&&isVideo){
-    previewHtml='<video src="'+escapeAttr(item.outputUrl)+'" controls autoplay muted loop style="width:100%;max-height:340px;border-radius:12px;object-fit:cover"></video>';
-  }else if(item.outputUrl&&!isVideo){
-    previewHtml='<img src="'+escapeAttr(item.outputUrl)+'" alt="'+escapeAttr(item.prompt||'')+'" style="width:100%;max-height:340px;border-radius:12px;object-fit:cover">';
-  }else if(item.previewUrl){
-    previewHtml='<img src="'+escapeAttr(item.previewUrl)+'" style="width:100%;max-height:300px;border-radius:12px;object-fit:cover">';
-  }else{
-    previewHtml='<div style="width:100%;height:160px;background:var(--panel-2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:44px">'+(isVideo?'🎬':'🖼')+'</div>';
-  }
-  // Result takes over the center zone (demo duo hidden until "voltar às demos")
+  var url=item.outputUrl||item.previewUrl;
+  var slide={kind:isVideo?'video':'image',url:url,prompt:item.prompt||'',isVideoFile:isVideo&&!!item.outputUrl,id:item.id,aspectRatio:item.aspectRatio};
   var zone=document.getElementById('scDemoZone');
-  if(zone)zone.style.display='none';
-  var slideActs=document.getElementById('scSlideActs');
-  if(slideActs)slideActs.style.display='none';
-  res.innerHTML='<div style="background:var(--panel);border-radius:16px;border:1px solid var(--line-2);overflow:hidden">'
-    +'<div style="padding:12px 14px;border-bottom:1px solid var(--line-2);display:flex;align-items:center;gap:10px">'
-    +'<span style="background:var(--accent);color:#fff;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">'+(isVideo?'🎬 Vídeo':'🖼 Imagem')+'</span>'
-    +'<span style="font-size:12px;color:var(--ink-3);flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+escapeHtml(item.prompt||'')+'</span>'
-    +'<span style="font-size:11px;color:var(--ink-4)">'+scTimeAgo(item.createdAt||Date.now())+'</span>'
-    +'<button class="btn btn-ghost btn-sm" style="font-size:11px;padding:3px 8px" onclick="scBackToDemos()" aria-label="'+(pt?'Voltar às demos':'Back to demos')+'">× '+(pt?'voltar às demos':'back to demos')+'</button>'
-    +'</div>'
-    +'<div style="padding:14px">'+previewHtml+'</div>'
-    +'<div style="padding:10px 14px;display:flex;flex-wrap:wrap;gap:8px;border-top:1px solid var(--line-2)">'
-    +(item.outputUrl?'<a class="btn btn-primary btn-sm" href="'+escapeAttr(item.outputUrl)+'" download target="_blank">'+(pt?'⬇ Baixar':'⬇ Download')+'</a>':'')
-    +'<button class="btn btn-ghost btn-sm" onclick="scCopyPrompt(\''+item.id+'\')">'+(pt?'📋 Copiar prompt':'📋 Copy prompt')+'</button>'
-    +'<button class="btn btn-ghost btn-sm" onclick="scGalleryReutilizar(\''+item.id+'\')">'+(pt?'↩ Reutilizar':'↩ Reuse')+'</button>'
-    +'<button class="btn btn-ghost btn-sm" onclick="scRegenerateItem(\''+item.id+'\')">'+(pt?'🔄 Gerar novamente':'🔄 Regenerate')+'</button>'
-    +'<button class="btn btn-ghost btn-sm" style="margin-left:auto;color:var(--err-color,#ef4444)" onclick="scGalleryDelete(\''+item.id+'\')">'+(pt?'🗑 Excluir':'🗑 Delete')+'</button>'
-    +'</div></div>';
-  res.style.display='';
-  res.scrollIntoView({behavior:'smooth',block:'nearest'});
+  if(zone)zone.style.display='';
+  if(window._scSlideTimer){clearInterval(window._scSlideTimer);window._scSlideTimer=null;}
+  if(url){
+    _scSetPreviewItem(slide);
+  }else{
+    window._scSlides=window._scSlides||{pool:[],i:0};
+    window._scSlides.pinned=true;
+    window._scActivePreview=slide;
+    var stage=document.getElementById('scSlideStage');
+    if(stage)stage.innerHTML='<div style="position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;color:var(--ink-3);font-size:13px;text-align:center;padding:0 18px"><span style="font-size:40px">'+(isVideo?'🎬':'🖼')+'</span>'+(pt?'Briefing salvo — gere no Studio para ver o resultado aqui.':'Briefing saved — generate in the Studio to see the result here.')+'</div>';
+  }
+  var badge=document.getElementById('scSlideBadge');
+  if(badge)badge.textContent='✓ '+(isVideo?(pt?'Vídeo':'Video'):(pt?'Imagem':'Image'))+' · '+scTimeAgo(item.createdAt||Date.now());
+  var acts=document.getElementById('scSlideActs');
+  if(acts){
+    acts.style.display='';
+    acts.innerHTML=(item.outputUrl?'<a class="btn btn-primary btn-sm" href="'+escapeAttr(item.outputUrl)+'" download target="_blank">⬇ '+(pt?'Salvar':'Save')+'</a>':'')
+      +'<button class="btn btn-sm" onclick="scCopyPrompt(\''+item.id+'\')">📋 '+(pt?'Copiar prompt':'Copy prompt')+'</button>'
+      +'<button class="btn btn-sm" onclick="scGalleryReutilizar(\''+item.id+'\')">↩ '+(pt?'Reutilizar':'Reuse')+'</button>'
+      +(url?'<button class="btn btn-sm" onclick="scUseAsRefActive()">📎 '+(pt?'Usar como referência':'Use as reference')+'</button>':'')
+      +(url?'<button class="btn btn-sm" onclick="scExpandPreview()">⛶ '+(pt?'Expandir':'Expand')+'</button>':'')
+      +'<button class="btn btn-sm" onclick="scResultToStudio(\''+item.id+'\')">⚙️ '+(pt?'Abrir no Studio':'Open in Studio')+'</button>'
+      +'<button class="btn btn-sm" onclick="scRegenerateItem(\''+item.id+'\')">🔄 '+(pt?'Gerar novamente':'Regenerate')+'</button>'
+      +'<button class="btn btn-ghost btn-sm" onclick="scBackToDemos()">× '+(pt?'voltar às demos':'back to demos')+'</button>';
+  }
+  if(zone)zone.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
+function scUseAsRefActive(){
+  var a=window._scActivePreview;
+  if(a&&a.url)scUseAsRef(a.url);
+}
+function scResultToStudio(id){
+  var item=scGalleryLoad().find(function(i){return i.id===id;});
+  if(!item)return;
+  sendBriefToStudioSuite({prompt:item.prompt,mediaType:item.mediaType,referenceUrl:item.outputUrl||item.previewUrl||(_scRef||null),modelId:item.modelId||undefined});
+}
+window.scUseAsRefActive=scUseAsRefActive;
+window.scResultToStudio=scResultToStudio;
 
 function scRegenerateItem(id){
   scGalleryReutilizar(id);
@@ -4563,7 +4852,7 @@ function scRenderRecentGallery(items){
       ?'<img src="'+escapeAttr(src)+'" alt="'+escapeAttr((item.prompt||'').slice(0,60))+'" loading="lazy">'
       :'<div class="sc-gal-emoji">'+(isVideo?'🎬':'🖼')+'</div>';
     return '<div class="sc-gal-cell">'
-      +'<div class="sc-gal-thumb" onclick="scShowResultById(\''+item.id+'\')" title="'+escapeAttr((item.prompt||'').slice(0,80))+'">'
+      +'<div class="sc-gal-thumb" onclick="scShowResultById(\''+item.id+'\')" ondblclick="event.stopPropagation();scGalExpand(\''+item.id+'\')" title="'+escapeAttr((item.prompt||'').slice(0,80))+'">'
       +thumbInner
       +'<span class="sc-gal-badge">'+(isVideo?'🎬':'🖼')+'</span>'
       +'</div>'
@@ -4747,13 +5036,18 @@ function _scRequireInput(){
 function sendBriefToStudioSuite(payload){
   payload=payload||{};
   var s=scGetSettings();
+  // Item ativo do preview principal acompanha o briefing
+  var active=window._scActivePreview||null;
+  var activeUrl=active?(active.url||null):null;
   sendToStudio({
     prompt:payload.prompt!==undefined?payload.prompt:s.prompt,
     modelId:payload.modelId||_scModel,
-    mediaUrl:payload.referenceUrl!==undefined?payload.referenceUrl:(_scRef||null),
+    mediaUrl:payload.referenceUrl!==undefined?payload.referenceUrl:(_scRef||activeUrl||null),
     mediaType:payload.mediaType||s.mediaType,
     source:'simple-create',
-    metadata:{aspectRatio:s.aspectRatio,duration:parseInt(s.duration)||8,style:s.style,quality:s.quality}
+    metadata:{aspectRatio:s.aspectRatio,duration:parseInt(s.duration)||8,style:s.style,quality:s.quality,
+      activePreview:activeUrl,activePreviewPrompt:active?(active.prompt||null):null,
+      postProduction:(window._scPostOps&&window._scPostOps.length)?window._scPostOps.slice():null}
   });
 }
 
@@ -4785,10 +5079,22 @@ function _handleCreate(type){
     +'</div></div>');
 }
 
+/* Estado de loading sobre o preview principal */
+function _scPreviewLoading(on,msg){
+  var card=document.getElementById('scDemoZone');
+  if(!card)return;
+  var ex=card.querySelector('.sc-preview-loading');
+  if(ex)ex.remove();
+  if(on){
+    var d=document.createElement('div');
+    d.className='sc-preview-loading';
+    d.innerHTML='<span style="font-size:30px">🎬</span><span>'+(msg||'')+'</span>';
+    card.appendChild(d);
+  }
+}
 async function _scRunHomeGeneration(s){
   var pt=S.lang==='pt';
-  var res=document.getElementById('scResultBlock');
-  if(res){res.style.display='';res.innerHTML='<div style="text-align:center;padding:22px;font-size:13px;color:var(--ink-2)">'+(pt?'🎬 Gerando... isso pode levar alguns instantes.':'🎬 Generating... this may take a moment.')+'</div>';}
+  _scPreviewLoading(true,pt?'Preparando geração... isso pode levar alguns instantes.':'Preparing generation... this may take a moment.');
   showActionFeedback(pt?'🎬 Geração iniciada':'🎬 Generation started','info');
   try{
     var d=await HsaiBackend.generateMedia({prompt:s.prompt,mediaType:s.mediaType,model:_scModel,
@@ -4796,15 +5102,18 @@ async function _scRunHomeGeneration(s){
       references:_scRef?[_scRef]:[]});
     var url=d&&(d.url||d.outputUrl);
     if(!url)throw new Error('no-output');
-    scGalleryAdd({
+    var item={
       id:'sc_'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),
       mediaType:s.mediaType||'video',prompt:s.prompt,modelId:_scModel||'',
       aspectRatio:s.aspectRatio,duration:parseInt(s.duration)||8,style:s.style,quality:s.quality,
       creditsUsed:d.creditsUsed||1,createdAt:Date.now(),previewUrl:d.previewUrl||url,outputUrl:url
-    });
-    showActionFeedback(pt?'✅ Pronto! Resultado na galeria rápida.':'✅ Done! Result in the quick gallery.','ok');
+    };
+    scGalleryAdd(item);
+    _scPreviewLoading(false);
+    scShowResult(item); // resultado assume o PREVIEW PRINCIPAL + galeria rápida
+    showActionFeedback(pt?'✅ Pronto! Resultado no preview e na galeria rápida.':'✅ Done! Result in the preview and quick gallery.','ok');
   }catch(e){
-    if(res)res.innerHTML='';
+    _scPreviewLoading(false);
     showQuickModal('<div style="text-align:center;padding:8px"><div style="font-size:28px;margin-bottom:12px">⚠️</div>'
       +'<h3 style="margin:0 0 8px">'+(pt?'Não foi possível gerar agora':'Could not generate right now')+'</h3>'
       +'<p style="font-size:13.5px;color:var(--ink-2);margin:0 0 18px">'+(pt?'Você pode enviar este briefing para o Studio Suite.':'You can send this briefing to the Studio Suite.')+'</p>'
@@ -4912,6 +5221,7 @@ function scMentorPathApply(i){
   showActionFeedback('🎭 '+p.title+(pt?' aplicado ao prompt':' applied to prompt'),'ok');
 }
 
+/* Storyboard rápido: modal com 3–6 cenas geradas do prompt + Enviar para Studio */
 function handleStoryboard(){
   var pt=S.lang==='pt';
   var prompt=((document.getElementById('scPrompt')||{}).value||'').trim();
@@ -4919,8 +5229,39 @@ function handleStoryboard(){
     showActionFeedback(pt?'Descreva uma ideia ou escolha uma inspiração antes de gerar.':'Describe an idea or pick an inspiration before generating.','err');
     return;
   }
-  scStoryboard();
+  var s=scGetSettings();
+  var director=(document.getElementById('scDirectorSelect')||{}).value||'';
+  var mentor=typeof _scMentorById==='function'?_scMentorById(director):null;
+  var local=_scGenerateLocalStoryboard(prompt,s);
+  if(mentor&&mentor.promptInfluence){
+    (local.scenes||[]).forEach(function(sc){sc.prompt=sc.prompt+', '+mentor.promptInfluence;});
+  }
+  window._scSbPreview=local;
+  var scenes=(local.scenes||[]).slice(0,6);
+  var rows=scenes.map(function(sc){
+    return '<div style="display:flex;gap:10px;align-items:flex-start;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:9px 11px">'
+      +'<span style="background:var(--hs-gold);color:var(--hs-button-text-dark);font-weight:700;font-size:11px;border-radius:7px;padding:3px 7px;flex-shrink:0">'+sc.number+'</span>'
+      +'<div style="min-width:0"><div style="font-size:12.5px;font-weight:600">'+escapeHtml(sc.title||'')+' <span style="color:var(--ink-4);font-weight:400">· '+escapeHtml(String(sc.duration||''))+'</span></div>'
+      +'<div style="font-size:11.5px;color:var(--ink-3);line-height:1.45;margin-top:2px">'+escapeHtml((sc.prompt||'').slice(0,140))+'</div></div></div>';
+  }).join('');
+  showQuickModal('<div><h3 style="margin:0 0 4px">🎞 '+(pt?'Storyboard sugerido':'Suggested storyboard')+'</h3>'
+    +'<div style="font-size:12px;color:var(--ink-3);margin-bottom:12px">'+escapeHtml(local.title||prompt.slice(0,60))+' · '+scenes.length+' '+(pt?'cenas':'scenes')+'</div>'
+    +'<div style="display:grid;gap:7px;max-height:46vh;overflow-y:auto">'+rows+'</div>'
+    +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">'
+    +'<button class="btn btn-primary btn-sm" onclick="document.getElementById(\'scQuickModal\').remove();scStoryboardToStudio()">⚙️ '+(pt?'Enviar para Studio':'Send to Studio')+'</button>'
+    +'<button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'scQuickModal\').remove();scStoryboard()">📋 '+(pt?'Abrir storyboard completo':'Open full storyboard')+'</button>'
+    +'<button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'scQuickModal\').remove()">'+(pt?'Fechar':'Close')+'</button>'
+    +'</div></div>',true);
 }
+function scStoryboardToStudio(){
+  var s=scGetSettings();
+  var local=window._scSbPreview;
+  if(local){
+    try{localStorage.setItem('hsai_sc_storyboard',JSON.stringify(Object.assign({},s,{storyboard:local})));}catch(e){}
+  }
+  sendBriefToStudioSuite();
+}
+window.scStoryboardToStudio=scStoryboardToStudio;
 
 function _scLastMedia(){
   var items=typeof scGalleryLoad==='function'?scGalleryLoad():[];
@@ -4944,12 +5285,29 @@ function handlePostProduction(){
     +row('📐',pt?'Melhorar resolução (Upscale)':'Improve resolution (Upscale)','finOpenTool(\'upscale_premium\')',true)
     +row('📱',pt?'Preparar Instagram / Reels':'Prepare Instagram / Reels','go(\'instagram\')',true)
     +row('▶️',pt?'Preparar YouTube':'Prepare YouTube','go(\'instagram\');showActionFeedback(\''+(pt?'Escolha YouTube como rede no publicador.':'Pick YouTube as the network in the publisher.')+'\',\'info\')',true)
+    +row('🎨',pt?'Corrigir cor (briefing)':'Color correction (briefing)','scPostOption(\'cor\')',true)
+    +row('🔇',pt?'Remover ruído (briefing)':'Denoise (briefing)','scPostOption(\'ruido\')',true)
+    +row('🎞',pt?'Transição entre clipes (briefing)':'Clip transitions (briefing)','scPostOption(\'transicao\')',true)
     +row('📝',pt?'Gerar legenda':'Generate caption','scCaptionModal()',false)
     +row('✨',pt?'Melhorar prompt':'Improve prompt','handleEnhancePrompt()',false)
     +row('📄',pt?'Exportar briefing':'Export briefing','scExportBriefing()',false)
     +'<button class="btn btn-primary" style="margin-top:6px" onclick="document.getElementById(\'scQuickModal\').remove();go(\'finisher\')">🎞 '+(pt?'Abrir Finishing Lab completo':'Open full Finishing Lab')+'</button>'
     +'</div></div>');
 }
+/* Opções de pós-produção sem API direta: entram no briefing (export + handoff pro Studio) */
+function scPostOption(op){
+  var pt=S.lang==='pt';
+  var labels={
+    cor:pt?'Correção de cor':'Color correction',
+    ruido:pt?'Remoção de ruído':'Noise removal',
+    transicao:pt?'Transições entre clipes':'Clip transitions'
+  };
+  var label=labels[op]||op;
+  window._scPostOps=window._scPostOps||[];
+  if(window._scPostOps.indexOf(label)<0)window._scPostOps.push(label);
+  showActionFeedback('🛠 '+label+(pt?' adicionado ao briefing de pós-produção — exporte o briefing ou abra no Studio.':' added to the post-production briefing — export it or open in the Studio.'),'ok');
+}
+window.scPostOption=scPostOption;
 function scCaptionModal(){
   var pt=S.lang==='pt';
   var prompt=((document.getElementById('scPrompt')||{}).value||'').trim();
@@ -4983,6 +5341,7 @@ function scExportBriefing(){
     (pt?'Qualidade: ':'Quality: ')+s.quality,
     (pt?'Modelo: ':'Model: ')+(_scModel||'auto'),
     (pt?'Referência anexada: ':'Reference attached: ')+(_scRef?(pt?'sim':'yes'):(pt?'não':'no')),
+    (pt?'Pós-produção: ':'Post-production: ')+((window._scPostOps&&window._scPostOps.length)?window._scPostOps.join(', '):'-'),
     (pt?'Gerado em: ':'Generated at: ')+new Date().toLocaleString()
   ];
   var blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'});
