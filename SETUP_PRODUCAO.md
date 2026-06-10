@@ -202,6 +202,31 @@ Ver `TESTING_CHECKLIST.md` para o roteiro completo.
 
 ---
 
+## PASSO 12b — Galeria Pública (tabela + endpoint)
+
+A Galeria Pública lê de `GET /api/public-gallery`, que consulta a tabela
+`public_gallery_items` no Supabase. Sem Supabase configurado (ou se a query
+falhar), o endpoint responde `{ "ok": true, "source": "demo", "items": [...] }`
+com itens de demonstração — a galeria nunca quebra no frontend.
+
+1. **Criar a tabela** — já incluída no `supabase/schema.sql` (PASSO 2).
+   Se o schema foi rodado antes desta versão, execute novamente o bloco
+   `public_gallery_items` (CREATE TABLE + índice + políticas RLS) no SQL Editor.
+2. **RLS** — leitura pública apenas de itens `is_public = true` e
+   `status = 'published'`; insert/update/delete restritos ao dono (`auth.uid()`).
+3. **Variáveis necessárias na Vercel** (mesmas do PASSO 6):
+   - `SUPABASE_URL`
+   - `SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+4. **Testar**:
+   ```bash
+   curl https://hollywoodstudio.ai/api/public-gallery
+   # Esperado: {"ok":true,"source":"supabase","items":[...]}
+   # Sem Supabase: {"ok":true,"source":"demo","items":[...]}
+   ```
+
+---
+
 ## PASSO 13 — Ativar o Finishing Lab (Creative Finisher)
 
 O Finishing Lab (Studio Suite → Pós-Produção → Finishing Lab) reúne as ferramentas

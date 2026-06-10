@@ -170,6 +170,27 @@ CREATE TABLE IF NOT EXISTS public.gallery_items (
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Galeria Pública (feed da comunidade — lido via GET /api/public-gallery)
+CREATE TABLE IF NOT EXISTS public.public_gallery_items (
+  id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id       UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+  title         TEXT,
+  prompt        TEXT,
+  media_type    TEXT NOT NULL DEFAULT 'image'
+                CHECK (media_type IN ('image','video','audio')),
+  media_url     TEXT NOT NULL,
+  thumbnail_url TEXT,
+  model         TEXT,
+  aspect_ratio  TEXT,
+  is_public     BOOLEAN NOT NULL DEFAULT TRUE,
+  status        TEXT NOT NULL DEFAULT 'published'
+                CHECK (status IN ('published','draft','hidden','under_review')),
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_public_gallery_feed
+  ON public.public_gallery_items (created_at DESC)
+  WHERE is_public = TRUE AND status = 'published';
+
 -- Chamados de suporte
 CREATE TABLE IF NOT EXISTS public.support_tickets (
   id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -332,6 +353,7 @@ ALTER TABLE public.projects            ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.generations         ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.favorites           ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.gallery_items       ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.public_gallery_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.support_tickets     ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.moderation_reports  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.user_consents       ENABLE ROW LEVEL SECURITY;
@@ -445,6 +467,29 @@ CREATE POLICY "gallery: user updates own"
 
 CREATE POLICY "gallery: user deletes own"
   ON public.gallery_items FOR DELETE
+  USING (auth.uid() = user_id);
+
+-- ── Public Gallery Items ──────────────────────────────────────────────────────
+
+DROP POLICY IF EXISTS "public_gallery: anyone reads published" ON public.public_gallery_items;
+DROP POLICY IF EXISTS "public_gallery: user inserts own"       ON public.public_gallery_items;
+DROP POLICY IF EXISTS "public_gallery: user updates own"       ON public.public_gallery_items;
+DROP POLICY IF EXISTS "public_gallery: user deletes own"       ON public.public_gallery_items;
+
+CREATE POLICY "public_gallery: anyone reads published"
+  ON public.public_gallery_items FOR SELECT
+  USING (is_public = TRUE AND status = 'published');
+
+CREATE POLICY "public_gallery: user inserts own"
+  ON public.public_gallery_items FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "public_gallery: user updates own"
+  ON public.public_gallery_items FOR UPDATE
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "public_gallery: user deletes own"
+  ON public.public_gallery_items FOR DELETE
   USING (auth.uid() = user_id);
 
 -- ── Generations ───────────────────────────────────────────────────────────────

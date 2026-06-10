@@ -869,8 +869,8 @@ a{color:inherit;text-decoration:none}
 /* ── App shell ── */
 #app{display:grid;grid-template-columns:var(--sidebar-w,248px) 1fr;grid-template-rows:60px 1fr;
   height:100vh;grid-template-areas:"side top" "side main";transition:grid-template-columns .25s ease}
-#app.sidebar-collapsed{--sidebar-w:72px}
-#app.sidebar-collapsed .sidebar{--sidebar-w:72px}
+#app.sidebar-collapsed{--sidebar-w:84px}
+#app.sidebar-collapsed .sidebar{--sidebar-w:84px}
 .topbar{grid-area:top;display:flex;align-items:center;gap:18px;padding:0 36px;
   border-bottom:1px solid var(--line);background:var(--bg-2);z-index:30}
 .sidebar{grid-area:side;background:var(--bg-2);border-right:1px solid var(--line);
@@ -1601,24 +1601,34 @@ body.layout-fullscreen .topbar{display:none!important}
 /* ── Simple Create — single-screen creative console ── */
 .sc-console{height:100vh;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
 .sc-console-top{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 16px;border-bottom:1px solid var(--line);min-height:48px;max-height:52px;box-sizing:border-box}
-.sc-logo{font-weight:800;font-size:15px;letter-spacing:-.5px;color:var(--ink);white-space:nowrap}
+.sc-logo{font-weight:800;font-size:16px;letter-spacing:-.5px;color:var(--ink);white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:2px;user-select:none}
+.sc-logo-ai{color:var(--accent);display:inline-flex;align-items:center;margin-left:5px;font-weight:800}
+.sc-logo-star{font-size:.85em;margin-left:1px;line-height:1}
+.sc-lang-tog{transform:scale(.92)}
 .sc-topbar-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.sc-topbar-right .user-chip{width:32px;height:32px}
 .sc-visitor-pill{font-size:11px;color:var(--ink-2);background:var(--accent-dim);border:1px solid var(--accent-dim);padding:4px 10px;border-radius:20px;white-space:nowrap}
-.sc-console-mid{flex:1;display:grid;grid-template-columns:220px minmax(0,1fr) 300px;gap:16px;padding:10px 16px;min-height:0;overflow:hidden}
-.sc-demo-col{display:flex;flex-direction:column;min-height:0;gap:8px}
-.sc-demo-col .sc-demo-single{flex:0 0 auto;aspect-ratio:16/11;max-height:300px;width:100%;margin:0}
+.sc-console-mid{flex:1;display:grid;grid-template-columns:240px minmax(0,1fr);gap:18px;padding:10px 18px;min-height:0;overflow:hidden}
+/* Demo / último resultado — acima do prompt, centralizado, altura limitada */
+.sc-demo-block{flex-shrink:0;width:100%;max-width:640px;margin:0 auto}
+.sc-demo-block .sc-demo-single{position:relative;width:100%;aspect-ratio:16/9;max-height:32vh;margin:0}
+.sc-badge-ov{position:absolute;top:8px;left:8px;display:flex;gap:6px;pointer-events:none}
+.sc-acts-below{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+.sc-acts-below .btn{font-size:12px;padding:5px 12px;border:1px solid var(--line-2);background:var(--panel);color:var(--ink-2);border-radius:8px}
+.sc-acts-below .btn:hover{border-color:var(--accent);color:var(--accent)}
 .sc-side{display:flex;flex-direction:column;min-height:0}
 .sc-side-title{font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--ink-4);text-transform:uppercase;margin-bottom:8px;flex-shrink:0}
 .sc-dir-list{overflow-y:auto;min-height:0;scrollbar-width:thin}
 .sc-dir-pill{display:block;width:100%;text-align:left;padding:6px 10px;border-radius:8px;border:1px solid var(--line-2);background:none;color:var(--ink-2);font-size:12px;cursor:pointer;margin-bottom:5px;transition:all .15s}
 .sc-dir-pill.active,.sc-dir-pill:hover{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
 .sc-dir-actions{flex-shrink:0;display:flex;flex-direction:column;gap:6px;margin-top:10px}
-.sc-center{display:flex;flex-direction:column;min-height:0;overflow:hidden;justify-content:center}
+.sc-center{display:flex;flex-direction:column;min-height:0;overflow-y:auto;overflow-x:hidden;justify-content:center;gap:4px;scrollbar-width:thin}
 .sc-center .sc-prompt-bar{width:100%;max-width:720px;margin:0 auto}
-.sc-center-hero{flex-shrink:0;text-align:center;padding:2px 0 12px}
-.sc-center-hero h1{font-size:clamp(20px,2.6vw,30px);font-weight:800;margin:0;line-height:1.15}
+.sc-center-hero{flex-shrink:0;text-align:center;padding:16px 0 14px}
+/* Título em sans-serif limpa (sem glifos serifados distorcidos) */
+.sc-center-hero h1{font-family:var(--display);font-size:clamp(21px,2.6vw,30px);font-weight:700;letter-spacing:-.4px;margin:0;line-height:1.18}
 .sc-center-hero h1 em{font-style:normal;color:var(--accent)}
-.sc-center-hero .sub{font-size:12.5px;color:var(--ink-3);margin:3px 0 0}
+.sc-center-hero .sub{font-size:13px;color:var(--ink-3);margin:8px 0 0}
 .sc-demo-duo{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:12px;min-height:0}
 .sc-demo-card{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line-2);background:var(--panel-2);min-height:0}
 .sc-demo-card video,.sc-demo-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
@@ -1630,7 +1640,9 @@ body.layout-fullscreen .topbar{display:none!important}
 .sc-demo-tt{font-size:12px;font-weight:700;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.6)}
 .sc-demo-acts{display:flex;gap:6px;flex-wrap:wrap}
 .sc-demo-acts .btn{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;backdrop-filter:blur(4px);font-size:11px;padding:4px 10px}
-.sc-gal-scroll{flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin}
+/* Galeria rápida — altura limitada (máx. ~8 itens visíveis), scroll interno discreto */
+.sc-gal-scroll{flex:0 1 auto;min-height:0;max-height:44vh;overflow-y:auto;scrollbar-width:thin}
+.sc-gal-panel{justify-content:flex-start}
 .sc-gal-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .sc-gal-cell{min-width:0}
 .sc-gal-thumb{position:relative;border-radius:10px;overflow:hidden;background:var(--panel-2);border:1px solid var(--line-2);cursor:pointer;aspect-ratio:1}
@@ -1641,30 +1653,31 @@ body.layout-fullscreen .topbar{display:none!important}
 .sc-gal-acts button{background:none;border:1px solid var(--line-2);border-radius:6px;font-size:10px;padding:2px 6px;cursor:pointer;color:var(--ink-3)}
 .sc-gal-acts button:hover{border-color:var(--accent);color:var(--accent)}
 .sc-prompt-bar{max-width:1100px;margin:0 auto}
-.sc-model-line{font-size:12px;color:var(--ink-3);display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0 4px}
+.sc-model-line{font-size:12px;color:var(--ink-3);display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 6px}
 .sc-select{background:var(--panel-2);border:1px solid var(--line-2);border-radius:8px;padding:7px 10px;color:var(--ink);font-size:13px;cursor:pointer;outline:none;transition:border-color .15s;max-width:160px}
 .sc-select:hover,.sc-select:focus{border-color:var(--accent)}
-.sc-compact-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0}
-.sc-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;align-items:center}
+.sc-compact-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.sc-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
 @media(max-width:900px){
   .sc-console{height:auto;overflow:visible;min-height:100vh}
   .sc-console-mid{display:flex;flex-direction:column;overflow:visible;padding-bottom:48px}
   .sc-center{order:0;overflow:visible}
-  .sc-demo-col{order:1}
   .sc-gal-panel{order:2}
   .sc-dir-panel{display:none}
   .sc-demo-duo{flex:none;grid-template-columns:1fr 1fr;gap:10px}
   .sc-demo-card{min-height:170px}
   .sc-demo-single{flex:none;min-height:200px}
-  .sc-demo-col .sc-demo-single{aspect-ratio:16/9;max-height:240px}
+  .sc-demo-block .sc-demo-single{aspect-ratio:16/9;max-height:240px}
   .sc-center-hero h1{font-size:22px}
-  .sc-side,.sc-gal-scroll{overflow:visible}
+  .sc-side{overflow:visible}
+  .sc-gal-scroll{overflow:visible;max-height:none}
   .sc-gal-grid{display:flex;overflow-x:auto;gap:8px;padding-bottom:6px;scrollbar-width:thin}
   .sc-gal-cell{flex:0 0 84px;width:84px}
 }
 #app.sidebar-collapsed .sidebar .brand{flex-direction:column!important;padding:14px 4px 10px!important;gap:6px!important;align-items:center!important;justify-content:flex-start!important}
 #app.sidebar-collapsed .sidebar .brand>div:first-child{flex:none!important;width:100%!important;justify-content:center!important}
-#app.sidebar-collapsed .sidebar .brand-icon{width:40px!important;height:40px!important;margin:0 auto!important;pointer-events:none}
+/* Marca AI★ maior no modo recolhido — selo premium, sem espremer */
+#app.sidebar-collapsed .sidebar .brand-icon{width:52px!important;height:52px!important;margin:0 auto!important;pointer-events:none}
 #app.sidebar-collapsed #sidebarToggleBtn{position:static!important;transform:none!important;top:auto!important;bottom:auto!important;right:auto!important;left:auto!important;margin:0 auto!important;background:var(--panel)!important;border:1px solid var(--line)!important;box-shadow:0 4px 12px rgba(0,0,0,.12)}
 
 /* .page-banner — faixa visual slim, sem texto pesado */
@@ -2593,8 +2606,44 @@ function init(){
   applyCfgOverrides();
   applySEO();
   initGoogle();
+  // Retorno do OAuth Supabase (#access_token=… no hash) → fecha o gate e mostra estado logado
+  if(detectSupabaseOAuthReturn())return;
   if(localStorage.getItem('hsai_user')){ S.user=JSON.parse(localStorage.getItem('hsai_user')); if(S.user&&!S.user.uid)S.user.uid=S.user.email==='admin'?'admin':'u_'+(S.user.email||'guest').replace(/[^a-z0-9]/gi,'').toLowerCase(); upsertUser(S.user); loadUserState(); enterApp(); }
   else { setupGuest(); enterApp(); }   // sem login → entra como VISITANTE direto na tela principal
+}
+/* Detecta o retorno do OAuth do Supabase (fluxo implícito) sem precisar do supabase-js.
+   Retorna true se assumiu o boot (vai chamar finishAuth ao terminar). */
+function detectSupabaseOAuthReturn(){
+  try{
+    var h=location.hash||'';
+    if(h.indexOf('access_token=')<0)return false;
+    var params=new URLSearchParams(h.replace(/^#/,''));
+    var token=params.get('access_token');
+    if(!token)return false;
+    var sbUrl=(window.HSAI_CONFIG&&window.HSAI_CONFIG.SUPABASE_URL)||CFG.SUPABASE_URL||'';
+    var sbKey=(window.HSAI_CONFIG&&window.HSAI_CONFIG.SUPABASE_ANON_KEY)||CFG.SUPABASE_ANON_KEY||'';
+    // Limpa o hash imediatamente (não deixa o token na URL/histórico)
+    try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}
+    if(!sbUrl){return false;}
+    localStorage.setItem('hsai_sb_token',token);
+    fetch(sbUrl+'/auth/v1/user',{headers:{'apikey':sbKey,'Authorization':'Bearer '+token}})
+      .then(function(r){return r.ok?r.json():null;})
+      .then(function(u){
+        if(u&&u.id){
+          var md=u.user_metadata||{};
+          S.user={uid:'sb_'+u.id,email:u.email||'',name:hsaiFixName(md.full_name||md.name||(u.email||'').split('@')[0]),picture:md.avatar_url||md.picture||'',admin:false,supabase:true};
+          upsertUser(S.user);
+          if(typeof HsaiBackend!=='undefined')HsaiBackend.setToken(token);
+          finishAuth();
+          toast(S.lang==='pt'?'✓ Login realizado com sucesso!':'✓ Logged in successfully!','ok');
+        }else{
+          setupGuest();enterApp();
+          toast(S.lang==='pt'?'Não foi possível confirmar o login. Tente novamente.':'Could not confirm the login. Try again.','err');
+        }
+      })
+      .catch(function(){setupGuest();enterApp();});
+    return true;
+  }catch(e){return false;}
 }
 /* AI-generated/cinematic imagery. Reel uses bundled local files (guaranteed to load);
    override with CFG.REEL_IMAGES (array of URLs) to use your own AI-generated images. */
@@ -2709,10 +2758,11 @@ function currentPlanInfo(){
   const pl=PLANS.find(x=>x.name.toLowerCase()===base.toLowerCase());
   return {name:base||(pl?pl.name:''),secs:pl?pl.secs:0};
 }
-function userMenu(){
+function userMenu(popId){
   if(isGuest()){return showAuthGate('default');}
-  const pop=document.getElementById('userPop');if(!pop)return;
+  const pop=document.getElementById(popId||'userPop');if(!pop)return;
   if(pop.classList.contains('open')){pop.classList.remove('open');return;}
+  closeUserPop();
   const pt=S.lang==='pt';
   const u=loadUsers()[S.user.uid]||{};
   const name=S.user.name||u.name||(pt?'Usuário':'User');
@@ -2736,11 +2786,13 @@ function userMenu(){
     <div class="up-credits">
       <div class="row"><span>${pt?'Créditos':'Credits'}</span><b style="color:var(--accent);font-family:var(--mono)">${S.credits}${total?` / ${total}`:''}</b></div>
       ${total?`<div class="up-bar"><i style="width:${pct}%"></i></div>`:''}
+      <button class="btn btn-primary btn-sm" style="width:100%;margin-top:8px" onclick="closeUserPop();go('plans')">⚡ ${pt?'Recarregar créditos':'Top up credits'}</button>
     </div>
+    <button class="up-item" onclick="closeUserPop();openAccountSettings()">${I('<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/>')}<span>${pt?'Meu perfil':'My profile'}</span></button>
     <button class="up-item" onclick="closeUserPop();openCredits()">${I('<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>')}<span>${pt?'Meus créditos e uso':'My credits & usage'}</span></button>
     <button class="up-item" onclick="closeUserPop();go('plans')">${I('<path d="M12 2l2.5 7H22l-6 4.5 2.3 7L12 16l-6.3 4.5L8 13.5 2 9h7.5L12 2z"/>')}<span>${plan?(pt?'Gerenciar plano':'Manage plan'):(pt?'Assinar um plano':'Subscribe to a plan')}</span></button>
-    <button class="up-item" onclick="closeUserPop();go('analytics')">${I('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>')}<span>${pt?'Estatísticas':'Analytics'}</span></button>
-    <button class="up-item" onclick="closeUserPop();go('gallery')">${I('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/>')}<span>${pt?'Minha galeria':'My gallery'}</span></button>
+    <button class="up-item" onclick="closeUserPop();go('analytics')">${I('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>')}<span>${pt?'Histórico e estatísticas':'History & analytics'}</span></button>
+    <button class="up-item" onclick="closeUserPop();go('gallery')">${I('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/>')}<span>${pt?'Minhas criações':'My creations'}</span></button>
     ${S.user.admin?`<button class="up-item" onclick="closeUserPop();go('admin')">${I('<path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/>')}<span>Admin</span></button>`:''}
     <div class="up-sep"></div>
     <button class="up-item" onclick="openAccountSettings()">${I('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8.6 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.16.38.39.72.69 1H21a2 2 0 0 1 0 4h-.91a1.65 1.65 0 0 0-.69 1z"/>')}<span>${pt?'Configurações da conta':'Account settings'}</span></button>
@@ -2748,7 +2800,7 @@ function userMenu(){
     <button class="up-item danger" onclick="logoutUser()">${I('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/>')}<span>${pt?'Sair da conta':'Log out'}</span></button>`;
   pop.classList.add('open');
 }
-function closeUserPop(){const p=document.getElementById('userPop');if(p)p.classList.remove('open');}
+function closeUserPop(){document.querySelectorAll('.user-pop.open').forEach(function(p){p.classList.remove('open');});}
 function logoutUser(){
   if(confirm(S.lang==='pt'?'Sair da conta?':'Log out?')){
     localStorage.removeItem('hsai_user');
@@ -2852,7 +2904,17 @@ function buildNav(){
     nav.appendChild(grp);
   }
 }
-function go(v){
+function go(v,opts){
+  // Histórico do navegador: pushState ao navegar; replaceState no 1º load / mesma view.
+  // opts.fromPop=true quando chamado pelo popstate (não empilha de novo).
+  if(!(opts&&opts.fromPop)){
+    try{
+      var url='#'+encodeURIComponent(v);
+      if(!history.state||!history.state.view){history.replaceState({view:v},'',url);}
+      else if(history.state.view!==v){history.pushState({view:v},'',url);}
+      else{history.replaceState({view:v},'',url);}
+    }catch(e){}
+  }
   S.view=v;
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.id===v));
   document.getElementById('topTitle').textContent=topTitle(v);
@@ -2860,6 +2922,15 @@ function go(v){
   else{document.body.classList.remove('layout-fullscreen');}
   render();document.getElementById('main').scrollTop=0;
 }
+// Voltar/avançar do navegador renderiza a view anterior (nunca sai do site nem trava)
+window.addEventListener('popstate',function(e){
+  try{
+    var app=document.getElementById('app');
+    if(!app||app.classList.contains('hide'))return;
+    var v=(e.state&&e.state.view)||'criar';
+    go(v,{fromPop:true});
+  }catch(err){}
+});
 function topTitle(v){
   if(v&&v.indexOf('custom:')===0){const s=S.sections.find(x=>x.id===v.slice(7));return s?s.name:'';}
   if(v==='finisher')return 'Finishing Lab';
@@ -3291,30 +3362,34 @@ function viewSimpleCreate(){
   var recResult=recommendModelForIntent({mediaType:_scType,style:_scStyle,quality:_scQuality==='Rápido'?'rapido':(_scQuality==='Premium'?'premium':'standard'),duration:parseInt(_scDuration)||8});
   var rec=recResult.model;
 
-  // Top bar right side — compact pills only (max ~52px tall)
-  var topRight='';
+  // Top bar right side — controles globais compactos: PT/EN · tema · planos · avatar/login
+  var langCtl='<div class="lang-toggle sc-lang-tog"><button class="'+(S.lang==='pt'?'on':'')+'" onclick="setLang(\'pt\')">PT</button><button class="'+(S.lang==='en'?'on':'')+'" onclick="setLang(\'en\')">EN</button></div>';
+  var themeCtl='<button class="icon-btn" onclick="toggleTheme()" title="'+(pt?'Tema claro/escuro':'Light/dark theme')+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:16px;height:16px"><path d="M12 3v2M12 19v2M5 12H3M21 12h-2M6 6l1.5 1.5M16.5 16.5L18 18M18 6l-1.5 1.5M7.5 16.5L6 18"/><circle cx="12" cy="12" r="4"/></svg></button>';
+  var plansCtl='<button class="btn btn-ghost btn-sm" onclick="go(\'plans\')">★ '+(pt?'Ver planos':'View plans')+'</button>';
+  var userCtl='';
   if(isGuest()){
-    topRight='<span class="sc-visitor-pill">'+(pt?'Visitante: faça login para liberar 3 créditos iniciais, mais modelos e alta qualidade.':'Guest: sign in to unlock 3 starter credits, more models and high quality.')+'</span>'
-      +'<button class="btn btn-primary btn-sm" onclick="showAuthGate(\'default\')">'+(pt?'Entrar':'Sign in')+'</button>'
-      +'<button class="btn btn-ghost btn-sm" onclick="go(\'plans\')">'+(pt?'Ver planos':'View plans')+'</button>';
+    userCtl='<button class="btn btn-primary btn-sm" onclick="showAuthGate(\'default\')">'+(pt?'Entrar':'Sign in')+'</button>';
   }else{
-    topRight='<span class="sc-visitor-pill">⚡ '+(S.credits||0)+' '+(pt?'créditos':'credits')+'</span>'
-      +((S.credits||0)<=3?'<button class="btn btn-ghost btn-sm" onclick="go(\'plans\')">'+(pt?'Ver planos':'View plans')+'</button>':'')
-      +'<button class="btn btn-ghost btn-sm" onclick="go(\'studio\')">Studio Suite →</button>';
+    var _avName=(S.user&&(S.user.name||S.user.email))||'A';
+    var avInner=(S.user&&S.user.picture)?'<img src="'+escapeAttr(S.user.picture)+'" referrerpolicy="no-referrer">':(_avName[0]||'A').toUpperCase();
+    userCtl='<span class="sc-visitor-pill">⚡ '+(S.credits||0)+' '+(pt?'créditos':'credits')+'</span>'
+      +'<button class="btn btn-ghost btn-sm" onclick="go(\'studio\')">Studio Suite →</button>'
+      +'<div class="user-wrap"><div class="user-chip" id="scUserChip" onclick="userMenu(\'scUserPop\')">'+avInner+'</div><div class="user-pop" id="scUserPop"></div></div>';
   }
+  var topRight=langCtl+themeCtl+plansCtl+userCtl;
 
   return '<div class="sc-console" id="scPage">'
 
-  // ── Top bar
+  // ── Top bar: logo (volta à Home) + controles globais
   +'<div class="sc-console-top">'
-  +'<div class="sc-logo">Hollywood Studio AI</div>'
+  +'<div class="sc-logo" onclick="go(\'criar\')" title="Home">Hollywood Studio <span class="sc-logo-ai">AI<span class="sc-logo-star">★</span></span></div>'
   +'<div class="sc-topbar-right">'+topRight+'</div>'
   +'</div>'
 
-  // ── Middle: galeria rápida (esquerda) | prompt no CENTRO | demo reduzido (direita)
+  // ── Middle: galeria rápida (esquerda) | demo acima + prompt no CENTRO
   +'<div class="sc-console-mid">'
 
-  // Left: quick gallery panel (2-col vertical grid)
+  // Left: quick gallery panel (2-col vertical grid, altura limitada)
   +'<div class="sc-side sc-gal-panel">'
   +'<div class="sc-side-title">'+(pt?'Galeria rápida':'Quick gallery')+'</div>'
   +'<div class="sc-gal-scroll"><div id="scRecentGallery">'+scRenderRecentGallery(scGalleryLoad())+'</div></div>'
@@ -3322,8 +3397,19 @@ function viewSimpleCreate(){
   +'<div style="flex-shrink:0;font-size:11px;color:var(--ink-4);margin-top:8px;line-height:1.5">'+(pt?'Comece rápido aqui. Aprofunde no Studio Suite.':'Start fast here. Go deeper in Studio Suite.')+' <a href="#" style="color:var(--accent)" onclick="event.preventDefault();go(\'studio\')">'+(pt?'Abrir →':'Open →')+'</a></div>'
   +'</div>'
 
-  // Center: hero + PROMPT (prioridade visual — visível sem rolagem)
+  // Center: demo/último resultado em cima (altura limitada) + título + PROMPT visível sem rolagem
   +'<div class="sc-center">'
+
+  // Demo / resultado — botões de ação ficam ABAIXO do preview, nunca sobre a imagem
+  +'<div class="sc-demo-block">'
+  +'<div class="sc-demo-single" id="scDemoZone">'
+  +'<div class="sc-demo-stage" id="scSlideStage"></div>'
+  +'<div class="sc-badge-ov"><span class="sc-slide-badge" id="scSlideBadge">🎬</span></div>'
+  +'</div>'
+  +'<div class="sc-acts-below" id="scSlideActs"></div>'
+  +'<div id="scResultBlock" style="display:none"></div>'
+  +'</div>'
+
   +'<div class="sc-center-hero">'
   +'<h1>'+(pt?'O que vamos <em>criar</em> hoje?':'What are we <em>creating</em> today?')+'</h1>'
   +'<p class="sub">'+(pt?'Vídeos e imagens com IA em segundos — você é o diretor.':'AI videos and images in seconds — you are the director.')+'</p>'
@@ -3392,20 +3478,6 @@ function viewSimpleCreate(){
 
   +'</div>'  // end .sc-prompt-bar
   +'</div>'  // end .sc-center
-
-  // Right: demo slideshow reduzido + resultado (nunca empurra o prompt)
-  +'<div class="sc-demo-col">'
-  +'<div class="sc-side-title">'+(pt?'Veja o que você pode criar':'See what you can create')+'</div>'
-  +'<div class="sc-demo-single" id="scDemoZone">'
-  +'<div class="sc-demo-stage" id="scSlideStage"></div>'
-  +'<div class="sc-demo-ov">'
-  +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
-  +'<span class="sc-slide-badge" id="scSlideBadge">🎬</span>'
-  +'</div>'
-  +'<div class="sc-demo-acts" id="scSlideActs"></div>'
-  +'</div></div>'
-  +'<div id="scResultBlock" style="display:none;flex:1;min-height:0;overflow-y:auto"></div>'
-  +'</div>'
 
   +'</div>'  // end .sc-console-mid
   +'</div>';  // end .sc-console
@@ -3530,6 +3602,8 @@ function scBackToDemos(){
   if(res){res.style.display='none';res.innerHTML='';delete res.dataset.id;}
   var zone=document.getElementById('scDemoZone');
   if(zone)zone.style.display='';
+  var acts=document.getElementById('scSlideActs');
+  if(acts)acts.style.display='';
 }
 function scShowResultById(id){
   var item=scGalleryLoad().find(function(i){return i.id===id;});
@@ -4170,6 +4244,8 @@ function scShowResult(item){
   // Result takes over the center zone (demo duo hidden until "voltar às demos")
   var zone=document.getElementById('scDemoZone');
   if(zone)zone.style.display='none';
+  var slideActs=document.getElementById('scSlideActs');
+  if(slideActs)slideActs.style.display='none';
   res.innerHTML='<div style="background:var(--panel);border-radius:16px;border:1px solid var(--line-2);overflow:hidden">'
     +'<div style="padding:12px 14px;border-bottom:1px solid var(--line-2);display:flex;align-items:center;gap:10px">'
     +'<span style="background:var(--accent);color:#fff;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">'+(isVideo?'🎬 Vídeo':'🖼 Imagem')+'</span>'
@@ -4205,7 +4281,10 @@ function scRenderRecentGallery(items){
       +(pt?'Suas criações vão aparecer aqui. Gere algo!':'Your creations will appear here. Generate something!')
       +'</div>';
   }
-  var cells=items.slice(0,SC_GALLERY_MAX).map(function(item){
+  // Máx. 8 itens visíveis na home — o resto fica na galeria completa
+  var SC_GALLERY_VISIBLE=8;
+  var extra=Math.max(0,Math.min(items.length,SC_GALLERY_MAX)-SC_GALLERY_VISIBLE);
+  var cells=items.slice(0,SC_GALLERY_VISIBLE).map(function(item){
     var isVideo=item.mediaType==='video';
     var src=item.previewUrl||item.outputUrl;
     var thumbInner=src
@@ -4222,7 +4301,10 @@ function scRenderRecentGallery(items){
       +'<button aria-label="'+(pt?'Excluir':'Delete')+'" title="'+(pt?'Excluir':'Delete')+'" onclick="scGalleryDelete(\''+item.id+'\')">🗑</button>'
       +'</div></div>';
   }).join('');
-  return '<div class="sc-gal-grid">'+cells+'</div>';
+  var more=extra>0
+    ?'<button class="btn btn-ghost btn-sm" style="width:100%;margin-top:6px;font-size:11px" onclick="go(\'gallery\')">+'+extra+' '+(pt?'— ver mais':'— see more')+'</button>'
+    :'';
+  return '<div class="sc-gal-grid">'+cells+'</div>'+more;
 }
 
 function _scCardThumb(item,large){
@@ -5787,14 +5869,7 @@ const _go_orig_for_mobile=window.go;
 function navIcon(id){if(id&&id.indexOf('custom:')===0){const s=S.sections.find(x=>x.id===id.slice(7));return s?(SECTION_ICONS[s.icon]||SECTION_ICONS.page):'';}for(const g of NAV){const it=(g.items||[]).find(x=>x.id===id);if(it)return it.ic;}return '';}
 function decorateHeader(){
   const el=document.querySelector('#main .view .view-head');if(!el||el.dataset.dec)return;
-  // Usa o banner REMOTO como padrão (evita 404 de /assets/banners no console).
-  // Se você subir /assets/banners/<view>.jpg, troque para AREA_BANNERS[S.view] aqui.
-  const ban=AREA_BANNERS_FALLBACK[S.view]||AREA_BANNERS[S.view];
-  if(ban&&el.parentElement){
-    const b=document.createElement('div');b.className='area-banner';
-    b.innerHTML=`<img src="${ban}" alt="" loading="lazy" onerror="this.onerror=null;this.parentElement.style.display='none'" referrerpolicy="no-referrer"><span class="area-banner-ov"></span>`;
-    el.parentElement.insertBefore(b,el);
-  }
+  // Banners fotográficos internos removidos: páginas internas abrem direto no conteúdo.
   const ic=navIcon(S.view);
   if(ic){
     const wrap=document.createElement('div');wrap.className='head-tx';
@@ -7153,6 +7228,36 @@ async function buyPlan(id,secs){
 /* ════════ GALERIA PÚBLICA — usuários compartilham para inspirar uns aos outros ════════ */
 function loadPublic(){try{return JSON.parse(localStorage.getItem('hsai_public_gallery')||'[]');}catch(e){return[];}}
 function savePublic(arr){localStorage.setItem('hsai_public_gallery',JSON.stringify(arr.slice(0,500)));}
+/* Galeria pública remota (/api/public-gallery) com fallback robusto */
+var _pubRemote={status:'idle',items:[],source:''};
+function _isDevHost(){try{return location.hostname==='localhost'||location.hostname==='127.0.0.1';}catch(e){return false;}}
+function fetchPublicGallery(force){
+  if(_pubRemote.status==='loading')return;
+  if(!force&&_pubRemote.status==='ok')return;
+  _pubRemote.status='loading';
+  fetch('/api/public-gallery')
+    .then(function(r){return r.json();})
+    .then(function(j){
+      if(j&&j.ok&&Array.isArray(j.items)){
+        _pubRemote.status='ok';
+        _pubRemote.source=j.source||'api';
+        _pubRemote.items=j.items.map(function(it){return{
+          id:'srv_'+it.id,uid:it.user_id||'',author:it.title||(S.lang==='pt'?'Criador':'Creator'),
+          prompt:it.prompt||'',type:it.media_type==='video'?'video':'image',
+          url:it.media_url||it.thumbnail_url||'',model:it.model||'',
+          date:it.created_at||new Date().toISOString(),likes:0,views:0,comments:[],remote:true
+        };}).filter(function(p){return p.url;});
+      }else{
+        _pubRemote.status='error';
+        if(_isDevHost())console.error('[public-gallery] resposta inesperada',j);
+      }
+    })
+    .catch(function(e){
+      _pubRemote.status='error';
+      if(_isDevHost())console.error('[public-gallery]',e);
+    })
+    .finally(function(){if(S.view==='public')render();});
+}
 function publishItem(idx){
   const item=S.gallery[idx];if(!item)return;
   if(!confirm(S.lang==='pt'?'Tornar este item PÚBLICO?\n\nSeu prompt e o resultado aparecerão na Galeria Pública para todos os usuários se inspirarem. Você pode despublicar a qualquer momento.':'Publish this item?\n\nYour prompt and the result will appear in the Public Gallery for everyone to draw inspiration from. You can unpublish anytime.'))return;
@@ -7237,15 +7342,15 @@ function viewPublic(){
   try{
     return _viewPublicInner();
   }catch(e){
-    // Estado de erro — a Galeria Pública nunca renderiza quebrada
+    // Estado de erro — a Galeria Pública nunca renderiza quebrada nem vira beco sem saída
+    if(_isDevHost())console.error('[viewPublic]',e);
     var pt=S.lang==='pt';
     return areaHeader({kicker:'COMUNIDADE',title:pt?'Galeria Pública':'Public Gallery',area:'public'})
-      +'<div class="card" style="text-align:center;padding:48px 24px">'
-      +'<div style="font-size:44px;margin-bottom:14px">⚠️</div>'
-      +'<h3 style="margin:0 0 8px">'+(pt?'Não foi possível carregar a galeria':'Could not load the gallery')+'</h3>'
-      +'<p style="color:var(--ink-3);max-width:460px;margin:0 auto 18px">'+(pt?'Algo deu errado ao carregar as publicações. Tente novamente em instantes.':'Something went wrong loading the posts. Try again shortly.')+'</p>'
-      +'<button class="btn btn-primary" onclick="render()">'+(pt?'Tentar novamente':'Try again')+'</button>'
-      +'</div>';
+      +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-bottom:14px;font-size:12px;color:var(--ink-3)">'
+      +'<span>⚠ '+(pt?'Não foi possível carregar as publicações agora.':'Could not load the posts right now.')+'</span>'
+      +'<button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="render()">↻ '+(pt?'Tentar de novo':'Retry')+'</button>'
+      +'</div>'
+      +_publicDemoFallback();
   }
 }
 function _publicDemoFallback(){
@@ -7267,7 +7372,17 @@ function _publicDemoFallback(){
     +'</div></div>';
 }
 function _viewPublicInner(){
-  const pub=loadPublic();
+  if(_pubRemote.status==='idle')fetchPublicGallery();
+  const localPub=loadPublic();
+  // Itens remotos do Supabase entram antes dos locais; demos do servidor não duplicam os seeds locais.
+  const remoteItems=(_pubRemote.status==='ok'&&_pubRemote.source==='supabase')?_pubRemote.items:[];
+  const pub=remoteItems.concat(localPub);
+  const retryNotice=_pubRemote.status==='error'
+    ?'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-bottom:14px;font-size:12px;color:var(--ink-3)">'
+      +'<span>⚠ '+(S.lang==='pt'?'Não foi possível atualizar a galeria online — mostrando conteúdo local.':'Could not refresh the online gallery — showing local content.')+'</span>'
+      +'<button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="fetchPublicGallery(true);render()">↻ '+(S.lang==='pt'?'Tentar de novo':'Retry')+'</button>'
+      +'</div>'
+    :'';
   const liked=JSON.parse(localStorage.getItem(userKey('liked'))||'[]');
   const statsBar='<div style="display:flex;gap:20px;flex-wrap:wrap;font-size:13px">'
     +'<span>🎨 <b>'+pub.length+'</b> '+(S.lang==='pt'?'criações':'creations')+'</span>'
@@ -7281,7 +7396,7 @@ function _viewPublicInner(){
     desc:S.lang==='pt'?'Trabalhos criados com IA pela comunidade. Curta, copie o prompt ou compartilhe.':'AI-created works by the community. Like, copy the prompt or share.',
     actions:statsBar,
     area:'public'
-  })+`
+  })+retryNotice+`
   ${pub.length?`<div class="public-feed">
     ${pub.map(p=>{
       const isLiked=liked.includes(p.id);
@@ -7322,7 +7437,7 @@ function _viewPublicInner(){
       </article>`;}).join('')}
   </div>`:`<div class="card" style="text-align:center;padding:48px 24px;background:linear-gradient(135deg,var(--panel),var(--panel-2));border:1px solid var(--line-2)">
     <div style="font-size:48px;margin-bottom:14px">🌍</div>
-    <h3 style="margin:0 0 8px">${S.lang==='pt'?'Galeria pública ainda sem publicações':'Public gallery has no posts yet'}</h3>
+    <h3 style="margin:0 0 8px">${S.lang==='pt'?'Ainda não há publicações na Galeria Pública':'No posts in the Public Gallery yet'}</h3>
     <p style="color:var(--ink-3);max-width:480px;margin:0 auto 18px">${S.lang==='pt'?'Publique uma criação para aparecer aqui. Gere algo no Estúdio, vá na sua Galeria e clique em "🌍 Publicar".':'Publish a creation to appear here. Generate something in the Studio, open your Gallery and click "🌍 Publish".'}</p>
     <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
       <button class="btn btn-primary" onclick="go('criar')">${S.lang==='pt'?'✨ Criar agora':'✨ Create now'}</button>
@@ -8503,7 +8618,7 @@ function viewEditing(){
   const vids=S.gallery.filter(g=>g.type==='video');
   const pool=vids.map((g)=>`<div class="res-card" onclick="addClip(${S.gallery.indexOf(g)})"><img src="${g.url}" referrerpolicy="no-referrer"><div class="ovl"><button>+ ${S.lang==='pt'?'Timeline':'Timeline'}</button></div></div>`).join('');
   return `
-  <div style="border-radius:14px;overflow:hidden;margin-bottom:20px;height:130px;background:linear-gradient(135deg,#0a1a2e,#2e1a0a);position:relative"><div style="position:absolute;inset:0;display:flex;align-items:center;padding:0 28px;gap:18px"><div style="font-size:46px;line-height:1">✂️</div><div><div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.5);margin-bottom:4px">${S.lang==='pt'?'CRIAÇÃO':'CREATION'}</div><div style="font-size:22px;font-weight:700;color:#fff">${S.lang==='pt'?'Edição em Lote':'Batch Editing'}</div><div style="font-size:12px;color:rgba(255,255,255,.65);margin-top:3px">${S.lang==='pt'?'Edite múltiplas imagens de uma vez com IA':'Edit multiple images at once with AI'}</div></div></div></div><div class="view-head"><div class="kicker">${t('create')}</div><h1 class="serif">${t('editing')}</h1>
+  <div class="view-head"><div class="kicker">${t('create')}</div><h1 class="serif">${t('editing')}</h1>
     <p>${S.lang==='pt'?'Anexe clipes, <b>arraste para reordenar</b> e <b>estique/encurte</b> cada um. Gere <b>continuidade por frames</b> (último frame → inicial do próximo), crie transições com IA e junte tudo num filme único.':'Attach clips, <b>drag to reorder</b> and <b>stretch/shorten</b> each one. Generate <b>frame continuity</b>, create AI transitions and stitch into one film.'}</p></div>
   <div class="grid" style="grid-template-columns:1fr 320px;align-items:start">
     <div class="card">
@@ -9513,14 +9628,13 @@ function saveNewAgent(){
 function viewGeminiAvatar(){
   var pt=S.lang==='pt';
   var hk=CFG.HEYGEN_API_KEY||getApiKey('heygen')||'';
-  var bannerHTML='<div style="background:linear-gradient(135deg,#0d001a,#1a0030,#1a1a1a);border-radius:16px;padding:28px;margin-bottom:22px;display:flex;align-items:center;gap:18px">'
-    +'<div style="font-size:46px;line-height:1">\u{1F3AD}</div>'
-    +'<div><div class="kicker" style="margin:0 0 3px;color:rgba(255,255,255,.55)">'+(pt?'CRIA\u00C7\u00C3O':'CREATION')+'</div>'
-    +'<h1 class="serif" style="margin:0 0 5px;font-size:24px;color:#fff">'+(pt?'Avatar IA':'AI Avatar')+'</h1>'
-    +'<p style="margin:0;font-size:12.5px;color:rgba(255,255,255,.65);max-width:520px">'
+  var bannerHTML='<div class="view-head">'
+    +'<div class="kicker">'+(pt?'CRIA\u00C7\u00C3O':'CREATION')+'</div>'
+    +'<h1 class="serif">'+(pt?'Avatar IA':'AI Avatar')+'</h1>'
+    +'<p style="max-width:640px">'
     +(pt?'Crie avatares falantes com HeyGen \u2014 sincronize texto com voz e produza v\u00EDdeos de presenter em minutos.'
        :'Create talking avatars with HeyGen \u2014 sync text to voice and produce presenter videos in minutes.')
-    +'</p></div></div>';
+    +'</p></div>';
 
   var useCases=[
     ['\u{1F5E3}',pt?'Apresenta\u00E7\u00E3o':'Presenter',pt?'Avatar fala seu roteiro':'Avatar reads your script'],
@@ -10415,34 +10529,13 @@ function finQuickModal(){
 
 function viewPosProdu(){
   var pt=S.lang==='pt';
-  // Build animated timeline banner (purely visual, no title text inside)
-  var timelineBanner=''
-    +'<div style="position:relative;border-radius:14px;overflow:hidden;margin-bottom:20px;height:90px;background:linear-gradient(135deg,#1a0a2e,#0a1a2e)">'
-    +'<div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,10,20,.5) 0%,transparent 40%,transparent 60%,rgba(10,10,20,.5) 100%);z-index:2"></div>'
-    +'<div style="position:absolute;inset:0;padding:12px 0;display:flex;flex-direction:column;gap:5px;z-index:1">'
-    +['#E8C56A','#5A8DEE','#E86A8A','#6AE8B4'].map(function(c,i){
-      return '<div style="display:flex;align-items:center;height:14px;gap:2px;padding:0 18px">'
-        +'<div style="width:32px;font-size:8px;color:rgba(255,255,255,.25);flex-shrink:0">'+(i===0?'V1':i===1?'V2':i===2?'A1':'GFX')+'</div>'
-        +Array.from({length:18},function(_,j){
-          var w=Math.floor(Math.random()*60)+15;
-          var gap=j%3===0;
-          return gap?'<div style="width:'+Math.floor(Math.random()*14+4)+'px"></div>'
-            :'<div style="height:100%;width:'+w+'px;background:'+c+';opacity:'+(0.45+Math.random()*0.45).toFixed(2)+';border-radius:2px;flex-shrink:0"></div>';
-        }).join('')
-        +'</div>';
-    }).join('')
-    +'</div>'
-    +'<div style="position:absolute;top:0;bottom:0;left:38%;width:2px;background:rgba(255,255,255,.7);z-index:3"></div>'
-    +'<div class="pb-tag">'+(pt?'CRIAÇÃO':'CREATION')+'</div>'
-    +'<div class="pb-icon" style="font-size:36px;opacity:.2">🎞️</div>'
-    +'</div>';
   return areaHeader({
     kicker:pt?'CRIAÇÃO':'CREATION',
     title:pt?'Pós-Produção':'Post Production',
     desc:pt?'Ferramentas de edição, transição IA entre clipes, upscale e integração com Adobe. Em expansão contínua.':'Editing tools, AI transition between clips, upscale and Adobe integration. Continuously expanding.',
     actions:'<button class="btn btn-primary btn-sm" onclick="go(\'finisher\')">🛠 '+(pt?'Abrir Finishing Lab (Premium)':'Open Finishing Lab (Premium)')+'</button>',
     area:'posprodu'
-  })+timelineBanner
+  })
 
     // ── Quick action grid: recommended editors + tools
     +'<div style="background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:22px">'
@@ -12503,11 +12596,11 @@ var _cs = {
   showDate: false,
   showModel: false,
   fontSize: 7,              // pt
-  bgColor: '#1a1a1a',       // page background
-  cellBg: '#2a2a2a',        // cell background
-  textColor: '#cccccc',
-  borderColor: '#444444',
-  borderWidth: 0,           // 0 = no border
+  bgColor: '#f8f7f3',       // page background — folha clara estilo contact sheet físico
+  cellBg: '#ffffff',        // cell background
+  textColor: '#3a3a3a',
+  borderColor: '#d9d6cd',
+  borderWidth: 1,           // borda leve por padrão
   // Export
   dpi: 150,                 // 72 | 96 | 150 | 300
   exportFormat: 'pdf',      // pdf | png | jpg
@@ -12668,8 +12761,8 @@ function viewContactSheet() {
     + '</div></div>';
 
   // ── Canvas preview ──
-  var preview = '<div id="csPreviewWrap" style="overflow:auto;border-radius:12px;border:1px solid var(--line-2);background:#111">'
-    + '<canvas id="csCanvas" style="display:block;margin:0 auto;max-width:100%;cursor:crosshair"></canvas>'
+  var preview = '<div id="csPreviewWrap" style="overflow:auto;border-radius:12px;border:1px solid #ddd9cf;background:#edebe4;padding:18px">'
+    + '<canvas id="csCanvas" style="display:block;margin:0 auto;max-width:100%;cursor:crosshair;box-shadow:0 4px 18px rgba(0,0,0,.14);border-radius:4px;background:#fff"></canvas>'
     + '</div>'
     + '<div style="font-size:11px;color:var(--ink-3);text-align:center;margin-top:6px">'
     + (pt?'Clique numa imagem para rotacionar (90°). Duplo clique para ângulo livre.':'Click an image to rotate (90°). Double-click for free angle.')
@@ -12789,7 +12882,7 @@ function csRenderCanvas(page) {
 
   // Page number
   ctx.font = (10 * mmToPx / 3.78) + 'px Arial';
-  ctx.fillStyle = 'rgba(255,255,255,.3)';
+  ctx.fillStyle = 'rgba(60,58,50,.45)';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'bottom';
   ctx.fillText((p+1) + ' / ' + Math.max(1, Math.ceil(items.length / perPage)), PW/2, PH - 4);
@@ -12814,9 +12907,9 @@ function csDrawImageInCell(ctx, url, x, y, w, h, itemIdx) {
   };
   img.onerror = function() {
     // Draw placeholder
-    ctx.fillStyle = '#333';
+    ctx.fillStyle = '#e8e6df';
     ctx.fillRect(x+1, y+1, w-2, h-2);
-    ctx.fillStyle = '#666';
+    ctx.fillStyle = '#9a978d';
     ctx.font = '11px Arial';
     ctx.textAlign = 'center';
     ctx.fillText('Exp.', x+w/2, y+h/2);

@@ -1587,6 +1587,56 @@ async function handleFinisher(req, res, toolPath) {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
+// PUBLIC GALLERY
+// ──────────────────────────────────────────────────────────────────────────────
+
+// Demos exibidos quando o Supabase não está configurado ou a query falha.
+const DEMO_GALLERY_ITEMS = [
+  {
+    id: 'demo-1', user_id: null, title: 'Golden hour rooftop',
+    prompt: 'Cinematic golden hour shot of a director on a city rooftop, anamorphic lens flare, 35mm film grain',
+    media_type: 'image', media_url: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=900&q=70&auto=format&fit=crop',
+    thumbnail_url: null, model: 'demo', aspect_ratio: '16:9', is_public: true, status: 'published',
+    created_at: '2026-01-01T12:00:00Z',
+  },
+  {
+    id: 'demo-2', user_id: null, title: 'Neon noir alley',
+    prompt: 'Ultra realistic neon noir alley at night, rain reflections, moody cyan and magenta lighting, cinematic',
+    media_type: 'image', media_url: 'https://images.unsplash.com/photo-1514306191717-452ec28c7814?w=900&q=70&auto=format&fit=crop',
+    thumbnail_url: null, model: 'demo', aspect_ratio: '16:9', is_public: true, status: 'published',
+    created_at: '2026-01-01T11:00:00Z',
+  },
+  {
+    id: 'demo-3', user_id: null, title: 'Studio product hero',
+    prompt: 'Luxury watch hero shot, dark studio background, golden rim light, macro detail, commercial photography',
+    media_type: 'image', media_url: 'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=900&q=70&auto=format&fit=crop',
+    thumbnail_url: null, model: 'demo', aspect_ratio: '1:1', is_public: true, status: 'published',
+    created_at: '2026-01-01T10:00:00Z',
+  },
+];
+
+async function handlePublicGallery(req, res) {
+  if (req.method !== 'GET') return res.status(405).json({ ok: false, error: 'Method not allowed' });
+
+  // Sem Supabase configurado → demo data (nunca erro pro cliente)
+  if (!hasSB()) {
+    return res.status(200).json({ ok: true, source: 'demo', items: DEMO_GALLERY_ITEMS });
+  }
+
+  const { data, error } = await sbQuery('public_gallery_items', {
+    select: 'id,user_id,title,prompt,media_type,media_url,thumbnail_url,model,aspect_ratio,is_public,status,created_at',
+    filter: 'is_public=eq.true&status=eq.published&order=created_at.desc&limit=60',
+  });
+
+  if (error || !Array.isArray(data)) {
+    log('error', '[public-gallery]', error || 'unexpected response');
+    return res.status(200).json({ ok: true, source: 'demo', items: DEMO_GALLERY_ITEMS });
+  }
+
+  return res.status(200).json({ ok: true, source: 'supabase', items: data });
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
 // BETA FALLBACK
 // ──────────────────────────────────────────────────────────────────────────────
 
@@ -1627,6 +1677,9 @@ const ROUTES = {
   // Gallery
   'gallery/list':            handleGalleryList,
   'gallery/save':            handleGallerySave,
+  // Public Gallery (sem auth — leitura pública, com fallback demo)
+  'public-gallery':          handlePublicGallery,
+  'public/gallery':          handlePublicGallery,
   // Favorites
   'favorites/list':          handleFavoritesList,
   'favorites/save':          handleFavoritesSave,
