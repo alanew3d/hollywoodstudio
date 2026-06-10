@@ -900,6 +900,11 @@ a{color:inherit;text-decoration:none}
 .main{padding:4px 4px 32px 0;grid-area:main;overflow-y:auto;position:relative;background:
   radial-gradient(1100px 480px at 78% -8%,rgba(212,168,87,.05),transparent 60%) ,var(--bg)}
 
+/* ── Mode buttons: Criar rápido vs Studio completo ── */
+.mode-btn{white-space:nowrap}
+.mode-diff-link{background:none;border:none;color:var(--ink-4);font-size:11px;cursor:pointer;text-decoration:underline;padding:2px 4px;white-space:nowrap}
+.mode-diff-link:hover{color:var(--accent)}
+
 /* ── Mobile: sidebar vira drawer ── */
 .menu-btn{display:none;width:42px;height:42px;border-radius:10px;border:1px solid var(--line);background:var(--bg-2);cursor:pointer;align-items:center;justify-content:center}
 .menu-btn svg{width:22px;height:22px;color:var(--ink)}
@@ -912,6 +917,9 @@ a{color:inherit;text-decoration:none}
   .menu-btn{display:flex}
   .topbar{padding:0 14px;gap:10px}
   .topbar .lang-tog,.topbar .theme-tog{display:none}
+  .mode-btn .lbl{display:none}
+  .mode-btn{padding:7px 10px!important;min-height:34px}
+  .mode-diff-link{display:none}
   .view{padding:18px 14px 80px !important}
   .view-head h1{font-size:22px !important}
   .area-banner{height:108px;border-radius:14px;margin-bottom:14px}
@@ -1922,6 +1930,9 @@ input:focus,textarea:focus,select:focus{
     <button class="menu-btn" onclick="toggleSidebar()" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
     <div class="tb-title serif" id="topTitle">Estúdio</div>
     <div class="tb-spacer"></div>
+    <button class="btn btn-primary btn-sm mode-btn" onclick="go('criar')" title="Use para gerar uma imagem, vídeo, prompt ou storyboard em poucos segundos.">✨ <span class="lbl" id="tbQuickLbl">Criar rápido</span></button>
+    <button class="btn btn-ghost btn-sm mode-btn" onclick="go('studio')" title="Use para controlar o fluxo inteiro: modelos, referências, storyboard, pós-produção, galeria e publicação.">🎛️ <span class="lbl" id="tbStudioLbl">Studio completo</span></button>
+    <button class="mode-diff-link" id="tbDiffLbl" onclick="hsaiModeDiff()">Qual a diferença?</button>
     <div class="lang-toggle lang-tog"><button id="tlPT" class="on" onclick="setLang('pt')">PT</button><button id="tlEN" onclick="setLang('en')">EN</button></div>
     <button class="icon-btn theme-tog" onclick="toggleTheme()" title="Tema"><svg id="themeIc" viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3v2M12 19v2M5 12H3M21 12h-2M6 6l1.5 1.5M16.5 16.5L18 18M18 6l-1.5 1.5M7.5 16.5L6 18"/><circle cx="12" cy="12" r="4"/></svg></button>
     <button class="btn-plans" onclick="go('plans')"><svg viewBox="0 0 24 24" width="15" fill="none" stroke="#1a1408" stroke-width="2"><path d="M12 2l2.5 7H22l-6 4.5 2.3 7L12 16l-6.3 4.5L8 13.5 2 9h7.5L12 2z"/></svg>Planos</button>
@@ -2056,16 +2067,16 @@ const S = {
 
 /* ════════ i18n ════════ */
 const I18N={
-  pt:{home:'Home',studio:'Estúdio',images:'Imagens',audio:'Áudio',characters:'Personagens',storyboard:'Storyboard',favorites:'Favoritos',editing:'Edição',agents:'Agentes',docs:'Documentos',spaces:'Spaces',flow:'Assistente',
+  pt:{home:'Home',studio:'Studio completo',images:'Imagens',audio:'Áudio',characters:'Personagens',storyboard:'Storyboard',favorites:'Favoritos',editing:'Edição',agents:'Agentes',docs:'Documentos',spaces:'Spaces',flow:'Assistente',
     council:'Conselho Criativo',analytics:'Estatísticas',opportunities:'Oportunidades',public:'Galeria Pública',
     academy:'Academy',news:'Notícias',festivals:'Festivais',gallery:'Galeria',plans:'Planos',admin:'Admin',marketing:'Marketing',models:'Modelos',batch:'Edição em Lote',contactsheet:'Contact Sheet',templates:'Templates',uploads:'Meus Uploads',posprodu:'Pós-Produção',tube:'YouTube',instagram:'Instagram',inspo:'Inspiração',
     create:'Criação',intelligence:'Inteligência',manage:'Gestão',community:'Comunidade',learn:'Aprender',account:'Conta',
-    generate:'Gerar',prompt:'Prompt',welcome:'Bem-vindo de volta','gemini-avatar':'Avatar IA',criar:'Criar'},
-  en:{home:'Home',studio:'Studio',images:'Images',audio:'Audio',characters:'Characters',storyboard:'Storyboard',favorites:'Favorites',editing:'Editing',agents:'Agents',docs:'Documents',spaces:'Spaces',flow:'Assistant',
+    generate:'Gerar',prompt:'Prompt',welcome:'Bem-vindo de volta','gemini-avatar':'Avatar IA',criar:'Criar rápido'},
+  en:{home:'Home',studio:'Full Studio',images:'Images',audio:'Audio',characters:'Characters',storyboard:'Storyboard',favorites:'Favorites',editing:'Editing',agents:'Agents',docs:'Documents',spaces:'Spaces',flow:'Assistant',
     council:'Conselho Criativo',analytics:'Analytics',opportunities:'Opportunities',public:'Public Gallery',
     academy:'Academy',news:'News',festivals:'Festivals',gallery:'Gallery',plans:'Plans',admin:'Admin',models:'Models',batch:'Batch Edit',contactsheet:'Contact Sheet',templates:'Templates',uploads:'My Uploads',posprodu:'Post Production',tube:'YouTube',instagram:'Instagram',inspo:'Inspiration',
     create:'Create',intelligence:'Intelligence',manage:'Manage',community:'Community',learn:'Learn',account:'Account',
-    generate:'Generate',prompt:'Prompt',welcome:'Welcome back','gemini-avatar':'AI Avatar',criar:'Create'}
+    generate:'Generate',prompt:'Prompt',welcome:'Welcome back','gemini-avatar':'AI Avatar',criar:'Quick create'}
 };
 
 // FEEDS CONFIG
@@ -2554,7 +2565,6 @@ function fmtMoney(brl){const rate=CFG.USD_RATE||0.18;
 const NAV=[
   {group:'create',items:[
     {id:'criar',ic:'M12 3l1.4 3.6L17 8l-3.6 1.4L12 13l-1.4-3.6L7 8l3.6-1.4L12 3zM5 16l.9 2.2 2.2.9-2.2.9L5 22l-.9-2.2L2 18.9l2.2-.9L5 16z'},
-    {id:'home',ic:'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10'},
     {id:'studio',ic:'M4 5h16v14H4zM4 9h16M9 5v14'},
     {id:'storyboard',ic:'M4 3h16v4H4zM4 11h16v4H4zM4 19h10v2H4z'},
     {id:'agents',ic:'M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8L12 2zM5 17l.9 2.6L8.5 20.5l-2.6.9L5 24l-.9-2.6L1.5 20.5l2.6-.9L5 17z'},
@@ -2693,6 +2703,9 @@ function syncLang(){
   const q=document.getElementById('authQuote');
   if(q)q.textContent=S.lang==='pt'?'A direção cinematográfica encontra a inteligência generativa.':'Cinematic direction meets generative intelligence.';
   const cil=document.getElementById('credInfoLbl');if(cil)cil.textContent=S.lang==='pt'?'Como funcionam os créditos':'How credits work';
+  const mq=document.getElementById('tbQuickLbl');if(mq)mq.textContent=S.lang==='pt'?'Criar rápido':'Quick create';
+  const ms=document.getElementById('tbStudioLbl');if(ms)ms.textContent=S.lang==='pt'?'Studio completo':'Full Studio';
+  const md=document.getElementById('tbDiffLbl');if(md)md.textContent=S.lang==='pt'?'Qual a diferença?':"What's the difference?";
 }
 function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';document.body.dataset.theme=S.theme;localStorage.setItem('hsai_theme',S.theme);}
 
@@ -3376,7 +3389,10 @@ function viewSimpleCreate(){
       +'<button class="btn btn-ghost btn-sm" onclick="go(\'studio\')">Studio Suite →</button>'
       +'<div class="user-wrap"><div class="user-chip" id="scUserChip" onclick="userMenu(\'scUserPop\')">'+avInner+'</div><div class="user-pop" id="scUserPop"></div></div>';
   }
-  var topRight=langCtl+themeCtl+plansCtl+userCtl;
+  var modeCtl='<button class="btn btn-primary btn-sm mode-btn" onclick="go(\'criar\')" title="'+(pt?'Use para gerar uma imagem, vídeo, prompt ou storyboard em poucos segundos.':'Use it to generate an image, video, prompt or storyboard in seconds.')+'">✨ <span class="lbl">'+(pt?'Criar rápido':'Quick create')+'</span></button>'
+    +'<button class="btn btn-ghost btn-sm mode-btn" onclick="go(\'studio\')" title="'+(pt?'Use para controlar o fluxo inteiro: modelos, referências, storyboard, pós-produção, galeria e publicação.':'Use it to control the entire workflow: models, references, storyboard, post-production, gallery and publishing.')+'">🎛️ <span class="lbl">'+(pt?'Studio completo':'Full Studio')+'</span></button>'
+    +'<button class="mode-diff-link" onclick="hsaiModeDiff()">'+(pt?'Qual a diferença?':'What\'s the difference?')+'</button>';
+  var topRight=modeCtl+langCtl+themeCtl+plansCtl+userCtl;
 
   return '<div class="sc-console" id="scPage">'
 
@@ -3412,7 +3428,7 @@ function viewSimpleCreate(){
 
   +'<div class="sc-center-hero">'
   +'<h1>'+(pt?'O que vamos <em>criar</em> hoje?':'What are we <em>creating</em> today?')+'</h1>'
-  +'<p class="sub">'+(pt?'Vídeos e imagens com IA em segundos — você é o diretor.':'AI videos and images in seconds — you are the director.')+'</p>'
+  +'<p class="sub">'+(pt?'Comece rápido aqui. Quando quiser mais controle, envie para o Studio completo.':'Start fast here. When you want more control, send it to the Full Studio.')+'</p>'
   +'</div>'
   +'<div class="sc-prompt-bar">'
   +'<textarea class="sc-prompt-field" id="scPrompt" rows="3" placeholder="'+(pt?'Descreva sua ideia...':'Describe your idea...')+'" oninput="scUpdateRecommendation()" style="width:100%;resize:none;min-height:88px;padding:12px 16px;font-size:15px"></textarea>'
@@ -3473,7 +3489,8 @@ function viewSimpleCreate(){
   +'<span style="flex:1"></span>'
   +'<button class="btn btn-ghost btn-sm" onclick="scAttachRef()">📎 '+(pt?'Referência':'Ref')+'</button>'
   +'<button class="btn btn-ghost btn-sm" onclick="scOpenModelPicker()">🎛 '+(pt?'Ver todos os modelos':'All models')+'</button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="scSendToStudio()">⚙️ Studio Suite</button>'
+  +'<span style="font-size:11px;color:var(--ink-4);white-space:nowrap">'+(pt?'Precisa de fluxo completo?':'Need the full workflow?')+'</span>'
+  +'<button class="btn btn-ghost btn-sm" onclick="scSendToStudio()" title="'+(pt?'Use para controlar o fluxo inteiro: modelos, referências, storyboard, pós-produção, galeria e publicação.':'Use it to control the entire workflow: models, references, storyboard, post-production, gallery and publishing.')+'">⚙️ '+(pt?'Continuar no Studio completo':'Continue in Full Studio')+'</button>'
   +'</div>'
 
   +'</div>'  // end .sc-prompt-bar
@@ -4082,6 +4099,21 @@ async function scEnhancePrompt(){
   finally{el.disabled=false;}
 }
 
+/* ── "Qual a diferença?" — Criar rápido vs Studio completo ── */
+function hsaiModeDiff(){
+  var pt=S.lang==='pt';
+  showQuickModal('<div style="padding:4px">'
+    +'<h3 style="margin-bottom:10px">✨ '+(pt?'Criar rápido × 🎛️ Studio completo':'Quick create × 🎛️ Full Studio')+'</h3>'
+    +'<p style="font-size:13.5px;color:var(--ink-2);line-height:1.6">'+(pt
+      ?'Criar rápido e Studio usam o mesmo motor. Criar é a entrada simples para começar agora. Studio é o modo completo para organizar, refinar e finalizar projetos profissionais.'
+      :'Quick create and Studio use the same engine. Create is the simple entry point to start now. Studio is the full mode to organize, refine and finish professional projects.')+'</p>'
+    +'<div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">'
+    +'<button class="btn btn-primary btn-sm" onclick="document.getElementById(\'scQuickModal\').remove();go(\'criar\')">✨ '+(pt?'Criar rápido':'Quick create')+'</button>'
+    +'<button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'scQuickModal\').remove();go(\'studio\')">🎛️ '+(pt?'Studio completo':'Full Studio')+'</button>'
+    +'</div></div>');
+}
+window.hsaiModeDiff=hsaiModeDiff;
+
 function showQuickModal(html,wide){
   var existing=document.getElementById('scQuickModal');
   if(existing)existing.remove();
@@ -4459,6 +4491,11 @@ function scUseAsRef(url,type){
 
 function viewStudio(){
   return `
+  <!-- ── Voltar ao Criar rápido ── -->
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 0 10px">
+    <button class="btn btn-ghost btn-sm" onclick="go('criar')">← ${S.lang==='pt'?'Voltar ao Criar rápido':'Back to Quick create'}</button>
+    <span style="font-size:12px;color:var(--ink-4)">${S.lang==='pt'?'Criar rápido é ideal para começar. Studio é para aprofundar.':'Quick create is ideal to get started. Studio is for going deeper.'}</span>
+  </div>
   <!-- ── STUDIO GRID — prompt no topo, sem banners acima ── -->
   <div class="studio" style="margin-top:4px">
     <div>
