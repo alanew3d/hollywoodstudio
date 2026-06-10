@@ -1583,7 +1583,7 @@ body.layout-fullscreen .topbar{display:none!important}
 .sc-logo{font-weight:800;font-size:15px;letter-spacing:-.5px;color:var(--ink);white-space:nowrap}
 .sc-topbar-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .sc-visitor-pill{font-size:11px;color:var(--ink-2);background:var(--accent-dim);border:1px solid var(--accent-dim);padding:4px 10px;border-radius:20px;white-space:nowrap}
-.sc-console-mid{flex:1;display:grid;grid-template-columns:200px 1fr 220px;gap:14px;padding:10px 16px;min-height:0;overflow:hidden}
+.sc-console-mid{flex:1;display:grid;grid-template-columns:230px 1fr;gap:14px;padding:10px 16px;min-height:0;overflow:hidden}
 .sc-side{display:flex;flex-direction:column;min-height:0}
 .sc-side-title{font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--ink-4);text-transform:uppercase;margin-bottom:8px;flex-shrink:0}
 .sc-dir-list{overflow-y:auto;min-height:0;scrollbar-width:thin}
@@ -1598,6 +1598,10 @@ body.layout-fullscreen .topbar{display:none!important}
 .sc-demo-duo{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:12px;min-height:0}
 .sc-demo-card{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line-2);background:var(--panel-2);min-height:0}
 .sc-demo-card video,.sc-demo-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.sc-demo-single{flex:1;position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line-2);background:var(--panel-2);min-height:0;width:100%;max-width:820px;margin:0 auto}
+.sc-demo-stage{position:absolute;inset:0}
+.sc-demo-stage video,.sc-demo-stage img{width:100%;height:100%;object-fit:cover;display:block}
+.sc-slide-badge{font-size:10px;font-weight:700;background:rgba(0,0,0,.55);color:#fff;border-radius:6px;padding:2px 8px;white-space:nowrap}
 .sc-demo-ov{position:absolute;left:0;right:0;bottom:0;padding:30px 12px 10px;background:linear-gradient(transparent,rgba(0,0,0,.78));display:flex;flex-direction:column;gap:6px}
 .sc-demo-tt{font-size:12px;font-weight:700;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.6)}
 .sc-demo-acts{display:flex;gap:6px;flex-wrap:wrap}
@@ -1627,6 +1631,7 @@ body.layout-fullscreen .topbar{display:none!important}
   .sc-dir-panel{display:none}
   .sc-demo-duo{flex:none;grid-template-columns:1fr 1fr;gap:10px}
   .sc-demo-card{min-height:170px}
+  .sc-demo-single{flex:none;min-height:210px}
   .sc-center-hero h1{font-size:22px}
   .sc-side,.sc-gal-scroll{overflow:visible}
   .sc-gal-grid{display:flex;overflow-x:auto;gap:8px;padding-bottom:6px;scrollbar-width:thin}
@@ -2217,6 +2222,78 @@ window.HSAI_MODELS=[
   {id:'stable-diffusion-xl',name:'SDXL',provider:'Stability AI',type:'text-to-image',categories:['text-to-image'],bestFor:'Geração rápida e customizável de imagens',description:'SDXL — open source com LoRA e controle avançado',strengths:['Open source','Customizável','Rápido','Econômico'],limitations:['Qualidade menor que Flux'],estimatedCredits:2,speed:'rapido',quality:'standard',aspectRatios:['1:1','16:9','9:16'],maxDuration:0,supportsImageInput:false,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:true,status:'active'}
 ];
 
+/* ════════ HSAI_MENTORS — catálogo de mentores criativos (Simple Create + Conselho) ════════
+   IMPORTANTE: nenhum mentor reproduz falas reais. promptInfluence = descritores de estilo SEGUROS.
+   safeDescription usa sempre o padrão "Visão inspirada em características públicas..." */
+function _hsaiSafeDesc(name){return 'Visão inspirada em características públicas de linguagem visual e narrativa associadas a '+name+'. Não reproduz falas reais.';}
+window.HSAI_MENTORS=[
+  /* ── Segmentos rápidos (não são pessoas) ── */
+  {id:'auto',name:'Automático',category:'segmento',type:'segment',styleKeywords:['equilíbrio','recomendação inteligente'],bestFor:'Deixar o sistema escolher a melhor direção',promptInfluence:'',safeDescription:'O sistema escolhe a direção criativa ideal para o seu prompt.',isLivingPerson:false,isEnabled:true},
+  {id:'cinematico',name:'Diretor de Cinema',category:'segmento',type:'segment',styleKeywords:['cinematográfico','color grading','profundidade'],bestFor:'Vídeos com estética de cinema',promptInfluence:'plano cinematográfico, câmera em movimento suave, profundidade de campo rasa, iluminação volumétrica, color grading de cinema, estética visual premium, 4K',safeDescription:'Direção cinematográfica clássica: enquadramento, luz e movimento de câmera de cinema.',isLivingPerson:false,isEnabled:true},
+  {id:'editorial',name:'Diretor de Arte',category:'segmento',type:'segment',styleKeywords:['composição','paleta','editorial'],bestFor:'Identidade visual e composição rigorosa',promptInfluence:'composição fotográfica rigorosa, paleta editorial refinada, enquadramento de moda/arte, luz natural ou controlada, estética de revista premium',safeDescription:'Direção de arte editorial: composição, paleta e acabamento de revista.',isLivingPerson:false,isEnabled:true},
+  {id:'narrativo',name:'Roteirista',category:'segmento',type:'segment',styleKeywords:['storytelling','arco emocional','personagem'],bestFor:'Histórias com começo, meio e fim',promptInfluence:'narrativa visual clara, progressão emocional, personagem central, conflito e resolução implícitos, ambiente envolvente, storytelling visual',safeDescription:'Estrutura narrativa: arco emocional, personagem e progressão de história.',isLivingPerson:false,isEnabled:true},
+  {id:'publicitario',name:'Publicitário',category:'segmento',type:'segment',styleKeywords:['comercial','marca','produto'],bestFor:'Comerciais e conteúdo de marca',promptInfluence:'estética de comercial premium, produto em destaque, iluminação de produto profissional, movimento elegante, visual de marca, corte dinâmico, 4K',safeDescription:'Linguagem de comercial premium: marca, produto e corte dinâmico.',isLivingPerson:false,isEnabled:true},
+  {id:'fotografo',name:'Fotógrafo',category:'segmento',type:'segment',styleKeywords:['lente','abertura','momento decisivo'],bestFor:'Imagens com técnica fotográfica',promptInfluence:'lente específica (35mm/50mm/85mm), abertura rasa, composição por terços, luz natural direcional, momento decisivo, profundidade atmosférica',safeDescription:'Técnica fotográfica: lente, abertura, luz direcional e composição.',isLivingPerson:false,isEnabled:true},
+  {id:'social',name:'Social Media',category:'segmento',type:'segment',styleKeywords:['vertical','gancho','reels'],bestFor:'Reels, TikTok e Shorts',promptInfluence:'formato vertical 9:16, gancho nos 2 primeiros segundos, texto legível, ritmo acelerado, estética de reels, visual limpo e direto',safeDescription:'Otimizado para redes sociais: vertical, gancho rápido e ritmo acelerado.',isLivingPerson:false,isEnabled:true},
+  {id:'luxo',name:'Luxo',category:'segmento',type:'segment',styleKeywords:['premium','dourado','exclusividade'],bestFor:'Marcas e produtos de alto padrão',promptInfluence:'atmosfera de luxo exclusivo, materiais premium, iluminação dourada, movimento lento e suave, paleta elegante, exclusividade visual, ultra HD',safeDescription:'Estética de luxo: materiais premium, luz dourada e ritmo elegante.',isLivingPerson:false,isEnabled:true},
+  {id:'produto',name:'Produto',category:'segmento',type:'segment',styleKeywords:['close-up','e-commerce','orbital'],bestFor:'Destaque de produto e e-commerce',promptInfluence:'produto em destaque, close-up detalhado, iluminação de produto impecável, background clean, movimento orbital elegante, visual de e-commerce premium',safeDescription:'Foco total no produto: close-up, fundo limpo e iluminação impecável.',isLivingPerson:false,isEnabled:true},
+  {id:'imoveis',name:'Imóveis',category:'segmento',type:'segment',styleKeywords:['golden hour','grande angular','tour'],bestFor:'Tours e anúncios imobiliários',promptInfluence:'imóvel premium, golden hour, grande angular, tour fluido de câmera, ambientes amplos e iluminados, visual aspiracional',safeDescription:'Linguagem imobiliária premium: golden hour, grande angular e tour fluido.',isLivingPerson:false,isEnabled:true},
+  {id:'moda',name:'Moda',category:'segmento',type:'segment',styleKeywords:['editorial','alta-costura','atitude'],bestFor:'Editoriais e campanhas de moda',promptInfluence:'editorial de moda, alta-costura, poses fortes, iluminação de estúdio dramática, paleta refinada, atitude e presença',safeDescription:'Editorial de moda: poses fortes, estúdio dramático e paleta refinada.',isLivingPerson:false,isEnabled:true},
+  {id:'musical',name:'Música',category:'segmento',type:'segment',styleKeywords:['videoclipe','ritmo','energia'],bestFor:'Videoclipes e conteúdo musical',promptInfluence:'sincronizado ao ritmo, visual abstrato e emocional, cores vibrantes, movimento expressivo, estética de videoclipe, energia e impacto visual',safeDescription:'Estética de videoclipe: ritmo, cor vibrante e movimento expressivo.',isLivingPerson:false,isEnabled:true},
+  {id:'viral',name:'Viral',category:'segmento',type:'segment',styleKeywords:['impacto','3 segundos','trending'],bestFor:'Conteúdo de alto alcance',promptInfluence:'abertura de impacto nos primeiros 3 segundos, ritmo rápido, cortes dinâmicos, visual chamativo, formato vertical 9:16, trending aesthetic',safeDescription:'Fórmula viral: impacto imediato, cortes rápidos e estética trending.',isLivingPerson:false,isEnabled:true},
+  /* ── Mestres do Cinema ── */
+  {id:'nolan',name:'Christopher Nolan',category:'cinema',type:'director',styleKeywords:['não-linear','IMAX','escala épica'],bestFor:'Épicos intelectuais e tensão estrutural',promptInfluence:'estrutura temporal em camadas, escala épica com física realista, formato IMAX, paleta fria e contida, tensão crescente, montagem paralela',safeDescription:_hsaiSafeDesc('Christopher Nolan'),isLivingPerson:true,isEnabled:true},
+  {id:'villeneuve',name:'Denis Villeneuve',category:'cinema',type:'director',styleKeywords:['monumental','silêncio','atmosfera'],bestFor:'Ficção científica contemplativa',promptInfluence:'escala monumental com silêncio, minimalismo épico, neblina e atmosfera densa, paleta dessaturada, sound design pesado implícito, intimidade em meio à imensidão',safeDescription:_hsaiSafeDesc('Denis Villeneuve'),isLivingPerson:true,isEnabled:true},
+  {id:'kubrick',name:'Stanley Kubrick',category:'cinema',type:'director',styleKeywords:['simetria','um ponto de fuga','precisão'],bestFor:'Composições geométricas e atmosfera fria',promptInfluence:'simetria de um ponto de fuga, zoom lento, iluminação prática realista, composição geométrica rigorosa, atmosfera fria e precisa, desconforto calculado',safeDescription:_hsaiSafeDesc('Stanley Kubrick'),isLivingPerson:false,isEnabled:true},
+  {id:'spielberg',name:'Steven Spielberg',category:'cinema',type:'director',styleKeywords:['maravilha','contraluz','aventura'],bestFor:'Espetáculo emocional e aventura',promptInfluence:'aventura emocional, contraluz quente, push-in lento em rosto maravilhado, câmera fluida que revela escala, espetáculo familiar',safeDescription:_hsaiSafeDesc('Steven Spielberg'),isLivingPerson:true,isEnabled:true},
+  {id:'scorsese',name:'Martin Scorsese',category:'cinema',type:'director',styleKeywords:['urbano','travelling','ritmo musical'],bestFor:'Energia urbana e narrativa visceral',promptInfluence:'energia urbana, travelling longo e fluido, paleta quente saturada, ritmo de montagem musical, cidade como personagem',safeDescription:_hsaiSafeDesc('Martin Scorsese'),isLivingPerson:true,isEnabled:true},
+  {id:'fincher',name:'David Fincher',category:'cinema',type:'director',styleKeywords:['precisão','noir digital','sombra'],bestFor:'Thrillers escuros e precisos',promptInfluence:'precisão técnica absoluta, paleta verde-escura e âmbar, câmera estável e cirúrgica, sombras densas, atmosfera noir digital',safeDescription:_hsaiSafeDesc('David Fincher'),isLivingPerson:true,isEnabled:true},
+  {id:'ridley-scott',name:'Ridley Scott',category:'cinema',type:'director',styleKeywords:['mundos densos','luz volumétrica','épico'],bestFor:'Mundos ricos e épicos viscerais',promptInfluence:'mundos densos e texturizados, fumaça e luz volumétrica, design de produção rico, épico visceral, contraste dramático',safeDescription:_hsaiSafeDesc('Ridley Scott'),isLivingPerson:true,isEnabled:true},
+  {id:'tarantino',name:'Quentin Tarantino',category:'cinema',type:'director',styleKeywords:['retrô','saturado','tensão'],bestFor:'Estética retrô e tensão estilizada',promptInfluence:'cores saturadas, enquadramentos baixos, zoom rápido pontual, estética retrô anos 70, tensão construída em cena, divisão em capítulos',safeDescription:_hsaiSafeDesc('Quentin Tarantino'),isLivingPerson:true,isEnabled:true},
+  {id:'wes-anderson',name:'Wes Anderson',category:'cinema',type:'director',styleKeywords:['simetria','pastel','frontal'],bestFor:'Visual simétrico e paleta curada',promptInfluence:'simetria central absoluta, paleta pastel curada, planos frontais, movimentos de câmera laterais precisos, estética de diorama',safeDescription:_hsaiSafeDesc('Wes Anderson'),isLivingPerson:true,isEnabled:true},
+  {id:'cameron',name:'James Cameron',category:'cinema',type:'director',styleKeywords:['escala','água','tecnologia'],bestFor:'Blockbusters tecnológicos',promptInfluence:'escala colossal, água e bioluminescência, tecnologia de ponta visível, ação clara e legível, azul profundo',safeDescription:_hsaiSafeDesc('James Cameron'),isLivingPerson:true,isEnabled:true},
+  {id:'cuaron',name:'Alfonso Cuarón',category:'cinema',type:'director',styleKeywords:['plano-sequência','luz natural','imersão'],bestFor:'Realismo imersivo emocional',promptInfluence:'plano-sequência imersivo, luz natural, câmera flutuante que testemunha, realismo emocional, tempo real',safeDescription:_hsaiSafeDesc('Alfonso Cuarón'),isLivingPerson:true,isEnabled:true},
+  {id:'del-toro',name:'Guillermo del Toro',category:'cinema',type:'director',styleKeywords:['gótico','criaturas','âmbar'],bestFor:'Fantasia sombria e criaturas',promptInfluence:'fantasia gótica, criaturas detalhadas e orgânicas, paleta âmbar e azul-petróleo, conto de fadas sombrio, texturas ricas',safeDescription:_hsaiSafeDesc('Guillermo del Toro'),isLivingPerson:true,isEnabled:true},
+  {id:'burton',name:'Tim Burton',category:'cinema',type:'director',styleKeywords:['gótico lúdico','espirais','excêntrico'],bestFor:'Fantasia macabra e excêntrica',promptInfluence:'gótico excêntrico, espirais e listras, paleta sombria com acentos vibrantes, fantasia macabra lúdica, silhuetas alongadas',safeDescription:_hsaiSafeDesc('Tim Burton'),isLivingPerson:true,isEnabled:true},
+  /* ── Fotografia ── */
+  {id:'deakins',name:'Roger Deakins',category:'fotografia',type:'cinematographer',styleKeywords:['luz motivada','silhueta','claridade'],bestFor:'Fotografia limpa e motivada',promptInfluence:'luz natural motivada, silhuetas em contraluz, composição limpa e clara, paleta contida, claridade absoluta de imagem',safeDescription:_hsaiSafeDesc('Roger Deakins'),isLivingPerson:true,isEnabled:true},
+  {id:'lubezki',name:'Emmanuel Lubezki',category:'fotografia',type:'cinematographer',styleKeywords:['hora mágica','grande angular','fluido'],bestFor:'Luz natural e câmera fluida',promptInfluence:'grande angular próxima ao sujeito, luz natural de hora mágica, plano-sequência fluido, céus amplos, imersão sensorial',safeDescription:_hsaiSafeDesc('Emmanuel Lubezki'),isLivingPerson:true,isEnabled:true},
+  {id:'gordon-willis',name:'Gordon Willis',category:'fotografia',type:'cinematographer',styleKeywords:['sombra','subexposição','mistério'],bestFor:'Drama de sombras profundas',promptInfluence:'sombras profundas, subexposição elegante, luz superior dura, contraste dramático, rostos parcialmente ocultos, mistério',safeDescription:_hsaiSafeDesc('Gordon Willis'),isLivingPerson:false,isEnabled:true},
+  {id:'storaro',name:'Vittorio Storaro',category:'fotografia',type:'cinematographer',styleKeywords:['cor dramática','temperatura','pictórico'],bestFor:'Cor como dramaturgia',promptInfluence:'cor como dramaturgia, transições de temperatura de cor, luz pictórica, simbolismo cromático, composição operática',safeDescription:_hsaiSafeDesc('Vittorio Storaro'),isLivingPerson:true,isEnabled:true},
+  {id:'leibovitz',name:'Annie Leibovitz',category:'fotografia',type:'photographer',styleKeywords:['retrato conceitual','narrativo','produção'],bestFor:'Retratos editoriais elaborados',promptInfluence:'retrato conceitual, iluminação cinematográfica suave, pose narrativa, cenário elaborado, acabamento editorial de capa',safeDescription:_hsaiSafeDesc('Annie Leibovitz'),isLivingPerson:true,isEnabled:true},
+  {id:'salgado',name:'Sebastião Salgado',category:'fotografia',type:'photographer',styleKeywords:['preto e branco','monumental','humanidade'],bestFor:'Documental épico em P&B',promptInfluence:'preto e branco monumental, contraste rico, humanidade épica, texturas profundas, escala natural grandiosa',safeDescription:_hsaiSafeDesc('Sebastião Salgado'),isLivingPerson:false,isEnabled:true},
+  {id:'mccurry',name:'Steve McCurry',category:'fotografia',type:'photographer',styleKeywords:['cor saturada','retrato','cultura'],bestFor:'Retratos vibrantes e culturais',promptInfluence:'cor saturada vibrante, retrato direto com olhar intenso, luz natural, contexto cultural rico, composição clássica',safeDescription:_hsaiSafeDesc('Steve McCurry'),isLivingPerson:true,isEnabled:true},
+  /* ── Arte & Design ── */
+  {id:'da-vinci',name:'Leonardo da Vinci',category:'arte',type:'artist',styleKeywords:['sfumato','anatomia','renascença'],bestFor:'Clássico renascentista',promptInfluence:'sfumato, anatomia precisa, composição triangular, luz suave renascentista, paleta terrosa, detalhe científico',safeDescription:_hsaiSafeDesc('Leonardo da Vinci'),isLivingPerson:false,isEnabled:true},
+  {id:'dali',name:'Salvador Dalí',category:'arte',type:'artist',styleKeywords:['surreal','onírico','impossível'],bestFor:'Surrealismo onírico',promptInfluence:'surrealismo onírico, perspectivas impossíveis, deserto infinito, objetos derretidos, precisão fotográfica do absurdo',safeDescription:_hsaiSafeDesc('Salvador Dalí'),isLivingPerson:false,isEnabled:true},
+  {id:'picasso',name:'Pablo Picasso',category:'arte',type:'artist',styleKeywords:['cubismo','fragmentação','geometria'],bestFor:'Formas fragmentadas e expressivas',promptInfluence:'formas fragmentadas cubistas, múltiplas perspectivas simultâneas, geometria expressiva, cores ousadas',safeDescription:_hsaiSafeDesc('Pablo Picasso'),isLivingPerson:false,isEnabled:true},
+  {id:'warhol',name:'Andy Warhol',category:'arte',type:'artist',styleKeywords:['pop art','serigrafia','repetição'],bestFor:'Pop art e cultura de massa',promptInfluence:'pop art, cores chapadas vibrantes, repetição serial, estética de serigrafia, ícones do cotidiano',safeDescription:_hsaiSafeDesc('Andy Warhol'),isLivingPerson:false,isEnabled:true},
+  {id:'basquiat',name:'Jean-Michel Basquiat',category:'arte',type:'artist',styleKeywords:['neo-expressionismo','urgência','urbano'],bestFor:'Arte urbana crua e simbólica',promptInfluence:'neo-expressionismo cru, traço urgente, texto e símbolos sobrepostos, coroas, energia urbana, fundo texturizado',safeDescription:_hsaiSafeDesc('Jean-Michel Basquiat'),isLivingPerson:false,isEnabled:true},
+  {id:'giger',name:'H.R. Giger',category:'arte',type:'artist',styleKeywords:['biomecânico','sombrio','industrial'],bestFor:'Horror biomecânico',promptInfluence:'biomecânico sombrio, texturas orgânicas e metálicas fundidas, monocromático, surrealismo industrial, arquitetura alienígena',safeDescription:_hsaiSafeDesc('H.R. Giger'),isLivingPerson:false,isEnabled:true},
+  {id:'syd-mead',name:'Syd Mead',category:'arte',type:'artist',styleKeywords:['futurismo','concept art','neon'],bestFor:'Futurismo industrial elegante',promptInfluence:'futurismo industrial elegante, veículos e cidades futuras, luz neon e cromados, otimismo tecnológico, concept art polido',safeDescription:_hsaiSafeDesc('Syd Mead'),isLivingPerson:false,isEnabled:true},
+  {id:'saul-bass',name:'Saul Bass',category:'arte',type:'designer',styleKeywords:['gráfico','minimalista','recorte'],bestFor:'Design gráfico narrativo',promptInfluence:'gráfico minimalista, formas recortadas, cores sólidas, tipografia como protagonista, narrativa em silhuetas',safeDescription:_hsaiSafeDesc('Saul Bass'),isLivingPerson:false,isEnabled:true},
+  /* ── Narrativa ── */
+  {id:'shakespeare',name:'William Shakespeare',category:'narrativa',type:'writer',styleKeywords:['drama universal','ambição','tragédia'],bestFor:'Drama elevado e universal',promptInfluence:'conflito universal, ambição e queda, drama elevado, atmosfera teatral, claro-escuro emocional',safeDescription:_hsaiSafeDesc('William Shakespeare'),isLivingPerson:false,isEnabled:true},
+  {id:'orwell',name:'George Orwell',category:'narrativa',type:'writer',styleKeywords:['distopia','vigilância','crítica'],bestFor:'Distopias e crítica social',promptInfluence:'distopia opressiva, vigilância onipresente, cinza institucional, uniformidade, crítica social visual',safeDescription:_hsaiSafeDesc('George Orwell'),isLivingPerson:false,isEnabled:true},
+  {id:'asimov',name:'Isaac Asimov',category:'narrativa',type:'writer',styleKeywords:['sci-fi racional','galáctico','lógica'],bestFor:'Ficção científica de ideias',promptInfluence:'ficção científica racional, civilizações galácticas, tecnologia lógica e limpa, escala de séculos, otimismo científico',safeDescription:_hsaiSafeDesc('Isaac Asimov'),isLivingPerson:false,isEnabled:true},
+  {id:'philip-k-dick',name:'Philip K. Dick',category:'narrativa',type:'writer',styleKeywords:['realidade instável','paranoia','identidade'],bestFor:'Sci-fi paranoico e existencial',promptInfluence:'realidade instável, paranoia tecnológica, identidade questionada, futuro decadente e úmido, neon sujo',safeDescription:_hsaiSafeDesc('Philip K. Dick'),isLivingPerson:false,isEnabled:true},
+  {id:'tolkien',name:'J.R.R. Tolkien',category:'narrativa',type:'writer',styleKeywords:['alta fantasia','épico','natureza'],bestFor:'Fantasia épica detalhada',promptInfluence:'alta fantasia épica, mundos detalhados com história própria, natureza majestosa, jornada do herói, luz dourada antiga',safeDescription:_hsaiSafeDesc('J.R.R. Tolkien'),isLivingPerson:false,isEnabled:true},
+  {id:'christie',name:'Agatha Christie',category:'narrativa',type:'writer',styleKeywords:['mistério','pistas','revelação'],bestFor:'Mistérios elegantes',promptInfluence:'mistério elegante, pistas meticulosas, ambientes fechados e refinados, tensão contida, revelação final',safeDescription:_hsaiSafeDesc('Agatha Christie'),isLivingPerson:false,isEnabled:true},
+  {id:'stephen-king',name:'Stephen King',category:'narrativa',type:'writer',styleKeywords:['terror cotidiano','tensão','americana'],bestFor:'Terror psicológico cotidiano',promptInfluence:'terror no cotidiano, cidade pequena americana, tensão psicológica crescente, normalidade que esconde o estranho',safeDescription:_hsaiSafeDesc('Stephen King'),isLivingPerson:true,isEnabled:true},
+  {id:'sorkin',name:'Aaron Sorkin',category:'narrativa',type:'writer',styleKeywords:['diálogo veloz','poder','idealismo'],bestFor:'Drama verbal e institucional',promptInfluence:'ritmo de diálogo veloz, corredores de poder, walk-and-talk, idealismo institucional, luz interna quente',safeDescription:_hsaiSafeDesc('Aaron Sorkin'),isLivingPerson:true,isEnabled:true},
+  {id:'kaufman',name:'Charlie Kaufman',category:'narrativa',type:'writer',styleKeywords:['meta','existencial','melancolia'],bestFor:'Narrativas existenciais e meta',promptInfluence:'meta-narrativa existencial, identidade fragmentada, melancolia surreal, realidade dobrada sobre si mesma',safeDescription:_hsaiSafeDesc('Charlie Kaufman'),isLivingPerson:true,isEnabled:true},
+  /* ── Música & Videoclipe ── */
+  {id:'bowie',name:'David Bowie',category:'musica',type:'musician',styleKeywords:['personas','glam','reinvenção'],bestFor:'Visual teatral e mutante',promptInfluence:'reinvenção visual constante, personas teatrais, glam futurista, maquiagem gráfica, androginia elegante',safeDescription:_hsaiSafeDesc('David Bowie'),isLivingPerson:false,isEnabled:true},
+  {id:'mj',name:'Michael Jackson',category:'musica',type:'musician',styleKeywords:['coreografia','curta-metragem','energia'],bestFor:'Performance e clipes épicos',promptInfluence:'coreografia icônica em grupo, videoclipe como curta-metragem, energia cênica máxima, iluminação de palco dramática',safeDescription:_hsaiSafeDesc('Michael Jackson'),isLivingPerson:false,isEnabled:true},
+  {id:'madonna',name:'Madonna',category:'musica',type:'musician',styleKeywords:['provocação','moda','reinvenção'],bestFor:'Pop provocador e fashion',promptInfluence:'provocação pop, reinvenção de era, moda como declaração, referências de arte e religião estilizadas',safeDescription:_hsaiSafeDesc('Madonna'),isLivingPerson:true,isEnabled:true},
+  {id:'prince',name:'Prince',category:'musica',type:'musician',styleKeywords:['roxo','sensualidade','virtuosismo'],bestFor:'Estética roxa e elétrica',promptInfluence:'roxo e dourado, sensualidade elétrica, virtuosismo cênico, fumaça e luz de show, glamour funk',safeDescription:_hsaiSafeDesc('Prince'),isLivingPerson:false,isEnabled:true},
+  {id:'beyonce',name:'Beyoncé',category:'musica',type:'musician',styleKeywords:['visual album','coreografia','simbolismo'],bestFor:'Produção visual impecável',promptInfluence:'estética de visual album, coreografia poderosa em formação, simbolismo cultural, produção impecável, poses monumentais',safeDescription:_hsaiSafeDesc('Beyoncé'),isLivingPerson:true,isEnabled:true},
+  {id:'spike-jonze',name:'Spike Jonze',category:'musica',type:'director',styleKeywords:['conceito','melancolia','prático'],bestFor:'Clipes conceituais inesperados',promptInfluence:'conceito inesperado, humor melancólico, execução prática inventiva, naturalismo com um toque absurdo',safeDescription:_hsaiSafeDesc('Spike Jonze'),isLivingPerson:true,isEnabled:true},
+  {id:'gondry',name:'Michel Gondry',category:'musica',type:'director',styleKeywords:['artesanal','loops','stop motion'],bestFor:'Clipes artesanais inventivos',promptInfluence:'artesanal lo-fi inventivo, loops e repetições visuais, stop motion, cenários de papelão e tecido, imaginação caseira',safeDescription:_hsaiSafeDesc('Michel Gondry'),isLivingPerson:true,isEnabled:true},
+  {id:'hype-williams',name:'Hype Williams',category:'musica',type:'director',styleKeywords:['fisheye','luxo hip-hop','saturado'],bestFor:'Clipes hip-hop de luxo',promptInfluence:'lente fisheye, brilho e luxo hip-hop, cores ultra saturadas, widescreen letterbox, fundos monocromáticos vibrantes',safeDescription:_hsaiSafeDesc('Hype Williams'),isLivingPerson:true,isEnabled:true}
+];
+function _scMentorById(id){if(!id)return null;return (window.HSAI_MENTORS||[]).find(function(m){return m.id===id;})||null;}
+
 /* ── recommendModelForIntent ── */
 function recommendModelForIntent(opts){
   opts=opts||{};
@@ -2719,6 +2796,16 @@ function render(){
   if(S.view==='tube')afterTube();
   if(S.view==='inspo')afterInspo();
   if(S.view==='criar')afterSimpleCreate();
+  if(S.view==='council'){
+    try{
+      var _pf=localStorage.getItem('hsai_council_prefill');
+      if(_pf){
+        var _cq=document.getElementById('councilQ');
+        if(_cq&&!_cq.value)_cq.value=_pf;
+        localStorage.removeItem('hsai_council_prefill');
+      }
+    }catch(e){}
+  }
   if(isGuest()&&S.view!=='plans'&&S.view!=='criar'&&S.view!=='create')guestBanner();
 }
 
@@ -2867,16 +2954,17 @@ function areaHeader(opts){
   var t=AREA_THEMES[opts.area]||{icon:'🎬',gradient:'135deg,#0a0a0c,#14101c'};
   var head='<div class="view-head">'
     +(opts.kicker?'<div class="kicker">'+opts.kicker+'</div>':'')
-    +'<h1 class="serif">'+opts.title+'</h1>'
+    +'<h1 class="serif" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span style="font-size:.8em;line-height:1">'+t.icon+'</span><span>'+opts.title+'</span>'+(opts.tag?'<span style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);border:1px solid var(--line-2);border-radius:20px;padding:3px 10px">'+opts.tag+'</span>':'')+'</h1>'
     +(opts.desc?'<p style="max-width:640px">'+opts.desc+'</p>':'')
     +(opts.actions?'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">'+opts.actions+'</div>':'')
     +'</div>';
-  var banner='<div class="page-banner" style="background:linear-gradient('+t.gradient+')">'
-    +'<div class="pb-overlay"></div>'
-    +'<div class="pb-icon">'+t.icon+'</div>'
-    +(opts.tag?'<div class="pb-tag">'+opts.tag+'</div>':'')
-    +'</div>';
-  return head+banner;
+  // Faixa .page-banner removida das páginas internas — só renderiza se explicitamente pedida.
+  if(opts.banner===true){
+    return head+'<div class="page-banner" style="background:linear-gradient('+t.gradient+')">'
+      +'<div class="pb-overlay"></div><div class="pb-icon">'+t.icon+'</div>'
+      +(opts.tag?'<div class="pb-tag">'+opts.tag+'</div>':'')+'</div>';
+  }
+  return head;
 }
 
 /* ════════ HOME ════════ */
@@ -2964,7 +3052,8 @@ var _scDirectorPrompts={
 
 function _scLocalEnhance(prompt,mediaType,director,aspectRatio,duration){
   var pt=typeof S!=='undefined'&&S.lang==='pt';
-  var dirDetails=_scDirectorPrompts[director]||(mediaType==='video'
+  var mentor=typeof _scMentorById==='function'?_scMentorById(director):null;
+  var dirDetails=(mentor&&mentor.promptInfluence)||_scDirectorPrompts[director]||(mediaType==='video'
     ?'plano cinematográfico, iluminação volumétrica, câmera em travelling suave, profundidade de campo, color grading profissional, 4K'
     :'composição profissional, iluminação dramática, alta resolução, detalhes nítidos, qualidade de estúdio');
   var suffix='';
@@ -3071,29 +3160,14 @@ function viewSimpleCreate(){
   // Top bar right side — compact pills only (max ~52px tall)
   var topRight='';
   if(isGuest()){
-    topRight='<span class="sc-visitor-pill">'+(pt?'Visitante: 3 créditos iniciais após login':'Guest: 3 starter credits after sign-in')+'</span>'
-      +'<button class="btn btn-primary btn-sm" onclick="go(\'plans\')">'+(pt?'Entrar':'Sign in')+'</button>'
+    topRight='<span class="sc-visitor-pill">'+(pt?'Visitante: faça login para liberar 3 créditos iniciais, mais modelos e alta qualidade.':'Guest: sign in to unlock 3 starter credits, more models and high quality.')+'</span>'
+      +'<button class="btn btn-primary btn-sm" onclick="showAuthGate(\'default\')">'+(pt?'Entrar':'Sign in')+'</button>'
       +'<button class="btn btn-ghost btn-sm" onclick="go(\'plans\')">'+(pt?'Ver planos':'View plans')+'</button>';
   }else{
     topRight='<span class="sc-visitor-pill">⚡ '+(S.credits||0)+' '+(pt?'créditos':'credits')+'</span>'
       +((S.credits||0)<=3?'<button class="btn btn-ghost btn-sm" onclick="go(\'plans\')">'+(pt?'Ver planos':'View plans')+'</button>':'')
       +'<button class="btn btn-ghost btn-sm" onclick="go(\'studio\')">Studio Suite →</button>';
   }
-
-  // Creative direction pills (left panel) — values mirror scDirectorSelect
-  var dirs=[
-    ['cinematico','🎬',pt?'Cinemático':'Cinematic'],
-    ['publicitario','📺',pt?'Publicitário':'Commercial'],
-    ['luxo','💎','Luxo'],
-    ['viral','🔥','Viral'],
-    ['narrativo','📖',pt?'Roteirista':'Screenwriter'],
-    ['fotografo','📷',pt?'Fotógrafo':'Photographer'],
-    ['editorial','🎨',pt?'Diretor de Arte':'Art Director'],
-    ['social','📱','Social Media']
-  ];
-  var dirPills=dirs.map(function(d){
-    return '<button class="sc-dir-pill" data-dir="'+d[0]+'" onclick="scSetDirector(\''+d[0]+'\')">'+d[1]+' '+d[2]+'</button>';
-  }).join('');
 
   return '<div class="sc-console" id="scPage">'
 
@@ -3103,53 +3177,33 @@ function viewSimpleCreate(){
   +'<div class="sc-topbar-right">'+topRight+'</div>'
   +'</div>'
 
-  // ── Middle: direção criativa | demos/result | galeria rápida
+  // ── Middle: galeria rápida (esquerda) | slideshow central / resultado
   +'<div class="sc-console-mid">'
 
-  // Left: creative direction panel
-  +'<div class="sc-side sc-dir-panel">'
-  +'<div class="sc-side-title">'+(pt?'Direção criativa':'Creative direction')+'</div>'
-  +'<div class="sc-dir-list">'+dirPills+'</div>'
-  +'<div class="sc-dir-actions">'
-  +'<button class="btn btn-ghost btn-sm" onclick="scEnhance()">✨ '+(pt?'Aplicar ao Enhance':'Apply to Enhance')+'</button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="scStoryboard()">📋 '+(pt?'Storyboard com esta visão':'Storyboard this vision')+'</button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="go(\'council\')">🎭 '+(pt?'Conselho Criativo':'Creative Council')+'</button>'
-  +'</div>'
-  +'</div>'
-
-  // Center: hero line + demo duo / result
-  +'<div class="sc-center">'
-  +'<div class="sc-center-hero">'
-  +'<h1>'+(pt?'O que vamos <em>criar</em> hoje?':'What are we <em>creating</em> today?')+'</h1>'
-  +'<p class="sub">'+(pt?'Vídeos e imagens com IA em segundos — você é o diretor.':'AI videos and images in seconds — you are the director.')+'</p>'
-  +'</div>'
-  +'<div class="sc-demo-duo" id="scDemoZone">'
-  +'<div class="sc-demo-card">'
-  +'<video id="scDemoVideo" muted loop autoplay playsinline preload="auto" referrerpolicy="no-referrer" onerror="this.style.opacity=0"></video>'
-  +'<div class="sc-demo-ov">'
-  +'<div class="sc-demo-tt">'+(pt?'Crie vídeos como este':'Create videos like this')+'</div>'
-  +'<div class="sc-demo-acts">'
-  +'<button class="btn btn-sm" onclick="scDemoSimilar(\'video\')">'+(pt?'Criar parecido':'Create similar')+'</button>'
-  +'<button class="btn btn-sm" onclick="scDemoUseRef(\'video\')">'+(pt?'Usar como referência':'Use as reference')+'</button>'
-  +'</div></div></div>'
-  +'<div class="sc-demo-card">'
-  +'<img id="scDemoImage" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=\'https://picsum.photos/seed/scimg/640/640\'">'
-  +'<div class="sc-demo-ov">'
-  +'<div class="sc-demo-tt">'+(pt?'Crie imagens como estas':'Create images like these')+'</div>'
-  +'<div class="sc-demo-acts">'
-  +'<button class="btn btn-sm" onclick="scDemoSimilar(\'image\')">'+(pt?'Criar parecido':'Create similar')+'</button>'
-  +'<button class="btn btn-sm" onclick="scDemoUseRef(\'image\')">'+(pt?'Usar como referência':'Use as reference')+'</button>'
-  +'</div></div></div>'
-  +'</div>'
-  +'<div id="scResultBlock" style="display:none;flex:1;min-height:0;overflow-y:auto"></div>'
-  +'</div>'
-
-  // Right: quick gallery panel
+  // Left: quick gallery panel (2-col vertical grid)
   +'<div class="sc-side sc-gal-panel">'
   +'<div class="sc-side-title">'+(pt?'Galeria rápida':'Quick gallery')+'</div>'
   +'<div class="sc-gal-scroll"><div id="scRecentGallery">'+scRenderRecentGallery(scGalleryLoad())+'</div></div>'
   +'<button class="btn btn-ghost btn-sm" style="margin-top:8px;flex-shrink:0" onclick="go(\'gallery\')">'+(pt?'Ver galeria completa →':'View full gallery →')+'</button>'
   +'<div style="flex-shrink:0;font-size:11px;color:var(--ink-4);margin-top:8px;line-height:1.5">'+(pt?'Comece rápido aqui. Aprofunde no Studio Suite.':'Start fast here. Go deeper in Studio Suite.')+' <a href="#" style="color:var(--accent)" onclick="event.preventDefault();go(\'studio\')">'+(pt?'Abrir →':'Open →')+'</a></div>'
+  +'</div>'
+
+  // Center: hero line + single combined slideshow / result
+  +'<div class="sc-center">'
+  +'<div class="sc-center-hero">'
+  +'<h1>'+(pt?'O que vamos <em>criar</em> hoje?':'What are we <em>creating</em> today?')+'</h1>'
+  +'<p class="sub">'+(pt?'Vídeos e imagens com IA em segundos — você é o diretor.':'AI videos and images in seconds — you are the director.')+'</p>'
+  +'</div>'
+  +'<div class="sc-demo-single" id="scDemoZone">'
+  +'<div class="sc-demo-stage" id="scSlideStage"></div>'
+  +'<div class="sc-demo-ov">'
+  +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
+  +'<span class="sc-slide-badge" id="scSlideBadge">🎬</span>'
+  +'<div class="sc-demo-tt">'+(pt?'Veja o que você pode criar':'See what you can create')+'</div>'
+  +'</div>'
+  +'<div class="sc-demo-acts" id="scSlideActs"></div>'
+  +'</div></div>'
+  +'<div id="scResultBlock" style="display:none;flex:1;min-height:0;overflow-y:auto"></div>'
   +'</div>'
 
   +'</div>'  // end .sc-console-mid
@@ -3158,7 +3212,7 @@ function viewSimpleCreate(){
   +'<div class="sc-console-bottom"><div class="sc-prompt-bar">'
   +'<textarea class="sc-prompt-field" id="scPrompt" rows="2" placeholder="'+(pt?'Descreva sua ideia...':'Describe your idea...')+'" oninput="scUpdateRecommendation()" style="width:100%;resize:none;min-height:54px;padding:10px 14px"></textarea>'
   +'<div id="scRefPreview" style="display:none;margin-top:6px"></div>'
-  +'<input type="file" id="scRefInput" class="hide" style="display:none" accept="image/*,video/*" onchange="scOnRefFile(this)">'
+  +'<input type="file" id="scRefInput" class="hide" style="display:none" accept="image/*,video/*,.pdf,.txt" onchange="scOnRefFile(this)">'
   +'<div id="scEnhanceUndo" style="display:none;margin-top:6px;gap:8px;flex-wrap:wrap;align-items:center"></div>'
 
   // Model recommendation — single thin line
@@ -3198,18 +3252,8 @@ function viewSimpleCreate(){
   +'<option value="fast"'+(_scQuality==='Rápido'?' selected':'')+'>'+(pt?'Rápido':'Fast')+'</option>'
   +'<option value="premium"'+(_scQuality==='Premium'?' selected':'')+'>Premium</option>'
   +'</select>'
-  +'<select class="sc-select" id="scDirectorSelect" onchange="scSetDirector(this.value)">'
-  +'<option value="">'+(pt?'Direção criativa':'Creative direction')+'</option>'
-  +'<option value="cinematico">🎬 '+(pt?'Cinemático':'Cinematic')+'</option>'
-  +'<option value="publicitario">📺 '+(pt?'Publicitário':'Commercial')+'</option>'
-  +'<option value="luxo">💎 Luxo</option>'
-  +'<option value="viral">🔥 Viral</option>'
-  +'<option value="narrativo">📖 '+(pt?'Roteirista':'Screenwriter')+'</option>'
-  +'<option value="produto">🛍 Produto</option>'
-  +'<option value="musical">🎵 Musical</option>'
-  +'<option value="editorial">🎨 '+(pt?'Diretor de Arte':'Art Director')+'</option>'
-  +'<option value="fotografo">📷 '+(pt?'Fotógrafo':'Photographer')+'</option>'
-  +'<option value="social">📱 Social Media</option>'
+  +'<select class="sc-select" id="scDirectorSelect" onchange="scSetDirector(this.value)" title="'+(pt?'Direção / Mentor criativo':'Direction / Creative mentor')+'">'
+  +_scMentorOptionsHtml(pt)
   +'</select>'
   +'</div>'
 
@@ -3218,10 +3262,11 @@ function viewSimpleCreate(){
   +'<button class="btn btn-primary" style="padding:9px 18px;font-size:13.5px" onclick="scCreate(\'video\')">🎬 '+(pt?'Criar Vídeo':'Create Video')+'</button>'
   +'<button class="btn btn-primary" style="padding:9px 18px;font-size:13.5px" onclick="scCreate(\'image\')">🖼 '+(pt?'Criar Imagem':'Create Image')+'</button>'
   +'<button class="btn btn-ghost btn-sm" onclick="scEnhance()">✨ Enhance</button>'
+  +'<button class="btn btn-ghost btn-sm" onclick="scMentor()">🎭 Mentor</button>'
   +'<button class="btn btn-ghost btn-sm" onclick="scStoryboard()">📋 Storyboard</button>'
   +'<span style="flex:1"></span>'
   +'<button class="btn btn-ghost btn-sm" onclick="scAttachRef()">📎 '+(pt?'Referência':'Ref')+'</button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="go(\'models\')">🎛 '+(pt?'Modelos':'Models')+'</button>'
+  +'<button class="btn btn-ghost btn-sm" onclick="scOpenModelPicker()">🎛 '+(pt?'Ver todos os modelos':'All models')+'</button>'
   +'<button class="btn btn-ghost btn-sm" onclick="scSendToStudio()">⚙️ Studio Suite</button>'
   +'</div>'
 
@@ -3233,7 +3278,14 @@ function afterSimpleCreate(){
   _scRenderRefPreview();
   _scStartSlides();
   var sel=document.getElementById('scDirectorSelect');
-  if(sel&&sel.value)scSetDirector(sel.value);
+  // Restaurar último mentor escolhido (memória leve do usuário logado)
+  if(sel&&!sel.value&&!window._scMentor&&typeof isGuest==='function'&&!isGuest()){
+    try{
+      var mem=JSON.parse(localStorage.getItem('hsai_user_memory')||'{}');
+      if(mem.lastMentor&&_scMentorById(mem.lastMentor))scSetDirector(mem.lastMentor);
+    }catch(e){}
+  }
+  if(sel&&sel.value&&sel.value!=='__more'&&sel.value!=='__council')scSetDirector(sel.value);
 }
 
 function _scRenderRefPreview(){
@@ -3249,73 +3301,92 @@ function _scRenderRefPreview(){
   preview.style.display='';
 }
 
-/* ── Demo duo slideshow (center cards) ── */
-function _scBuildSlidePools(){
-  var gal=scGalleryLoad();
-  var userVids=gal.filter(function(i){return i.mediaType==='video'&&(i.outputUrl||i.previewUrl);})
-    .map(function(i){return{url:i.outputUrl||i.previewUrl,prompt:i.prompt||'',isVideoFile:!!i.outputUrl};});
-  var userImgs=gal.filter(function(i){return i.mediaType!=='video'&&(i.outputUrl||i.previewUrl);})
-    .map(function(i){return{url:i.outputUrl||i.previewUrl,prompt:i.prompt||''};});
-  var demoVids=(typeof DEMO_REEL!=='undefined'?DEMO_REEL:[]).map(function(d){return{url:d.url,prompt:d.prompt||'',isVideoFile:true};});
-  var demoImgs=(typeof REEL_IMGS!=='undefined'?REEL_IMGS:[]).slice(0,8).map(function(u){return{url:u,prompt:''};});
-  return{
-    vids:userVids.concat(demoVids),
-    imgs:userImgs.concat(demoImgs)
-  };
+/* ── Single combined demo slideshow (center) ──
+   Pool unificado: criações recentes do usuário logado primeiro, depois demos de vídeo/imagem intercalados. */
+function _scBuildSlidePool(){
+  var user=[];
+  if(typeof isGuest==='function'&&!isGuest()){
+    user=scGalleryLoad().filter(function(i){return i.outputUrl||i.previewUrl;}).map(function(i){
+      return{kind:i.mediaType==='video'?'video':'image',url:i.outputUrl||i.previewUrl,prompt:i.prompt||'',isVideoFile:i.mediaType==='video'&&!!i.outputUrl,id:i.id};
+    });
+  }
+  var demoVids=(typeof DEMO_REEL!=='undefined'?DEMO_REEL:[]).map(function(d){return{kind:'video',url:d.url,prompt:d.prompt||'',isVideoFile:true};});
+  var demoImgs=(typeof REEL_IMGS!=='undefined'?REEL_IMGS:[]).slice(0,8).map(function(u){return{kind:'image',url:u,prompt:''};});
+  var demos=[],n=Math.max(demoVids.length,demoImgs.length);
+  for(var i=0;i<n;i++){if(demoVids[i])demos.push(demoVids[i]);if(demoImgs[i])demos.push(demoImgs[i]);}
+  return user.concat(demos);
 }
 function _scApplySlide(){
   var st=window._scSlides;
-  if(!st)return;
-  var v=document.getElementById('scDemoVideo');
-  var im=document.getElementById('scDemoImage');
-  if(v&&st.vids.length){
-    var sv=st.vids[st.vi%st.vids.length];
-    if(v.getAttribute('src')!==sv.url){v.style.opacity='';v.src=sv.url;}
+  if(!st||!st.pool||!st.pool.length)return;
+  var stage=document.getElementById('scSlideStage');
+  if(!stage)return;
+  var s=st.pool[st.i%st.pool.length];
+  var pt=typeof S!=='undefined'&&S.lang==='pt';
+  if(s.kind==='video'&&s.isVideoFile){
+    stage.innerHTML='<video muted loop autoplay playsinline preload="auto" referrerpolicy="no-referrer" src="'+escapeAttr(s.url)+'" onerror="this.style.opacity=0"></video>';
+  }else{
+    stage.innerHTML='<img src="'+escapeAttr(s.url)+'" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=\'https://picsum.photos/seed/scimg/960/540\'">';
   }
-  if(im&&st.imgs.length){
-    var si=st.imgs[st.ii%st.imgs.length];
-    if(im.getAttribute('src')!==si.url)im.src=si.url;
+  var badge=document.getElementById('scSlideBadge');
+  if(badge)badge.textContent=s.kind==='video'?'🎬 '+(pt?'Vídeo':'Video'):'🖼 '+(pt?'Imagem':'Image');
+  var acts=document.getElementById('scSlideActs');
+  if(acts){
+    var b='<button class="btn btn-sm" onclick="scDemoSimilar()">'+(pt?'Criar parecido':'Create similar')+'</button>'
+      +'<button class="btn btn-sm" onclick="scDemoUseRef()">'+(pt?'Usar como referência':'Use as reference')+'</button>'
+      +'<button class="btn btn-sm" onclick="scSlideCopyPrompt()">'+(pt?'Copiar prompt':'Copy prompt')+'</button>';
+    if(s.id){
+      b+='<button class="btn btn-sm" onclick="scGalleryReutilizar(\''+s.id+'\')">'+(pt?'Reutilizar':'Reuse')+'</button>'
+        +'<button class="btn btn-sm" onclick="scShowResultById(\''+s.id+'\')">'+(pt?'Ver':'View')+'</button>';
+    }
+    acts.innerHTML=b;
   }
 }
 function _scStartSlides(){
   if(window._scSlideTimer){clearInterval(window._scSlideTimer);window._scSlideTimer=null;}
-  var pools=_scBuildSlidePools();
-  window._scSlides={vids:pools.vids,imgs:pools.imgs,vi:0,ii:0};
+  window._scSlides={pool:_scBuildSlidePool(),i:0};
   _scApplySlide();
   window._scSlideTimer=setInterval(function(){
     var st=window._scSlides;
     if(!document.getElementById('scDemoZone')||!st){
       clearInterval(window._scSlideTimer);window._scSlideTimer=null;return;
     }
-    if(st.vids.length>1)st.vi=(st.vi+1)%st.vids.length;
-    if(st.imgs.length>1)st.ii=(st.ii+1)%st.imgs.length;
-    _scApplySlide();
-  },4000);
+    if(st.pool.length>1){st.i=(st.i+1)%st.pool.length;_scApplySlide();}
+  },5000);
 }
-function _scCurrentSlide(kind){
+function _scCurrentSlide(){
   var st=window._scSlides;
-  if(!st)return null;
-  if(kind==='video')return st.vids.length?st.vids[st.vi%st.vids.length]:null;
-  return st.imgs.length?st.imgs[st.ii%st.imgs.length]:null;
+  if(!st||!st.pool||!st.pool.length)return null;
+  return st.pool[st.i%st.pool.length];
 }
 function scDemoSimilar(kind){
   var pt=typeof S!=='undefined'&&S.lang==='pt';
-  var slide=_scCurrentSlide(kind);
-  var fallback=kind==='video'
+  var slide=_scCurrentSlide();
+  var k=kind||(slide?slide.kind:'video');
+  var fallback=k==='video'
     ?(pt?'cena cinematográfica ao entardecer numa cidade, lente 35mm, color grading de cinema':'cinematic sunset city scene, 35mm lens, film color grading')
     :(pt?'fotografia editorial premium, iluminação dramática, alta resolução':'premium editorial photo, dramatic lighting, high resolution');
   var prompt=(slide&&slide.prompt)?slide.prompt:fallback;
-  scSetType(kind);
+  scSetType(k==='image'?'image':'video');
   var el=document.getElementById('scPrompt');
   if(el){el.value=prompt;el.focus();scUpdateRecommendation();}
   toast(pt?'Prompt carregado! Ajuste e gere.':'Prompt loaded! Adjust and generate.','ok');
 }
-function scDemoUseRef(kind){
-  var slide=_scCurrentSlide(kind);
+function scDemoUseRef(){
+  var slide=_scCurrentSlide();
   if(!slide)return;
   _scRef=slide.url;
   _scRenderRefPreview();
   toast(typeof S!=='undefined'&&S.lang==='pt'?'📎 Referência adicionada':'📎 Reference added','ok');
+}
+function scSlideCopyPrompt(){
+  var pt=typeof S!=='undefined'&&S.lang==='pt';
+  var slide=_scCurrentSlide();
+  var p=slide&&slide.prompt;
+  if(!p){toast(pt?'Este demo não tem prompt público.':'This demo has no public prompt.','info');return;}
+  navigator.clipboard.writeText(p).then(function(){
+    toast(pt?'✅ Prompt copiado!':'✅ Prompt copied!','ok');
+  }).catch(function(){toast(p.slice(0,60)+'...','info');});
 }
 function scBackToDemos(){
   var res=document.getElementById('scResultBlock');
@@ -3328,13 +3399,107 @@ function scShowResultById(id){
   if(item)scShowResult(item);
 }
 
-/* ── Creative direction (pills ↔ select kept in sync) ── */
+/* ── Direção / Mentor criativo (dropdown compacto + modal de busca + Conselho) ── */
+function _scMentorOptionsHtml(pt){
+  // Amostra compacta na home: segmentos principais + alguns mestres do cinema
+  var sampleIds=['auto','cinematico','publicitario','fotografo','narrativo','luxo','social','nolan','villeneuve','kubrick'];
+  var icons={auto:'🤖',cinematico:'🎬',publicitario:'📺',fotografo:'📷',narrativo:'📖',luxo:'💎',social:'📱'};
+  var cur=window._scMentor||'';
+  var html='<option value=""'+(cur===''?' selected':'')+'>'+(pt?'🎭 Direção / Mentor':'🎭 Direction / Mentor')+'</option>';
+  sampleIds.forEach(function(id){
+    var m=_scMentorById(id);
+    if(!m||!m.isEnabled)return;
+    html+='<option value="'+m.id+'"'+(cur===m.id?' selected':'')+'>'+(icons[m.id]||'🎬')+' '+m.name+'</option>';
+  });
+  html+='<option value="__more">🔎 '+(pt?'Buscar mentor...':'Search mentor...')+'</option>';
+  html+='<option value="__council">🎭 '+(pt?'Ver Conselho Criativo completo':'View full Creative Council')+'</option>';
+  return html;
+}
 function scSetDirector(val){
   var sel=document.getElementById('scDirectorSelect');
-  if(sel&&sel.value!==val)sel.value=val;
+  if(val==='__council'){
+    if(sel)sel.value=window._scMentor||'';
+    scOpenCouncilWithPrompt();
+    return;
+  }
+  if(val==='__more'){
+    if(sel)sel.value=window._scMentor||'';
+    scOpenMentorModal();
+    return;
+  }
+  window._scMentor=val||'';
+  if(sel&&sel.value!==val){
+    // se o mentor escolhido não está na amostra do select, injeta a opção
+    var has=false;
+    for(var i=0;i<sel.options.length;i++){if(sel.options[i].value===val){has=true;break;}}
+    if(!has&&val){
+      var m=_scMentorById(val);
+      var op=document.createElement('option');
+      op.value=val;op.textContent='🎭 '+(m?m.name:val);
+      sel.insertBefore(op,sel.querySelector('option[value="__more"]'));
+    }
+    sel.value=val;
+  }
   document.querySelectorAll('.sc-dir-pill').forEach(function(p){
     p.classList.toggle('active',p.dataset.dir===val);
   });
+  try{
+    var mem=JSON.parse(localStorage.getItem('hsai_user_memory')||'{}');
+    mem.lastMentor=val||'';
+    localStorage.setItem('hsai_user_memory',JSON.stringify(mem));
+  }catch(e){}
+}
+function scOpenCouncilWithPrompt(){
+  var p=((document.getElementById('scPrompt')||{}).value||'').trim();
+  try{if(p)localStorage.setItem('hsai_council_prefill',p);}catch(e){}
+  go('council');
+}
+var _scMentorSearch='';
+function scOpenMentorModal(){
+  _scMentorSearch='';
+  var pt=S.lang==='pt';
+  showQuickModal('<div>'
+    +'<h3 style="margin:0 0 10px">🎭 '+(pt?'Escolher mentor criativo':'Choose creative mentor')+'</h3>'
+    +'<input class="input" id="scMentorSearchInput" placeholder="'+(pt?'Buscar por nome ou categoria...':'Search by name or category...')+'" oninput="scMentorSearchInput(this.value)" style="width:100%;margin-bottom:10px">'
+    +'<div id="scMentorList" style="max-height:52vh;overflow-y:auto">'+_scMentorListHtml()+'</div>'
+    +'<div style="margin-top:10px;text-align:right"><button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'scQuickModal\').remove();scOpenCouncilWithPrompt()">'+(pt?'Ver Conselho Criativo completo →':'View full Creative Council →')+'</button></div>'
+    +'</div>',true);
+  var si=document.getElementById('scMentorSearchInput');if(si)si.focus();
+}
+function scMentorSearchInput(v){
+  _scMentorSearch=v||'';
+  var el=document.getElementById('scMentorList');
+  if(el)el.innerHTML=_scMentorListHtml();
+}
+function _scMentorListHtml(){
+  var pt=S.lang==='pt';
+  var q=(_scMentorSearch||'').toLowerCase();
+  var cats=[['segmento',pt?'Segmentos rápidos':'Quick segments'],['cinema',pt?'Mestres do Cinema':'Cinema Masters'],['fotografia',pt?'Fotografia':'Photography'],['arte',pt?'Arte & Design':'Art & Design'],['narrativa',pt?'Narrativa':'Narrative'],['musica',pt?'Música & Videoclipe':'Music & Video']];
+  var html='';
+  cats.forEach(function(c){
+    var list=(window.HSAI_MENTORS||[]).filter(function(m){
+      if(!m.isEnabled||m.category!==c[0])return false;
+      if(!q)return true;
+      return (m.name+' '+m.category+' '+(m.bestFor||'')+' '+(m.styleKeywords||[]).join(' ')).toLowerCase().indexOf(q)>=0;
+    });
+    if(!list.length)return;
+    html+='<div style="font-size:10px;letter-spacing:1.5px;font-weight:700;color:var(--ink-4);text-transform:uppercase;margin:10px 0 6px">'+c[1]+'</div>';
+    html+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px">';
+    list.forEach(function(m){
+      html+='<button style="text-align:left;border:1px solid var(--line-2);border-radius:10px;padding:9px 11px;background:var(--panel-2);cursor:pointer;color:var(--ink)" onclick="scPickMentor(\''+m.id+'\')">'
+        +'<div style="font-size:12.5px;font-weight:700">'+escapeHtml(m.name)+'</div>'
+        +'<div style="font-size:10.5px;color:var(--ink-4);line-height:1.4;margin-top:2px">'+escapeHtml(m.bestFor||'')+'</div>'
+        +'</button>';
+    });
+    html+='</div>';
+  });
+  return html||'<div style="padding:20px;text-align:center;color:var(--ink-4);font-size:13px">'+(pt?'Nenhum mentor encontrado.':'No mentor found.')+'</div>';
+}
+function scPickMentor(id){
+  var md=document.getElementById('scQuickModal');if(md)md.remove();
+  scSetDirector(id);
+  var m=_scMentorById(id);
+  toast('🎭 '+(S.lang==='pt'?'Mentor selecionado: ':'Mentor selected: ')+(m?m.name:id),'ok');
 }
 
 function scSetType(t){
@@ -3357,15 +3522,266 @@ function scUpdateRecommendation(){
   var nm=document.getElementById('scRecModelName');
   var nr=document.getElementById('scRecReason');
   var nc=document.getElementById('scRecCredits');
+  if(window._scModelLocked&&_scModel)return; // usuário escolheu manualmente — não sobrescrever
   if(nm&&rec.model){nm.textContent=rec.model.name;nm.title=rec.reason||'';}
   if(nr)nr.textContent=rec.reason;
   if(nc)nc.textContent=rec.estimatedCredits||(rec.model?rec.model.estimatedCredits:3);
   _scModel=rec.model?rec.model.id:null;
 }
 
-function scChooseModel(){
-  S.modelCatFilter=_scType==='image'?'image':(_scType==='audio'||_scType==='music'?'audio':'video');
-  go('models');
+/* ── Model picker — modal compacto dentro da home (sem navegação) ── */
+function scChooseModel(){scOpenModelPicker();}
+var _scPickerTab='video',_scPickerSearch='';
+function scOpenModelPicker(tab){
+  _scPickerTab=tab||(_scType==='image'?'image':'video');
+  _scPickerSearch='';
+  showQuickModal(_scModelPickerHtml(),true);
+}
+function _scModelPickerHtml(){
+  var pt=S.lang==='pt';
+  var tabs=[['video','🎬 '+(pt?'Vídeo':'Video')],['image','🖼 '+(pt?'Imagem':'Image')],['avatar','🧑 Avatar'],['audio','🎵 '+(pt?'Áudio':'Audio')],['upscale','⬆ Upscale'],['agents','🤖 '+(pt?'Agentes':'Agents')]];
+  var tabBtns=tabs.map(function(tb){
+    return '<button class="btn btn-sm '+(_scPickerTab===tb[0]?'btn-primary':'btn-ghost')+'" onclick="scPickerTab(\''+tb[0]+'\')">'+tb[1]+'</button>';
+  }).join('');
+  return '<div>'
+    +'<h3 style="margin:0 0 10px">'+(pt?'Escolher modelo':'Choose model')+'</h3>'
+    +'<input class="input" id="scPickerSearch" placeholder="'+(pt?'Buscar modelo...':'Search model...')+'" oninput="scPickerSearchInput(this.value)" style="width:100%;margin-bottom:10px" value="'+escapeAttr(_scPickerSearch)+'">'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">'+tabBtns+'</div>'
+    +'<div id="scPickerBody">'+_scPickerBodyHtml()+'</div>'
+    +'<div style="margin-top:12px;text-align:right"><button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'scQuickModal\').remove();go(\'models\')">'+(pt?'Página completa de modelos →':'Full models page →')+'</button></div>'
+    +'</div>';
+}
+function scPickerTab(tb){
+  _scPickerTab=tb;
+  var m=document.getElementById('scQuickModal');if(m)m.remove();
+  showQuickModal(_scModelPickerHtml(),true);
+}
+function scPickerSearchInput(v){
+  _scPickerSearch=v||'';
+  var b=document.getElementById('scPickerBody');
+  if(b)b.innerHTML=_scPickerBodyHtml();
+}
+function _scPickerBodyHtml(){
+  var pt=S.lang==='pt';
+  if(_scPickerTab==='agents')return _scAgentsHtml();
+  var typeMap={video:'text-to-video',image:'text-to-image',avatar:'avatar',upscale:'upscale',audio:'audio'};
+  var q=(_scPickerSearch||'').toLowerCase();
+  var list=(window.HSAI_MODELS||[]).filter(function(m){return m.type===typeMap[_scPickerTab];});
+  if(q)list=list.filter(function(m){return (m.name+' '+m.provider+' '+(m.bestFor||'')+' '+(m.description||'')).toLowerCase().indexOf(q)>=0;});
+  if(!list.length){
+    return '<div style="padding:24px;text-align:center;color:var(--ink-4);font-size:13px">'
+      +(_scPickerTab==='audio'
+        ?(pt?'Modelos de áudio (Suno, ElevenLabs) disponíveis no Studio Suite.':'Audio models (Suno, ElevenLabs) available in Studio Suite.')
+        :(pt?'Nenhum modelo encontrado.':'No models found.'))
+      +'</div>';
+  }
+  var badge=function(m){
+    var st=m.status||'active';
+    var lbl=st==='active'?(pt?'ativo':'active'):(st==='beta'?'beta':(st==='external'?(pt?'externo':'external'):st));
+    var col=st==='active'?'#22a06b':(st==='beta'?'#b08a2e':'#888');
+    var b='<span style="font-size:10px;font-weight:700;border:1px solid '+col+';color:'+col+';border-radius:6px;padding:1px 6px">'+lbl+'</span>';
+    if(m.isPremium)b+=' <span style="font-size:10px;font-weight:700;border:1px solid var(--accent);color:var(--accent);border-radius:6px;padding:1px 6px">'+(pt?'requer plano':'plan required')+'</span>';
+    return b;
+  };
+  return '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;max-height:48vh;overflow-y:auto;padding-right:4px">'+list.map(function(m){
+    return '<div style="border:1px solid var(--line-2);border-radius:12px;padding:12px;background:var(--panel-2);display:flex;flex-direction:column;gap:6px">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap"><b style="font-size:13px">'+escapeHtml(m.name)+'</b><span>'+badge(m)+'</span></div>'
+      +'<div style="font-size:11px;color:var(--ink-3);line-height:1.45">'+escapeHtml(m.bestFor||m.description||'')+'</div>'
+      +'<div style="font-size:11px;color:var(--ink-4)">~'+(m.estimatedCredits||3)+' '+(pt?'créditos':'credits')+' · '+escapeHtml(m.provider||'')+'</div>'
+      +'<button class="btn btn-primary btn-sm" style="margin-top:auto" onclick="scPickModel(\''+m.id+'\')">'+(pt?'Usar este modelo':'Use this model')+'</button>'
+      +'</div>';
+  }).join('')+'</div>';
+}
+function scPickModel(id){
+  var m=(window.HSAI_MODELS||[]).find(function(x){return x.id===id;});
+  _scModel=id;
+  window._scModelLocked=true;
+  var nm=document.getElementById('scRecModelName');if(nm&&m){nm.textContent=m.name;nm.title=m.bestFor||'';}
+  var nc=document.getElementById('scRecCredits');if(nc&&m)nc.textContent=m.estimatedCredits||3;
+  var md=document.getElementById('scQuickModal');if(md)md.remove();
+  toast((S.lang==='pt'?'Modelo selecionado: ':'Model selected: ')+(m?m.name:id),'ok');
+}
+
+/* ── Agentes de texto (GPT/Claude/Diretor/Doctor/Storyboard/Social) — backend only, sem chaves no front ── */
+var HSAI_AGENTS=[
+  {id:'gpt',icon:'💬',name:'GPT',desc:{pt:'Assistente rápido para ideias e respostas gerais',en:'Fast assistant for ideas and general answers'}},
+  {id:'claude',icon:'🧠',name:'Claude',desc:{pt:'Análise criativa aprofundada do seu conceito',en:'Deep creative analysis of your concept'}},
+  {id:'diretor',icon:'🎬',name:'Diretor AI',desc:{pt:'Estratégia criativa e direção do projeto',en:'Creative strategy and project direction'}},
+  {id:'doctor',icon:'🩺',name:'Prompt Doctor',desc:{pt:'Diagnostica e melhora seu prompt',en:'Diagnoses and improves your prompt'}},
+  {id:'storyboard',icon:'📋',name:'Storyboard Agent',desc:{pt:'Quebra sua ideia em cenas',en:'Breaks your idea into scenes'}},
+  {id:'social',icon:'📱',name:'Social Agent',desc:{pt:'Legenda e hashtags para redes',en:'Caption and hashtags for social'}}
+];
+function _scAgentsHtml(){
+  var pt=S.lang==='pt';
+  return '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;max-height:44vh;overflow-y:auto;padding-right:4px">'
+    +HSAI_AGENTS.map(function(a){
+      return '<div style="border:1px solid var(--line-2);border-radius:12px;padding:12px;background:var(--panel-2);display:flex;flex-direction:column;gap:6px">'
+        +'<b style="font-size:13px">'+a.icon+' '+escapeHtml(a.name)+'</b>'
+        +'<div style="font-size:11px;color:var(--ink-3);line-height:1.45">'+escapeHtml(a.desc[pt?'pt':'en'])+'</div>'
+        +'<button class="btn btn-primary btn-sm" style="margin-top:auto" onclick="scRunAgent(\''+a.id+'\')">'+(pt?'Consultar':'Consult')+'</button>'
+        +'</div>';
+    }).join('')
+    +'</div>'
+    +'<div style="font-size:11px;color:var(--ink-4);margin-top:10px;line-height:1.5">'
+    +(pt?'Agentes de texto — consultam o backend com segurança (sem chaves no navegador). Anexos avançados ficam disponíveis nos planos pagos.':'Text agents — securely consult the backend (no keys in the browser). Advanced attachments are available on paid plans.')
+    +'</div>';
+}
+async function scRunAgent(id){
+  var pt=S.lang==='pt';
+  var s=scGetSettings();
+  if(!s.prompt.trim()){toast(pt?'Digite uma ideia no prompt primeiro':'Type an idea in the prompt first','err');return;}
+  if(isGuest()&&guestAgentUses()>=GUEST_AGENT_LIMIT){
+    var mg=document.getElementById('scQuickModal');if(mg)mg.remove();
+    showAuthGate('agents');return;
+  }
+  if(isGuest())bumpGuestAgentUses();
+  var body=document.getElementById('scPickerBody');
+  if(body)body.innerHTML='<div style="padding:30px;text-align:center;color:var(--ink-3)">🤖 '+(pt?'Consultando agente...':'Consulting agent...')+'</div>';
+  var text='';
+  if(typeof HsaiBackend!=='undefined'){
+    try{
+      var d=null;
+      if(id==='social')d=await HsaiBackend.socialCaption(s.prompt,'instagram','profissional');
+      else if(id==='storyboard')d=await HsaiBackend.generateStoryboard(s.prompt,3,s.style);
+      else if(id==='claude'||id==='diretor')d=await HsaiBackend.creativeBoard(s.prompt,[],s.style);
+      else d=await HsaiBackend.enhancePrompt(s.prompt,s.style,null);
+      if(d&&d.ok){
+        if(d.enhanced)text=d.enhanced;
+        else if(d.caption)text=d.caption;
+        else if(d.result&&d.result.scenes)text=d.result.scenes.map(function(sc,i){return (i+1)+'. '+(sc.title||'')+' — '+(sc.prompt||sc.description||'');}).join('\n\n');
+        else if(d.result)text=Object.keys(d.result).map(function(k){return k.toUpperCase()+': '+(typeof d.result[k]==='string'?d.result[k]:JSON.stringify(d.result[k]));}).join('\n\n');
+        else if(d.text)text=d.text;
+      }
+    }catch(e){}
+  }
+  if(!text)text=_scAgentLocalFallback(id,s);
+  scRememberInteraction('agent',{agent:id,prompt:s.prompt});
+  window._scAgentText=text;
+  if(body){
+    body.innerHTML='<div style="background:var(--panel-2);border-radius:12px;padding:14px;font-size:13px;line-height:1.6;white-space:pre-wrap;max-height:40vh;overflow-y:auto">'+escapeHtml(text)+'</div>'
+      +'<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">'
+      +'<button class="btn btn-primary btn-sm" onclick="scAgentApply()">'+(pt?'Aplicar ao prompt':'Apply to prompt')+'</button>'
+      +'<button class="btn btn-ghost btn-sm" onclick="scPickerTab(\'agents\')">'+(pt?'← Voltar aos agentes':'← Back to agents')+'</button>'
+      +'</div>'
+      +(isGuest()?'<div style="font-size:11px;color:var(--ink-4);margin-top:8px">'+(pt?'Visitante: uso limitado ('+Math.max(0,GUEST_AGENT_LIMIT-guestAgentUses())+' restantes). Faça login para uso completo.':'Guest: limited use ('+Math.max(0,GUEST_AGENT_LIMIT-guestAgentUses())+' left). Sign in for full use.')+'</div>':'');
+  }
+}
+function scAgentApply(){
+  var el=document.getElementById('scPrompt');
+  if(el&&window._scAgentText){_scOrigPrompt=el.value;el.value=window._scAgentText;}
+  var md=document.getElementById('scQuickModal');if(md)md.remove();
+  var u=document.getElementById('scEnhanceUndo');
+  if(u){u.style.display='';u.innerHTML='<button class="btn btn-ghost btn-sm" onclick="scUndoEnhance()">↩ '+(S.lang==='pt'?'Original':'Revert')+'</button>';}
+  toast(S.lang==='pt'?'Resultado aplicado ao prompt':'Result applied to prompt','ok');
+}
+function _scAgentLocalFallback(id,s){
+  var pt=S.lang==='pt';
+  if(id==='social'){
+    return (pt?'Legenda sugerida: ':'Suggested caption: ')+s.prompt.slice(0,90)
+      +'\n\n#ai #'+(s.mediaType==='video'?'video':'foto')+' #'+(s.style||'cinematic').replace(/\s+/g,'')+' #hollywoodstudioai';
+  }
+  if(id==='storyboard'){
+    var sb=_scGenerateLocalStoryboard(s.prompt,s);
+    return sb.scenes.map(function(sc){return sc.number+'. '+sc.title+' — '+sc.prompt;}).join('\n\n');
+  }
+  var director=(document.getElementById('scDirectorSelect')||{}).value||s.style;
+  return _scLocalEnhance(s.prompt,s.mediaType,director,s.aspectRatio,parseInt(s.duration)||8);
+}
+
+/* ── Memória leve (usuário logado) ── */
+function scRememberInteraction(type,data){
+  if(typeof isGuest==='function'&&isGuest())return;
+  try{
+    var h=JSON.parse(localStorage.getItem('hsai_conversation_history')||'[]');
+    h.unshift({type:type,data:data,at:Date.now()});
+    localStorage.setItem('hsai_conversation_history',JSON.stringify(h.slice(0,30)));
+  }catch(e){}
+}
+
+/* ── Mentor criativo (estratégia) — distinto do Enhance (técnico) ── */
+async function applyCreativeMentor(opts){
+  opts=opts||{};
+  var prompt=opts.prompt||'';
+  var mentor=typeof opts.mentor==='string'?_scMentorById(opts.mentor):(opts.mentor||null);
+  var mediaType=opts.mediaType||'video';
+  var style=opts.style||'';
+  var pt=typeof S!=='undefined'&&S.lang==='pt';
+  var enhancedPrompt=_scComposeMentorPrompt(prompt,mentor,mediaType);
+  // Backend primeiro (HsaiBackend → /api, sem chaves no navegador)
+  if(typeof HsaiBackend!=='undefined'&&typeof isGuest==='function'&&!isGuest()){
+    try{
+      var d=await HsaiBackend.creativeBoard(prompt,opts.referenceFiles||[],mentor?mentor.promptInfluence:style);
+      if(d&&d.ok&&d.result){
+        var r=d.result;
+        return{ok:true,source:'backend',mentorId:mentor?mentor.id:null,
+          conceito:r.conceito||'',narrativa:r.narrativa||'',
+          emocao:r['emoção']||r.emocao||'',tom:r.tom||'',
+          direcaoArtistica:r['estética']||r.estetica||'',
+          abertura:r.abertura||'',composicao:r.composicao||'',
+          safeNote:mentor?mentor.safeDescription:'',
+          enhancedPrompt:enhancedPrompt};
+      }
+    }catch(e){}
+  }
+  // Fallback local — sempre funciona sem API
+  var inf=mentor?mentor.promptInfluence:(_scDirectorPrompts[style]||'');
+  return{ok:true,source:'local',mentorId:mentor?mentor.id:null,
+    conceito:(pt?'Conceito central: ':'Core concept: ')+prompt,
+    narrativa:pt?'Estruture em três atos curtos: estabelecimento do ambiente, ação principal sobre o elemento de destaque e fechamento com impacto visual.':'Structure in three short acts: establish the setting, main action on the key element, closing with visual impact.',
+    emocao:pt?'Defina UMA emoção dominante e mantenha luz, cor e ritmo a serviço dela.':'Pick ONE dominant emotion and keep light, color and rhythm serving it.',
+    tom:mentor&&mentor.styleKeywords?mentor.styleKeywords.join(', '):(pt?'cinematográfico, premium':'cinematic, premium'),
+    direcaoArtistica:inf||(pt?'composição rigorosa, paleta coerente, iluminação intencional':'rigorous composition, coherent palette, intentional lighting'),
+    abertura:pt?'Abra com o plano mais forte: apresente o sujeito nos primeiros 2 segundos, sem texto, com movimento de câmera claro.':'Open with the strongest shot: present the subject within the first 2 seconds, no text, clear camera movement.',
+    composicao:mediaType==='video'
+      ?(pt?'Planos: geral → detalhe → fechamento. Movimento suave, profundidade de campo controlada.':'Shots: wide → detail → closing. Smooth movement, controlled depth of field.')
+      :(pt?'Regra dos terços, ponto focal único, espaço negativo deliberado.':'Rule of thirds, single focal point, deliberate negative space.'),
+    safeNote:mentor?mentor.safeDescription:'',
+    enhancedPrompt:enhancedPrompt};
+}
+function _scComposeMentorPrompt(prompt,mentor,mediaType){
+  var inf=mentor?mentor.promptInfluence:'';
+  var base=mediaType==='video'?'cinematic video quality':'professional image quality';
+  return prompt+(inf?', '+inf:'')+', '+base;
+}
+async function scMentor(){
+  var pt=S.lang==='pt';
+  var s=scGetSettings();
+  if(!s.prompt.trim()){toast(pt?'Digite uma ideia primeiro':'Enter an idea first','err');return;}
+  var mid=(document.getElementById('scDirectorSelect')||{}).value||'';
+  var mentor=_scMentorById(mid);
+  showQuickModal('<div style="text-align:center;padding:24px">🎭 '+(pt?'Consultando mentor criativo...':'Consulting creative mentor...')+'</div>');
+  var r=await applyCreativeMentor({prompt:s.prompt,mentor:mentor,mediaType:s.mediaType,style:s.style,referenceFiles:_scRef?[_scRef]:[]});
+  window._scMentorResult=r;
+  scRememberInteraction('mentor',{prompt:s.prompt,mentor:mid});
+  var row=function(k,v){
+    return v?'<div style="margin-bottom:10px"><div style="font-size:10px;letter-spacing:1.5px;font-weight:700;color:var(--ink-4);text-transform:uppercase">'+k+'</div><div style="font-size:13px;color:var(--ink-1);line-height:1.55">'+escapeHtml(v)+'</div></div>':'';
+  };
+  showQuickModal('<div>'
+    +'<h3 style="margin:0 0 4px">🎭 '+(pt?'Mentor Criativo':'Creative Mentor')+(mentor?' · '+escapeHtml(mentor.name):'')+'</h3>'
+    +(r.safeNote?'<div style="font-size:11px;color:var(--ink-4);margin-bottom:12px">'+escapeHtml(r.safeNote)+'</div>':'<div style="margin-bottom:12px"></div>')
+    +row(pt?'Conceito':'Concept',r.conceito)
+    +row(pt?'Narrativa':'Narrative',r.narrativa)
+    +row(pt?'Emoção':'Emotion',r.emocao)
+    +row(pt?'Tom':'Tone',r.tom)
+    +row(pt?'Direção artística':'Art direction',r.direcaoArtistica)
+    +row(pt?'Abertura / Cena':'Opening / Scene',r.abertura)
+    +row(pt?'Composição':'Composition',r.composicao)
+    +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">'
+    +'<button class="btn btn-primary btn-sm" onclick="scMentorApply()">'+(pt?'Aplicar ao prompt':'Apply to prompt')+'</button>'
+    +'<button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'scQuickModal\').remove();scStoryboard()">'+(pt?'Gerar Storyboard':'Generate Storyboard')+'</button>'
+    +'<button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'scQuickModal\').remove();scSendToStudio()">'+(pt?'Enviar para Studio':'Send to Studio')+'</button>'
+    +'<button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'scQuickModal\').remove();scOpenCouncilWithPrompt()">'+(pt?'Ver Conselho completo':'View full Council')+'</button>'
+    +'</div></div>',true);
+}
+function scMentorApply(){
+  var r=window._scMentorResult;
+  if(!r)return;
+  var el=document.getElementById('scPrompt');
+  if(el){_scOrigPrompt=el.value;el.value=r.enhancedPrompt||el.value;}
+  var u=document.getElementById('scEnhanceUndo');
+  if(u){u.style.display='';u.innerHTML='<button class="btn btn-ghost btn-sm" onclick="scUndoEnhance()">↩ '+(S.lang==='pt'?'Original':'Revert')+'</button>';}
+  var m=document.getElementById('scQuickModal');if(m)m.remove();
+  toast(S.lang==='pt'?'🎭 Visão do mentor aplicada ao prompt':'🎭 Mentor vision applied to prompt','ok');
 }
 
 function scOpenStudio(){
@@ -3388,14 +3804,14 @@ async function scEnhancePrompt(){
   finally{el.disabled=false;}
 }
 
-function showQuickModal(html){
+function showQuickModal(html,wide){
   var existing=document.getElementById('scQuickModal');
   if(existing)existing.remove();
   var el=document.createElement('div');
   el.id='scQuickModal';
   el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
   el.onclick=function(e){if(e.target===el)el.remove();};
-  el.innerHTML='<div style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:28px 32px;max-width:440px;width:100%;position:relative">'+html+'<button style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:18px;cursor:pointer;color:var(--ink-3)" onclick="document.getElementById(\'scQuickModal\').remove()">✕</button></div>';
+  el.innerHTML='<div style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:28px 32px;max-width:'+(wide?'760px':'440px')+';width:100%;position:relative;max-height:88vh;overflow-y:auto">'+html+'<button style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:18px;cursor:pointer;color:var(--ink-3)" onclick="document.getElementById(\'scQuickModal\').remove()">✕</button></div>';
   document.body.appendChild(el);
 }
 function scGenerate(){
@@ -3425,6 +3841,16 @@ function scCreate(type){
 function scSendToStudio(){
   var s=scGetSettings();
   if(!s.prompt.trim()){toast(S.lang==='pt'?'Digite uma ideia primeiro':'Enter an idea first','err');return;}
+  // Memória leve de preferências (logado: localStorage; Supabase quando disponível futuramente)
+  if(typeof isGuest==='function'&&!isGuest()){
+    try{
+      var mem=JSON.parse(localStorage.getItem('hsai_user_memory')||'{}');
+      mem.lastType=s.mediaType;mem.lastStyle=s.style;mem.lastQuality=s.quality;mem.lastAspect=s.aspectRatio;
+      mem.lastMentor=(document.getElementById('scDirectorSelect')||{}).value||mem.lastMentor||'';
+      localStorage.setItem('hsai_user_memory',JSON.stringify(mem));
+    }catch(e){}
+  }
+  scRememberInteraction('create',{prompt:s.prompt,mediaType:s.mediaType});
   sendToStudio({prompt:s.prompt,modelId:_scModel,source:'simple-create',mediaType:s.mediaType,
     aspectRatio:s.aspectRatio,duration:parseInt(s.duration)||8,style:s.style,quality:s.quality});
   // Record to recent gallery
@@ -3614,6 +4040,8 @@ async function scEnhance(){
   _scOrigPrompt=promptEl.value;
   var s=scGetSettings();
   var director=(document.getElementById('scDirectorSelect')||{}).value||'';
+  var mentor=typeof _scMentorById==='function'?_scMentorById(director):null;
+  var styleHint=(mentor&&mentor.promptInfluence)||director||s.style;
   var pt=S.lang==='pt';
   promptEl.disabled=true;
   var oldVal=promptEl.value;
@@ -3621,16 +4049,17 @@ async function scEnhance(){
   var enhanced=null;
   if(typeof HsaiBackend!=='undefined'&&!isGuest()){
     try{
-      var d=await HsaiBackend.enhancePrompt(s.prompt,director||s.style,null);
+      var d=await HsaiBackend.enhancePrompt(s.prompt,styleHint,null);
       if(d.ok&&d.enhanced)enhanced=d.enhanced;
     }catch(e){}
   }
   if(!enhanced){
     try{
-      var res=await fetch('/api/enhance',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:oldVal,style:director||s.style,model:_scModel})});
+      var res=await fetch('/api/enhance',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:oldVal,style:styleHint,model:_scModel})});
       if(res.ok){var rd=await res.json();if(rd.enhanced)enhanced=rd.enhanced;}
     }catch(e){}
   }
+  scRememberInteraction('enhance',{prompt:oldVal});
   if(!enhanced){
     enhanced=_scLocalEnhance(oldVal,s.mediaType,director||s.style,s.aspectRatio,parseInt(s.duration)||8);
   }
@@ -3661,14 +4090,19 @@ function scStoryboard(){
   if(!prompt.trim()){toast(S.lang==='pt'?'Digite uma ideia primeiro':'Enter an idea first','err');return;}
   var pt=S.lang==='pt';
   var director=(document.getElementById('scDirectorSelect')||{}).value||'';
+  var mentor=typeof _scMentorById==='function'?_scMentorById(director):null;
   var local=_scGenerateLocalStoryboard(prompt,s);
+  // Mentor escolhido influencia o prompt de cada cena (descritores seguros de estilo)
+  if(mentor&&mentor.promptInfluence){
+    (local.scenes||[]).forEach(function(sc){sc.prompt=sc.prompt+', '+mentor.promptInfluence;});
+  }
   // Keep raw data for scSendSceneToStudio / Studio handoff
   localStorage.setItem('hsai_sc_storyboard',JSON.stringify(Object.assign({},s,{storyboard:local})));
   // Persist in the real storyboard store so viewStoryboardDetail renders it (never empty)
   var sb=saveStoryboard({
     title:local.title,
     brief:prompt,
-    style:director||local.style,
+    style:(mentor?mentor.name:director)||local.style,
     totalDuration:local.totalDuration,
     scenes:(local.scenes||[]).map(function(sc){
       return{sceneNumber:sc.number,title:sc.title,duration:sc.duration,prompt:sc.prompt,
@@ -3701,6 +4135,14 @@ function scAttachRef(){
 function scOnRefFile(input){
   var file=input.files&&input.files[0];
   if(!file)return;
+  var pt=typeof S!=='undefined'&&S.lang==='pt';
+  if(!/^image\/|^video\//.test(file.type||'')){
+    toast(pt
+      ?'Análise avançada de documentos (PDF/texto) fica disponível nos planos pagos ou com a API configurada. Use imagem ou vídeo como referência.'
+      :'Advanced document analysis (PDF/text) is available on paid plans or with the API configured. Use an image or video as reference.','info');
+    input.value='';
+    return;
+  }
   var reader=new FileReader();
   reader.onload=function(e){
     _scRef=e.target.result;
@@ -8181,13 +8623,60 @@ function googleHelp(){
   window.open('https://console.cloud.google.com/apis/credentials','_blank');
 }
 function googleSignIn(){
-  if(!CFG.GOOGLE_CLIENT_ID){
-    toast(S.lang==='pt'?'Login com Google ainda não configurado. Configure Auth/Google no backend ou Supabase.':'Google login not configured yet. Set up Auth/Google in backend or Supabase.','err');
-    return;
+  var pt=S.lang==='pt';
+  try{
+    // Supabase OAuth (se um client global estiver disponível e configurado)
+    var sbClient=window.supabase&&typeof window.supabase.auth==='object'&&window.supabase.auth.signInWithOAuth?window.supabase:null;
+    var sbConfigured=!!(window.HSAI_CONFIG&&window.HSAI_CONFIG.SUPABASE_URL);
+    if(sbClient&&sbConfigured){
+      sbClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin}})
+        .catch(function(e){toast((pt?'Erro no login Supabase: ':'Supabase login error: ')+(e&&e.message||e),'err');});
+      return;
+    }
+    // GIS (Google Identity Services) — fluxo atual
+    if(!CFG.GOOGLE_CLIENT_ID){
+      toast(pt?'Login com Google ainda precisa ser configurado no Supabase/Auth. Use e-mail e senha ou configure GOOGLE/SUPABASE nas variáveis de ambiente.':'Google login still needs to be configured (Supabase/Auth). Use email and password, or set GOOGLE/SUPABASE environment variables.','err');
+      return;
+    }
+    if(!window.google||!google.accounts||!google.accounts.id){
+      toast(pt?'SDK do Google ainda carregando — tente novamente em instantes ou entre com e-mail e senha.':'Google SDK still loading — try again shortly or sign in with email and password.','err');
+      return;
+    }
+    google.accounts.id.initialize({client_id:CFG.GOOGLE_CLIENT_ID,callback:onGoogle,use_fedcm_for_prompt:true,itp_support:true});
+    google.accounts.id.prompt(function(n){
+      try{
+        if(n&&((n.isNotDisplayed&&n.isNotDisplayed())||(n.isSkippedMoment&&n.isSkippedMoment()))){
+          var h=document.getElementById('gHelpLine');if(h)h.style.display='block';
+          toast(pt?'O Google não exibiu o login (origem não autorizada?). Use e-mail e senha ou toque na ajuda abaixo do botão.':'Google did not show the login (unauthorized origin?). Use email/password or tap the help link below the button.','err');
+        }
+      }catch(e){}
+    });
+  }catch(e){
+    toast((pt?'Erro ao iniciar login Google: ':'Google login error: ')+(e&&e.message||e),'err');
   }
-  if(!window.google||!google.accounts){toast('Google SDK…','err');return;}
-  google.accounts.id.initialize({client_id:CFG.GOOGLE_CLIENT_ID,callback:onGoogle,use_fedcm_for_prompt:true,itp_support:true});
-  google.accounts.id.prompt();
+}
+/* "Esqueci minha senha" — nunca um no-op silencioso */
+function openForgotPassword(){
+  var pt=S.lang==='pt';
+  var email=(document.getElementById('auEmail')||{}).value||'';
+  showQuickModal('<div style="padding:4px">'
+    +'<h3 style="margin:0 0 10px">'+(pt?'Recuperar acesso':'Recover access')+'</h3>'
+    +'<p style="font-size:13px;color:var(--ink-2);line-height:1.6;margin:0 0 14px">'
+    +(pt?'Se você criou a conta com e-mail e senha neste dispositivo, basta entrar novamente com o mesmo e-mail e definir uma nova senha. Para contas Google, use "Continuar com Google".'
+        :'If you created your account with email and password on this device, just sign in again with the same email and set a new password. For Google accounts, use "Continue with Google".')
+    +'</p>'
+    +'<div class="field"><span class="label">E-mail</span><input class="input" id="fpEmail" type="email" value="'+escapeAttr(email)+'" placeholder="voce@estudio.com"></div>'
+    +'<button class="btn btn-primary" style="width:100%;margin-top:10px" onclick="fpSendReset()">'+(pt?'Continuar':'Continue')+'</button>'
+    +'</div>');
+}
+function fpSendReset(){
+  var pt=S.lang==='pt';
+  var em=((document.getElementById('fpEmail')||{}).value||'').trim();
+  if(!em||em.indexOf('@')<0){toast(pt?'Informe um e-mail válido':'Enter a valid email','err');return;}
+  var m=document.getElementById('scQuickModal');if(m)m.remove();
+  var inp=document.getElementById('auEmail');if(inp)inp.value=em;
+  var pw=document.getElementById('auPass');if(pw){pw.value='';pw.focus();}
+  toast(pt?'Digite uma nova senha e toque em Entrar para retomar o acesso a '+em+'.':'Type a new password and tap Sign in to regain access to '+em+'.','ok');
 }
 function onGoogle(resp){
   try{
