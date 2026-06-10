@@ -112,14 +112,14 @@ window.HSAI_CONFIG = {
   seoSettings: {
     title:       'Hollywood Studio AI — Workflow audiovisual com IA',
     description: 'Da ideia ao corte final. Gere vídeos, imagens e áudio cinematográficos. Organize prompts, referências, modelos e publique.',
-    image:       'https://hollywoodstudio.ai/assets/social/og-whatsapp-hollywoodstudio-ai.jpg',
+    image:       'https://hollywoodstudio.ai/assets/social/og-hollywoodstudio-ai.jpg',
     url:         'https://hollywoodstudio.ai',
     keywords:    'workflow audiovisual com IA, geração de vídeo com IA, AI video workflow, cinematic AI, estúdio de IA',
   },
   SEO: {
     title:       'Hollywood Studio AI — Workflow audiovisual com IA',
     description: 'Da ideia ao corte final. Gere vídeos, imagens e áudio cinematográficos com Seedance, Kling, Veo, Flux e mais.',
-    image:       'https://hollywoodstudio.ai/assets/social/og-whatsapp-hollywoodstudio-ai.jpg',
+    image:       'https://hollywoodstudio.ai/assets/social/og-hollywoodstudio-ai.jpg',
     url:         'https://hollywoodstudio.ai',
   },
 
