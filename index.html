@@ -23,6 +23,7 @@
 <meta property="og:locale" content="pt_BR">
 <meta property="og:locale:alternate" content="en_US">
 <link rel="image_src" href="https://hollywoodstudio.ai/assets/social/hero-hollywoodstudio-ai.jpg">
+<link rel="preload" as="image" href="assets/social/hero-hollywoodstudio-ai.jpg">
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Hollywood Studio AI — Geração de vídeo, imagem e áudio por IA">
@@ -1867,6 +1868,64 @@ input:focus,textarea:focus,select:focus{
 </style>
 </head>
 <body data-theme="light">
+
+<!-- ══ SPLASH CINEMATOGRÁFICO (1× por sessão do navegador) ══ -->
+<script>
+(function(){
+  try{
+    if(sessionStorage.getItem('hsaiSplashSeen'))return;
+    sessionStorage.setItem('hsaiSplashSeen','true');
+    window.__hsaiSplash=true;
+    document.documentElement.classList.add('hsai-splash-lock');
+  }catch(e){}
+})();
+</script>
+<style>
+#hsaiSplash{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;background:#000;z-index:99999;opacity:1;transition:opacity .5s ease}
+#hsaiSplash.out{opacity:0;pointer-events:none}
+#hsaiSplash img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;opacity:0;transition:opacity .7s ease}
+#hsaiSplash img.in{opacity:1}
+#hsaiSplashSkip{position:absolute;bottom:28px;right:28px;background:rgba(0,0,0,.55);border:1px solid rgba(212,168,67,.55);color:#f0e6cf;font-size:12.5px;padding:7px 16px;border-radius:999px;cursor:pointer;letter-spacing:.4px;transition:border-color .2s,color .2s,background .2s}
+#hsaiSplashSkip:hover{border-color:#D4A843;color:#D4A843;background:rgba(0,0,0,.78)}
+html.hsai-splash-lock,html.hsai-splash-lock body{overflow:hidden}
+html:not(.hsai-splash-lock) #hsaiSplash:not(.out){display:none}
+@media(max-width:640px){#hsaiSplashSkip{right:50%;transform:translateX(50%);bottom:max(24px,env(safe-area-inset-bottom,24px))}}
+</style>
+<div id="hsaiSplash" aria-hidden="true">
+  <img id="hsaiSplashImg" src="assets/social/hero-hollywoodstudio-ai.jpg" alt="">
+  <button id="hsaiSplashSkip" type="button" onclick="window.__hsaiSplashEnd&&window.__hsaiSplashEnd()">Pular →</button>
+</div>
+<script>
+(function(){
+  var el=document.getElementById('hsaiSplash');
+  if(!el)return;
+  // Sessão já viu o splash → remove o overlay sem nunca pintá-lo
+  if(!window.__hsaiSplash){if(el.parentNode)el.parentNode.removeChild(el);return;}
+  var img=document.getElementById('hsaiSplashImg');
+  var ended=false,timers=[];
+  function end(){
+    if(ended)return;ended=true;
+    timers.forEach(clearTimeout);timers=[];
+    img.onload=img.onerror=null;
+    el.classList.add('out');
+    document.documentElement.classList.remove('hsai-splash-lock');
+    setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},550);
+  }
+  window.__hsaiSplashEnd=end;
+  // Trava dura: o splash NUNCA segura o site por mais de 3s
+  timers.push(setTimeout(end,3000));
+  function start(){
+    img.classList.add('in');                          // fade-in 700ms
+    timers.push(setTimeout(end,1700));                // 700 in + ~1000 hold; fade-out 500ms ⇒ ~2200ms total
+  }
+  if(img.complete&&img.naturalWidth>0){start();}
+  else{
+    img.onload=start;
+    img.onerror=end;                                  // imagem falhou → site imediatamente
+    timers.push(setTimeout(function(){if(!img.complete||!img.naturalWidth)end();},2500)); // imagem lenta → segue
+  }
+})();
+</script>
 
 <!-- ══ AUTH ══ -->
 <div id="authScreen">
