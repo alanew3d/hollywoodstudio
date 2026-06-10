@@ -1865,65 +1865,74 @@ input:focus,textarea:focus,select:focus{
 .sc-why-card h4{font-size:13px;font-weight:700;margin:0 0 4px}
 .sc-why-card p{font-size:12px;color:var(--ink-3);line-height:1.55;margin:0}
 .sc-trial-banner{background:linear-gradient(135deg,rgba(212,168,87,.12),rgba(212,168,87,.05));border:1px solid rgba(212,168,87,.3);border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+/* ══ Splash cinematográfico ══ */
+#hsai-splash{position:fixed;inset:0;width:100vw;height:100vh;background:#000;z-index:999999;display:flex;align-items:center;justify-content:center;overflow:hidden;opacity:1;visibility:visible;transition:opacity 480ms ease,visibility 480ms ease}
+#hsai-splash img{width:100%;height:100%;object-fit:cover;object-position:center;transform:scale(1.015);animation:hsaiSplashIn 900ms ease-out}
+@keyframes hsaiSplashIn{from{transform:scale(1.04);opacity:0}to{transform:scale(1.015);opacity:1}}
+#hsai-splash.hsai-hide{opacity:0;visibility:hidden;pointer-events:none}
+#hsai-splash-skip{position:absolute;right:28px;bottom:28px;border:1px solid rgba(216,169,58,.7);background:rgba(0,0,0,.58);color:#fff;border-radius:999px;padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 4px 18px rgba(0,0,0,.45);transition:background .2s ease,color .2s ease,border-color .2s ease}
+#hsai-splash-skip:hover,#hsai-splash-skip:focus-visible{background:#d8a93a;color:#000;border-color:#d8a93a}
+body.hsai-splash-lock{overflow:hidden}
+@media(max-width:768px){#hsai-splash-skip{right:auto;left:50%;transform:translateX(-50%);bottom:22px}}
 </style>
 </head>
 <body data-theme="light">
 
-<!-- ══ SPLASH CINEMATOGRÁFICO (1× por sessão do navegador) ══ -->
-<script>
-(function(){
-  try{
-    if(sessionStorage.getItem('hsaiSplashSeen'))return;
-    sessionStorage.setItem('hsaiSplashSeen','true');
-    window.__hsaiSplash=true;
-    document.documentElement.classList.add('hsai-splash-lock');
-  }catch(e){}
-})();
-</script>
-<style>
-#hsaiSplash{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;background:#000;z-index:99999;opacity:1;transition:opacity .5s ease}
-#hsaiSplash.out{opacity:0;pointer-events:none}
-#hsaiSplash img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;opacity:0;transition:opacity .7s ease}
-#hsaiSplash img.in{opacity:1}
-#hsaiSplashSkip{position:absolute;bottom:28px;right:28px;background:rgba(0,0,0,.55);border:1px solid rgba(212,168,67,.55);color:#f0e6cf;font-size:12.5px;padding:7px 16px;border-radius:999px;cursor:pointer;letter-spacing:.4px;transition:border-color .2s,color .2s,background .2s}
-#hsaiSplashSkip:hover{border-color:#D4A843;color:#D4A843;background:rgba(0,0,0,.78)}
-html.hsai-splash-lock,html.hsai-splash-lock body{overflow:hidden}
-html:not(.hsai-splash-lock) #hsaiSplash:not(.out){display:none}
-@media(max-width:640px){#hsaiSplashSkip{right:50%;transform:translateX(50%);bottom:max(24px,env(safe-area-inset-bottom,24px))}}
-</style>
-<div id="hsaiSplash" aria-hidden="true">
-  <img id="hsaiSplashImg" src="assets/social/hero-hollywoodstudio-ai.jpg" alt="">
-  <button id="hsaiSplashSkip" type="button" onclick="window.__hsaiSplashEnd&&window.__hsaiSplashEnd()">Pular →</button>
+<!-- ══ SPLASH CINEMATOGRÁFICO (1× por sessão; replay via window.HSAIReplaySplash) ══ -->
+<div id="hsai-splash" aria-label="Abertura cinematográfica Hollywood Studio AI">
+  <img src="assets/social/hero-hollywoodstudio-ai.jpg" alt="Hollywood Studio AI">
+  <button id="hsai-splash-skip" type="button">Pular →</button>
 </div>
 <script>
 (function(){
-  var el=document.getElementById('hsaiSplash');
-  if(!el)return;
-  // Sessão já viu o splash → remove o overlay sem nunca pintá-lo
-  if(!window.__hsaiSplash){if(el.parentNode)el.parentNode.removeChild(el);return;}
-  var img=document.getElementById('hsaiSplashImg');
-  var ended=false,timers=[];
-  function end(){
-    if(ended)return;ended=true;
-    timers.forEach(clearTimeout);timers=[];
-    img.onload=img.onerror=null;
-    el.classList.add('out');
-    document.documentElement.classList.remove('hsai-splash-lock');
-    setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},550);
+  var KEY='hsaiSplashSeen';
+  function seen(){try{return sessionStorage.getItem(KEY)==='true';}catch(e){return false;}}
+  function wire(splash){
+    var img=splash.querySelector('img');
+    var skip=splash.querySelector('#hsai-splash-skip');
+    var hidden=false,t1,t2;
+    function hideSplash(){
+      if(hidden)return;hidden=true;
+      clearTimeout(t1);clearTimeout(t2);
+      splash.classList.add('hsai-hide');
+      document.body.classList.remove('hsai-splash-lock');
+      try{sessionStorage.setItem(KEY,'true');}catch(e){}
+      setTimeout(function(){if(splash.parentNode)splash.parentNode.removeChild(splash);},600);
+    }
+    document.body.classList.add('hsai-splash-lock');
+    if(skip)skip.addEventListener('click',hideSplash);
+    if(img){
+      img.addEventListener('error',hideSplash);
+      if(img.complete&&img.naturalWidth===0)hideSplash();
+    }
+    t1=setTimeout(hideSplash,1900);   // auto-hide
+    t2=setTimeout(hideSplash,2600);   // trava dura
   }
-  window.__hsaiSplashEnd=end;
-  // Trava dura: o splash NUNCA segura o site por mais de 3s
-  timers.push(setTimeout(end,3000));
-  function start(){
-    img.classList.add('in');                          // fade-in 700ms
-    timers.push(setTimeout(end,1700));                // 700 in + ~1000 hold; fade-out 500ms ⇒ ~2200ms total
+  var splash=document.getElementById('hsai-splash');
+  if(splash){
+    if(seen()){if(splash.parentNode)splash.parentNode.removeChild(splash);}
+    else{wire(splash);}
   }
-  if(img.complete&&img.naturalWidth>0){start();}
-  else{
-    img.onload=start;
-    img.onerror=end;                                  // imagem falhou → site imediatamente
-    timers.push(setTimeout(function(){if(!img.complete||!img.naturalWidth)end();},2500)); // imagem lenta → segue
-  }
+  // Replay manual (ex.: "Ver abertura cinematográfica")
+  window.HSAIReplaySplash=function(){
+    try{sessionStorage.removeItem(KEY);}catch(e){}
+    var old=document.getElementById('hsai-splash');
+    if(old&&old.parentNode)old.parentNode.removeChild(old);
+    var div=document.createElement('div');
+    div.id='hsai-splash';
+    div.setAttribute('aria-label','Abertura cinematográfica Hollywood Studio AI');
+    var img=document.createElement('img');
+    img.src='assets/social/hero-hollywoodstudio-ai.jpg';
+    img.alt='Hollywood Studio AI';
+    var btn=document.createElement('button');
+    btn.id='hsai-splash-skip';
+    btn.type='button';
+    btn.textContent='Pular →';
+    div.appendChild(img);
+    div.appendChild(btn);
+    document.body.appendChild(div);
+    wire(div);
+  };
 })();
 </script>
 
@@ -2882,6 +2891,7 @@ function userMenu(popId){
     ${S.user.admin?`<button class="up-item" onclick="closeUserPop();go('admin')">${I('<path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/>')}<span>Admin</span></button>`:''}
     <div class="up-sep"></div>
     <button class="up-item" onclick="openAccountSettings()">${I('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8.6 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.16.38.39.72.69 1H21a2 2 0 0 1 0 4h-.91a1.65 1.65 0 0 0-.69 1z"/>')}<span>${pt?'Configurações da conta':'Account settings'}</span></button>
+    <button class="up-item" onclick="closeUserPop();window.HSAIReplaySplash&&window.HSAIReplaySplash()">${I('<rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 8h20M6 4l2 4M12 4l2 4M18 4l2 4"/>')}<span>${pt?'Ver abertura cinematográfica':'Watch cinematic intro'}</span></button>
     <div class="up-sep"></div>
     <button class="up-item danger" onclick="logoutUser()">${I('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/>')}<span>${pt?'Sair da conta':'Log out'}</span></button>`;
   pop.classList.add('open');
