@@ -479,7 +479,9 @@ function handleHealth(req, res) {
     openai: !!process.env.OPENAI_API_KEY,
     claude: !!process.env.ANTHROPIC_API_KEY,
     gemini: !!process.env.GEMINI_API_KEY,
-    version: '2.0.0',
+    magnific: !!process.env.MAGNIFIC_API_KEY,
+    atlas: !!(process.env.ATLAS_API_KEY || process.env.ATLAS_KEY),
+    version: '2.1.0',
   });
 }
 
@@ -1362,6 +1364,8 @@ async function handleAdminStatus(req, res) {
     openai:       { configured: !!process.env.OPENAI_API_KEY,       label: 'OpenAI' },
     claude:       { configured: !!process.env.ANTHROPIC_API_KEY,    label: 'Claude' },
     gemini:       { configured: !!process.env.GEMINI_API_KEY,       label: 'Gemini' },
+    magnific:     { configured: !!process.env.MAGNIFIC_API_KEY,     label: 'Magnific API' },
+    atlas:        { configured: !!(process.env.ATLAS_API_KEY || process.env.ATLAS_KEY), label: 'Atlas Cloud API' },
     google_auth:  { configured: !!process.env.GOOGLE_CLIENT_ID,     label: 'Google Auth' },
     app_url:      { configured: !!process.env.APP_URL,              label: 'APP_URL' },
     admin_emails: { configured: !!process.env.ADMIN_EMAILS,         label: 'Admin Emails' },
@@ -1421,6 +1425,165 @@ async function handleAdminConfig(req, res) {
   }
 
   return res.status(405).json({ error: 'Method not allowed' });
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// CREATIVE FINISHER — camada de provedores (Magnific / Atlas / OpenAI / Claude)
+// As chamadas HTTP reais ao Magnific/Atlas ainda NÃO são feitas: sem a chave
+// configurada retornamos status "not_configured"; com a chave, "pending_integration".
+// Créditos NUNCA são debitados enquanto o provedor não responder com sucesso.
+// ──────────────────────────────────────────────────────────────────────────────
+
+function hasMagnific() { return !!process.env.MAGNIFIC_API_KEY; }
+function hasAtlasFinisher() { return !!(process.env.ATLAS_API_KEY || process.env.ATLAS_KEY); }
+
+async function callMagnificTool(tool, payload = {}) {
+  if (!hasMagnific()) {
+    return {
+      ok: false,
+      status: 'not_configured',
+      message: 'Magnific API ainda não configurada. Configure MAGNIFIC_API_KEY nas variáveis de ambiente da Vercel.',
+      tool,
+    };
+  }
+  // Integração HTTP real será adicionada aqui (endpoint + payload Magnific).
+  log('info', '[finisher] callMagnificTool (pending integration)', tool, Object.keys(payload || {}));
+  return {
+    ok: false,
+    status: 'pending_integration',
+    message: 'Chave Magnific detectada. A integração HTTP desta ferramenta será ativada em breve.',
+    tool,
+  };
+}
+
+async function callAtlasTool(model, payload = {}) {
+  if (!hasAtlasFinisher()) {
+    return {
+      ok: false,
+      status: 'not_configured',
+      message: 'Atlas Cloud API ainda não configurada. Configure ATLAS_API_KEY nas variáveis de ambiente da Vercel.',
+      model,
+    };
+  }
+  log('info', '[finisher] callAtlasTool (pending integration)', model, Object.keys(payload || {}));
+  return {
+    ok: false,
+    status: 'pending_integration',
+    message: 'Chave Atlas detectada. A integração HTTP desta ferramenta será ativada em breve.',
+    model,
+  };
+}
+
+/** Texto via OpenAI com interface de payload do Finisher */
+async function callOpenAIText(payload = {}) {
+  const { prompt = '', system = '', model = 'gpt-4o-mini' } = payload;
+  return callOpenAI(prompt, system, model);
+}
+
+/** Texto via Claude com interface de payload do Finisher */
+async function callClaudeText(payload = {}) {
+  const { prompt = '', system = '' } = payload;
+  return callClaude(prompt, system);
+}
+
+/** Catálogo backend dos tools do Finisher (custo, premium, provedor padrão) */
+const FINISHER_TOOLS = {
+  'image-to-prompt':   { id: 'image_to_prompt',   credits: 1, premium: false, provider: 'ai-text'  },
+  'improve-prompt':    { id: 'improve_prompt',    credits: 1, premium: false, provider: 'ai-text'  },
+  'upscale':           { id: 'upscale_premium',   credits: 5, premium: true,  provider: 'magnific' },
+  'inpaint':           { id: 'inpainting',        credits: 5, premium: true,  provider: 'magnific' },
+  'relight':           { id: 'relight',           credits: 5, premium: true,  provider: 'magnific' },
+  'style-transfer':    { id: 'style_transfer',    credits: 5, premium: true,  provider: 'magnific' },
+  'expand':            { id: 'image_expand',      credits: 3, premium: true,  provider: 'magnific' },
+  'remove-background': { id: 'remove_background', credits: 2, premium: true,  provider: 'magnific' },
+  'change-camera':     { id: 'change_camera',     credits: 5, premium: true,  provider: 'atlas'    },
+  'lip-sync':          { id: 'lip_sync',          credits: 10, premium: true, provider: 'atlas'    },
+};
+
+function localImproveFallback(prompt, mediaType) {
+  const base = mediaType === 'image'
+    ? 'composição profissional, iluminação dramática, alta resolução, detalhes nítidos, qualidade de estúdio'
+    : 'plano cinematográfico, iluminação volumétrica, câmera em travelling suave, profundidade de campo, color grading profissional, 4K';
+  return `${prompt}, ${base}, sem aparência artificial`;
+}
+
+async function handleFinisher(req, res, toolPath) {
+  if (req.method !== 'POST') return res.status(405).json({ ok: false, error: 'Method not allowed' });
+  const tool = FINISHER_TOOLS[toolPath];
+  if (!tool) return res.status(404).json({ ok: false, error: 'Ferramenta desconhecida', tool: toolPath });
+
+  const body = await readJsonBody(req);
+  const prompt = (body.prompt || '').toString().slice(0, 4000);
+  const mediaType = body.mediaType === 'image' ? 'image' : 'video';
+
+  // ── Ferramentas de texto: funcionam com OpenAI/Claude quando há chave, com fallback local
+  if (tool.provider === 'ai-text') {
+    if (toolPath === 'improve-prompt') {
+      if (!prompt.trim()) return res.status(400).json({ ok: false, error: 'prompt obrigatório' });
+      const system = 'Você é um especialista em prompts para geração de vídeo e imagem com IA. Reescreva o prompt do usuário em um prompt técnico, cinematográfico e detalhado (câmera, lente, luz, paleta, movimento). Responda APENAS com o prompt melhorado.';
+      const aiResult = (await callOpenAIText({ prompt, system })) || (await callClaudeText({ prompt, system }));
+      return res.status(200).json({
+        ok: true,
+        tool: tool.id,
+        source: aiResult ? 'ai' : 'local',
+        enhanced: aiResult || localImproveFallback(prompt, mediaType),
+        creditsUsed: 0,
+      });
+    }
+    // image-to-prompt: requer modelo de visão — sem chave, orienta; com chave de texto, gera prompt-base
+    const imageRef = body.image || body.imageUrl || '';
+    if (!imageRef) return res.status(400).json({ ok: false, error: 'image/imageUrl obrigatório' });
+    const hasTextAI = !!(process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY);
+    if (!hasTextAI) {
+      return res.status(200).json({
+        ok: false,
+        status: 'not_configured',
+        tool: tool.id,
+        message: 'Extração de prompt requer OPENAI_API_KEY ou ANTHROPIC_API_KEY configurada na Vercel.',
+      });
+    }
+    const sys2 = 'Você descreve imagens como prompts técnicos de geração (estilo, luz, lente, composição, paleta). Gere um prompt técnico genérico de alta qualidade baseado no contexto fornecido.';
+    const hint = (body.hint || '').toString().slice(0, 500);
+    const aiR = (await callOpenAIText({ prompt: `Contexto da referência: ${hint || 'imagem de referência enviada pelo usuário'}. Gere o prompt técnico.`, system: sys2 }))
+      || (await callClaudeText({ prompt: `Contexto da referência: ${hint || 'imagem de referência enviada pelo usuário'}. Gere o prompt técnico.`, system: sys2 }));
+    return res.status(200).json({ ok: !!aiR, status: aiR ? 'ok' : 'error', tool: tool.id, prompt: aiR || '', creditsUsed: 0 });
+  }
+
+  // ── Ferramentas premium (Magnific / Atlas): exigem login; nunca debitam sem provedor configurado
+  const providerConfigured = tool.provider === 'magnific' ? hasMagnific() : hasAtlasFinisher();
+  if (!providerConfigured) {
+    const provider = tool.provider === 'magnific' ? 'Magnific' : 'Atlas Cloud';
+    const envVar = tool.provider === 'magnific' ? 'MAGNIFIC_API_KEY' : 'ATLAS_API_KEY';
+    return res.status(200).json({
+      ok: false,
+      status: 'not_configured',
+      tool: tool.id,
+      message: `${provider} API ainda não configurada. Configure ${envVar} nas variáveis de ambiente da Vercel.`,
+    });
+  }
+
+  const auth = await authenticate(req);
+  if (!auth) return res.status(401).json({ ok: false, error: 'login_required', message: 'Faça login para usar ferramentas premium do Finishing Lab.' });
+
+  const userId = auth.supaUser.id;
+  const balance = await getUserCredits(userId);
+  if (balance < tool.credits) {
+    return res.status(402).json({ ok: false, error: 'insufficient_credits', required: tool.credits, balance, message: 'Créditos insuficientes — veja os planos para recarregar.' });
+  }
+
+  const payload = { ...body, userId };
+  const result = tool.provider === 'magnific'
+    ? await callMagnificTool(tool.id, payload)
+    : await callAtlasTool(tool.id, payload);
+
+  if (!result.ok) {
+    // Falha/integração pendente — nenhum crédito foi debitado
+    return res.status(200).json({ ...result, tool: tool.id, creditsUsed: 0 });
+  }
+
+  // Sucesso real do provedor: debita e registra transação
+  const debit = await mutateCredits(userId, -tool.credits, 'use', `finisher:${tool.id}`, { tool: tool.id });
+  return res.status(200).json({ ok: true, tool: tool.id, result, creditsUsed: tool.credits, balance: debit.balance });
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -1489,6 +1652,17 @@ const ROUTES = {
   'admin/users/update':      handleAdminUsersUpdate,
   'admin/status':            handleAdminStatus,
   'admin/config':            handleAdminConfig,
+  // Creative Finisher (Magnific / Atlas / OpenAI / Claude)
+  'finisher/image-to-prompt':   (req, res) => handleFinisher(req, res, 'image-to-prompt'),
+  'finisher/improve-prompt':    (req, res) => handleFinisher(req, res, 'improve-prompt'),
+  'finisher/upscale':           (req, res) => handleFinisher(req, res, 'upscale'),
+  'finisher/inpaint':           (req, res) => handleFinisher(req, res, 'inpaint'),
+  'finisher/relight':           (req, res) => handleFinisher(req, res, 'relight'),
+  'finisher/style-transfer':    (req, res) => handleFinisher(req, res, 'style-transfer'),
+  'finisher/expand':            (req, res) => handleFinisher(req, res, 'expand'),
+  'finisher/remove-background': (req, res) => handleFinisher(req, res, 'remove-background'),
+  'finisher/change-camera':     (req, res) => handleFinisher(req, res, 'change-camera'),
+  'finisher/lip-sync':          (req, res) => handleFinisher(req, res, 'lip-sync'),
 };
 
 export default async function handler(req, res) {

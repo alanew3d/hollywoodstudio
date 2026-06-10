@@ -2333,6 +2333,62 @@ window.HSAI_MENTORS=[
 ];
 function _scMentorById(id){if(!id)return null;return (window.HSAI_MENTORS||[]).find(function(m){return m.id===id;})||null;}
 
+/* ════════ HSAI_FINISHER_TOOLS — Creative Finisher / Finishing Lab ════════
+   Camada de finalização premium (Magnific / Atlas / OpenAI / Claude via backend).
+   status: 'active' = funciona já (fallback local) · 'beta' = requer API configurada. */
+window.HSAI_FINISHER_TOOLS=[
+  {id:'image_to_prompt',name:'Extrair Prompt da Referência',category:'melhorar',icon:'🔍',
+   description:'Transforma uma imagem ou frame em um prompt técnico detalhado para recriar ou variar a cena.',
+   bestFor:'Recriar looks de referências e frames de vídeo',providerOptions:['openai','claude'],
+   estimatedCredits:'0-1',status:'beta',requiresImage:true,requiresVideo:false,requiresPrompt:false,isPremium:false,
+   apiPath:'image-to-prompt'},
+  {id:'improve_prompt',name:'Enhance Avançado',category:'melhorar',icon:'✨',
+   description:'Reescreve seu prompt com técnica de cinema: câmera, lente, luz, paleta e movimento.',
+   bestFor:'Elevar qualquer prompt antes de gastar créditos',providerOptions:['openai','claude','local'],
+   estimatedCredits:'0-1',status:'active',requiresImage:false,requiresVideo:false,requiresPrompt:true,isPremium:false,
+   apiPath:'improve-prompt'},
+  {id:'upscale_premium',name:'Finalizar em Qualidade Premium',category:'melhorar',icon:'📐',
+   description:'Upscale gerativo de máxima qualidade — detalhes, nitidez e textura de produção.',
+   bestFor:'Entrega final de imagens e frames em alta resolução',providerOptions:['magnific'],
+   estimatedCredits:'3-8',status:'beta',requiresImage:true,requiresVideo:false,requiresPrompt:false,isPremium:true,
+   apiPath:'upscale'},
+  {id:'relight',name:'Reiluminar Cena',category:'melhorar',icon:'💡',
+   description:'Reposiciona e redefine a iluminação da cena sem regenerar do zero.',
+   bestFor:'Corrigir luz dura, mudar hora do dia, criar mood',providerOptions:['magnific'],
+   estimatedCredits:'3-8',status:'beta',requiresImage:true,requiresVideo:false,requiresPrompt:false,isPremium:true,
+   apiPath:'relight'},
+  {id:'inpainting',name:'Corrigir Área',category:'corrigir',icon:'🩹',
+   description:'Troca objetos, corrige rótulos e remove artefatos em uma área selecionada.',
+   bestFor:'Trocar objeto, corrigir rótulo/texto, remover artefato',providerOptions:['magnific'],
+   estimatedCredits:'3-8',status:'beta',requiresImage:true,requiresVideo:false,requiresPrompt:true,isPremium:true,
+   apiPath:'inpaint'},
+  {id:'remove_background',name:'Remover Fundo',category:'corrigir',icon:'✂️',
+   description:'Remove o fundo com precisão preservando bordas finas e transparência.',
+   bestFor:'Produtos, avatares e composições',providerOptions:['magnific'],
+   estimatedCredits:'1-3',status:'beta',requiresImage:true,requiresVideo:false,requiresPrompt:false,isPremium:true,
+   apiPath:'remove-background'},
+  {id:'change_camera',name:'Mudar Câmera',category:'corrigir',icon:'🎥',
+   description:'Reposiciona o ângulo/enquadramento da câmera mantendo a cena.',
+   bestFor:'Novo ângulo do mesmo take sem regenerar tudo',providerOptions:['atlas'],
+   estimatedCredits:'3-8',status:'beta',requiresImage:true,requiresVideo:true,requiresPrompt:false,isPremium:true,
+   apiPath:'change-camera'},
+  {id:'style_transfer',name:'Aplicar Estilo',category:'finalizar',icon:'🎨',
+   description:'Aplica o estilo visual de uma referência sobre sua imagem ou frame.',
+   bestFor:'Consistência de identidade visual entre peças',providerOptions:['magnific'],
+   estimatedCredits:'3-8',status:'beta',requiresImage:true,requiresVideo:false,requiresPrompt:false,isPremium:true,
+   apiPath:'style-transfer'},
+  {id:'image_expand',name:'Expandir Quadro',category:'finalizar',icon:'↔️',
+   description:'Expande a imagem para novos formatos (9:16, 16:9, 1:1, 4:5) gerando o entorno.',
+   bestFor:'Adaptar uma criação para todas as redes',providerOptions:['magnific'],
+   estimatedCredits:'2-5',status:'beta',requiresImage:true,requiresVideo:false,requiresPrompt:false,isPremium:true,
+   apiPath:'expand'},
+  {id:'lip_sync',name:'Lip Sync / Personagem Falando',category:'finalizar',icon:'💋',
+   description:'Sincroniza a fala de um personagem com áudio — apresentadores e avatares.',
+   bestFor:'Avatares falantes, dublagem e apresentações',providerOptions:['atlas'],
+   estimatedCredits:'5-15',status:'beta',requiresImage:true,requiresVideo:true,requiresPrompt:false,isPremium:true,
+   apiPath:'lip-sync'}
+];
+
 /* ── recommendModelForIntent ── */
 function recommendModelForIntent(opts){
   opts=opts||{};
@@ -2806,6 +2862,7 @@ function go(v){
 }
 function topTitle(v){
   if(v&&v.indexOf('custom:')===0){const s=S.sections.find(x=>x.id===v.slice(7));return s?s.name:'';}
+  if(v==='finisher')return 'Finishing Lab';
   return t(v);
 }
 
@@ -2816,7 +2873,7 @@ function render(){
   const m=document.getElementById('main');
   const R={home:viewHome,criar:viewSimpleCreate,studio:viewStudio,images:viewImages,audio:viewAudio,characters:viewCharacters,storyboard:viewStoryboard,favorites:viewFavoritesPage,editing:viewEditing,batch:viewBatch,agents:viewAgents,docs:viewDocs,spaces:viewSpaces,
     flow:viewFlow,council:viewCouncil,analytics:viewAnalytics,opportunities:viewOpportunities,public:viewPublic,models:viewModelsCatalog,
-    academy:viewAcademy,news:viewNews,festivals:viewFestivals,'gemini-avatar':viewGeminiAvatar,gallery:viewGallery,uploads:viewUploadGallery,templates:viewTemplates,contactsheet:viewContactSheet,plans:viewPlans,admin:viewAdmin,marketing:viewMarketingPage,tube:viewTube,instagram:viewInstagram,inspo:viewInspo,posprodu:viewPosProdu};
+    academy:viewAcademy,news:viewNews,festivals:viewFestivals,'gemini-avatar':viewGeminiAvatar,gallery:viewGallery,uploads:viewUploadGallery,templates:viewTemplates,contactsheet:viewContactSheet,plans:viewPlans,admin:viewAdmin,marketing:viewMarketingPage,tube:viewTube,instagram:viewInstagram,inspo:viewInspo,posprodu:viewPosProdu,finisher:viewFinishingLab};
   let body;
   if(S.view&&S.view.indexOf('custom:')===0)body=viewCustom(S.view.slice(7));
   else body=(R[S.view]||viewStudio)();
@@ -3326,6 +3383,7 @@ function viewSimpleCreate(){
   +'<button class="btn btn-ghost btn-sm" onclick="scEnhance()">✨ Enhance</button>'
   +'<button class="btn btn-ghost btn-sm" onclick="scMentor()">🎭 Mentor</button>'
   +'<button class="btn btn-ghost btn-sm" onclick="scStoryboard()">📋 Storyboard</button>'
+  +'<button class="btn btn-ghost btn-sm" onclick="finQuickModal()" title="'+(pt?'Finalizar / Corrigir resultado':'Finish / Fix result')+'">🛠 '+(pt?'Finalizar':'Finish')+'</button>'
   +'<span style="flex:1"></span>'
   +'<button class="btn btn-ghost btn-sm" onclick="scAttachRef()">📎 '+(pt?'Referência':'Ref')+'</button>'
   +'<button class="btn btn-ghost btn-sm" onclick="scOpenModelPicker()">🎛 '+(pt?'Ver todos os modelos':'All models')+'</button>'
@@ -4341,6 +4399,7 @@ function viewStudio(){
           <button class="btn btn-ghost btn-sm" onclick="stMentor()">🎭 Mentor</button>
           <button class="btn btn-ghost btn-sm" onclick="go('storyboard')">📋 Storyboard</button>
           <button class="btn btn-ghost btn-sm" onclick="stOpenModelPicker()">🎛 ${S.lang==='pt'?'Modelos':'Models'}</button>
+          <button class="btn btn-ghost btn-sm" onclick="go('finisher')">🛠 ${S.lang==='pt'?'Finalizar':'Finish'}</button>
         </div>
         <div id="cRefWrap" style="margin-top:10px"></div>
       </div>
@@ -7433,11 +7492,82 @@ function viewAdmin(){
     ${adminFinanceCard()}
     ${adminUsersCard()}
     ${integrationsCard()}
+    ${finisherIntegrationsCard()}
+    ${finisherToolsCard()}
     ${googleAuthCard()}
     ${paymentsCard()}
     ${buildSectionCard()}
     ${seoCard()}
   </div>`;
+}
+
+/* ── Admin > Integrações do Creative Finisher (Magnific / Atlas / OpenAI / Claude) ── */
+function finisherIntegrationsCard(){
+  var pt=S.lang==='pt';
+  return '<div class="card"><span class="label">'+(pt?'Finishing Lab — Integrações':'Finishing Lab — Integrations')+'</span>'
+    +'<div id="finIntegStatus" style="font-size:12.5px;color:var(--ink-2);line-height:2;margin:8px 0 10px">'
+    +'<span style="color:var(--ink-4)">'+(pt?'Clique em "Testar conexão" para verificar.':'Click "Test connection" to check.')+'</span>'
+    +'</div>'
+    +'<button class="btn btn-ghost btn-sm" onclick="finTestConnections()">🔌 '+(pt?'Testar conexão':'Test connection')+'</button>'
+    +'<div class="attach-note" style="margin-top:10px">'+(pt
+      ?'As chaves ficam APENAS no servidor: configure <b>MAGNIFIC_API_KEY</b>, <b>ATLAS_API_KEY</b>, <b>OPENAI_API_KEY</b> e <b>ANTHROPIC_API_KEY</b> em Vercel → Settings → Environment Variables. O status acima mostra apenas presença (nunca o valor).'
+      :'Keys live ONLY on the server: set <b>MAGNIFIC_API_KEY</b>, <b>ATLAS_API_KEY</b>, <b>OPENAI_API_KEY</b> and <b>ANTHROPIC_API_KEY</b> in Vercel → Settings → Environment Variables. The status above shows presence only (never the value).')
+    +'</div></div>';
+}
+async function finTestConnections(){
+  var pt=S.lang==='pt';
+  var el=document.getElementById('finIntegStatus');
+  if(el)el.innerHTML='<span style="color:var(--ink-4)">⏳ '+(pt?'Verificando...':'Checking...')+'</span>';
+  var d=null;
+  try{var r=await fetch('/api/health');d=await r.json();}catch(e){}
+  if(!el)return;
+  if(!d){
+    el.innerHTML='<span style="color:var(--err)">'+(pt?'Não foi possível consultar /api/health (backend offline?).':'Could not reach /api/health (backend offline?).')+'</span>';
+    return;
+  }
+  var rows=[
+    ['Magnific API',!!d.magnific],
+    ['Atlas Cloud API',!!d.atlas],
+    ['OpenAI',!!d.openai],
+    ['Claude',!!d.claude]
+  ];
+  el.innerHTML=rows.map(function(rw){
+    return '<div style="display:flex;align-items:center;gap:8px"><span class="dot '+(rw[1]?'':'soon')+'"></span><b>'+rw[0]+'</b> <span style="font-size:11px;color:'+(rw[1]?'var(--ok)':'var(--ink-4)')+'">'+(rw[1]?(pt?'configurado':'configured'):(pt?'não configurado':'not configured'))+'</span></div>';
+  }).join('')
+  +'<div style="font-size:10.5px;color:var(--ink-4);margin-top:4px">'+(pt?'Verificado em ':'Checked at ')+new Date().toLocaleTimeString()+'</div>';
+  toast(pt?'Status das integrações atualizado.':'Integration status updated.','ok');
+}
+/* ── Admin > Ferramentas do Finisher (toggle, custo, premium, provedor) ── */
+function finisherToolsCard(){
+  var pt=S.lang==='pt';
+  var ov=finAdminOverrides();
+  var rows=(window.HSAI_FINISHER_TOOLS||[]).map(function(t){
+    var o=ov[t.id]||{};
+    var enabled=o.enabled!==false;
+    var credits=o.credits!=null&&o.credits!==''?o.credits:t.estimatedCredits;
+    var premium=o.premium!=null?!!o.premium:t.isPremium;
+    var provider=o.provider||t.providerOptions[0];
+    return '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:6px 0;border-bottom:1px solid var(--line)">'
+      +'<input type="checkbox" '+(enabled?'checked':'')+' onchange="finAdminSet(\''+t.id+'\',\'enabled\',this.checked)" style="accent-color:var(--accent)" title="'+(pt?'Ativar/desativar':'Enable/disable')+'">'
+      +'<b style="font-size:12px;flex:1;min-width:130px">'+t.icon+' '+escapeHtml(t.name)+'</b>'
+      +'<input class="input" style="width:60px;padding:3px 6px;font-size:11px" value="'+escapeAttr(String(credits))+'" onchange="finAdminSet(\''+t.id+'\',\'credits\',this.value)" title="'+(pt?'Custo em créditos':'Credit cost')+'">'
+      +'<label style="display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--ink-3)"><input type="checkbox" '+(premium?'checked':'')+' onchange="finAdminSet(\''+t.id+'\',\'premium\',this.checked)" style="accent-color:var(--accent)">PRO</label>'
+      +'<select class="input" style="width:auto;padding:3px 6px;font-size:11px" onchange="finAdminSet(\''+t.id+'\',\'provider\',this.value)">'
+      +(t.providerOptions||[]).map(function(p){return '<option'+(p===provider?' selected':'')+'>'+p+'</option>';}).join('')
+      +'</select>'
+      +'</div>';
+  }).join('');
+  return '<div class="card"><span class="label">'+(pt?'Finishing Lab — Ferramentas':'Finishing Lab — Tools')+'</span>'
+    +'<div style="margin-top:8px;max-height:280px;overflow-y:auto">'+rows+'</div>'
+    +'<div class="attach-note" style="margin-top:8px">'+(pt?'Ajustes salvos localmente no painel admin (toggle, custo, premium e provedor padrão).':'Settings saved locally in the admin panel (toggle, cost, premium and default provider).')+'</div>'
+    +'</div>';
+}
+function finAdminSet(toolId,key,val){
+  var ov=finAdminOverrides();
+  ov[toolId]=ov[toolId]||{};
+  ov[toolId][key]=val;
+  try{localStorage.setItem('hsai_finisher_admin',JSON.stringify(ov));}catch(e){}
+  toast((S.lang==='pt'?'Ferramenta atualizada: ':'Tool updated: ')+toolId,'ok');
 }
 
 /* ════════ IMAGES (dedicated image generation) ════════ */
@@ -9990,6 +10120,299 @@ function addCustomCouncilMember(){
 }
 
 
+/* ════════════════════════════════════════════════════════════
+   FINISHING LAB — Creative Finisher (Pós-Produção Premium)
+   Catálogo: window.HSAI_FINISHER_TOOLS · Backend: /api/finisher/*
+   ════════════════════════════════════════════════════════════ */
+function finAdminOverrides(){
+  try{return JSON.parse(localStorage.getItem('hsai_finisher_admin')||'{}');}catch(e){return{};}
+}
+function finGetTools(){
+  var ov=finAdminOverrides();
+  return (window.HSAI_FINISHER_TOOLS||[]).map(function(t){
+    var o=ov[t.id]||{};
+    return Object.assign({},t,{
+      enabled:o.enabled!==false,
+      estimatedCredits:o.credits!=null&&o.credits!==''?o.credits:t.estimatedCredits,
+      isPremium:o.premium!=null?!!o.premium:t.isPremium,
+      provider:o.provider||t.providerOptions[0]
+    });
+  }).filter(function(t){return t.enabled;});
+}
+function finLastResult(){
+  var g=(S.gallery||[])[0];
+  if(g&&g.url)return{url:g.url,type:g.type||'image',prompt:g.prompt||''};
+  var sc=(typeof scGalleryLoad==='function'?scGalleryLoad():[])[0];
+  if(sc)return{url:sc.outputUrl||sc.previewUrl||'',type:sc.mediaType||'video',prompt:sc.prompt||''};
+  return null;
+}
+function viewFinishingLab(){
+  var pt=S.lang==='pt';
+  var tools=finGetTools();
+  var sections=[
+    ['melhorar',pt?'MELHORAR':'ENHANCE','✨'],
+    ['corrigir',pt?'CORRIGIR':'FIX','🩹'],
+    ['finalizar',pt?'FINALIZAR':'FINISH','🏁']
+  ];
+  var statusBadge=function(t){
+    if(t.status==='active')return '<span style="font-size:9.5px;font-weight:700;border:1px solid #22a06b;color:#22a06b;border-radius:6px;padding:1px 7px">'+(pt?'ATIVO':'ACTIVE')+'</span>';
+    return '<span style="font-size:9.5px;font-weight:700;border:1px solid #b08a2e;color:#b08a2e;border-radius:6px;padding:1px 7px">BETA · '+(pt?'REQUER API':'NEEDS API')+'</span>';
+  };
+  var card=function(t){
+    return '<div class="dc-card" style="display:flex;flex-direction:column;gap:8px;padding:16px">'
+      +'<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">'
+      +'<div style="display:flex;align-items:center;gap:8px"><span style="font-size:22px">'+t.icon+'</span><b style="font-size:13.5px">'+escapeHtml(t.name)+'</b></div>'
+      +'<div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">'+statusBadge(t)
+      +(t.isPremium?'<span style="font-size:9.5px;font-weight:700;border:1px solid var(--accent);color:var(--accent);border-radius:6px;padding:1px 7px">PREMIUM</span>':'')+'</div>'
+      +'</div>'
+      +'<div style="font-size:12px;color:var(--ink-2);line-height:1.5">'+escapeHtml(t.description)+'</div>'
+      +'<div style="font-size:11px;color:var(--ink-4)">🎯 '+escapeHtml(t.bestFor)+'</div>'
+      +'<div style="font-size:11px;color:var(--ink-3)">~'+t.estimatedCredits+' '+(pt?'créditos':'credits')+' · '+escapeHtml((t.providerOptions||[]).join(' / '))+'</div>'
+      +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:4px">'
+      +'<button class="btn btn-primary btn-sm" onclick="finOpenTool(\''+t.id+'\')">'+(pt?'Usar agora':'Use now')+'</button>'
+      +'<button class="btn btn-ghost btn-sm" onclick="finSendLast(\''+t.id+'\')">'+(pt?'Enviar último resultado':'Send last result')+'</button>'
+      +(t.requiresImage?'<button class="btn btn-ghost btn-sm" onclick="finPickFile(\''+t.id+'\')">'+(pt?'Usar imagem/frame':'Use image/frame')+'</button>':'')
+      +'</div></div>';
+  };
+  var body=sections.map(function(sec){
+    var list=tools.filter(function(t){return t.category===sec[0];});
+    if(!list.length)return'';
+    return '<div style="font-size:10px;letter-spacing:2px;font-weight:700;color:var(--ink-4);margin:22px 0 12px">'+sec[2]+' '+sec[1]+'</div>'
+      +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px">'+list.map(card).join('')+'</div>';
+  }).join('');
+  // Seção Exportar
+  body+='<div style="font-size:10px;letter-spacing:2px;font-weight:700;color:var(--ink-4);margin:22px 0 12px">📤 '+(pt?'EXPORTAR':'EXPORT')+'</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">'
+    +[['📱',pt?'Preparar para redes':'Prepare for social',pt?'Formatos 9:16, 1:1, 4:5 e legendas':'9:16, 1:1, 4:5 formats and captions','instagram'],
+      ['▶️','YouTube',pt?'Títulos, descrição e capa':'Titles, description and cover','tube'],
+      ['🌍',pt?'Galeria Pública':'Public Gallery',pt?'Publique sua criação na comunidade':'Publish your creation to the community','public'],
+      ['🖼',pt?'Minha Galeria':'My Gallery',pt?'Baixe e organize seus resultados':'Download and organize results','gallery']
+    ].map(function(e){
+      return '<div class="dc-card" style="padding:14px;cursor:pointer" onclick="go(\''+e[3]+'\')">'
+        +'<div style="font-size:24px;margin-bottom:6px">'+e[0]+'</div>'
+        +'<div style="font-weight:700;font-size:13px;margin-bottom:3px">'+e[1]+'</div>'
+        +'<div style="font-size:11.5px;color:var(--ink-3);line-height:1.45">'+e[2]+'</div>'
+        +'</div>';
+    }).join('')
+    +'</div>';
+  return areaHeader({
+    kicker:pt?'PÓS-PRODUÇÃO PREMIUM':'PREMIUM POST-PRODUCTION',
+    title:'Finishing Lab',
+    desc:pt?'Finalize, corrija e eleve seus resultados: upscale premium, reiluminação, correção de área, estilo, expansão de quadro e lip sync — com Magnific, Atlas, OpenAI e Claude.':'Finish, fix and elevate your results: premium upscale, relight, area fix, style, frame expand and lip sync — powered by Magnific, Atlas, OpenAI and Claude.',
+    actions:'<button class="btn btn-ghost btn-sm" onclick="go(\'posprodu\')">🎞 '+(pt?'Pós-Produção clássica':'Classic Post-Production')+'</button>',
+    area:'posprodu'
+  })+body
+  +'<input type="file" id="finFileInput" accept="image/*,video/*" style="display:none" onchange="finOnFile(this)">';
+}
+function finToolById(id){return finGetTools().find(function(t){return t.id===id;})||(window.HSAI_FINISHER_TOOLS||[]).find(function(t){return t.id===id;});}
+var _finCtx={tool:null,image:null,prompt:''};
+function finSendLast(id){
+  var last=finLastResult();
+  var pt=S.lang==='pt';
+  if(!last||!last.url){toast(pt?'Nenhum resultado recente encontrado. Gere algo primeiro.':'No recent result found. Generate something first.','info');finOpenTool(id);return;}
+  finOpenTool(id,{image:last.url,prompt:last.prompt});
+}
+function finPickFile(id){
+  _finCtx.tool=id;
+  var inp=document.getElementById('finFileInput');
+  if(!inp){
+    inp=document.createElement('input');inp.type='file';inp.id='finFileInput';inp.accept='image/*,video/*';
+    inp.style.display='none';inp.onchange=function(){finOnFile(inp);};
+    document.body.appendChild(inp);
+  }
+  inp.click();
+}
+function finOnFile(inp){
+  var f=inp.files&&inp.files[0];
+  if(!f)return;
+  var r=new FileReader();
+  r.onload=function(e){finOpenTool(_finCtx.tool,{image:e.target.result});};
+  r.readAsDataURL(f);
+  inp.value='';
+}
+function finOpenTool(id,preset){
+  preset=preset||{};
+  var t=finToolById(id);
+  if(!t)return;
+  var pt=S.lang==='pt';
+  _finCtx={tool:id,image:preset.image||null,prompt:preset.prompt||''};
+  var html='<div><h3 style="margin:0 0 4px">'+t.icon+' '+escapeHtml(t.name)+'</h3>'
+    +'<div style="font-size:12px;color:var(--ink-3);margin-bottom:14px">'+escapeHtml(t.description)+' · ~'+t.estimatedCredits+' '+(pt?'créditos':'credits')+'</div>';
+  if(t.requiresImage){
+    html+='<div style="margin-bottom:12px">'
+      +(_finCtx.image
+        ?'<img src="'+escapeAttr(_finCtx.image)+'" style="max-height:140px;max-width:100%;border-radius:10px;object-fit:cover" onerror="this.style.display=\'none\'">'
+        :'<div style="border:2px dashed var(--line-2);border-radius:10px;padding:18px;text-align:center;font-size:12px;color:var(--ink-3);cursor:pointer" onclick="finPickFile(\''+id+'\')">📎 '+(pt?'Clique para enviar imagem ou frame':'Click to upload image or frame')+'</div>')
+      +'</div>';
+  }
+  if(t.requiresPrompt||id==='improve_prompt'||id==='inpainting'){
+    html+='<textarea class="input" id="finPrompt" style="width:100%;min-height:80px;margin-bottom:12px" placeholder="'
+      +(id==='inpainting'?(pt?'Descreva o que corrigir/trocar na área...':'Describe what to fix/replace in the area...')
+        :(pt?'Cole ou digite o prompt...':'Paste or type the prompt...'))
+      +'">'+escapeHtml(_finCtx.prompt||((document.getElementById('scPrompt')||{}).value||''))+'</textarea>';
+  }
+  if(id==='image_expand'){
+    html+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span style="font-size:12px;color:var(--ink-3)">'+(pt?'Novo formato':'New format')+'</span>'
+      +'<select class="sc-select" id="finAspect"><option>9:16</option><option>16:9</option><option>1:1</option><option>4:5</option></select></div>';
+  }
+  html+='<div style="display:flex;gap:8px;flex-wrap:wrap">'
+    +'<button class="btn btn-primary" onclick="finRun(\''+id+'\')">'+t.icon+' '+(pt?'Executar':'Run')+'</button>'
+    +'<button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'scQuickModal\').remove();go(\'finisher\')">'+(pt?'Abrir Finishing Lab completo':'Open full Finishing Lab')+'</button>'
+    +'</div>'
+    +'<div id="finRunStatus" style="margin-top:12px"></div></div>';
+  showQuickModal(html,true);
+}
+function finApi(path,body){
+  var headers={'Content-Type':'application/json'};
+  try{
+    var tok=localStorage.getItem('hsai_sb_token')||localStorage.getItem('hsai_token')||'';
+    if(tok)headers['Authorization']='Bearer '+tok;
+  }catch(e){}
+  return fetch('/api/finisher/'+path,{method:'POST',headers:headers,body:JSON.stringify(body||{})})
+    .then(function(r){return r.json().then(function(d){d._http=r.status;return d;});});
+}
+async function finRun(id){
+  var pt=S.lang==='pt';
+  var t=finToolById(id);
+  if(!t)return;
+  var st=document.getElementById('finRunStatus');
+  var prompt=((document.getElementById('finPrompt')||{}).value||_finCtx.prompt||'').trim();
+  if(t.requiresPrompt&&!prompt){toast(pt?'Digite um prompt primeiro':'Enter a prompt first','err');return;}
+  if(t.requiresImage&&!_finCtx.image){toast(pt?'Envie uma imagem ou frame primeiro':'Upload an image or frame first','err');return;}
+  if(t.isPremium&&isGuest()){
+    var m0=document.getElementById('scQuickModal');if(m0)m0.remove();
+    showAuthGate('premium');return;
+  }
+  if(st)st.innerHTML='<div style="font-size:12.5px;color:var(--ink-3)">⏳ '+(pt?'Processando...':'Processing...')+'</div>';
+  var body={prompt:prompt,mediaType:'image'};
+  if(_finCtx.image)body.image=_finCtx.image.slice(0,200000); // limitar payload
+  if(id==='image_expand')body.aspect=((document.getElementById('finAspect')||{}).value)||'9:16';
+  if(id==='image_to_prompt')body.hint=prompt;
+  var d;
+  try{d=await finApi(t.apiPath,body);}
+  catch(e){d=null;}
+  // Fallback local garantido para Enhance Avançado
+  if(id==='improve_prompt'&&(!d||(!d.ok&&!d.enhanced))){
+    d={ok:true,source:'local',enhanced:(typeof _scLocalEnhance==='function'?_scLocalEnhance(prompt,'video','', '16:9',8):prompt+', cinematic quality, 4K')};
+  }
+  if(!d){
+    if(st)st.innerHTML='<div style="font-size:12.5px;color:var(--err)">'+(pt?'Erro de conexão. Tente novamente.':'Connection error. Try again.')+'</div>';
+    return;
+  }
+  if(d._http===402||d.error==='insufficient_credits'){
+    var m1=document.getElementById('scQuickModal');if(m1)m1.remove();
+    showQuickModal('<div style="text-align:center;padding:8px"><div style="font-size:28px;margin-bottom:12px">🎟</div><h3>'+(pt?'Créditos insuficientes':'Insufficient credits')+'</h3><p style="font-size:13.5px;color:var(--ink-2);margin:8px 0 16px">'+(pt?'Esta ferramenta usa ~':'This tool uses ~')+t.estimatedCredits+' '+(pt?'créditos. Recarregue para continuar.':'credits. Top up to continue.')+'</p><button class="btn btn-primary" onclick="document.getElementById(\'scQuickModal\').remove();go(\'plans\')">'+(pt?'Ver planos':'View plans')+'</button></div>');
+    return;
+  }
+  if(d._http===401||d.error==='login_required'){
+    var m2=document.getElementById('scQuickModal');if(m2)m2.remove();
+    showAuthGate('premium');return;
+  }
+  if(d.status==='not_configured'||d.status==='pending_integration'){
+    finBetaModal(t,d.message||'');return;
+  }
+  if(d.ok&&(d.enhanced||d.prompt)){
+    finShowResult(t,{before:prompt,after:d.enhanced||d.prompt,source:d.source||'ai'});
+    return;
+  }
+  if(d.ok&&d.result){
+    finShowResult(t,{beforeImg:_finCtx.image,afterImg:d.result.url||'',after:d.result.prompt||''});
+    return;
+  }
+  if(st)st.innerHTML='<div style="font-size:12.5px;color:var(--err)">'+escapeHtml(d.message||d.error||(pt?'Não foi possível executar.':'Could not run.'))+'</div>';
+}
+function finBetaModal(t,msg){
+  var pt=S.lang==='pt';
+  showQuickModal('<div style="text-align:center;padding:8px">'
+    +'<div style="font-size:30px;margin-bottom:10px">'+t.icon+'</div>'
+    +'<h3 style="margin:0 0 6px">'+escapeHtml(t.name)+' — BETA</h3>'
+    +'<p style="font-size:13px;color:var(--ink-2);line-height:1.6;margin:0 0 8px">'+escapeHtml(msg||(pt?'Esta ferramenta premium será ativada assim que a API for configurada.':'This premium tool will activate once the API is configured.'))+'</p>'
+    +'<p style="font-size:11.5px;color:var(--ink-4);margin:0 0 16px">'+(pt?'Nenhum crédito foi debitado.':'No credits were debited.')+'</p>'
+    +'<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">'
+    +'<button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'scQuickModal\').remove();go(\'finisher\')">'+(pt?'Ver outras ferramentas':'See other tools')+'</button>'
+    +(S.user&&S.user.admin?'<button class="btn btn-primary btn-sm" onclick="document.getElementById(\'scQuickModal\').remove();go(\'admin\')">'+(pt?'Configurar (Admin)':'Configure (Admin)')+'</button>':'')
+    +'</div></div>');
+}
+/* ── Result UI (before/after + ações) ── */
+var _finResult=null;
+function finShowResult(t,data){
+  _finResult={tool:t.id,data:data};
+  var pt=S.lang==='pt';
+  var body='<div><h3 style="margin:0 0 12px">'+t.icon+' '+escapeHtml(t.name)+' — '+(pt?'Resultado':'Result')+'</h3>';
+  if(data.beforeImg||data.afterImg){
+    body+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">'
+      +'<div><div style="font-size:10px;letter-spacing:1.5px;color:var(--ink-4);font-weight:700;margin-bottom:4px">'+(pt?'ANTES':'BEFORE')+'</div>'
+      +(data.beforeImg?'<img src="'+escapeAttr(data.beforeImg)+'" style="width:100%;border-radius:10px;object-fit:cover;max-height:220px">':'<div style="color:var(--ink-4);font-size:12px">—</div>')+'</div>'
+      +'<div><div style="font-size:10px;letter-spacing:1.5px;color:var(--accent);font-weight:700;margin-bottom:4px">'+(pt?'DEPOIS':'AFTER')+'</div>'
+      +(data.afterImg?'<img src="'+escapeAttr(data.afterImg)+'" style="width:100%;border-radius:10px;object-fit:cover;max-height:220px">':'<div style="color:var(--ink-4);font-size:12px">'+(pt?'(aguardando API)':'(waiting for API)')+'</div>')+'</div>'
+      +'</div>';
+  }
+  if(data.before||data.after){
+    body+='<div style="display:grid;gap:8px;margin-bottom:12px">'
+      +(data.before?'<div style="background:var(--panel-2);border-radius:10px;padding:10px;font-size:12px;color:var(--ink-3)"><b style="font-size:10px;letter-spacing:1px">'+(pt?'ANTES':'BEFORE')+'</b><br>'+escapeHtml(data.before)+'</div>':'')
+      +'<div style="background:var(--panel-2);border:1px solid var(--accent-dim);border-radius:10px;padding:10px;font-size:13px;color:var(--ink-1);line-height:1.55"><b style="font-size:10px;letter-spacing:1px;color:var(--accent)">'+(pt?'DEPOIS':'AFTER')+'</b><br>'+escapeHtml(data.after||'')+'</div>'
+      +'</div>';
+  }
+  body+='<div style="display:flex;gap:6px;flex-wrap:wrap">'
+    +(data.afterImg?'<a class="btn btn-ghost btn-sm" href="'+escapeAttr(data.afterImg)+'" download>⬇ '+(pt?'Baixar':'Download')+'</a>':'')
+    +'<button class="btn btn-ghost btn-sm" onclick="finCopyResult()">📋 '+(pt?'Copiar prompt':'Copy prompt')+'</button>'
+    +'<button class="btn btn-primary btn-sm" onclick="finReuseResult()">↺ '+(pt?'Reutilizar':'Reuse')+'</button>'
+    +'<button class="btn btn-ghost btn-sm" onclick="finSendResultToStudio()">🎬 Studio</button>'
+    +'<button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'scQuickModal\').remove();go(\'gallery\')">🖼 '+(pt?'Galeria':'Gallery')+'</button>'
+    +'<button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'scQuickModal\').remove();go(\'posprodu\')">🎞 '+(pt?'Pós-Produção':'Post-Prod')+'</button>'
+    +'<button class="btn btn-ghost btn-sm" onclick="finVariation()">🔁 '+(pt?'Gerar variação':'New variation')+'</button>'
+    +'<button class="btn btn-ghost btn-sm" style="color:var(--err)" onclick="_finResult=null;document.getElementById(\'scQuickModal\').remove()">🗑 '+(pt?'Excluir':'Delete')+'</button>'
+    +'</div></div>';
+  showQuickModal(body,true);
+}
+function _finResultText(){
+  var d=_finResult&&_finResult.data;
+  return d?(d.after||d.before||''):'';
+}
+function finCopyResult(){
+  var p=_finResultText();
+  var pt=S.lang==='pt';
+  if(!p){toast(pt?'Nada para copiar.':'Nothing to copy.','info');return;}
+  navigator.clipboard.writeText(p).then(function(){toast(pt?'✅ Prompt copiado!':'✅ Prompt copied!','ok');}).catch(function(){toast(p.slice(0,60)+'...','info');});
+}
+function finReuseResult(){
+  var p=_finResultText();
+  var m=document.getElementById('scQuickModal');if(m)m.remove();
+  go('criar');
+  setTimeout(function(){
+    var el=document.getElementById('scPrompt');
+    if(el&&p){el.value=p;el.focus();if(typeof scUpdateRecommendation==='function')scUpdateRecommendation();}
+  },240);
+}
+function finSendResultToStudio(){
+  var d=_finResult&&_finResult.data;
+  var m=document.getElementById('scQuickModal');if(m)m.remove();
+  if(typeof sendToStudio==='function')sendToStudio({prompt:(d&&(d.after||d.before))||'',mediaUrl:(d&&(d.afterImg||d.beforeImg))||'',mediaType:'image',source:'finisher'});
+}
+function finVariation(){
+  if(!_finResult)return;
+  var d=_finResult.data;
+  finOpenTool(_finResult.tool,{prompt:d.after||d.before||'',image:d.beforeImg||null});
+}
+/* ── Home: modal compacto e discreto "Finalizar / Corrigir" ── */
+function finQuickModal(){
+  var pt=S.lang==='pt';
+  var opts=[
+    ['improve_prompt','✨',pt?'Melhorar prompt':'Improve prompt'],
+    ['image_to_prompt','🔍',pt?'Extrair prompt da referência':'Extract prompt from reference'],
+    ['upscale_premium','📐',pt?'Melhorar imagem/frame (Upscale)':'Improve image/frame (Upscale)'],
+    ['inpainting','🩹',pt?'Corrigir área':'Fix area'],
+    ['relight','💡',pt?'Reiluminar':'Relight']
+  ];
+  showQuickModal('<div><h3 style="margin:0 0 12px">🛠 '+(pt?'Finalizar / Corrigir':'Finish / Fix')+'</h3>'
+    +'<div style="display:grid;gap:7px">'
+    +opts.map(function(o){
+      return '<button class="btn btn-ghost" style="justify-content:flex-start;text-align:left" onclick="document.getElementById(\'scQuickModal\').remove();finOpenTool(\''+o[0]+'\')">'+o[1]+' '+o[2]+'</button>';
+    }).join('')
+    +'<button class="btn btn-primary" style="margin-top:6px" onclick="document.getElementById(\'scQuickModal\').remove();go(\'finisher\')">🎞 '+(pt?'Abrir Finishing Lab completo':'Open full Finishing Lab')+'</button>'
+    +'</div></div>');
+}
+
 function viewPosProdu(){
   var pt=S.lang==='pt';
   // Build animated timeline banner (purely visual, no title text inside)
@@ -10017,6 +10440,7 @@ function viewPosProdu(){
     kicker:pt?'CRIAÇÃO':'CREATION',
     title:pt?'Pós-Produção':'Post Production',
     desc:pt?'Ferramentas de edição, transição IA entre clipes, upscale e integração com Adobe. Em expansão contínua.':'Editing tools, AI transition between clips, upscale and Adobe integration. Continuously expanding.',
+    actions:'<button class="btn btn-primary btn-sm" onclick="go(\'finisher\')">🛠 '+(pt?'Abrir Finishing Lab (Premium)':'Open Finishing Lab (Premium)')+'</button>',
     area:'posprodu'
   })+timelineBanner
 

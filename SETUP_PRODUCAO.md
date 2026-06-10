@@ -106,6 +106,8 @@ RESEND_FROM_EMAIL           = noreply@hollywoodstudio.ai
 OPENAI_API_KEY              = sk-...    (opcional)
 ANTHROPIC_API_KEY           = sk-ant-... (opcional)
 GEMINI_API_KEY              = AIza...   (opcional)
+MAGNIFIC_API_KEY            = ...       (opcional — Finishing Lab premium)
+ATLAS_API_KEY               = ...       (opcional — Finishing Lab: câmera/lip sync)
 GOOGLE_CLIENT_ID            = [id].apps.googleusercontent.com
 APP_URL                     = https://hollywoodstudio.ai
 ADMIN_EMAILS                = seu@email.com
@@ -200,6 +202,37 @@ Ver `TESTING_CHECKLIST.md` para o roteiro completo.
 
 ---
 
+## PASSO 13 — Ativar o Finishing Lab (Creative Finisher)
+
+O Finishing Lab (Studio Suite → Pós-Produção → Finishing Lab) reúne as ferramentas
+premium de finalização: Upscale Premium, Corrigir Área (inpainting), Reiluminar,
+Aplicar Estilo, Expandir Quadro, Remover Fundo, Mudar Câmera e Lip Sync.
+
+1. **Magnific** — crie a chave no painel do provedor e adicione na Vercel:
+   - `MAGNIFIC_API_KEY` em **Settings > Environment Variables** (Production)
+   - Habilita: upscale, inpainting, relight, style transfer, expand, remove background
+2. **Atlas Cloud** — adicione `ATLAS_API_KEY` na Vercel:
+   - Habilita: Mudar Câmera e Lip Sync
+3. **OpenAI / Claude** — `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` já habilitam
+   o Enhance Avançado e a Extração de Prompt da Referência (com fallback local).
+4. Faça **redeploy** após salvar as variáveis.
+
+### Como testar o Finishing Lab
+1. Acesse `https://hollywoodstudio.ai/api/health` — confira `magnific: true` e `atlas: true`.
+2. No app, vá em **Admin > Finishing Lab — Integrações > Testar conexão**.
+3. Abra o **Finishing Lab** e rode o **Enhance Avançado** (funciona sempre, com fallback local).
+4. Rode uma ferramenta premium (ex.: Upscale): sem chave, deve aparecer o modal
+   "BETA — Magnific API ainda não configurada" e **nenhum crédito é debitado**.
+5. Com chave configurada, ferramentas premium exigem login e validam créditos
+   antes de executar (saldo insuficiente → modal de planos).
+
+> As rotas internas ficam todas na função única `api/index.js`:
+> `POST /api/finisher/upscale`, `/inpaint`, `/relight`, `/style-transfer`,
+> `/expand`, `/remove-background`, `/change-camera`, `/lip-sync`,
+> `/improve-prompt`, `/image-to-prompt`.
+
+---
+
 ## ⚠️ Chaves que NUNCA entram no frontend
 
 As variáveis abaixo são **exclusivamente backend** (api/index.js).
@@ -211,8 +244,9 @@ Jamais devem aparecer em `index.html`, `config.js`, `hsai-core.js`, `admin-patch
 - `RESEND_API_KEY`
 - `OPENAI_API_KEY`
 - `ANTHROPIC_API_KEY`
-- `ANTHROPIC_API_KEY`
 - `GEMINI_API_KEY`
+- `MAGNIFIC_API_KEY`
+- `ATLAS_API_KEY`
 - `GOOGLE_CLIENT_SECRET`
 
 ---
