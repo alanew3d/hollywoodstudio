@@ -272,18 +272,26 @@ function viewFavoritesPage(){
       <button class="btn btn-ghost btn-sm" onclick="go('gallery')">${pt?'Ver Galeria →':'View Gallery →'}</button>
     </div>` : `
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px">
-      ${favs.map(item => `
+      ${favs.map(item => {
+        const ftype=(item.mediaType||item.type||(item.prompt&&!item.thumbnail?'prompt':'imagem'));
+        const typeIc={video:'🎬',image:'🖼',imagem:'🖼',prompt:'📝',modelo:'🤖',model:'🤖',projeto:'📁',project:'📁'}[ftype]||'⭐';
+        const openUrl=item.mediaUrl||item.url||item.thumbnail||'';
+        return `
         <div class="dc-card" style="padding:0;overflow:hidden;position:relative">
-          <div style="height:130px;background:var(--panel);position:relative;overflow:hidden">
+          <div style="height:130px;background:var(--panel);position:relative;overflow:hidden;cursor:pointer" onclick="${openUrl?(ftype==='video'?`openVideo('${openUrl}')`:`openImage('${openUrl}')`):''}">
             <img src="${item.thumbnail || ''}" onerror="this.style.display='none'" style="width:100%;height:100%;object-fit:cover" referrerpolicy="no-referrer">
-            <button onclick="removeFavorite('${item.id}');go('favorites')" style="position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.6);border:none;color:white;cursor:pointer;font-size:14px" title="${pt?'Remover':'Remove'}">✕</button>
+            <span style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,.65);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px">${typeIc} ${ftype}</span>
+            <button onclick="event.stopPropagation();removeFavorite('${item.id}');go('favorites')" style="position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.6);border:none;color:white;cursor:pointer;font-size:14px" title="${pt?'Remover':'Remove'}">✕</button>
           </div>
           <div style="padding:12px">
             <div style="font-weight:600;font-size:13px;color:var(--ink-1);margin-bottom:4px;line-height:1.3">${(item.title||'').slice(0,40)}</div>
             <div style="font-size:11px;color:var(--ink-3);margin-bottom:8px">${item.model||''} · ${new Date(item.savedAt).toLocaleDateString('pt-BR')}</div>
-            <button onclick="sendFavoriteToStudio('${item.id}')" class="btn btn-primary btn-sm" style="width:100%">${pt?'▶ Usar no Estúdio':'▶ Use in Studio'}</button>
+            <div style="display:flex;gap:6px">
+              <button onclick="sendFavoriteToStudio('${item.id}')" class="btn btn-primary btn-sm" style="flex:1" title="${pt?'Reutilizar no Estúdio':'Reuse in Studio'}">▶ ${pt?'Reutilizar':'Reuse'}</button>
+              <button onclick="favCopyPrompt('${item.id}')" class="btn btn-ghost btn-sm" title="${pt?'Copiar prompt':'Copy prompt'}">📋</button>
+            </div>
           </div>
-        </div>`).join('')}
+        </div>`;}).join('')}
     </div>`}
   </div>
 
@@ -315,6 +323,15 @@ function togglePopularFavorite(id){
   else { const d = getActiveDemos().find(x => x.id === id); if(d) addFavorite(d); }
   updateFavoritesCounter();
   if(typeof go === 'function') go('favorites');
+}
+function favCopyPrompt(id){
+  const pt = typeof S !== 'undefined' && S.lang === 'pt';
+  const item = getFavorites().find(f => f.id === id);
+  const p = item && (item.prompt || item.title) || '';
+  if(!p){ toast(pt?'Este favorito não tem prompt salvo.':'This favorite has no saved prompt.','info'); return; }
+  navigator.clipboard.writeText(p).then(function(){
+    toast(pt?'✅ Prompt copiado!':'✅ Prompt copied!','ok');
+  }).catch(function(){ toast(p.slice(0,60)+'...','info'); });
 }
 function sendFavoriteToStudio(id){
   const item = getFavorites().find(f => f.id === id || f.url === id || f.mediaUrl === id);
@@ -1310,6 +1327,10 @@ svg.sedges path{stroke:var(--accent);stroke-width:2;fill:none;opacity:.6}
 .fest-card .desc{font-size:12px;color:var(--ink-2);line-height:1.5}
 .fest-card .frow{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:8px;border-top:1px solid var(--line)}
 .fest-card .deadline{font-size:11px;font-family:var(--mono);color:var(--ink-3)}
+.fest-card-premium{position:relative;overflow:hidden}
+.fest-card-premium::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.55}
+.fest-card-premium:hover{border-color:var(--accent-dim);box-shadow:0 10px 32px rgba(212,168,87,.10)}
 .tag{font-size:10px;padding:3px 8px;border-radius:20px;border:1px solid var(--line-2);color:var(--ink-3)}
 
 /* ── Gallery ── */
@@ -1583,15 +1604,18 @@ body.layout-fullscreen .topbar{display:none!important}
 .sc-logo{font-weight:800;font-size:15px;letter-spacing:-.5px;color:var(--ink);white-space:nowrap}
 .sc-topbar-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .sc-visitor-pill{font-size:11px;color:var(--ink-2);background:var(--accent-dim);border:1px solid var(--accent-dim);padding:4px 10px;border-radius:20px;white-space:nowrap}
-.sc-console-mid{flex:1;display:grid;grid-template-columns:230px 1fr;gap:14px;padding:10px 16px;min-height:0;overflow:hidden}
+.sc-console-mid{flex:1;display:grid;grid-template-columns:220px minmax(0,1fr) 300px;gap:16px;padding:10px 16px;min-height:0;overflow:hidden}
+.sc-demo-col{display:flex;flex-direction:column;min-height:0;gap:8px}
+.sc-demo-col .sc-demo-single{flex:0 0 auto;aspect-ratio:16/11;max-height:300px;width:100%;margin:0}
 .sc-side{display:flex;flex-direction:column;min-height:0}
 .sc-side-title{font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--ink-4);text-transform:uppercase;margin-bottom:8px;flex-shrink:0}
 .sc-dir-list{overflow-y:auto;min-height:0;scrollbar-width:thin}
 .sc-dir-pill{display:block;width:100%;text-align:left;padding:6px 10px;border-radius:8px;border:1px solid var(--line-2);background:none;color:var(--ink-2);font-size:12px;cursor:pointer;margin-bottom:5px;transition:all .15s}
 .sc-dir-pill.active,.sc-dir-pill:hover{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
 .sc-dir-actions{flex-shrink:0;display:flex;flex-direction:column;gap:6px;margin-top:10px}
-.sc-center{display:flex;flex-direction:column;min-height:0;overflow:hidden}
-.sc-center-hero{flex-shrink:0;text-align:center;padding:2px 0 8px}
+.sc-center{display:flex;flex-direction:column;min-height:0;overflow:hidden;justify-content:center}
+.sc-center .sc-prompt-bar{width:100%;max-width:720px;margin:0 auto}
+.sc-center-hero{flex-shrink:0;text-align:center;padding:2px 0 12px}
 .sc-center-hero h1{font-size:clamp(20px,2.6vw,30px);font-weight:800;margin:0;line-height:1.15}
 .sc-center-hero h1 em{font-style:normal;color:var(--accent)}
 .sc-center-hero .sub{font-size:12.5px;color:var(--ink-3);margin:3px 0 0}
@@ -1616,7 +1640,6 @@ body.layout-fullscreen .topbar{display:none!important}
 .sc-gal-acts{display:flex;gap:4px;justify-content:center;margin:3px 0 4px}
 .sc-gal-acts button{background:none;border:1px solid var(--line-2);border-radius:6px;font-size:10px;padding:2px 6px;cursor:pointer;color:var(--ink-3)}
 .sc-gal-acts button:hover{border-color:var(--accent);color:var(--accent)}
-.sc-console-bottom{flex-shrink:0;padding:8px 16px 12px;border-top:1px solid var(--line)}
 .sc-prompt-bar{max-width:1100px;margin:0 auto}
 .sc-model-line{font-size:12px;color:var(--ink-3);display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0 4px}
 .sc-select{background:var(--panel-2);border:1px solid var(--line-2);border-radius:8px;padding:7px 10px;color:var(--ink);font-size:13px;cursor:pointer;outline:none;transition:border-color .15s;max-width:160px}
@@ -1625,13 +1648,15 @@ body.layout-fullscreen .topbar{display:none!important}
 .sc-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;align-items:center}
 @media(max-width:900px){
   .sc-console{height:auto;overflow:visible;min-height:100vh}
-  .sc-console-top{order:0}
-  .sc-console-bottom{order:1;border-top:none;border-bottom:1px solid var(--line)}
-  .sc-console-mid{order:2;display:flex;flex-direction:column;overflow:visible;padding-bottom:48px}
+  .sc-console-mid{display:flex;flex-direction:column;overflow:visible;padding-bottom:48px}
+  .sc-center{order:0;overflow:visible}
+  .sc-demo-col{order:1}
+  .sc-gal-panel{order:2}
   .sc-dir-panel{display:none}
   .sc-demo-duo{flex:none;grid-template-columns:1fr 1fr;gap:10px}
   .sc-demo-card{min-height:170px}
-  .sc-demo-single{flex:none;min-height:210px}
+  .sc-demo-single{flex:none;min-height:200px}
+  .sc-demo-col .sc-demo-single{aspect-ratio:16/9;max-height:240px}
   .sc-center-hero h1{font-size:22px}
   .sc-side,.sc-gal-scroll{overflow:visible}
   .sc-gal-grid{display:flex;overflow-x:auto;gap:8px;padding-bottom:6px;scrollbar-width:thin}
@@ -1735,14 +1760,25 @@ input:focus,textarea:focus,select:focus{
 @keyframes pulse-rec{0%,100%{opacity:1}50%{opacity:.7}}
 .neural-arrow{color:var(--ink-4);font-size:14px;flex-shrink:0}
 
-/* Home hero */
+/* Home hero — gradiente elegante com acento dourado (nada de preto chapado) */
 .hsai-hero{
-  background:linear-gradient(135deg,#0a0a0c 0%,#14101c 50%,#0c0f14 100%);
+  background:linear-gradient(135deg,#100c18 0%,#1c1428 38%,#121726 72%,#0f1118 100%);
   border-radius:18px;padding:48px 40px 44px;margin-bottom:24px;
-  border:1px solid var(--line);position:relative;overflow:hidden}
+  border:1px solid rgba(212,168,87,.18);position:relative;overflow:hidden}
 .hsai-hero::before{content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 60% 50% at 70% 50%,rgba(212,168,87,.07) 0%,transparent 70%);
+  background:radial-gradient(ellipse 70% 60% at 72% 38%,rgba(212,168,87,.14) 0%,transparent 65%),
+             radial-gradient(ellipse 50% 45% at 18% 85%,rgba(90,141,238,.08) 0%,transparent 70%);
   pointer-events:none}
+.hsai-hero::after{content:'';position:absolute;left:0;right:0;top:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,168,87,.5),transparent);pointer-events:none}
+/* Botões sobre fundo escuro do hero — contraste AA garantido nos dois temas */
+.btn-hero-outline{
+  background:rgba(255,255,255,.07)!important;
+  border:1px solid rgba(212,168,87,.6)!important;
+  color:#f3e7cd!important;font-weight:600}
+.btn-hero-outline:hover:not(:disabled){
+  background:rgba(212,168,87,.18)!important;
+  border-color:var(--accent)!important;color:#fff!important}
 .hsai-hero h1{font-family:var(--serif);font-size:clamp(26px,4vw,42px);
   font-weight:300;line-height:1.18;color:#fff;margin:0 0 12px}
 .hsai-hero h1 em{font-style:normal;color:var(--accent);font-weight:500}
@@ -1753,6 +1789,9 @@ input:focus,textarea:focus,select:focus{
   border-radius:10px;padding:12px 14px}
 .hsai-step .s-num{font-size:11px;color:var(--accent);font-weight:700;margin-bottom:4px;letter-spacing:1px}
 .hsai-step .s-label{font-size:12.5px;color:rgba(255,255,255,.75);line-height:1.4}
+.hsai-step-click{cursor:pointer;transition:border-color .15s,background .15s,transform .15s}
+.hsai-step-click:hover{border-color:rgba(212,168,87,.55);background:rgba(212,168,87,.1);transform:translateY(-2px)}
+.hsai-step-click:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .hsai-why{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:16px 0 22px}
 .hsai-why-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
 .hsai-why-card .ic{font-size:26px;margin-bottom:8px}
@@ -2982,13 +3021,18 @@ function viewHome(){
       }).join('<span class="neural-arrow">·</span>')
       +'</div>';
   }
+  var stepDefs=[
+    [1,pt?'Ideia → Prompt':'Idea → Prompt'],
+    [2,pt?'Escolher modelo':'Choose model'],
+    [3,pt?'Referência visual':'Visual reference'],
+    [4,pt?'Gerar':'Generate'],
+    [5,pt?'Pós-Produção':'Post-Production'],
+    [6,pt?'Publicar':'Publish']
+  ];
   var stepsHtml='<div class="hsai-steps">'
-    +'<div class="hsai-step"><div class="s-num">01</div><div class="s-label">'+(pt?'Ideia → Prompt':'Idea → Prompt')+'</div></div>'
-    +'<div class="hsai-step"><div class="s-num">02</div><div class="s-label">'+(pt?'Escolher modelo':'Choose model')+'</div></div>'
-    +'<div class="hsai-step"><div class="s-num">03</div><div class="s-label">'+(pt?'Referência visual':'Visual reference')+'</div></div>'
-    +'<div class="hsai-step"><div class="s-num">04</div><div class="s-label">'+(pt?'Gerar':'Generate')+'</div></div>'
-    +'<div class="hsai-step"><div class="s-num">05</div><div class="s-label">'+(pt?'Pós-Produção':'Post-Production')+'</div></div>'
-    +'<div class="hsai-step"><div class="s-num">06</div><div class="s-label">'+(pt?'Publicar':'Publish')+'</div></div>'
+    +stepDefs.map(function(s){
+      return '<div class="hsai-step hsai-step-click" role="button" tabindex="0" onclick="hsaiStep('+s[0]+')" onkeydown="if(event.key===\'Enter\')hsaiStep('+s[0]+')"><div class="s-num">0'+s[0]+'</div><div class="s-label">'+s[1]+'</div></div>';
+    }).join('')
     +'</div>';
   var whyHtml='<div class="hsai-why">'
     +'<div class="hsai-why-card"><div class="ic">🎯</div><h4>'+(pt?'Monte antes de gastar':'Plan before you spend')+'</h4><p>'+(pt?'Organize prompt, referências e modelo antes de usar um único crédito.':'Organize prompt, references and model before spending a single credit.')+'</p></div>'
@@ -2998,8 +3042,8 @@ function viewHome(){
     +'</div>';
   var ctaBlock='<div style="display:flex;gap:10px;flex-wrap:wrap">'
     +'<button class="btn btn-primary" style="padding:13px 28px;font-size:15px" onclick="go(\'criar\')">'+(pt?'✨ Criar Agora →':'✨ Create Now →')+'</button>'
-    +'<button class="btn btn-ghost" style="padding:13px 22px" onclick="go(\'studio\')">'+(pt?'⚙️ Abrir Studio Completo':'⚙️ Full Studio')+'</button>'
-    +'<button class="btn btn-ghost" style="padding:13px 18px" onclick="go(\'models\')">'+(pt?'Ver modelos':'View models')+'</button>'
+    +'<button class="btn btn-hero-outline" style="padding:13px 22px" onclick="go(\'studio\')">'+(pt?'⚙️ Abrir Studio Completo':'⚙️ Full Studio')+'</button>'
+    +'<button class="btn btn-hero-outline" style="padding:13px 18px" onclick="go(\'models\')">'+(pt?'Ver modelos':'View models')+'</button>'
     +'</div>';
   var creditsBadge=!isGuest()?('<div style="margin-top:16px;display:inline-flex;align-items:center;gap:8px;background:rgba(212,168,87,.1);border:1px solid rgba(212,168,87,.2);border-radius:20px;padding:6px 14px;font-size:13px;color:var(--accent)"><b>'+credits+'</b> '+(pt?'créditos disponíveis':'credits available')+'<button class="btn btn-ghost btn-sm" style="padding:2px 8px;font-size:11px;margin:0" onclick="go(\'plans\')">'+(pt?'Recarregar':'Top up')+'</button></div>'):'';
   var demoStrip='<div style="margin-top:28px;border-top:1px solid var(--line);padding-top:22px"><div style="font-size:10px;letter-spacing:2px;font-weight:700;color:var(--ink-4);margin-bottom:12px">'+(pt?'EXEMPLOS GERADOS COM IA':'AI-GENERATED EXAMPLES')+'</div>'
@@ -3032,6 +3076,39 @@ function viewHome(){
     +'<p style="font-size:12.5px;color:var(--ink-3);margin:8px 0 0;max-width:540px">'+(pt?'Monte seu projeto antes de gastar créditos. Teste a ideia, refine o prompt e gere quando estiver pronto.':'Plan your project before spending credits. Test the idea, refine the prompt, generate when ready.')+'</p>'
     +'</div>'
     +demoStrip;
+}
+
+/* ── Steps 1-6 da home — cards funcionais (não decorativos) ── */
+function hsaiStep(n){
+  var pt=S.lang==='pt';
+  if(n===5){go('posprodu');return;}
+  if(n===6){
+    showQuickModal('<div><h3 style="margin:0 0 12px">📤 '+(pt?'Publicar / Exportar':'Publish / Export')+'</h3>'
+      +'<p style="font-size:13px;color:var(--ink-2);margin:0 0 14px">'+(pt?'Escolha para onde levar sua criação:':'Choose where to take your creation:')+'</p>'
+      +'<div style="display:grid;gap:8px">'
+      +'<button class="btn btn-ghost" onclick="document.getElementById(\'scQuickModal\').remove();go(\'tube\')">▶️ YouTube</button>'
+      +'<button class="btn btn-ghost" onclick="document.getElementById(\'scQuickModal\').remove();go(\'instagram\')">📸 Instagram</button>'
+      +'<button class="btn btn-ghost" onclick="document.getElementById(\'scQuickModal\').remove();go(\'public\')">🌍 '+(pt?'Galeria Pública':'Public Gallery')+'</button>'
+      +'</div></div>');
+    return;
+  }
+  go('criar');
+  setTimeout(function(){
+    var el=document.getElementById('scPrompt');
+    if(n===1){
+      if(el){
+        el.focus();
+        if((el.value||'').trim())toast(pt?'✨ Dica: toque em Enhance para refinar seu prompt.':'✨ Tip: tap Enhance to refine your prompt.','info');
+      }
+    }else if(n===2){
+      scOpenModelPicker(_scType==='image'?'image':'video');
+    }else if(n===3){
+      if(typeof scAttachRef==='function')scAttachRef();
+    }else if(n===4){
+      if(el&&(el.value||'').trim())scCreate(_scType);
+      else{if(el)el.focus();toast(pt?'Descreva sua ideia primeiro e toque em Gerar.':'Describe your idea first, then tap Generate.','info');}
+    }
+  },240);
 }
 
 /* ════════ SIMPLE CREATE ════════ */
@@ -3177,7 +3254,7 @@ function viewSimpleCreate(){
   +'<div class="sc-topbar-right">'+topRight+'</div>'
   +'</div>'
 
-  // ── Middle: galeria rápida (esquerda) | slideshow central / resultado
+  // ── Middle: galeria rápida (esquerda) | prompt no CENTRO | demo reduzido (direita)
   +'<div class="sc-console-mid">'
 
   // Left: quick gallery panel (2-col vertical grid)
@@ -3188,29 +3265,14 @@ function viewSimpleCreate(){
   +'<div style="flex-shrink:0;font-size:11px;color:var(--ink-4);margin-top:8px;line-height:1.5">'+(pt?'Comece rápido aqui. Aprofunde no Studio Suite.':'Start fast here. Go deeper in Studio Suite.')+' <a href="#" style="color:var(--accent)" onclick="event.preventDefault();go(\'studio\')">'+(pt?'Abrir →':'Open →')+'</a></div>'
   +'</div>'
 
-  // Center: hero line + single combined slideshow / result
+  // Center: hero + PROMPT (prioridade visual — visível sem rolagem)
   +'<div class="sc-center">'
   +'<div class="sc-center-hero">'
   +'<h1>'+(pt?'O que vamos <em>criar</em> hoje?':'What are we <em>creating</em> today?')+'</h1>'
   +'<p class="sub">'+(pt?'Vídeos e imagens com IA em segundos — você é o diretor.':'AI videos and images in seconds — you are the director.')+'</p>'
   +'</div>'
-  +'<div class="sc-demo-single" id="scDemoZone">'
-  +'<div class="sc-demo-stage" id="scSlideStage"></div>'
-  +'<div class="sc-demo-ov">'
-  +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
-  +'<span class="sc-slide-badge" id="scSlideBadge">🎬</span>'
-  +'<div class="sc-demo-tt">'+(pt?'Veja o que você pode criar':'See what you can create')+'</div>'
-  +'</div>'
-  +'<div class="sc-demo-acts" id="scSlideActs"></div>'
-  +'</div></div>'
-  +'<div id="scResultBlock" style="display:none;flex:1;min-height:0;overflow-y:auto"></div>'
-  +'</div>'
-
-  +'</div>'  // end .sc-console-mid
-
-  // ── Bottom prompt bar
-  +'<div class="sc-console-bottom"><div class="sc-prompt-bar">'
-  +'<textarea class="sc-prompt-field" id="scPrompt" rows="2" placeholder="'+(pt?'Descreva sua ideia...':'Describe your idea...')+'" oninput="scUpdateRecommendation()" style="width:100%;resize:none;min-height:54px;padding:10px 14px"></textarea>'
+  +'<div class="sc-prompt-bar">'
+  +'<textarea class="sc-prompt-field" id="scPrompt" rows="3" placeholder="'+(pt?'Descreva sua ideia...':'Describe your idea...')+'" oninput="scUpdateRecommendation()" style="width:100%;resize:none;min-height:88px;padding:12px 16px;font-size:15px"></textarea>'
   +'<div id="scRefPreview" style="display:none;margin-top:6px"></div>'
   +'<input type="file" id="scRefInput" class="hide" style="display:none" accept="image/*,video/*,.pdf,.txt" onchange="scOnRefFile(this)">'
   +'<div id="scEnhanceUndo" style="display:none;margin-top:6px;gap:8px;flex-wrap:wrap;align-items:center"></div>'
@@ -3270,7 +3332,24 @@ function viewSimpleCreate(){
   +'<button class="btn btn-ghost btn-sm" onclick="scSendToStudio()">⚙️ Studio Suite</button>'
   +'</div>'
 
-  +'</div></div>'  // end .sc-prompt-bar / .sc-console-bottom
+  +'</div>'  // end .sc-prompt-bar
+  +'</div>'  // end .sc-center
+
+  // Right: demo slideshow reduzido + resultado (nunca empurra o prompt)
+  +'<div class="sc-demo-col">'
+  +'<div class="sc-side-title">'+(pt?'Veja o que você pode criar':'See what you can create')+'</div>'
+  +'<div class="sc-demo-single" id="scDemoZone">'
+  +'<div class="sc-demo-stage" id="scSlideStage"></div>'
+  +'<div class="sc-demo-ov">'
+  +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
+  +'<span class="sc-slide-badge" id="scSlideBadge">🎬</span>'
+  +'</div>'
+  +'<div class="sc-demo-acts" id="scSlideActs"></div>'
+  +'</div></div>'
+  +'<div id="scResultBlock" style="display:none;flex:1;min-height:0;overflow-y:auto"></div>'
+  +'</div>'
+
+  +'</div>'  // end .sc-console-mid
   +'</div>';  // end .sc-console
 }
 
@@ -3402,8 +3481,8 @@ function scShowResultById(id){
 /* ── Direção / Mentor criativo (dropdown compacto + modal de busca + Conselho) ── */
 function _scMentorOptionsHtml(pt){
   // Amostra compacta na home: segmentos principais + alguns mestres do cinema
-  var sampleIds=['auto','cinematico','publicitario','fotografo','narrativo','luxo','social','nolan','villeneuve','kubrick'];
-  var icons={auto:'🤖',cinematico:'🎬',publicitario:'📺',fotografo:'📷',narrativo:'📖',luxo:'💎',social:'📱'};
+  var sampleIds=['auto','cinematico','publicitario','luxo','viral','narrativo','fotografo','social','nolan','villeneuve','kubrick','spielberg','scorsese','fincher'];
+  var icons={auto:'🤖',cinematico:'🎬',publicitario:'📺',fotografo:'📷',narrativo:'📖',luxo:'💎',social:'📱',viral:'🔥'};
   var cur=window._scMentor||'';
   var html='<option value=""'+(cur===''?' selected':'')+'>'+(pt?'🎭 Direção / Mentor':'🎭 Direction / Mentor')+'</option>';
   sampleIds.forEach(function(id){
@@ -3443,6 +3522,9 @@ function scSetDirector(val){
   document.querySelectorAll('.sc-dir-pill').forEach(function(p){
     p.classList.toggle('active',p.dataset.dir===val);
   });
+  // Manter o seletor do Studio em sincronia (mesmo catálogo de mentores)
+  var stSel=document.getElementById('stDirectorSelect');
+  if(stSel&&stSel.value!==val)stSel.value=val||'';
   try{
     var mem=JSON.parse(localStorage.getItem('hsai_user_memory')||'{}');
     mem.lastMentor=val||'';
@@ -3594,6 +3676,17 @@ function _scPickerBodyHtml(){
 }
 function scPickModel(id){
   var m=(window.HSAI_MODELS||[]).find(function(x){return x.id===id;});
+  // Contexto Studio: aplica no seletor real do Studio (mapeia por id/nome)
+  if(window._scPickerContext==='studio'){
+    window._scPickerContext='';
+    var md0=document.getElementById('scQuickModal');if(md0)md0.remove();
+    if(typeof MODELS!=='undefined'&&typeof setModel==='function'){
+      var st=MODELS.find(function(x){return x.id===id||x.id===id.replace(/-/g,'')||(m&&x.name.toLowerCase()===m.name.toLowerCase());});
+      if(st){setModel(st.id);toast((S.lang==='pt'?'Modelo selecionado: ':'Model selected: ')+st.name,'ok');return;}
+    }
+    toast(S.lang==='pt'?'Modelo disponível na criação rápida (home).':'Model available in quick create (home).','info');
+    return;
+  }
   _scModel=id;
   window._scModelLocked=true;
   var nm=document.getElementById('scRecModelName');if(nm&&m){nm.textContent=m.name;nm.title=m.bestFor||'';}
@@ -3789,6 +3882,59 @@ function scOpenStudio(){
   sendToStudio({prompt:prompt,modelId:_scModel,source:'simple-create'});
 }
 
+/* ── Mentor / Model picker no Studio Suite (mesmo catálogo da home) ── */
+function stSetDirector(val){
+  var sel=document.getElementById('stDirectorSelect');
+  if(val==='__council'){
+    if(sel)sel.value=window._scMentor||'';
+    var p=((document.getElementById('cPrompt')||{}).value||'').trim();
+    try{if(p)localStorage.setItem('hsai_council_prefill',p);}catch(e){}
+    go('council');return;
+  }
+  if(val==='__more'){
+    if(sel)sel.value=window._scMentor||'';
+    scOpenMentorModal();return;
+  }
+  window._scMentor=val||'';
+}
+async function stMentor(){
+  var pt=S.lang==='pt';
+  var el=document.getElementById('cPrompt');
+  var prompt=el?(el.value||'').trim():'';
+  if(!prompt){toast(pt?'Digite uma ideia primeiro':'Enter an idea first','err');return;}
+  var mid=(document.getElementById('stDirectorSelect')||{}).value||window._scMentor||'';
+  var mentor=_scMentorById(mid);
+  showQuickModal('<div style="text-align:center;padding:24px">🎭 '+(pt?'Consultando mentor criativo...':'Consulting creative mentor...')+'</div>');
+  var r=await applyCreativeMentor({prompt:prompt,mentor:mentor,mediaType:S.cmode==='image'?'image':'video',style:''});
+  window._stMentorResult=r;
+  var row=function(k,v){
+    return v?'<div style="margin-bottom:10px"><div style="font-size:10px;letter-spacing:1.5px;font-weight:700;color:var(--ink-4);text-transform:uppercase">'+k+'</div><div style="font-size:13px;color:var(--ink-1);line-height:1.55">'+escapeHtml(v)+'</div></div>':'';
+  };
+  showQuickModal('<div>'
+    +'<h3 style="margin:0 0 4px">🎭 '+(pt?'Mentor Criativo':'Creative Mentor')+(mentor?' · '+escapeHtml(mentor.name):'')+'</h3>'
+    +(r.safeNote?'<div style="font-size:11px;color:var(--ink-4);margin-bottom:12px">'+escapeHtml(r.safeNote)+'</div>':'<div style="margin-bottom:12px"></div>')
+    +row(pt?'Conceito':'Concept',r.conceito)
+    +row(pt?'Narrativa':'Narrative',r.narrativa)
+    +row(pt?'Emoção':'Emotion',r.emocao)
+    +row(pt?'Direção artística':'Art direction',r.direcaoArtistica)
+    +row(pt?'Composição':'Composition',r.composicao)
+    +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">'
+    +'<button class="btn btn-primary btn-sm" onclick="stMentorApply()">'+(pt?'Aplicar ao prompt':'Apply to prompt')+'</button>'
+    +'</div></div>',true);
+}
+function stMentorApply(){
+  var r=window._stMentorResult;
+  if(!r)return;
+  var el=document.getElementById('cPrompt');
+  if(el&&r.enhancedPrompt)el.value=r.enhancedPrompt;
+  var m=document.getElementById('scQuickModal');if(m)m.remove();
+  toast(S.lang==='pt'?'🎭 Visão do mentor aplicada ao prompt':'🎭 Mentor vision applied to prompt','ok');
+}
+function stOpenModelPicker(){
+  window._scPickerContext='studio';
+  scOpenModelPicker(S.cmode==='image'?'image':'video');
+}
+
 async function scEnhancePrompt(){
   var pt=S.lang==='pt';
   var el=document.getElementById('scPrompt');
@@ -3922,7 +4068,7 @@ function scGalleryReutilizar(id){
   var durEl=document.getElementById('scDurSelect');
   if(durEl&&item.duration)durEl.value=String(item.duration);
   if(item.modelId)S.model=item.modelId;
-  var bar=document.querySelector('.sc-console-bottom')||document.getElementById('scPage');
+  var bar=document.querySelector('.sc-prompt-bar')||document.getElementById('scPage');
   if(bar)bar.scrollIntoView({behavior:'smooth',block:'nearest'});
   var pt=typeof S!=='undefined'&&S.lang==='pt';
   toast(pt?'↩ Configurações restauradas. Edite e gere novamente.':'↩ Settings restored. Edit and generate again.','ok');
@@ -4173,46 +4319,30 @@ function scUseAsRef(url,type){
 
 function viewStudio(){
   return `
-  ${reel('Generative cinema',S.lang==='pt'?'Da direção ao take final':'From direction to final take')}
-
-  <!-- ── BANNER DEMO — largura total, autoplay randômico, só desktop ── -->
-  <div class="dc-card studio-demo-box" id="studioDemoBox" style="margin-bottom:18px;padding:0;overflow:hidden;border-radius:14px;position:relative">
-    <video id="demoVid" muted autoplay playsinline preload="auto"
-      style="width:100%;max-height:300px;object-fit:cover;display:block;background:#000"
-      onerror="this.closest('.studio-demo-box').style.display='none'"
-      referrerpolicy="no-referrer"></video>
-    <div id="demoOverlay" style="position:absolute;bottom:0;left:0;right:0;padding:14px 18px;background:linear-gradient(transparent,rgba(0,0,0,.8));display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:8px">
-      <div>
-        <div id="demoModelLabel" style="font-size:10px;color:rgba(255,255,255,.6);letter-spacing:1px;margin-bottom:3px"></div>
-        <div id="demoPromptLabel" style="font-size:12.5px;color:rgba(255,255,255,.9);line-height:1.4;max-width:560px"></div>
-      </div>
-      <button class="btn btn-sm" id="demoUseBtn" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:white;white-space:nowrap;backdrop-filter:blur(6px)">${S.lang==='pt'?'Usar Prompt →':'Use Prompt →'}</button>
-    </div>
-    <div style="position:absolute;top:10px;right:10px;display:flex;gap:6px" id="demoDots"></div>
-  </div>
-
-  <!-- ── RAILS ── -->
-  <div class="chip-rail" id="modelRail" style="margin-bottom:12px"></div>
-  <div class="chip-rail" id="presetRail">${PRESETS.map(p=>`<div class="pchip" onclick="applyPreset('${p.n}',this)">${p.ic} ${p.n}</div>`).join('')}</div>
-
-  <!-- ── STUDIO GRID ── -->
-  <div class="studio" style="margin-top:10px">
+  <!-- ── STUDIO GRID — prompt no topo, sem banners acima ── -->
+  <div class="studio" style="margin-top:4px">
     <div>
       <div class="dc-card">
         <h3>${S.lang==='pt'?'Direção Criativa':'Creative Direction'} <span class="eng">AI ENGINE</span></h3>
         <div class="seg" id="cmTabs" style="margin-bottom:14px">${CMODES.map(([m,l])=>`<button onclick="setCmode('${m}')" class="${S.cmode===m?'on':''}">${l}</button>`).join('')}</div>
-        <div class="model-select-wrap" id="cModelWrap" style="margin-bottom:12px">
+        <div style="position:relative;margin-bottom:12px">
+          <textarea class="input" id="cPrompt" style="min-height:120px;padding-bottom:40px" placeholder="${S.lang==='pt'?'Descreva o que você quer… use @personagem. Ex.: casal numa cafeteria de manhã':'Describe what you want… use @character. E.g.: a couple at a coffee shop in the morning'}"></textarea>
+          <button class="btn btn-ghost btn-sm" style="position:absolute;right:8px;bottom:8px;padding:5px 12px;font-size:12px" onclick="enhanceInPlace()">✨ ${S.lang==='pt'?'Aprimorar':'Enhance'}</button>
+        </div>
+        <div class="model-select-wrap" id="cModelWrap" style="margin-bottom:10px">
           <div class="model-select" id="cModelSelect" onclick="toggleCModelMenu()">
             <span class="dot"></span><span class="ms-name" id="cMsName"></span><span class="ms-sub" id="cMsSub"></span>
             <svg class="chev" viewBox="0 0 24 24" width="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
           </div>
           <div class="model-menu" id="cModelMenu"></div>
         </div>
-        <div style="position:relative">
-          <textarea class="input" id="cPrompt" style="min-height:120px;padding-bottom:40px" placeholder="${S.lang==='pt'?'Descreva o que você quer… use @personagem. Ex.: casal numa cafeteria de manhã':'Describe what you want… use @character. E.g.: a couple at a coffee shop in the morning'}"></textarea>
-          <button class="btn btn-ghost btn-sm" style="position:absolute;right:8px;bottom:8px;padding:5px 12px;font-size:12px" onclick="enhanceInPlace()">✨ ${S.lang==='pt'?'Aprimorar':'Enhance'}</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:4px">
+          <select class="sc-select" id="stDirectorSelect" onchange="stSetDirector(this.value)" title="${S.lang==='pt'?'Direção / Mentor criativo':'Direction / Creative mentor'}">${_scMentorOptionsHtml(S.lang==='pt')}</select>
+          <button class="btn btn-ghost btn-sm" onclick="stMentor()">🎭 Mentor</button>
+          <button class="btn btn-ghost btn-sm" onclick="go('storyboard')">📋 Storyboard</button>
+          <button class="btn btn-ghost btn-sm" onclick="stOpenModelPicker()">🎛 ${S.lang==='pt'?'Modelos':'Models'}</button>
         </div>
-        <div id="cRefWrap" style="margin-top:12px"></div>
+        <div id="cRefWrap" style="margin-top:10px"></div>
       </div>
       <div class="dc-card" id="genBand" style="margin-bottom:14px">
         <div class="cost-line" style="margin-top:0"><span>${S.lang==='pt'?'Custo estimado':'Estimated cost'}</span><b id="costEst">—</b></div>
@@ -4250,6 +4380,27 @@ function viewStudio(){
       </div>
     </aside>
   </div>
+
+  <!-- ── RAILS — abaixo da área de criação para não empurrar o prompt ── -->
+  <div class="chip-rail" id="modelRail" style="margin:16px 0 10px"></div>
+  <div class="chip-rail" id="presetRail">${PRESETS.map(p=>`<div class="pchip" onclick="applyPreset('${p.n}',this)">${p.ic} ${p.n}</div>`).join('')}</div>
+
+  <!-- ── DEMO CARROSSEL — área visual abaixo do fluxo de criação ── -->
+  <div class="dc-card studio-demo-box" id="studioDemoBox" style="margin-top:14px;padding:0;overflow:hidden;border-radius:14px;position:relative">
+    <video id="demoVid" muted autoplay playsinline preload="auto"
+      style="width:100%;max-height:260px;object-fit:cover;display:block;background:#000"
+      onerror="this.closest('.studio-demo-box').style.display='none'"
+      referrerpolicy="no-referrer"></video>
+    <div id="demoOverlay" style="position:absolute;bottom:0;left:0;right:0;padding:14px 18px;background:linear-gradient(transparent,rgba(0,0,0,.8));display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div>
+        <div id="demoModelLabel" style="font-size:10px;color:rgba(255,255,255,.6);letter-spacing:1px;margin-bottom:3px"></div>
+        <div id="demoPromptLabel" style="font-size:12.5px;color:rgba(255,255,255,.9);line-height:1.4;max-width:560px"></div>
+      </div>
+      <button class="btn btn-sm" id="demoUseBtn" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:white;white-space:nowrap;backdrop-filter:blur(6px)">${S.lang==='pt'?'Usar Prompt →':'Use Prompt →'}</button>
+    </div>
+    <div style="position:absolute;top:10px;right:10px;display:flex;gap:6px" id="demoDots"></div>
+  </div>
+
   <!-- Galeria mobile: fora do grid, só aparece no mobile -->
   <div class="dc-card gal-mobile" id="galCard" style="margin-top:16px;display:none">
     <h3 style="margin-bottom:12px">${S.lang==='pt'?'Galeria':'Gallery'} (<span id="galCountM">${S.gallery.length}</span>)</h3>
@@ -6364,17 +6515,27 @@ const FESTS=[
   {region:'Dubai · AE',name:'AI Art & Film Awards',type:'awards',url:'https://www.google.com/search?q=AI+Art+and+Film+Awards+Dubai',d:{pt:'Premiação focada em arte e filme gerados por IA.',en:'Awards focused on AI-generated art and film.'},deadline:'Sep'}
 ];
 function viewFestivals(){
-  const filters=['all','festival','contest','awards'];
-  const fb=filters.map(f=>`<button class="seg-btn pb-btn ${(S._fest||'all')===f?'':''}" style="${(S._fest||'all')===f?'border-color:var(--accent-dim);color:var(--accent)':''}" onclick="S._fest='${f}';render()">${f==='all'?(S.lang==='pt'?'Todos':'All'):f}</button>`).join(' ');
-  const list=FESTS.filter(f=>!S._fest||S._fest==='all'||f.type===S._fest);
-  const cards=list.map(f=>`<div class="fest-card">
-    <div class="ftop"><div><div class="region">${f.region}</div><h4 class="serif">${f.name}</h4></div><span class="tag">${f.type}</span></div>
+  const pt=S.lang==='pt';
+  const cur=S._fest||'all';
+  const filters=[
+    ['all',pt?'🏆 Todos':'🏆 All'],
+    ['festival',pt?'🎬 Festivais':'🎬 Festivals'],
+    ['contest',pt?'🎯 Concursos':'🎯 Contests'],
+    ['awards',pt?'✨ Premiações':'✨ Awards']
+  ];
+  const fb=filters.map(([f,l])=>`<button class="btn btn-sm ${cur===f?'btn-primary':'btn-ghost'}" onclick="S._fest='${f}';render()">${l}</button>`).join(' ');
+  const typeLbl={festival:pt?'Festival':'Festival',contest:pt?'Concurso':'Contest',awards:pt?'Premiação':'Awards'};
+  const list=FESTS.filter(f=>cur==='all'||f.type===cur);
+  const cards=list.length?list.map(f=>`<div class="fest-card fest-card-premium">
+    <div class="ftop"><div><div class="region">📍 ${f.region}</div><h4 class="serif">${f.name}</h4></div><span class="tag" style="border-color:var(--accent-dim);color:var(--accent)">${typeLbl[f.type]||f.type}</span></div>
     <div class="desc">${f.d[S.lang]}</div>
-    <div class="frow"><span class="deadline">${S.lang==='pt'?'Prazo':'Deadline'}: ${f.deadline}</span>
-      <a class="pb-btn" href="${f.url}" target="_blank" rel="noopener">${S.lang==='pt'?'Inscrição / site →':'Submit / site →'}</a></div></div>`).join('');
+    <div class="frow">
+      <span class="deadline" title="${pt?'Prazo de inscrição':'Submission deadline'}">⏳ ${pt?'Prazo':'Deadline'}: <b style="color:var(--accent)">${f.deadline}</b></span>
+      <a class="pb-btn" href="${f.url}" target="_blank" rel="noopener">${pt?'Inscrição / site →':'Submit / site →'}</a></div></div>`).join('')
+    :`<div class="card" style="grid-column:1/-1;text-align:center;padding:40px"><div style="font-size:40px;margin-bottom:10px">🏆</div><p style="color:var(--ink-3)">${pt?'Nenhum item nesta categoria.':'No items in this category.'}</p></div>`;
   return areaHeader({
     kicker:t('discover'),title:t('festivals'),
-    desc:S.lang==='pt'?'Festivais, concursos e premiações abertos a obras audiovisuais — muitos já aceitando trabalhos feitos com IA. Use como meta e vitrine.':'Festivals, contests and awards open to AV works — many already accepting AI-made pieces.',
+    desc:pt?'Festivais, concursos e premiações abertos a obras audiovisuais — muitos já aceitando trabalhos feitos com IA. Use como meta e vitrine.':'Festivals, contests and awards open to AV works — many already accepting AI-made pieces.',
     area:'festivals'
   })+`
   <div class="fest-filters">${fb}</div>
@@ -7014,6 +7175,39 @@ function openShareMenu(pid){
   const m=document.getElementById('shareMenu_'+pid);if(m)m.style.display=m.style.display==='block'?'none':'block';
 }
 function viewPublic(){
+  try{
+    return _viewPublicInner();
+  }catch(e){
+    // Estado de erro — a Galeria Pública nunca renderiza quebrada
+    var pt=S.lang==='pt';
+    return areaHeader({kicker:'COMUNIDADE',title:pt?'Galeria Pública':'Public Gallery',area:'public'})
+      +'<div class="card" style="text-align:center;padding:48px 24px">'
+      +'<div style="font-size:44px;margin-bottom:14px">⚠️</div>'
+      +'<h3 style="margin:0 0 8px">'+(pt?'Não foi possível carregar a galeria':'Could not load the gallery')+'</h3>'
+      +'<p style="color:var(--ink-3);max-width:460px;margin:0 auto 18px">'+(pt?'Algo deu errado ao carregar as publicações. Tente novamente em instantes.':'Something went wrong loading the posts. Try again shortly.')+'</p>'
+      +'<button class="btn btn-primary" onclick="render()">'+(pt?'Tentar novamente':'Try again')+'</button>'
+      +'</div>';
+  }
+}
+function _publicDemoFallback(){
+  var pt=S.lang==='pt';
+  var demos=(typeof DEMO_REEL!=='undefined'?DEMO_REEL:[]).slice(0,6);
+  if(!demos.length)return'';
+  return '<div style="margin-top:26px">'
+    +'<div style="font-size:10px;letter-spacing:2px;font-weight:700;color:var(--ink-4);margin-bottom:12px">'+(pt?'ENQUANTO ISSO — EXEMPLOS GERADOS COM IA':'MEANWHILE — AI-GENERATED EXAMPLES')+'</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">'
+    +demos.map(function(d,i){
+      return '<div style="border-radius:12px;overflow:hidden;background:var(--panel-2);border:1px solid var(--line);position:relative">'
+        +'<video src="'+escapeAttr(d.url)+'" muted loop autoplay playsinline preload="metadata" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block" referrerpolicy="no-referrer" onerror="this.closest(\'div\').style.display=\'none\'"></video>'
+        +'<div style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,.6);color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:8px;letter-spacing:1px">DEMO</div>'
+        +'<div style="padding:10px 12px">'
+        +'<div style="font-size:11px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+escapeHtml(d.model||'')+'</div>'
+        +'<button class="btn btn-ghost btn-sm" style="margin-top:6px;width:100%" onclick="reuseDemo('+i+')">'+(pt?'Criar parecido':'Create similar')+'</button>'
+        +'</div></div>';
+    }).join('')
+    +'</div></div>';
+}
+function _viewPublicInner(){
   const pub=loadPublic();
   const liked=JSON.parse(localStorage.getItem(userKey('liked'))||'[]');
   const statsBar='<div style="display:flex;gap:20px;flex-wrap:wrap;font-size:13px">'
@@ -7067,10 +7261,15 @@ function viewPublic(){
         </div>
       ${(p.comments&&p.comments.length)?`<div style="padding:8px 14px 10px;border-top:1px solid var(--line);background:var(--panel-2)">${p.comments.slice(0,2).map(function(c){return '<div style="font-size:12px;color:var(--ink-2);padding:2px 0">💬 '+escapeHtml(c)+'</div>';}).join('')}${p.comments.length>2?'<div style="font-size:11px;color:var(--ink-4);margin-top:2px">+ '+(p.comments.length-2)+' comentários</div>':''}</div>`:''}
       </article>`;}).join('')}
-  </div>`:`<div class="card" style="text-align:center;padding:40px"><div style="font-size:48px;margin-bottom:14px">🌍</div>
-    <h3 style="margin:0 0 8px">${S.lang==='pt'?'Nada compartilhado ainda':'Nothing shared yet'}</h3>
-    <p style="color:var(--ink-3);max-width:480px;margin:0 auto">${S.lang==='pt'?'Seja o primeiro! Gere algo no Estúdio, vá na sua Galeria e clique em "🌍 Publicar".':'Be the first! Generate something, go to your Gallery and click "🌍 Publish".'}</p>
-  </div>`}`;
+  </div>`:`<div class="card" style="text-align:center;padding:48px 24px;background:linear-gradient(135deg,var(--panel),var(--panel-2));border:1px solid var(--line-2)">
+    <div style="font-size:48px;margin-bottom:14px">🌍</div>
+    <h3 style="margin:0 0 8px">${S.lang==='pt'?'Galeria pública ainda sem publicações':'Public gallery has no posts yet'}</h3>
+    <p style="color:var(--ink-3);max-width:480px;margin:0 auto 18px">${S.lang==='pt'?'Publique uma criação para aparecer aqui. Gere algo no Estúdio, vá na sua Galeria e clique em "🌍 Publicar".':'Publish a creation to appear here. Generate something in the Studio, open your Gallery and click "🌍 Publish".'}</p>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="go('criar')">${S.lang==='pt'?'✨ Criar agora':'✨ Create now'}</button>
+      <button class="btn btn-ghost" onclick="go('gallery')">${S.lang==='pt'?'Minha galeria':'My gallery'}</button>
+    </div>
+  </div>${_publicDemoFallback()}`}`;
 }
 function mcCaps(m){
   var rs=m.refSpec||{};
@@ -7801,6 +8000,7 @@ function viewInspo(){
   _inspoSeeds=INSPO_SEED.concat(pub);
   const srcF=S.inspoSrc||'all';
   const seeds=srcF==='all'?_inspoSeeds:_inspoSeeds.filter(function(s){return s.src===srcF;});
+  window._inspoView=seeds;
   return areaHeader({
     kicker:S.lang==='pt'?'INSPIRAÇÃO':'INSPIRATION',
     title:t('inspo'),
@@ -7818,9 +8018,9 @@ function viewInspo(){
       <img src="${s.url}" loading="lazy" referrerpolicy="no-referrer" onerror="this.closest('.inspo-card').style.display='none'" onclick="inspoOpen(${i})" style="cursor:pointer">
       ${s.prompt?`<figcaption onclick="inspoOpen(${i})" style="cursor:pointer">${escapeHtml(s.prompt.slice(0,90))}</figcaption>`:''}
       <div class="inspo-actions">
-        <button class="share-btn" style="padding:4px 8px;font-size:11px" onclick="event.stopPropagation();sendToStudio({prompt:${JSON.stringify(s.prompt||'')},mediaUrl:${JSON.stringify(s.url)},mediaType:'image',title:'Inspiração',source:'inspo'})" title="${S.lang==='pt'?'Usar no Estúdio':'Use in Studio'}">🎬</button>
-        <button class="share-btn" style="padding:4px 8px;font-size:11px" onclick="event.stopPropagation();copyText(${JSON.stringify(s.prompt||'')})" title="${S.lang==='pt'?'Copiar prompt':'Copy prompt'}">⧉</button>
-        <button class="share-btn" style="padding:4px 8px;font-size:11px;color:#25d366" onclick="event.stopPropagation();shareContent({platform:'whatsapp',url:${JSON.stringify(s.url)},text:'Hollywood Studio AI',source:'inspo'})" title="WhatsApp">💬</button>
+        <button class="share-btn" style="padding:4px 9px;font-size:11px" onclick="event.stopPropagation();inspoOpen(${i})" title="${S.lang==='pt'?'Ver prompt':'View prompt'}">👁 ${S.lang==='pt'?'ver prompt':'prompt'}</button>
+        <button class="share-btn" style="padding:4px 9px;font-size:11px" onclick="event.stopPropagation();inspoUseAsRef(${i})" title="${S.lang==='pt'?'Usar como referência':'Use as reference'}">📎 ${S.lang==='pt'?'referência':'reference'}</button>
+        <button class="share-btn" style="padding:4px 9px;font-size:11px;color:var(--accent)" onclick="event.stopPropagation();inspoCreateSimilar(${i})" title="${S.lang==='pt'?'Criar parecido':'Create similar'}">✨ ${S.lang==='pt'?'criar parecido':'similar'}</button>
       </div>
     </figure>`).join('')}
   </div>
@@ -7830,6 +8030,26 @@ function viewInspo(){
 }
 let _inspoSeeds=[];
 let _inspoPage=0;
+function inspoUseAsRef(i){
+  var s=(window._inspoView||[])[i];
+  if(!s)return;
+  _scRef=s.url;
+  go('criar');
+  setTimeout(function(){
+    if(typeof _scRenderRefPreview==='function')_scRenderRefPreview();
+    toast(S.lang==='pt'?'📎 Referência adicionada — descreva sua ideia.':'📎 Reference added — describe your idea.','ok');
+  },240);
+}
+function inspoCreateSimilar(i){
+  var s=(window._inspoView||[])[i];
+  if(!s)return;
+  go('criar');
+  setTimeout(function(){
+    var el=document.getElementById('scPrompt');
+    if(el){el.value=s.prompt||'';el.focus();if(typeof scUpdateRecommendation==='function')scUpdateRecommendation();}
+    toast(S.lang==='pt'?'✨ Prompt carregado! Ajuste e gere.':'✨ Prompt loaded! Adjust and generate.','ok');
+  },240);
+}
 function inspoLoadMore(){
   _inspoPage++;
   var grid=document.getElementById('inspoGrid');
@@ -7879,7 +8099,6 @@ const INSPO_SEED=[
   {url:'https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=900&q=80',prompt:'abstract fluid art, vibrant colors, macro, fine art print',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=900&q=80',prompt:'UGC authentic portrait, natural light window, casual, social media',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=900&q=80',prompt:'social media app on phone, lifestyle, flat lay, tech photography',src:'unsplash'},
-,
   // Extra AI-focused inspirations
   {url:'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=900&q=80',prompt:'AI avatar portrait, hyperrealistic digital human, studio lighting, 8K detail',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=900&q=80',prompt:'Fashion model editorial, AI generated, cinematic color grade',src:'unsplash'},
@@ -8635,7 +8854,7 @@ function googleSignIn(){
     }
     // GIS (Google Identity Services) — fluxo atual
     if(!CFG.GOOGLE_CLIENT_ID){
-      toast(pt?'Login com Google ainda precisa ser configurado no Supabase/Auth. Use e-mail e senha ou configure GOOGLE/SUPABASE nas variáveis de ambiente.':'Google login still needs to be configured (Supabase/Auth). Use email and password, or set GOOGLE/SUPABASE environment variables.','err');
+      toast(pt?'Login com Google ainda precisa ser configurado no Supabase/Auth. Verifique as variáveis SUPABASE_URL, SUPABASE_ANON_KEY e o provider Google no Supabase.':'Google login still needs to be configured in Supabase/Auth. Check the SUPABASE_URL and SUPABASE_ANON_KEY variables and the Google provider in Supabase.','err');
       return;
     }
     if(!window.google||!google.accounts||!google.accounts.id){
@@ -11787,17 +12006,22 @@ async function syncGalleryOnLogin() {
     : '✓ Gallery synced (' + S.gallery.length + ' items)', 'ok');
 }
 
-/* ── Hook into existing auth to call backend ── */
-var _origFinishAuth = typeof finishAuth === 'function' ? finishAuth : null;
-function finishAuth() {
-  if (_origFinishAuth) _origFinishAuth();
-  // After local auth succeeds, also authenticate with backend
-  if (CFG.USE_BACKEND && S.user && S.user.email) {
-    setTimeout(function() {
-      syncGalleryOnLogin().catch(function(){});
-    }, 500);
-  }
-}
+/* ── Hook into existing auth to call backend ──
+   IMPORTANTE: não redeclarar finishAuth como function declaration — o hoisting
+   fazia _origFinishAuth apontar para o próprio wrapper (recursão infinita) e o
+   login (e-mail e Google) nunca completava. Usamos atribuição em runtime. */
+(function(){
+  var _origFinishAuth = (typeof window.finishAuth === 'function') ? window.finishAuth : null;
+  window.finishAuth = function() {
+    if (_origFinishAuth) _origFinishAuth();
+    // After local auth succeeds, also authenticate with backend
+    if (CFG.USE_BACKEND && S.user && S.user.email) {
+      setTimeout(function() {
+        syncGalleryOnLogin().catch(function(){});
+      }, 500);
+    }
+  };
+})();
 
 /* ── Hook into gallery save to also save to backend ── */
 var _origGalUnshift = null;
