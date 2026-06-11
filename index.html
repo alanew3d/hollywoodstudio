@@ -1790,6 +1790,10 @@ body.layout-fullscreen .topbar{display:none!important}
 .sc-pa-model-info{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-3);white-space:nowrap;flex:0 0 auto;flex-shrink:0;margin-left:auto}
 .sc-pa-model-info b{color:var(--ink)}
 .sc-pa-model-info .btn{font-size:11px;padding:2px 8px;min-height:26px}
+/* Alias classes for row layout */
+.sc-pa-row1{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.sc-model-badge{font-size:12px;color:var(--text-muted,#888);white-space:nowrap;display:flex;align-items:center;gap:6px}
+.sc-model-change{background:none;border:none;color:var(--hs-gold,#c9a227);cursor:pointer;font-size:12px;text-decoration:underline;padding:0 2px}
 /* Row 3: config selects — compact labels */
 .sc-pa-row--config{align-items:flex-end;flex-wrap:wrap;gap:6px}
 .sc-pa-row--config .sc-select{height:34px;font-size:12px;padding:0 8px}
@@ -1844,6 +1848,14 @@ body.layout-fullscreen .topbar{display:none!important}
   .sc-pa-row--config .sc-select{max-width:100%;width:100%;box-sizing:border-box}
   #scPrompt,.sc-prompt-field{min-height:96px!important}
   .sc-pa-left .btn{min-height:44px;max-height:none}
+}
+@media(max-width:768px){
+  .sc-pa-row1,.sc-pa-left{gap:6px}
+  .sc-pa-row2{gap:6px}
+  .sc-pa-row1 .sc-pa-left{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sc-pa-row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sc-pa-row1 .sc-pa-left button,.sc-pa-row2 button{font-size:13px;height:36px}
+  .sc-model-badge{width:100%;justify-content:flex-start}
 }
 /* ══ Mobile: botões de ação da home em grade 2 colunas ══ */
 @media(max-width:640px){
@@ -3848,16 +3860,16 @@ function viewSimpleCreate(){
   +'<div class="sc-prompt-actions">'
 
   // Row 1: primary action buttons (left) + model info (right)
-  +'<div class="sc-pa-row sc-pa-row--primary">'
+  +'<div class="sc-pa-row sc-pa-row--primary sc-pa-row1">'
   +'<div class="sc-pa-left">'
   +'<button class="btn btn-primary btn-sm" onclick="handleCreateVideo()" title="'+(pt?'Gerar vídeo com IA usando o prompt e referências atuais':'Generate AI video with current prompt and references')+'">🎬 '+(pt?'Criar Vídeo':'Create Video')+'</button>'
   +'<button class="btn btn-primary btn-sm" onclick="handleCreateImage()" title="'+(pt?'Gerar imagem com IA usando o prompt e referências atuais':'Generate AI image with current prompt and references')+'">🖼 '+(pt?'Criar Imagem':'Create Image')+'</button>'
   +'<button class="btn btn-ghost btn-sm" onclick="scAttachRef()" title="'+(pt?'Anexe imagem, vídeo ou áudio como referência':'Attach image, video or audio as reference')+'">📎 '+(pt?'Referência':'Reference')+'</button>'
   +'<button class="btn btn-ghost btn-sm" onclick="scOpenModelPicker()" title="'+(pt?'Escolha ou compare modelos de IA':'Choose or compare AI models')+'">🎛 '+(pt?'Modelos':'Models')+'</button>'
   +'</div>'
-  +'<div class="sc-pa-model-info" id="scModelRec">'
+  +'<div class="sc-pa-model-info sc-model-badge" id="scModelRec">'
   +'<span>'+(pt?'Modelo':'Model')+': <b id="scRecModelName" style="color:var(--ink)">'+(rec?rec.name:'Seedance Fast')+'</b> · ~<span id="scRecCredits">'+(recResult.estimatedCredits||3)+'</span> '+(pt?'créditos':'credits')+'</span>'
-  +'<button class="btn btn-ghost btn-sm" onclick="scChooseModel()" style="font-size:11px;padding:2px 8px">'+(pt?'Trocar':'Change')+'</button>'
+  +'<button class="btn btn-ghost btn-sm sc-model-change" onclick="scChooseModel()" style="font-size:11px;padding:2px 8px">'+(pt?'Trocar':'Change')+'</button>'
   +'</div>'
   +'</div>'
 
@@ -3915,7 +3927,7 @@ function viewSimpleCreate(){
   +'</div>'
 
   // Row 3: support buttons (Mentor · Storyboard · Pós-produção · Studio completo)
-  +'<div class="sc-pa-row sc-pa-row--support">'
+  +'<div class="sc-pa-row sc-pa-row--support sc-pa-row2">'
   +'<button class="btn btn-ghost btn-sm" onclick="handleMentor()" title="'+(pt?'Aplique a visão de um mentor criativo':'Apply a creative mentor\'s vision')+'">🎭 Mentor</button>'
   +'<button class="btn btn-ghost btn-sm" onclick="handleStoryboard()" title="'+(pt?'Transforme a ideia em cenas de storyboard':'Turn the idea into storyboard scenes')+'">📋 Storyboard</button>'
   +'<button class="btn btn-ghost btn-sm" onclick="handlePostProduction()" title="'+(pt?'Pós-produção: resolução, redes sociais, legenda, briefing':'Post-production: resolution, social media, caption, briefing')+'">🛠 '+(pt?'Pós-produção':'Post-production')+'</button>'
