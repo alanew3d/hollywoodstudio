@@ -485,6 +485,39 @@ function handleHealth(req, res) {
   });
 }
 
+// ── /api/health/details ──────────────────────────────────────────────────────
+// Presença BOOLEANA de cada variável de ambiente (nunca expõe valores).
+function handleHealthDetails(req, res) {
+  const has = (k) => !!process.env[k];
+  return res.status(200).json({
+    ok: true,
+    ts: new Date().toISOString(),
+    env: {
+      SUPABASE_URL:              has('SUPABASE_URL'),
+      SUPABASE_ANON_KEY:         has('SUPABASE_ANON_KEY'),
+      SUPABASE_SERVICE_ROLE_KEY: has('SUPABASE_SERVICE_ROLE_KEY'),
+      STRIPE_SECRET_KEY:         has('STRIPE_SECRET_KEY'),
+      STRIPE_WEBHOOK_SECRET:     has('STRIPE_WEBHOOK_SECRET'),
+      RESEND_API_KEY:            has('RESEND_API_KEY'),
+      OPENAI_API_KEY:            has('OPENAI_API_KEY'),
+      ANTHROPIC_API_KEY:         has('ANTHROPIC_API_KEY'),
+      GEMINI_API_KEY:            has('GEMINI_API_KEY'),
+      MAGNIFIC_API_KEY:          has('MAGNIFIC_API_KEY'),
+      ATLAS_API_KEY:             !!(process.env.ATLAS_API_KEY || process.env.ATLAS_KEY),
+      HEYGEN_API_KEY:            has('HEYGEN_API_KEY'),
+      FAL_API_KEY:               !!(process.env.FAL_API_KEY || process.env.FAL_KEY),
+      BYTEPLUS_API_KEY:          !!(process.env.BYTEPLUS_API_KEY || process.env.SEEDANCE_API_KEY),
+      KLING_API_KEY:             has('KLING_API_KEY'),
+      FLUX_API_KEY:              !!(process.env.FLUX_API_KEY || process.env.BFL_API_KEY),
+      RUNWAY_API_KEY:            has('RUNWAY_API_KEY'),
+      GOOGLE_CLIENT_ID:          has('GOOGLE_CLIENT_ID'),
+      KV:                        hasKV(),
+      APP_URL:                   has('APP_URL'),
+      ADMIN_EMAILS:              has('ADMIN_EMAILS'),
+    },
+  });
+}
+
 // ── /api/auth/google ─────────────────────────────────────────────────────────
 
 async function handleAuthGoogle(req, res) {
@@ -1656,6 +1689,7 @@ function betaFallback(req, res, path) {
 
 const ROUTES = {
   'health':                  handleHealth,
+  'health/details':          handleHealthDetails,
   // Auth
   'auth/google':             handleAuthGoogle,
   'auth/session':            handleAuthSession,
