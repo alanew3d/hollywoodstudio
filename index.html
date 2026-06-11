@@ -2113,6 +2113,165 @@ body.hsai-splash-lock{overflow:hidden}
 .hc-prio.high{border-color:rgba(240,180,41,.4);color:#d99c12}
 [data-theme="dark"] .hc-prio.high{color:#f0b429}
 @media(max-width:640px){.hc-grid{grid-template-columns:1fr}.hc-score-card{gap:12px;padding:14px 16px}}
+
+/* ══ MOBILE HOME (criar) LAYOUT — ≤768px / ≤480px ══ */
+
+/* 1. Guest banner — compact on mobile */
+@media(max-width:768px){
+  .sc-guest-banner,[class*="guest-banner"],#guestBar{
+    padding:10px 14px!important;
+    font-size:13px!important;
+    line-height:1.35!important;
+    flex-wrap:wrap!important;
+    gap:8px!important;
+  }
+  .sc-guest-banner button,[class*="guest-banner"] button,#guestBar button{
+    height:34px;
+    font-size:12px;
+    padding:0 10px;
+  }
+}
+
+/* 2. Top header — compact on mobile */
+@media(max-width:768px){
+  .sc-console-top,.sc-topbar,.sc-header,#scHeader{
+    padding:6px 12px;
+    gap:6px;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+  }
+  .sc-console-top .btn-label,.sc-topbar .btn-label,.topbar-label{display:none}
+  .sc-console-top .qual-diff,.sc-topbar .qual-diff,[class*="qual-diferenca"]{display:none}
+}
+
+/* 3. Preview — smaller on mobile */
+@media(max-width:768px){
+  .sc-demo-block .sc-demo-single.simple-preview-card,
+  .sc-preview,.sc-result-card,.sc-main-preview,#scPreview{
+    max-height:230px!important;
+    height:clamp(150px,30vh,230px)!important;
+    width:calc(100vw - 32px);
+    border-radius:18px;
+  }
+  .sc-demo-block .sc-demo-single.simple-preview-card img,
+  .sc-demo-block .sc-demo-single.simple-preview-card video,
+  .sc-preview img,.sc-preview video,
+  .sc-result-card img,.sc-result-card video{
+    max-height:230px;
+    object-fit:cover;
+  }
+  .sc-demo-block .sc-demo-single.simple-preview-card.is-vertical img,
+  .sc-demo-block .sc-demo-single.simple-preview-card.is-vertical video,
+  .sc-preview.is-vertical img,.sc-preview.is-vertical video,
+  .sc-result-card.is-vertical img,.sc-result-card.is-vertical video{
+    object-fit:contain;
+    max-height:230px;
+  }
+}
+
+/* 4. Preview action buttons — 2-column grid on mobile */
+@media(max-width:768px){
+  .sc-acts-below,.sc-preview-actions,.sc-result-actions,[class*="preview-btn-row"]{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+  }
+  .sc-acts-below .btn,.sc-preview-actions button,.sc-result-actions button{
+    height:36px;
+    font-size:13px;
+    padding:0 8px;
+  }
+}
+
+/* 5. Title and subtitle — compact on mobile */
+@media(max-width:768px){
+  .sc-center-hero h1,.sc-title,#scTitle,.sc-headline{
+    font-size:clamp(22px,7vw,30px)!important;
+    line-height:1.1;
+    margin-top:8px;
+    margin-bottom:4px;
+  }
+  .sc-center-hero .sub,.sc-subtitle,#scSubtitle,.sc-tagline{
+    font-size:13px;
+    line-height:1.35;
+    max-width:92%;
+    margin-bottom:6px;
+  }
+}
+
+/* 6. Prompt textarea — comfortable height on mobile */
+@media(max-width:768px){
+  #scPrompt,.sc-prompt-field,.sc-prompt-textarea{
+    min-height:96px;
+    max-height:140px;
+    font-size:15px;
+    padding-bottom:34px;
+  }
+}
+
+/* 7. Action buttons — organized rows on mobile */
+@media(max-width:768px){
+  .sc-pa-row--primary,.sc-actions-row1,.sc-pa-row1{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+  }
+  .sc-pa-row--support,.sc-actions-row2,.sc-pa-row2,.sc-pa-row3{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:6px;
+  }
+  .sc-pa-model-info,.sc-model-badge{
+    width:100%;
+    font-size:12px;
+    margin-top:4px;
+  }
+}
+
+/* 8. Config row (Formato, Tempo, etc.) — compact on mobile */
+@media(max-width:768px){
+  .sc-pa-row--config,.sc-config-row,.sc-settings-row,[class*="sc-config"]{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:6px;
+    overflow-x:hidden;
+  }
+  .sc-pa-row--config .sc-select,.sc-pa-row--config .sc-select-group,
+  .sc-config-row select,.sc-settings-row select,.sc-format-group{
+    height:40px;
+    font-size:13px;
+    max-width:100%;
+  }
+  .sc-fmt-btn{font-size:10px;padding:3px 6px}
+}
+
+/* 9. Floating chat button — smaller, safe area on mobile */
+@media(max-width:768px){
+  .floating-chat,#chatBtn,.chat-float-btn,[class*="float-chat"]{
+    width:48px!important;
+    height:48px!important;
+    bottom:calc(16px + env(safe-area-inset-bottom,0px))!important;
+    right:16px!important;
+    font-size:20px!important;
+  }
+}
+
+/* 10. No horizontal scroll */
+@media(max-width:768px){
+  .sc-center,.sc-console,.sc-layout,.simple-create-container,#viewCriar{
+    overflow-x:hidden;
+    max-width:100vw;
+  }
+  body{overflow-x:hidden}
+}
+
+/* 11. Reduce vertical gaps between sections on mobile */
+@media(max-width:768px){
+  .sc-center{
+    gap:8px!important;
+    padding:8px 16px 24px!important;
+  }
+}
 </style>
 </head>
 <body data-theme="light">
