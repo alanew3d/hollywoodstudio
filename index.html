@@ -1695,7 +1695,7 @@ body.layout-fullscreen .topbar{display:none!important}
 
 /* ══ Preview principal inteligente — mídia vertical centralizada com backdrop desfocado ══ */
 .sc-demo-block .sc-demo-single.simple-preview-card{
-  width:min(820px,100%);aspect-ratio:auto;height:clamp(260px,34vh,390px);max-height:none;
+  width:min(820px,100%);aspect-ratio:auto;height:clamp(240px,34vh,360px);max-height:none;
   border-radius:22px;overflow:hidden;margin:0 auto;background:#0b0b0e;border:1px solid var(--line-2);
   box-shadow:0 12px 40px rgba(0,0,0,.28)}
 .simple-preview-card .simple-preview-backdrop{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
@@ -2273,12 +2273,12 @@ const S = {
 const I18N={
   pt:{home:'Home',studio:'Studio completo',images:'Imagens',audio:'Áudio',characters:'Personagens',storyboard:'Storyboard',favorites:'Favoritos',editing:'Edição',agents:'Agentes',docs:'Documentos',spaces:'Spaces',flow:'Assistente',
     council:'Conselho Criativo',analytics:'Estatísticas',opportunities:'Oportunidades',public:'Galeria Pública',
-    academy:'Academy',news:'Notícias',festivals:'Festivais',gallery:'Galeria',plans:'Planos',admin:'Admin',marketing:'Marketing',models:'Modelos',batch:'Edição em Lote',contactsheet:'Contact Sheet',templates:'Templates',uploads:'Meus Uploads',posprodu:'Pós-Produção',tube:'YouTube',instagram:'Instagram',inspo:'Inspiração',
+    academy:'Academy',news:'Notícias',festivals:'Festivais',gallery:'Galeria',plans:'Planos',admin:'Admin',marketing:'Marketing',models:'Modelos',batch:'Edição em Lote',contactsheet:'Contact Sheet',templates:'Templates',uploads:'Meus Uploads',posprodu:'Pós-Produção',tube:'YouTube',tv:'Hollywood TV',instagram:'Instagram',inspo:'Inspiração',
     create:'Criação',intelligence:'Inteligência',manage:'Gestão',community:'Comunidade',learn:'Aprender',account:'Conta',
     generate:'Gerar',prompt:'Prompt',welcome:'Bem-vindo de volta','gemini-avatar':'Avatar IA',criar:'Criar rápido'},
   en:{home:'Home',studio:'Full Studio',images:'Images',audio:'Audio',characters:'Characters',storyboard:'Storyboard',favorites:'Favorites',editing:'Editing',agents:'Agents',docs:'Documents',spaces:'Spaces',flow:'Assistant',
     council:'Conselho Criativo',analytics:'Analytics',opportunities:'Opportunities',public:'Public Gallery',
-    academy:'Academy',news:'News',festivals:'Festivals',gallery:'Gallery',plans:'Plans',admin:'Admin',models:'Models',batch:'Batch Edit',contactsheet:'Contact Sheet',templates:'Templates',uploads:'My Uploads',posprodu:'Post Production',tube:'YouTube',instagram:'Instagram',inspo:'Inspiration',
+    academy:'Academy',news:'News',festivals:'Festivals',gallery:'Gallery',plans:'Plans',admin:'Admin',models:'Models',batch:'Batch Edit',contactsheet:'Contact Sheet',templates:'Templates',uploads:'My Uploads',posprodu:'Post Production',tube:'YouTube',tv:'Hollywood TV',instagram:'Instagram',inspo:'Inspiration',
     create:'Create',intelligence:'Intelligence',manage:'Manage',community:'Community',learn:'Learn',account:'Account',
     generate:'Generate',prompt:'Prompt',welcome:'Welcome back','gemini-avatar':'AI Avatar',criar:'Quick create'}
 };
@@ -2792,6 +2792,7 @@ const NAV=[
   {group:'community',items:[
     {id:'public',ic:'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM2 12h20M12 2c3 3 4.5 6.5 4.5 10s-1.5 7-4.5 10c-3-3-4.5-6.5-4.5-10S9 5 12 2z'},
     {id:'inspo',ic:'M3 3h7v10H3zM14 3h7v6h-7zM14 13h7v8h-7zM3 17h7v4H3z'},
+    {id:'tv',ic:'M3 8h18v12H3zM8 3l4 4 4-4M8 16l2.5-4 2 2.5L15 12l1.5 4z'},
     {id:'tube',ic:'M22 8.5a4 4 0 0 0-3-3.8C17 4.2 12 4.2 12 4.2s-5 0-7 .5a4 4 0 0 0-3 3.8 42 42 0 0 0 0 7 4 4 0 0 0 3 3.8c2 .5 7 .5 7 .5s5 0 7-.5a4 4 0 0 0 3-3.8 42 42 0 0 0 0-7zM10 15V9l5 3z'},
     {id:'instagram',ic:'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z'},
     {id:'opportunities',ic:'M4 7h16v13H4zM8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M4 12h16'}
@@ -2953,12 +2954,20 @@ function finishAuth(){
   if(isNew && S.user && S.user.email) setTimeout(()=>sendUserWelcomeEmail(S.user),1000);
   enterApp();
 }
+/* Deep-link: honra o hash (#tv, #storyboard…) no boot se for uma view conhecida */
+function _initialView(){
+  try{
+    var h=decodeURIComponent((location.hash||'').replace(/^#/,''));
+    if(/^[a-z][a-z0-9-]*$/.test(h)&&h.indexOf('access_token')<0)return h;
+  }catch(e){}
+  return 'criar';
+}
 function enterApp(){
   document.getElementById('authScreen').classList.add('hide');
   document.getElementById('app').classList.remove('hide');
   const _chip=document.getElementById('userChip');if(_chip){_chip.innerHTML=S.user.picture?`<img src="${S.user.picture}" referrerpolicy="no-referrer">`:(S.user.name||'A')[0].toUpperCase();}
   try{document.getElementById('app').classList.toggle('sidebar-collapsed',localStorage.getItem('hsai_sidebar_collapsed')==='1'&&window.innerWidth>860);}catch(e){}
-  buildNav(); go('criar'); updateCredits();
+  buildNav(); go(_initialView()); updateCredits();
   syncSidebarToggle();
   if(isGuest())guestBanner();
   if(!window._jobLoop){window._jobLoop=1;pollJobsLoop();}
@@ -3069,7 +3078,7 @@ function exploreAsGuest(){
   document.getElementById('app').classList.remove('hide');
   document.getElementById('userChip').textContent=(S.user.name||'V')[0].toUpperCase();
   try{document.getElementById('app').classList.toggle('sidebar-collapsed',localStorage.getItem('hsai_sidebar_collapsed')==='1'&&window.innerWidth>860);}catch(e){}
-  buildNav(); go('criar'); updateCredits(); guestBanner();
+  buildNav(); go(_initialView()); updateCredits(); guestBanner();
   syncSidebarToggle();
 }
 // Faixa de incentivo no topo do conteúdo, só para visitantes.
@@ -3162,7 +3171,7 @@ function render(){
   const m=document.getElementById('main');
   const R={home:viewHome,criar:viewSimpleCreate,studio:viewStudio,images:viewImages,audio:viewAudio,characters:viewCharacters,storyboard:viewStoryboard,favorites:viewFavoritesPage,editing:viewEditing,batch:viewBatch,agents:viewAgents,docs:viewDocs,spaces:viewSpaces,
     flow:viewFlow,council:viewCouncil,analytics:viewAnalytics,opportunities:viewOpportunities,public:viewPublic,models:viewModelsCatalog,
-    academy:viewAcademy,news:viewNews,festivals:viewFestivals,'gemini-avatar':viewGeminiAvatar,gallery:viewGallery,uploads:viewUploadGallery,templates:viewTemplates,contactsheet:viewContactSheet,plans:viewPlans,admin:viewAdmin,marketing:viewMarketingPage,tube:viewTube,instagram:viewInstagram,inspo:viewInspo,posprodu:viewPosProdu,finisher:viewFinishingLab};
+    academy:viewAcademy,news:viewNews,festivals:viewFestivals,'gemini-avatar':viewGeminiAvatar,gallery:viewGallery,uploads:viewUploadGallery,templates:viewTemplates,contactsheet:viewContactSheet,plans:viewPlans,admin:viewAdmin,marketing:viewMarketingPage,tube:viewTube,tv:viewHollywoodTV,instagram:viewInstagram,inspo:viewInspo,posprodu:viewPosProdu,finisher:viewFinishingLab};
   let body;
   if(S.view&&S.view.indexOf('custom:')===0)body=viewCustom(S.view.slice(7));
   else body=(R[S.view]||viewStudio)();
@@ -3324,6 +3333,7 @@ const AREA_THEMES={
   account:   {icon:'👤',gradient:'135deg,#0c0a14,#140c0a'},
   instagram: {icon:'📸',gradient:'135deg,#1a0820,#200818'},
   tube:      {icon:'▶️',gradient:'135deg,#200a0a,#100a0a'},
+  tv:        {icon:'📺',gradient:'135deg,#14101c,#0a0a14'},
   news:      {icon:'📰',gradient:'135deg,#0a0c10,#101410'},
   academy:   {icon:'🎓',gradient:'135deg,#0a0c14,#0c1018'},
   festivals: {icon:'🏆',gradient:'135deg,#140e08,#1a1208'},
@@ -3597,7 +3607,8 @@ function viewSimpleCreate(){
   var modeCtl='<button class="btn btn-primary btn-sm mode-btn" onclick="go(\'criar\')" title="'+(pt?'Use para gerar uma imagem, vídeo, prompt ou storyboard em poucos segundos.':'Use it to generate an image, video, prompt or storyboard in seconds.')+'">✨ <span class="lbl">'+(pt?'Criar rápido':'Quick create')+'</span></button>'
     +'<button class="btn btn-ghost btn-sm mode-btn" onclick="go(\'studio\')" title="'+(pt?'Use para controlar o fluxo inteiro: modelos, referências, storyboard, pós-produção, galeria e publicação.':'Use it to control the entire workflow: models, references, storyboard, post-production, gallery and publishing.')+'">🎛️ <span class="lbl">'+(pt?'Studio completo':'Full Studio')+'</span></button>'
     +'<button class="mode-diff-link" onclick="hsaiModeDiff()">'+(pt?'Qual a diferença?':'What\'s the difference?')+'</button>';
-  var topRight=modeCtl+langCtl+themeCtl+plansCtl+userCtl;
+  var tvCtl='<button class="btn btn-primary btn-sm" onclick="go(\'tv\')" title="'+(pt?'Inspirações em vídeo com IA, em sequência.':'AI video inspirations, in sequence.')+'">📺 <span class="lbl">Hollywood TV</span></button>';
+  var topRight=modeCtl+tvCtl+langCtl+themeCtl+plansCtl+userCtl;
 
   return '<div class="sc-console" id="scPage">'
 
@@ -3882,7 +3893,7 @@ function _scStartInspRotation(){
         }
       }
       tick();
-    },5000+Math.floor(Math.random()*3000)); // troca UMA posição a cada 5–8s
+    },8000+Math.floor(Math.random()*6000)); // troca UMA posição a cada 8–14s
   })();
 }
 
@@ -8296,6 +8307,114 @@ function sharePublicTo(pid,where){
 function openShareMenu(pid){
   const m=document.getElementById('shareMenu_'+pid);if(m)m.style.display=m.style.display==='block'?'none':'block';
 }
+/* ════════ HOLLYWOOD TV — inspirações em vídeo com IA ════════ */
+const HOLLYWOOD_TV_PLAYLIST=[
+  {id:'tv-demo-1',
+   title:{pt:'Showreel cinematográfico com IA',en:'Cinematic AI showreel'},
+   category:{pt:'Showcase',en:'Showcase'},
+   youtubeId:'COLOCAR_ID_DEMO_1',
+   model:'seedance-2',
+   prompt:'cinematic AI showreel, sweeping drone shots over a futuristic city at golden hour, anamorphic lens flares, subtle film grain, epic orchestral mood'},
+  {id:'tv-demo-2',
+   title:{pt:'Comercial de luxo gerado por IA',en:'AI-generated luxury commercial'},
+   category:{pt:'Comercial',en:'Commercial'},
+   youtubeId:'COLOCAR_ID_DEMO_2',
+   model:'kling-2',
+   prompt:'luxury perfume commercial, macro shots of golden liquid, slow-motion splash, dramatic studio lighting, premium cinematic look'}
+];
+function _tvValidId(id){return !!id&&!/^COLOCAR_/.test(id)&&/^[A-Za-z0-9_-]{6,}$/.test(id);}
+function _tvTitle(it,pt){return (it.title&&(pt?it.title.pt:it.title.en))||'';}
+function viewHollywoodTV(){
+  var pt=S.lang==='pt';
+  var idx=window._tvIndex||0;
+  if(!HOLLYWOOD_TV_PLAYLIST[idx])idx=0;
+  var cur=HOLLYWOOD_TV_PLAYLIST[idx];
+  var player;
+  if(cur&&_tvValidId(cur.youtubeId)){
+    player='<div style="position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;border:1px solid var(--line-2)">'
+      +'<iframe id="tvPlayer" src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(cur.youtubeId)+'?autoplay=1&mute=1&rel=0" title="Hollywood TV" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>'
+      +'</div>';
+  }else{
+    // Poster elegante quando o vídeo ainda não está configurado — nunca uma página quebrada
+    player='<div style="position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;border:1px solid var(--line-2);background:linear-gradient(135deg,#15121c,#0a0a10);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:20px">'
+      +'<div style="font-size:46px;line-height:1">📺</div>'
+      +'<div class="serif" style="font-size:20px;color:#edeef2">'+(cur?escapeHtml(_tvTitle(cur,pt)):'Hollywood TV')+'</div>'
+      +'<div style="font-size:12.5px;color:#a8afbd">'+(pt?'Vídeo demo em breve.':'Demo video coming soon.')+'</div>'
+      +'</div>';
+  }
+  var curMeta=cur
+    ?'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px">'
+      +'<span style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent-dim);background:var(--accent-dim);border-radius:14px;padding:3px 10px">'+escapeHtml((cur.category&&(pt?cur.category.pt:cur.category.en))||'')+'</span>'
+      +'<b style="font-size:15px">'+escapeHtml(_tvTitle(cur,pt))+'</b>'
+      +'<span style="flex:1"></span>'
+      +'<button class="btn btn-primary btn-sm" onclick="tvCreateSimilar('+idx+')">✨ '+(pt?'Criar parecido':'Create similar')+'</button>'
+      +'<button class="btn btn-ghost btn-sm" onclick="tvUseInStudio('+idx+')">⚙️ '+(pt?'Usar prompt no Studio':'Use prompt in Studio')+'</button>'
+      +'<button class="btn btn-ghost btn-sm" onclick="tvCopyPrompt('+idx+')">⧉ '+(pt?'Copiar prompt':'Copy prompt')+'</button>'
+      +'</div>'
+    :'';
+  var list=HOLLYWOOD_TV_PLAYLIST.map(function(it,i){
+    var thumb=_tvValidId(it.youtubeId)
+      ?'<img src="https://i.ytimg.com/vi/'+encodeURIComponent(it.youtubeId)+'/hqdefault.jpg" loading="lazy" referrerpolicy="no-referrer" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.onerror=null;this.parentElement.innerHTML=\'<div style=&quot;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:26px&quot;>📺</div>\'">'
+      :'<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:26px;background:linear-gradient(135deg,#15121c,#0a0a10)">📺</div>';
+    return '<div class="card" style="display:flex;gap:12px;align-items:stretch;padding:12px'+(i===idx?';border-color:var(--accent)':'')+'">'
+      +'<div onclick="tvPlay('+i+')" style="flex:0 0 132px;aspect-ratio:16/9;border-radius:10px;overflow:hidden;border:1px solid var(--line-2);background:var(--panel-2);cursor:pointer" title="'+(pt?'Assistir':'Watch')+'">'+thumb+'</div>'
+      +'<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">'
+      +'<div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink-3)">'+escapeHtml((it.category&&(pt?it.category.pt:it.category.en))||'')+(i===idx?' · <span style="color:var(--accent)">'+(pt?'Tocando agora':'Now playing')+'</span>':'')+'</div>'
+      +'<b style="font-size:13.5px;line-height:1.35">'+escapeHtml(_tvTitle(it,pt))+'</b>'
+      +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:auto">'
+      +'<button class="btn btn-primary btn-sm" style="font-size:11.5px;padding:5px 10px" onclick="tvCreateSimilar('+i+')">✨ '+(pt?'Criar parecido':'Create similar')+'</button>'
+      +'<button class="btn btn-ghost btn-sm" style="font-size:11.5px;padding:5px 10px" onclick="tvUseInStudio('+i+')">⚙️ '+(pt?'Usar no Studio':'Use in Studio')+'</button>'
+      +'<button class="btn btn-ghost btn-sm" style="font-size:11.5px;padding:5px 10px" onclick="tvCopyPrompt('+i+')">⧉ '+(pt?'Copiar prompt':'Copy prompt')+'</button>'
+      +'</div></div></div>';
+  }).join('');
+  return areaHeader({
+    kicker:pt?'Comunidade':'Community',
+    title:'Hollywood TV',
+    desc:pt?'Inspirações em vídeo com IA, em sequência.':'AI video inspirations, in sequence.',
+    area:'tv'
+  })
+  +'<div style="max-width:880px;margin:0 auto">'
+  +player
+  +curMeta
+  +'<div class="label" style="margin:26px 0 12px">'+(pt?'Próximos vídeos':'Next videos')+'</div>'
+  +'<div style="display:flex;flex-direction:column;gap:10px">'+list+'</div>'
+  +'</div>';
+}
+function tvPlay(i){
+  if(!HOLLYWOOD_TV_PLAYLIST[i])return;
+  window._tvIndex=i;render();
+}
+function tvCreateSimilar(i){
+  var it=HOLLYWOOD_TV_PLAYLIST[i];if(!it)return;
+  var pt=S.lang==='pt';
+  go('criar');
+  setTimeout(function(){
+    if(typeof scSetType==='function')scSetType('video');
+    var el=document.getElementById('scPrompt');
+    if(el){el.value=it.prompt||'';el.focus();if(typeof scUpdateRecommendation==='function')scUpdateRecommendation();}
+    if(it.model&&typeof scPickModel==='function')scPickModel(it.model);
+    if(typeof showActionFeedback==='function')showActionFeedback(pt?'✨ Prompt da Hollywood TV carregado! Ajuste e gere.':'✨ Hollywood TV prompt loaded! Adjust and generate.','ok');
+  },240);
+}
+function tvUseInStudio(i){
+  var it=HOLLYWOOD_TV_PLAYLIST[i];if(!it)return;
+  // MODELS (Studio) usa ids sem hífen; HSAI_MODELS (home) usa com hífen
+  var studioModel=(it.model||'').replace(/-/g,'');
+  if(typeof sendToStudio==='function'){sendToStudio({prompt:it.prompt,modelId:studioModel,mediaType:'video',source:'hollywood-tv'});}
+  else{
+    go('studio');
+    setTimeout(function(){var b=document.getElementById('cPrompt');if(b){b.value=it.prompt||'';b.focus();}},220);
+  }
+}
+function tvCopyPrompt(i){
+  var it=HOLLYWOOD_TV_PLAYLIST[i];if(!it)return;
+  var pt=S.lang==='pt';
+  try{
+    navigator.clipboard.writeText(it.prompt||'');
+    toast(pt?'⧉ Prompt copiado!':'⧉ Prompt copied!','ok');
+  }catch(e){toast(pt?'Não foi possível copiar':'Could not copy','err');}
+}
+
 function viewPublic(){
   try{
     return _viewPublicInner();
