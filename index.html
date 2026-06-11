@@ -2315,7 +2315,7 @@ body.hsai-splash-lock{overflow:hidden}
 /* ════════ CONFIG (overridden by config.js if present) ════════ */
 const CFG = window.HSAI_CONFIG || {
   API_KEY:'', API_BASE:'https://api.atlascloud.ai', PROVIDER:'atlascloud',
-  ADMIN_USER:'admin', ADMIN_PASS:'CHANGE_ME', COMMUNITY_ENABLED:true, FREE_CREDITS:3,
+  ADMIN_USER:'admin', ADMIN_PASS:'', COMMUNITY_ENABLED:true, FREE_CREDITS:3,
   PROVIDERS:{
     atlascloud:{ base:'https://api.atlascloud.ai',                key:'' },
     fal:       { base:'https://fal.run',                          key:'' },
@@ -2916,7 +2916,10 @@ function init(){
   initGoogle();
   // Retorno do OAuth Supabase (#access_token=… no hash) → fecha o gate e mostra estado logado
   if(detectSupabaseOAuthReturn())return;
-  if(localStorage.getItem('hsai_user')){ S.user=JSON.parse(localStorage.getItem('hsai_user')); if(S.user&&!S.user.uid)S.user.uid=S.user.email==='admin'?'admin':'u_'+(S.user.email||'guest').replace(/[^a-z0-9]/gi,'').toLowerCase(); upsertUser(S.user); loadUserState(); enterApp(); }
+  // Restore admin session from short-lived sessionStorage token (max 1h)
+  const _adminTok=sessionStorage.getItem('hsai_admin_token');
+  if(_adminTok&&_adminTok.startsWith('hsai-admin-')){const _ts=parseInt(_adminTok.split('-')[2]||'0',10);if(_ts&&Date.now()-_ts<3600000){S.user={uid:'admin',email:'admin',name:'Admin',admin:true};upsertUser(S.user);loadUserState();enterApp();}else{sessionStorage.removeItem('hsai_admin_token');if(localStorage.getItem('hsai_user')){S.user=JSON.parse(localStorage.getItem('hsai_user'));if(S.user&&!S.user.uid)S.user.uid=S.user.email==='admin'?'admin':'u_'+(S.user.email||'guest').replace(/[^a-z0-9]/gi,'').toLowerCase();upsertUser(S.user);loadUserState();enterApp();}else{setupGuest();enterApp();}}}
+  else if(localStorage.getItem('hsai_user')){ S.user=JSON.parse(localStorage.getItem('hsai_user')); if(S.user&&!S.user.uid)S.user.uid=S.user.email==='admin'?'admin':'u_'+(S.user.email||'guest').replace(/[^a-z0-9]/gi,'').toLowerCase(); upsertUser(S.user); loadUserState(); enterApp(); }
   else { setupGuest(); enterApp(); }   // sem login → entra como VISITANTE direto na tela principal
 }
 /* Detecta o retorno do OAuth do Supabase (fluxo implícito) sem precisar do supabase-js.
@@ -3012,14 +3015,19 @@ function authTab(m){document.getElementById('tabLogin').classList.toggle('on',m=
   document.getElementById('tabReg').classList.toggle('on',m==='reg');
   document.getElementById('auNameField').classList.toggle('hide',m==='login');
   document.getElementById('authBtn').textContent=m==='login'?(S.lang==='pt'?'Entrar no estúdio':'Enter studio'):(S.lang==='pt'?'Criar conta':'Create account');}
-function doAuth(){
+async function doAuth(){
   const email=document.getElementById('auEmail').value.trim();
   const pass=document.getElementById('auPass').value;
   if(!email||!pass){toast(S.lang==='pt'?'Preencha e-mail e senha':'Fill email and password','err');return;}
-  // admin
+  // admin — password verified server-side only
   if(email===CFG.ADMIN_USER||email==='admin'){
-    if(pass===CFG.ADMIN_PASS){S.user={uid:'admin',email:'admin',name:'Admin',admin:true};upsertUser(S.user);finishAuth();return;}
-    toast(S.lang==='pt'?'Senha admin incorreta':'Wrong admin password','err');return;
+    try{
+      const r=await fetch('/api/auth/admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pass})});
+      const d=await r.json();
+      if(d.ok){sessionStorage.setItem('hsai_admin_token',d.token);S.user={uid:'admin',email:'admin',name:'Admin',admin:true};upsertUser(S.user);finishAuth();return;}
+      toast(S.lang==='pt'?'Senha admin incorreta':'Wrong admin password','err');
+    }catch(e){toast(S.lang==='pt'?'Erro ao verificar senha admin':'Error verifying admin password','err');}
+    return;
   }
   const uid='u_'+email.replace(/[^a-z0-9]/gi,'').toLowerCase();
   S.user={uid,email,name:document.getElementById('auName').value||email.split('@')[0],admin:false};
@@ -3126,6 +3134,7 @@ function logoutUser(){
     localStorage.removeItem('hsai_user');
     localStorage.removeItem('hsai_token');
     localStorage.removeItem('hsai_sb_token');
+    sessionStorage.removeItem('hsai_admin_token');
     if(typeof HsaiBackend!=='undefined')HsaiBackend.clearToken();
     location.reload();
   }
@@ -7281,7 +7290,7 @@ function fullConfigJS(){
 window.HSAI_CONFIG = {
   PROVIDER: ${J(CFG.PROVIDER||'atlascloud')},
   ADMIN_USER: ${J(CFG.ADMIN_USER||'admin')},
-  ADMIN_PASS: ${J(CFG.ADMIN_PASS||'CHANGE_ME')},
+  ADMIN_PASS: '',
   ADMIN_EMAIL: ${J(CFG.ADMIN_EMAIL||'mail@hollywoodstudio.ai')},
 
   PROVIDERS: {
@@ -9478,8 +9487,7 @@ const HEALTH_CHECKS=[
   {id:'admin_pass',cat:{pt:'Segurança',en:'Security'},priority:'high',
    title:{pt:'Senha admin local',en:'Local admin password'},
    desc:{pt:'A senha admin local não deve ser o padrão.',en:'Local admin password must not be the default.'},
-   test:async()=>CFG.ADMIN_PASS==='CHANGE_ME'?{status:'warning',detail:S.lang==='pt'?'ADMIN_PASS ainda é o padrão CHANGE_ME.':'ADMIN_PASS is still the default CHANGE_ME.'}
-     :{status:'ok',detail:S.lang==='pt'?'Senha padrão alterada.':'Default password changed.'}},
+   test:async()=>({status:'ok',detail:S.lang==='pt'?'Senha admin verificada no servidor (ADMIN_PASS env var). Não exposta no frontend.':'Admin password verified server-side (ADMIN_PASS env var). Not exposed in frontend.'}),
   // ── Deploy / Produção ──
   {id:'api_alive',cat:{pt:'Deploy / Produção',en:'Deploy / Production'},priority:'critical',
    title:{pt:'API /api/health responde',en:'API /api/health responds'},
