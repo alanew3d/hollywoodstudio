@@ -5,8 +5,6 @@
  * Rotas implementadas:
  *   POST /api/auth/google          Verificar token Google
  *   GET  /api/auth/session         Retornar dados do usuário via Supabase JWT
- *   POST /api/auth/admin           Login admin via ADMIN_PASS env var (server-side only)
- *   GET  /api/auth/admin/verify    Verificar token admin (hsai-admin-* format)
  *   GET  /api/credits/balance      Saldo de créditos
  *   POST /api/credits/use          Consumir créditos (valida antes de gerar)
  *   GET  /api/credits/history      Histórico de transações
@@ -1184,17 +1182,6 @@ async function handleAIStoryboard(req, res) {
   return res.status(200).json({ ok: true, storyboard: result });
 }
 
-// ── /api/ailan/generate — stub for future AI-powered generation ───────────────
-async function handleAILANGenerate(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-  // No auth required for the stub — generation is local
-  return res.status(200).json({
-    ok: true,
-    source: 'local',
-    message: 'Plano gerado localmente. Configure ANTHROPIC_API_KEY ou OPENAI_API_KEY para geração assistida por IA.'
-  });
-}
-
 // ── /api/email/send ──────────────────────────────────────────────────────────
 
 async function handleEmailSend(req, res) {
@@ -1359,39 +1346,6 @@ async function handleAccountDelete(req, res) {
   } catch {}
 
   return res.status(200).json({ ok: true, message: 'Conta removida com sucesso.' });
-}
-
-// ── /api/auth/admin — password-based admin login (server-side only) ──────────
-
-async function handleAuthAdmin(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ ok: false, error: 'Method not allowed' });
-  const body = await readJsonBody(req);
-  const { password } = body;
-  const adminPass = process.env.ADMIN_PASS;
-  if (!adminPass) {
-    return res.status(503).json({ ok: false, error: 'ADMIN_PASS not configured in environment.' });
-  }
-  if (!password || password !== adminPass) {
-    return res.status(401).json({ ok: false, error: 'Invalid admin password.' });
-  }
-  const token = `hsai-admin-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-  return res.status(200).json({ ok: true, token, expiresIn: 3600 });
-}
-
-async function handleAuthAdminVerify(req, res) {
-  if (req.method !== 'GET') return res.status(405).json({ ok: false, error: 'Method not allowed' });
-  const auth = req.headers.authorization || '';
-  const token = auth.startsWith('Bearer ') ? auth.slice(7).trim() : '';
-  if (!token || !token.startsWith('hsai-admin-')) {
-    return res.status(401).json({ ok: false, error: 'Invalid token format.' });
-  }
-  // Parse timestamp from token: hsai-admin-<ms>-<random>
-  const parts = token.split('-');
-  const ts = parseInt(parts[2], 10);
-  if (!ts || isNaN(ts) || Date.now() - ts > 3600 * 1000) {
-    return res.status(401).json({ ok: false, error: 'Token expired or invalid.' });
-  }
-  return res.status(200).json({ ok: true, admin: true });
 }
 
 // ── /api/admin/* ─────────────────────────────────────────────────────────────
@@ -1739,8 +1693,6 @@ const ROUTES = {
   // Auth
   'auth/google':             handleAuthGoogle,
   'auth/session':            handleAuthSession,
-  'auth/admin':              handleAuthAdmin,
-  'auth/admin/verify':       handleAuthAdminVerify,
   // Credits
   'credits/balance':         handleCreditsBalance,
   'credits/use':             handleCreditsUse,
@@ -1775,7 +1727,6 @@ const ROUTES = {
   'ai/creative-board':       handleAICreativeBoard,
   'ai/social-caption':       handleAISocialCaption,
   'ai/storyboard':           handleAIStoryboard,
-  'ailan/generate':          handleAILANGenerate,
   // Email
   'email/send':              handleEmailSend,
   // Support

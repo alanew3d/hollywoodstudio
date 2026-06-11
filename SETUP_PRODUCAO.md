@@ -111,7 +111,6 @@ ATLAS_API_KEY               = ...       (opcional — Finishing Lab: câmera/lip
 GOOGLE_CLIENT_ID            = [id].apps.googleusercontent.com
 APP_URL                     = https://hollywoodstudio.ai
 ADMIN_EMAILS                = seu@email.com
-ADMIN_PASS                  = senha_forte_aqui   ← senha do admin, verificada apenas no servidor. Nunca inserir no config.js ou frontend.
 ```
 
 5. Clique em **Save** para cada variável
