@@ -3444,7 +3444,7 @@ function hsaiStep(n){
     if(n===1){
       if(el){
         el.focus();
-        if((el.value||'').trim())toast(pt?'✨ Dica: toque em Enhance para refinar seu prompt.':'✨ Tip: tap Enhance to refine your prompt.','info');
+        if((el.value||'').trim())toast(pt?'✨ Dica: toque em Aprimorar para refinar seu prompt.':'✨ Tip: tap Enhance to refine your prompt.','info');
       }
     }else if(n===2){
       scOpenModelPicker(_scType==='image'?'image':'video');
@@ -3646,6 +3646,21 @@ function viewSimpleCreate(){
   +'<input type="file" id="scRefInput" class="hide" style="display:none" accept="image/*,video/*,.pdf,.txt" onchange="scOnRefFile(this)">'
   +'<div id="scEnhanceUndo" style="display:none;margin-top:6px;gap:8px;flex-wrap:wrap;align-items:center"></div>'
 
+  // Linhas de ação compactas coladas ao textarea (2 fileiras)
+  +'<div class="sc-prompt-actions">'
+  +'<div class="sc-pa-row">'
+  +'<button class="btn btn-ghost btn-sm" onclick="scAttachRef()" title="'+(pt?'Anexe imagem, vídeo ou áudio como referência':'Attach image, video or audio as reference')+'">📎 '+(pt?'Referência':'Reference')+'</button>'
+  +'<button class="btn btn-ghost btn-sm" onclick="scOpenModelPicker()" title="'+(pt?'Escolha ou compare modelos de IA':'Choose or compare AI models')+'">🎛 '+(pt?'Modelos':'Models')+'</button>'
+  +'<button class="btn btn-ghost btn-sm" onclick="handleEnhancePrompt()" title="'+(pt?'Aprimore seu prompt com IA':'Enhance your prompt with AI')+'">✨ '+(pt?'Aprimorar':'Enhance')+'</button>'
+  +'<button class="btn btn-ghost btn-sm" onclick="handleMentor()" title="'+(pt?'Aplique a visão de um mentor criativo':'Apply a creative mentor\'s vision')+'">🎭 Mentor</button>'
+  +'</div>'
+  +'<div class="sc-pa-row">'
+  +'<button class="btn btn-ghost btn-sm" onclick="handleStoryboard()" title="'+(pt?'Transforme a ideia em cenas de storyboard':'Turn the idea into storyboard scenes')+'">📋 Storyboard</button>'
+  +'<button class="btn btn-ghost btn-sm" onclick="handlePostProduction()" title="'+(pt?'Pós-produção: resolução, redes sociais, legenda, briefing':'Post-production: resolution, social media, caption, briefing')+'">🛠 '+(pt?'Pós-produção':'Post-production')+'</button>'
+  +'<button class="btn btn-ghost btn-sm" onclick="scSendToStudio()" title="'+(pt?'Use para controlar o fluxo inteiro: modelos, referências, storyboard, pós-produção, galeria e publicação.':'Use it to control the entire workflow: models, references, storyboard, post-production, gallery and publishing.')+'">⚙️ '+(pt?'Studio completo':'Full Studio')+'</button>'
+  +'</div>'
+  +'</div>'
+
   // Model recommendation — single thin line
   +'<div class="sc-model-line" id="scModelRec">'
   +'<span>'+(pt?'Modelo':'Model')+': <b id="scRecModelName" style="color:var(--ink)">'+(rec?rec.name:'Seedance Fast')+'</b></span>'
@@ -3688,19 +3703,10 @@ function viewSimpleCreate(){
   +'</select>'
   +'</div>'
 
-  // Action buttons
+  // CTAs primárias de geração
   +'<div class="sc-actions">'
   +'<button class="btn btn-primary" style="padding:9px 18px;font-size:13.5px" onclick="handleCreateVideo()">🎬 '+(pt?'Criar Vídeo':'Create Video')+'</button>'
   +'<button class="btn btn-primary" style="padding:9px 18px;font-size:13.5px" onclick="handleCreateImage()">🖼 '+(pt?'Criar Imagem':'Create Image')+'</button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="handleEnhancePrompt()">✨ Enhance</button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="handleMentor()">🎭 Mentor</button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="handleStoryboard()">📋 Storyboard</button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="handlePostProduction()" title="'+(pt?'Pós-produção: resolução, redes sociais, legenda, briefing':'Post-production: resolution, social media, caption, briefing')+'">🛠 '+(pt?'Pós-produção':'Post-production')+'</button>'
-  +'<span style="flex:1"></span>'
-  +'<button class="btn btn-ghost btn-sm" onclick="scAttachRef()">📎 '+(pt?'Referência':'Ref')+'</button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="scOpenModelPicker()">🎛 '+(pt?'Ver todos os modelos':'All models')+'</button>'
-  +'<span style="font-size:11px;color:var(--ink-4);white-space:nowrap">'+(pt?'Precisa de fluxo completo?':'Need the full workflow?')+'</span>'
-  +'<button class="btn btn-ghost btn-sm" onclick="scSendToStudio()" title="'+(pt?'Use para controlar o fluxo inteiro: modelos, referências, storyboard, pós-produção, galeria e publicação.':'Use it to control the entire workflow: models, references, storyboard, post-production, gallery and publishing.')+'">⚙️ '+(pt?'Continuar no Studio completo':'Continue in Full Studio')+'</button>'
   +'</div>'
 
   +'</div>'  // end .sc-prompt-bar
@@ -7178,7 +7184,7 @@ function viewStoryboard(){
   const sbs=getStoryboards();
   return areaHeader({
     kicker:pt?'Pré-Produção':'Pre-Production',
-    title:'🎬 Storyboard',
+    title:'Storyboard',
     desc:pt?'Planeje seu projeto cinematográfico com IA. Gere storyboards completos com cenas detalhadas, prompts particionados e timeline visual — prontos para o Estúdio.':'Plan your cinematic project with AI. Generate complete storyboards with detailed scenes, partitioned prompts and visual timeline.',
     area:'storyboard'
   })+`
@@ -7188,7 +7194,7 @@ function viewStoryboard(){
       <div style="font-size:2em;margin-bottom:8px">✨</div>
       <h3 style="margin-bottom:6px;font-size:16px">${pt?'Novo Storyboard':'New Storyboard'}</h3>
       <p style="color:var(--ink-3);font-size:12px;line-height:1.5;margin-bottom:12px">${pt?'Brief → GPT-4 → Cenas cinematográficas com prompts particionados.':'Brief → GPT-4 → Cinematic scenes with partitioned prompts.'}</p>
-      <button class="btn btn-primary btn-sm" style="width:100%">${pt?'Criar →':'Create →'}</button>
+      <button class="btn btn-primary btn-sm" style="width:100%" onclick="event.stopPropagation();viewStoryboardGenerator()">${pt?'Criar storyboard':'Create storyboard'}</button>
     </div>
     <div class="dc-card sb-menu-card" onclick="viewStoryboardGallery()">
       <div style="font-size:2em;margin-bottom:8px">📚</div>
