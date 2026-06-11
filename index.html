@@ -838,7 +838,9 @@ if(typeof document !== 'undefined' && document.addEventListener){
 :root{
   --bg:#0a0a0c; --bg-2:#0e0f12; --panel:#121317; --panel-2:#16181d; --panel-3:#1f2127;
   --elev:#1b1d23; --line:rgba(255,255,255,.07); --line-2:rgba(255,255,255,.12);
-  --ink:#edeef2; --ink-2:#a7abb6; --ink-3:#6c707c; --ink-4:#474a54;
+  /* Texto no tema escuro: nada abaixo de ~#8a8f9a sobre preto */
+  --text-soft-dark:#c3cad6; --text-muted-dark:#a8afbd; --text-subtle-dark:#8f98aa;
+  --ink:#edeef2; --ink-2:var(--text-soft-dark); --ink-3:var(--text-muted-dark); --ink-4:var(--text-subtle-dark);
   --accent:#d4a857; --accent-2:#e7c688; --accent-dim:rgba(212,168,87,.14);
   --hs-gold:#d4a843; --hs-gold-light:#ecca74; --hs-gold-dark:#a87516; --hs-gold-hover:#e7c05e;
   --hs-dark:#050505; --hs-button-text-dark:#090909;
@@ -1832,10 +1834,43 @@ body.layout-fullscreen .topbar{display:none!important}
 
 /* Sidebar active state — gold left bar */
 .nav-item.active,.nav-item.on{
-  background:linear-gradient(90deg,var(--accent-dim) 0%,transparent 100%);
+  background:rgba(229,182,79,.12);
   border-left:2.5px solid var(--accent);
-  color:var(--accent)}
-.nav-item.active svg,.nav-item.on svg{stroke:var(--accent)}
+  color:#fff}
+[data-theme="light"] .nav-item.active,[data-theme="light"] .nav-item.on{color:var(--ink)}
+.nav-item.active svg,.nav-item.on svg{stroke:var(--accent);opacity:1}
+
+/* Sidebar (tema escuro): itens e hover mais legíveis sobre preto */
+body:not([data-theme="light"]) .nav-item{color:#d9deea}
+body:not([data-theme="light"]) .nav-item svg{color:#aab2c2;opacity:1}
+body:not([data-theme="light"]) .nav-item:hover{background:rgba(255,255,255,.06);color:#fff}
+body:not([data-theme="light"]) .nav-group h6{color:var(--text-subtle-dark)}
+
+/* Botões escuros (ghost) no tema escuro: hover carvão claro + texto quase branco */
+body:not([data-theme="light"]) .btn-ghost:hover:not(:disabled){background:#262932;color:#f0f2f7;border-color:rgba(255,255,255,.22)}
+.btn:disabled,.btn[disabled]{opacity:.55;cursor:not-allowed}
+
+/* ══ Créditos avulsos — bloco único em destaque (Planos) ══ */
+.credits-topup-block{margin-top:22px;padding:24px 22px;border-radius:var(--r-lg);
+  border:1.5px solid rgba(212,168,87,.5);
+  background:linear-gradient(160deg,rgba(212,168,87,.10),rgba(18,19,23,.9) 55%);
+  box-shadow:0 10px 34px rgba(0,0,0,.25)}
+[data-theme="light"] .credits-topup-block{
+  background:linear-gradient(160deg,rgba(212,168,87,.12),#fffdf7 55%);
+  border-color:rgba(169,118,42,.45);box-shadow:0 10px 30px rgba(0,0,0,.08)}
+.topup-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;max-width:760px;margin:0 auto}
+.topup-card{position:relative;text-align:center;padding:22px 16px 18px;border-radius:14px;
+  background:var(--panel);border:1px solid var(--line-2)}
+.topup-card.featured{border:1.5px solid var(--accent);box-shadow:0 8px 26px rgba(212,168,87,.18)}
+.topup-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);white-space:nowrap;
+  background:linear-gradient(135deg,var(--hs-gold-light),var(--hs-gold));color:var(--hs-button-text-dark);
+  font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;border-radius:20px;padding:4px 12px}
+
+/* ══ Contact Sheet — container de preview escuro (estilo preview de PDF) ══ */
+.cs-preview-wrap{overflow:auto;border-radius:18px;border:1px solid rgba(255,255,255,.08);
+  background:#181818;padding:clamp(20px,4vw,44px);box-shadow:inset 0 2px 16px rgba(0,0,0,.5),0 8px 28px rgba(0,0,0,.3)}
+[data-theme="light"] .cs-preview-wrap{background:#2a2a2a;border-color:#242424;
+  box-shadow:inset 0 2px 14px rgba(0,0,0,.45),0 10px 28px rgba(0,0,0,.18)}
 
 /* Topbar */
 .topbar{box-shadow:0 1px 0 var(--line),0 4px 16px rgba(0,0,0,.08)}
@@ -5706,7 +5741,7 @@ function renderGalStrip(){const el=document.getElementById('galStrip');if(!el)re
   }
   const galHtml=S.gallery.slice(0,6).map((g)=>{
     const media=g.type==='video'
-      ?`<video src="${g.url}" muted loop autoplay playsinline preload="auto" style="background:#111" onerror="this.style.background='#111';this.insertAdjacentHTML('afterend','<div style=\'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#666;font-size:12px\'>Expirado</div>')" onclick="event.stopPropagation();openVideo('${g.url}')" referrerpolicy="no-referrer"></video>`
+      ?`<video src="${g.url}" muted loop autoplay playsinline preload="auto" style="background:#111" onerror="this.style.background='#111';this.insertAdjacentHTML('afterend','<div style=\'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#9aa1ad;font-size:12px\'>Expirado</div>')" onclick="event.stopPropagation();openVideo('${g.url}')" referrerpolicy="no-referrer"></video>`
       :`<img src="${g.url}" onclick="event.stopPropagation();openImage('${g.url}')" onerror="this.style.opacity=.2" referrerpolicy="no-referrer">`;
     return `<div class="gi" title="${escapeAttr((g.prompt||'').slice(0,60))}">${media}</div>`;}).join('');
   el.innerHTML=galHtml;
@@ -7613,7 +7648,7 @@ function afterGallery(){
     const idx=S.gallery.indexOf(g);
     const ar=(g.ratio||(g.type==='image'?'1:1':'16:9')).replace(':','/');
     const media=g.type==='video'
-      ?`<video src="${g.url}" muted loop autoplay playsinline preload="auto" style="background:#111" onerror="this.style.background='#111';this.insertAdjacentHTML('afterend','<div style=\'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#666;font-size:12px\'>Expirado</div>')" onclick="event.stopPropagation();openVideo('${g.url}')" referrerpolicy="no-referrer"></video>`
+      ?`<video src="${g.url}" muted loop autoplay playsinline preload="auto" style="background:#111" onerror="this.style.background='#111';this.insertAdjacentHTML('afterend','<div style=\'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#9aa1ad;font-size:12px\'>Expirado</div>')" onclick="event.stopPropagation();openVideo('${g.url}')" referrerpolicy="no-referrer"></video>`
       :`<img src="${g.url}" onclick="event.stopPropagation();openImage('${g.url}')" onerror="this.style.background='#16181d';this.style.opacity='.4';this.alt='Imagem expirada'" referrerpolicy="no-referrer">`;
     const reuseIc='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/></svg>';
     const regenIc='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M12 8v4l3 2"/></svg>';
@@ -7819,11 +7854,11 @@ function viewPlans(){
     <ul>${p.feat[S.lang].map(f=>/^(Tudo do|Everything in)/.test(f)?`<li style="list-style:none;font-weight:700;color:var(--accent);margin:2px 0 4px;padding-left:0">${f}</li>`:`<li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7"/></svg>${f}</li>`).join('')}</ul>
     <button class="btn ${p.featured?'btn-primary':'btn-ghost'}" style="width:100%" onclick="buyPlan('${p.id}',${p.secs})">${S.lang==='pt'?'Assinar':'Subscribe'}</button>
   </div>`).join('');
-  const topups=TOPUPS.map(t=>`<div class="card" style="text-align:center;padding:18px">
-    <div class="serif" style="font-size:26px">${t.cr}<span style="font-size:13px;color:var(--ink-3)"> cr</span></div>
-    <div style="font-size:12px;color:var(--ink-3);margin:4px 0 12px">${S.lang==='pt'?'crédito avulso':'one-time credits'}</div>
-    <div class="serif" style="font-size:18px;color:var(--accent);margin-bottom:12px">${fmtMoney(t.price)}</div>
-    <button class="btn btn-ghost btn-sm" style="width:100%" onclick="buyCredits(${t.cr},${t.price})">${S.lang==='pt'?'Comprar':'Buy'}</button></div>`).join('');
+  const topups=TOPUPS.map((t,i)=>`<div class="topup-card${i===1?' featured':''}">
+    ${i===1?`<div class="topup-badge">${S.lang==='pt'?'Mais procurado':'Most popular'}</div>`:''}
+    <div class="serif" style="font-size:30px;line-height:1.1">${t.cr}<span style="font-size:13px;color:var(--ink-3)"> ${S.lang==='pt'?'créditos':'credits'}</span></div>
+    <div class="serif" style="font-size:20px;color:var(--accent);margin:8px 0 14px">${fmtMoney(t.price)}</div>
+    <button class="btn btn-primary btn-sm" style="width:100%" onclick="buyCredits(${t.cr},${t.price})">${S.lang==='pt'?'Comprar créditos':'Buy credits'}</button></div>`).join('');
   return areaHeader({
     kicker:t('plans'),
     title:S.lang==='pt'?'Planos & Créditos':'Plans & Credits',
@@ -7843,6 +7878,15 @@ function viewPlans(){
     </div>
   </div>
   <div class="plans">${cards}</div>
+
+  <!-- Créditos avulsos — bloco único em destaque, logo após os planos -->
+  <div class="credits-topup-block">
+    <div style="text-align:center;margin-bottom:18px">
+      <h3 class="serif" style="margin:0 0 6px;font-size:24px">${S.lang==='pt'?'Precisa de mais créditos?':'Need more credits?'}</h3>
+      <p style="font-size:13.5px;color:var(--ink-2);margin:0">${S.lang==='pt'?'Compre créditos avulsos para continuar criando sem trocar de plano.':'Buy one-time credits to keep creating without changing plans.'}</p>
+    </div>
+    <div class="topup-grid">${topups}</div>
+  </div>
 
   <!-- Enterprise Card -->
   <div class="card" style="margin-top:18px;border:2px solid var(--accent);background:linear-gradient(135deg,var(--accent-dim),transparent);border-radius:var(--r-lg);padding:26px">
@@ -7868,8 +7912,6 @@ function viewPlans(){
       </div>
     </div>
   </div>
-  <div class="label" style="margin:30px 0 12px">${S.lang==='pt'?'Créditos avulsos (sem assinatura)':'One-time credits (no subscription)'}</div>
-  <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">${topups}</div>
   <div class="attach-note" style="text-align:center;margin-top:20px">${S.lang==='pt'?'Pagamentos via Stripe e PayPal. Configure os links em config.js.':'Payments via Stripe & PayPal. Set the links in config.js.'}</div>`;
 }
 function buyCredits(cr,price){
@@ -13662,8 +13704,8 @@ function viewContactSheet() {
     + '</div></div>';
 
   // ── Canvas preview ──
-  var preview = '<div id="csPreviewWrap" style="overflow:auto;border-radius:12px;border:1px solid #ddd9cf;background:#edebe4;padding:18px">'
-    + '<canvas id="csCanvas" style="display:block;margin:0 auto;max-width:100%;cursor:crosshair;box-shadow:0 4px 18px rgba(0,0,0,.14);border-radius:4px;background:#fff"></canvas>'
+  var preview = '<div id="csPreviewWrap" class="cs-preview-wrap">'
+    + '<canvas id="csCanvas" style="display:block;margin:0 auto;max-width:100%;cursor:crosshair;box-shadow:0 10px 34px rgba(0,0,0,.45);border-radius:4px;background:#fff"></canvas>'
     + '</div>'
     + '<div style="font-size:11px;color:var(--ink-3);text-align:center;margin-top:6px">'
     + (pt?'Clique numa imagem para rotacionar (90°). Duplo clique para ângulo livre.':'Click an image to rotate (90°). Double-click for free angle.')
