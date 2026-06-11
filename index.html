@@ -1745,7 +1745,9 @@ body.layout-fullscreen .topbar{display:none!important}
 .sc-model-line{font-size:12px;color:var(--ink-3);display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 6px}
 .sc-select{background:var(--panel-2);border:1px solid var(--line-2);border-radius:8px;padding:7px 10px;color:var(--ink);font-size:13px;cursor:pointer;outline:none;transition:border-color .15s;max-width:160px}
 .sc-select:hover,.sc-select:focus{border-color:var(--accent)}
-.sc-compact-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.sc-select-group{display:flex;flex-direction:column;gap:2px}
+.sc-select-lbl{font-size:9px;letter-spacing:.7px;text-transform:uppercase;color:var(--ink-4);font-weight:600;padding:0 2px}
+.sc-compact-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin:10px 0}
 .sc-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
 /* Linhas de ação compactas coladas ao prompt (2 fileiras) */
 .sc-prompt-actions{display:flex;flex-direction:column;gap:6px;margin-top:8px}
@@ -1754,7 +1756,7 @@ body.layout-fullscreen .topbar{display:none!important}
 @media(max-width:640px){
   .sc-pa-row{display:grid;grid-template-columns:repeat(2,1fr)}
   .sc-pa-row .btn{width:100%;justify-content:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .sc-pa-row:last-child .btn:last-child{grid-column:1/-1}
+  .sc-pa-row .btn:last-child:nth-child(odd){grid-column:1/-1}
 }
 @media(max-width:900px){
   .sc-console{height:auto;overflow:visible;min-height:100vh}
@@ -2523,17 +2525,26 @@ window.HSAI_MODELS=[
   {id:'veo-3',name:'Veo 3',provider:'Google',type:'text-to-video',categories:['text-to-video'],bestFor:'Hero shots 4K com áudio nativo',description:'Google Veo 3 com áudio nativo e altíssima fidelidade fotográfica',strengths:['Áudio nativo','Fidelidade 4K','Física realista'],limitations:['Acesso externo','Custo premium'],estimatedCredits:12,speed:'lento',quality:'premium',aspectRatios:['16:9','9:16'],maxDuration:8,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:true,isPremium:true,isActive:true,status:'external'},
   {id:'runway-gen4',name:'Runway Gen-4',provider:'Runway',type:'text-to-video',categories:['text-to-video','image-to-video'],bestFor:'VFX e mixed media',description:'Controle de estilo, referências e movimento de câmera avançado',strengths:['Controle de estilo','Multi-ref','VFX'],limitations:['Acesso externo'],estimatedCredits:11,speed:'medio',quality:'premium',aspectRatios:['16:9','9:16','1:1'],maxDuration:10,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:true,isPremium:true,isActive:true,status:'external'},
   {id:'luma-dream',name:'Luma Dream Machine',provider:'Luma AI',type:'text-to-video',categories:['text-to-video','image-to-video'],bestFor:'Movimentos de câmera fluidos',description:'Excelente para cenas com câmera em movimento e visuais oníricos',strengths:['Câmera fluida','Visual onírico','Boa velocidade'],limitations:['Acesso externo'],estimatedCredits:6,speed:'medio',quality:'standard',aspectRatios:['16:9','9:16'],maxDuration:10,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:true,status:'external'},
-  {id:'hailuo-mini',name:'Hailuo MiniMax',provider:'MiniMax',type:'text-to-video',categories:['text-to-video'],bestFor:'Volume de conteúdo e testes',description:'O mais rápido e econômico — ideal para Reels e TikTok',strengths:['Muito rápido','Econômico','Alto dinamismo'],limitations:['Qualidade menor em detalhe'],estimatedCredits:3,speed:'rapido',quality:'standard',aspectRatios:['16:9','9:16'],maxDuration:10,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:true,status:'beta'},
-  {id:'wan-21',name:'Wan 2.1',provider:'Alibaba',type:'text-to-video',categories:['text-to-video','image-to-video'],bestFor:'Controle de primeiro e último frame',description:'Excelente para encadear clipes com continuidade exata',strengths:['Start+End frame','Boa qualidade','Preço justo'],limitations:['Menos vibrante'],estimatedCredits:5,speed:'medio',quality:'standard',aspectRatios:['16:9','9:16'],maxDuration:15,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:true,status:'beta'},
-  {id:'flux-dev',name:'Flux Dev',provider:'Black Forest Labs',type:'text-to-image',categories:['text-to-image'],bestFor:'Imagens de alta qualidade e detalhadas',description:'Flux Dev — qualidade premium para imagens estáticas',strengths:['Alta qualidade','Grande controle','Boa aderência'],limitations:['Mais lento que Schnell'],estimatedCredits:6,speed:'medio',quality:'premium',aspectRatios:['1:1','16:9','9:16','4:5'],maxDuration:0,supportsImageInput:false,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:true,status:'active'},
-  {id:'flux-schnell',name:'Flux Schnell',provider:'Black Forest Labs',type:'text-to-image',categories:['text-to-image'],bestFor:'Geração rápida de imagens',description:'Flux Schnell — velocidade máxima para iteração de imagens',strengths:['Muito rápido','Econômico','Boa qualidade'],limitations:['Menos detalhe que Dev'],estimatedCredits:2,speed:'rapido',quality:'standard',aspectRatios:['1:1','16:9','9:16'],maxDuration:0,supportsImageInput:false,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:true,status:'active'},
-  {id:'gpt-image-1',name:'GPT Image 1',provider:'OpenAI',type:'text-to-image',categories:['text-to-image'],bestFor:'Seguimento fiel de instruções complexas',description:'Modelo de imagem da OpenAI com ótima compreensão de texto',strengths:['Segue instruções complexas','Alta qualidade','Estilos variados'],limitations:['Acesso externo','Custo médio'],estimatedCredits:8,speed:'medio',quality:'premium',aspectRatios:['1:1','16:9','9:16'],maxDuration:0,supportsImageInput:false,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:true,status:'external'},
-  {id:'gemini-image',name:'Gemini Image',provider:'Google',type:'text-to-image',categories:['text-to-image'],bestFor:'Imagens fotorrealistas com contexto',description:'Geração de imagem do Google com alta fidelidade',strengths:['Fotorrealismo','Boa compreensão de cena'],limitations:['Acesso externo'],estimatedCredits:6,speed:'medio',quality:'standard',aspectRatios:['1:1','16:9','9:16'],maxDuration:0,supportsImageInput:false,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:true,status:'external'},
+  {id:'hailuo-mini',name:'Hailuo MiniMax',provider:'MiniMax',type:'text-to-video',categories:['text-to-video'],bestFor:'Volume de conteúdo e testes',description:'O mais rápido e econômico — ideal para Reels e TikTok',strengths:['Muito rápido','Econômico','Alto dinamismo'],limitations:['Qualidade menor em detalhe'],estimatedCredits:3,speed:'rapido',quality:'standard',aspectRatios:['16:9','9:16'],maxDuration:10,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:false,status:'externo'},
+  {id:'wan-21',name:'Wan 2.1',provider:'Alibaba',type:'text-to-video',categories:['text-to-video','image-to-video'],bestFor:'Controle de primeiro e último frame',description:'Excelente para encadear clipes com continuidade exata',strengths:['Start+End frame','Boa qualidade','Preço justo'],limitations:['Menos vibrante'],estimatedCredits:5,speed:'medio',quality:'standard',aspectRatios:['16:9','9:16'],maxDuration:15,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:false,status:'externo'},
+  {id:'flux-dev',name:'Flux Dev',provider:'Black Forest Labs',type:'text-to-image',categories:['text-to-image'],bestFor:'Imagens de alta qualidade e detalhadas',description:'Flux Dev — qualidade premium para imagens estáticas',strengths:['Alta qualidade','Grande controle','Boa aderência'],limitations:['Mais lento que Schnell'],estimatedCredits:6,speed:'medio',quality:'premium',aspectRatios:['1:1','16:9','9:16','4:5'],maxDuration:0,supportsImageInput:false,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:true,status:'beta'},
+  {id:'flux-schnell',name:'Flux Schnell',provider:'Black Forest Labs',type:'text-to-image',categories:['text-to-image'],bestFor:'Geração rápida de imagens',description:'Flux Schnell — velocidade máxima para iteração de imagens',strengths:['Muito rápido','Econômico','Boa qualidade'],limitations:['Menos detalhe que Dev'],estimatedCredits:2,speed:'rapido',quality:'standard',aspectRatios:['1:1','16:9','9:16'],maxDuration:0,supportsImageInput:false,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:true,status:'beta'},
+  {id:'gpt-image-1',name:'GPT Image 1',provider:'OpenAI',type:'text-to-image',categories:['text-to-image'],bestFor:'Seguimento fiel de instruções complexas',description:'Modelo de imagem da OpenAI com ótima compreensão de texto',strengths:['Segue instruções complexas','Alta qualidade','Estilos variados'],limitations:['Requer chave OpenAI configurada no admin','Custo médio'],estimatedCredits:8,speed:'medio',quality:'premium',aspectRatios:['1:1','16:9','9:16'],maxDuration:0,supportsImageInput:false,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:false,status:'requer configuração'},
+  {id:'gemini-image',name:'Gemini Image',provider:'Google',type:'text-to-image',categories:['text-to-image'],bestFor:'Imagens fotorrealistas com contexto',description:'Geração de imagem do Google com alta fidelidade',strengths:['Fotorrealismo','Boa compreensão de cena'],limitations:['Requer chave Gemini configurada no admin'],estimatedCredits:6,speed:'medio',quality:'standard',aspectRatios:['1:1','16:9','9:16'],maxDuration:0,supportsImageInput:false,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:false,status:'requer configuração'},
   {id:'heygen-avatar',name:'HeyGen Avatar',provider:'HeyGen',type:'avatar',categories:['avatar','lip-sync'],bestFor:'Avatares falantes e apresentadores digitais',description:'Criação de avatares com lip sync realista e múltiplos idiomas',strengths:['Lip sync preciso','Multi-idioma','Avatares customizados'],limitations:['Acesso externo','Plano específico'],estimatedCredits:15,speed:'medio',quality:'premium',aspectRatios:['16:9','9:16','1:1'],maxDuration:300,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:false,isPremium:true,isActive:true,status:'external'},
   {id:'krea-upscale',name:'Krea Upscale',provider:'Krea AI',type:'upscale',categories:['upscale','enhance'],bestFor:'Upscale rápido de imagens e vídeos',description:'Upscaling inteligente preservando qualidade original',strengths:['Velocidade','Preserva detalhes','Boa interface'],limitations:['Acesso externo'],estimatedCredits:4,speed:'rapido',quality:'standard',aspectRatios:['any'],maxDuration:0,supportsImageInput:true,supportsVideoInput:true,supportsPromptOnly:false,isPremium:false,isActive:true,status:'external'},
   {id:'magnific',name:'Magnific',provider:'Magnific AI',type:'upscale',categories:['upscale','enhance'],bestFor:'Upscale de máxima qualidade com detalhes gerativos',description:'O melhor upscaler do mercado com controle criativo',strengths:['Máxima qualidade','Detalhes gerativos','Controle criativo'],limitations:['Custo alto','Acesso externo'],estimatedCredits:12,speed:'lento',quality:'premium',aspectRatios:['any'],maxDuration:0,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:false,isPremium:true,isActive:true,status:'external'},
   {id:'sora',name:'Sora',provider:'OpenAI',type:'text-to-video',categories:['text-to-video'],bestFor:'Coerência de mundo e cenas complexas',description:'Sora da OpenAI — continuidade temporal e física realista',strengths:['Coerência de mundo','Multi-ação','Alta qualidade'],limitations:['Acesso externo','Custo premium'],estimatedCredits:10,speed:'lento',quality:'premium',aspectRatios:['16:9','9:16','1:1'],maxDuration:12,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:true,isPremium:true,isActive:true,status:'external'},
-  {id:'stable-diffusion-xl',name:'SDXL',provider:'Stability AI',type:'text-to-image',categories:['text-to-image'],bestFor:'Geração rápida e customizável de imagens',description:'SDXL — open source com LoRA e controle avançado',strengths:['Open source','Customizável','Rápido','Econômico'],limitations:['Qualidade menor que Flux'],estimatedCredits:2,speed:'rapido',quality:'standard',aspectRatios:['1:1','16:9','9:16'],maxDuration:0,supportsImageInput:false,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:true,status:'active'}
+  {id:'stable-diffusion-xl',name:'SDXL',provider:'Stability AI',type:'text-to-image',categories:['text-to-image'],bestFor:'Geração rápida e customizável de imagens',description:'SDXL — open source com LoRA e controle avançado',strengths:['Open source','Customizável','Rápido','Econômico'],limitations:['Qualidade menor que Flux'],estimatedCredits:2,speed:'rapido',quality:'standard',aspectRatios:['1:1','16:9','9:16'],maxDuration:0,supportsImageInput:false,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:false,status:'externo'},
+  // Kling 3.0 family
+  {id:'kling-3',name:'Kling 3.0',provider:'Kuaishou',type:'text-to-video',categories:['text-to-video','image-to-video'],bestFor:'Vídeos ultra-realistas com personagens expressivos',description:'Kling 3.0 — geração de vídeo de nova geração com realismo máximo',strengths:['Ultra-realismo','Expressão facial precisa','Movimento fluido'],limitations:['Acesso externo'],estimatedCredits:10,speed:'medio',quality:'premium',aspectRatios:['16:9','9:16','1:1'],maxDuration:15,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:true,isPremium:true,isActive:false,status:'externo'},
+  {id:'kling-3-omni',name:'Kling 3.0 Omni',provider:'Kuaishou',type:'text-to-video',categories:['text-to-video','image-to-video'],bestFor:'Vídeos multimodais: texto, imagem e áudio simultâneos',description:'Kling 3.0 Omni — versão multimodal com suporte a áudio nativo',strengths:['Multimodal (texto+imagem+áudio)','Máxima qualidade','Áudio nativo'],limitations:['Acesso externo','Custo premium'],estimatedCredits:12,speed:'lento',quality:'premium',aspectRatios:['16:9','9:16'],maxDuration:15,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:true,isPremium:true,isActive:false,status:'externo'},
+  {id:'kling-3-motion',name:'Kling 3.0 Motion Control',provider:'Kuaishou',type:'text-to-video',categories:['text-to-video'],bestFor:'Controle preciso de câmera e trajetória de objetos',description:'Kling 3.0 com Motion Control — edite trajetórias de câmera e objetos',strengths:['Controle de câmera preciso','Trajetórias customizadas','Stabilização'],limitations:['Acesso externo'],estimatedCredits:11,speed:'medio',quality:'premium',aspectRatios:['16:9','9:16'],maxDuration:10,supportsImageInput:true,supportsVideoInput:false,supportsPromptOnly:true,isPremium:true,isActive:false,status:'externo'},
+  // Image models adicionais
+  {id:'nano-banana-pro',name:'Nano Banana Pro',provider:'Nano Banana',type:'text-to-image',categories:['text-to-image'],bestFor:'Imagens de alta fidelidade com controle avançado',description:'Nano Banana Pro — modelo de imagem com qualidade premium',strengths:['Alta qualidade','Rápido','Boa aderência ao prompt'],limitations:['Acesso externo'],estimatedCredits:5,speed:'rapido',quality:'premium',aspectRatios:['1:1','16:9','9:16','4:5'],maxDuration:0,supportsImageInput:false,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:false,status:'externo'},
+  {id:'nano-banana-2',name:'Nano Banana 2',provider:'Nano Banana',type:'text-to-image',categories:['text-to-image'],bestFor:'Iteração rápida de imagens com custo baixo',description:'Nano Banana 2 — velocidade e eficiência para geração de imagens',strengths:['Muito rápido','Econômico','Fácil iteração'],limitations:['Acesso externo','Qualidade menor que Pro'],estimatedCredits:2,speed:'rapido',quality:'standard',aspectRatios:['1:1','16:9','9:16'],maxDuration:0,supportsImageInput:false,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:false,status:'externo'},
+  {id:'seedream-45',name:'Seedream 4.5',provider:'ByteDance',type:'text-to-image',categories:['text-to-image'],bestFor:'Imagens cinematográficas de alta qualidade',description:'Seedream 4.5 — geração de imagem da ByteDance com estética premium',strengths:['Estética cinematográfica','Alta resolução','Boa aderência'],limitations:['API em configuração'],estimatedCredits:6,speed:'medio',quality:'premium',aspectRatios:['1:1','16:9','9:16','4:5'],maxDuration:0,supportsImageInput:false,supportsVideoInput:false,supportsPromptOnly:true,isPremium:false,isActive:true,status:'beta'},
+  {id:'seedream-5',name:'Seedream 5',provider:'ByteDance',type:'text-to-image',categories:['text-to-image'],bestFor:'Imagens ultra-detalhadas com composição avançada',description:'Seedream 5 — a versão mais avançada da família Seedream',strengths:['Ultra-detalhe','Composição avançada','Qualidade de pôster'],limitations:['Acesso externo'],estimatedCredits:8,speed:'medio',quality:'premium',aspectRatios:['1:1','16:9','9:16','4:5'],maxDuration:0,supportsImageInput:false,supportsVideoInput:false,supportsPromptOnly:true,isPremium:true,isActive:false,status:'externo'}
 ];
 
 /* ════════ HSAI_MENTORS — catálogo de mentores criativos (Simple Create + Conselho) ════════
@@ -3712,12 +3723,14 @@ function viewSimpleCreate(){
   // Linhas de ação compactas coladas ao textarea (2 fileiras)
   +'<div class="sc-prompt-actions">'
   +'<div class="sc-pa-row">'
+  +'<button class="btn btn-primary btn-sm" onclick="handleCreateVideo()" title="'+(pt?'Gerar vídeo com IA usando o prompt e referências atuais':'Generate AI video with current prompt and references')+'">🎬 '+(pt?'Criar Vídeo':'Create Video')+'</button>'
+  +'<button class="btn btn-primary btn-sm" onclick="handleCreateImage()" title="'+(pt?'Gerar imagem com IA usando o prompt e referências atuais':'Generate AI image with current prompt and references')+'">🖼 '+(pt?'Criar Imagem':'Create Image')+'</button>'
   +'<button class="btn btn-ghost btn-sm" onclick="scAttachRef()" title="'+(pt?'Anexe imagem, vídeo ou áudio como referência':'Attach image, video or audio as reference')+'">📎 '+(pt?'Referência':'Reference')+'</button>'
   +'<button class="btn btn-ghost btn-sm" onclick="scOpenModelPicker()" title="'+(pt?'Escolha ou compare modelos de IA':'Choose or compare AI models')+'">🎛 '+(pt?'Modelos':'Models')+'</button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="handleEnhancePrompt()" title="'+(pt?'Aprimore seu prompt com IA':'Enhance your prompt with AI')+'">✨ '+(pt?'Aprimorar':'Enhance')+'</button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="handleMentor()" title="'+(pt?'Aplique a visão de um mentor criativo':'Apply a creative mentor\'s vision')+'">🎭 Mentor</button>'
+  +'<button class="btn btn-ghost btn-sm" onclick="handleEnhancePrompt()" title="'+(pt?'Aprimore seu prompt com IA':'Enhance your prompt with AI')+'">✨ '+(pt?'Aprimorar Prompt':'Enhance Prompt')+'</button>'
   +'</div>'
   +'<div class="sc-pa-row">'
+  +'<button class="btn btn-ghost btn-sm" onclick="handleMentor()" title="'+(pt?'Aplique a visão de um mentor criativo':'Apply a creative mentor\'s vision')+'">🎭 Mentor</button>'
   +'<button class="btn btn-ghost btn-sm" onclick="handleStoryboard()" title="'+(pt?'Transforme a ideia em cenas de storyboard':'Turn the idea into storyboard scenes')+'">📋 Storyboard</button>'
   +'<button class="btn btn-ghost btn-sm" onclick="handlePostProduction()" title="'+(pt?'Pós-produção: resolução, redes sociais, legenda, briefing':'Post-production: resolution, social media, caption, briefing')+'">🛠 '+(pt?'Pós-produção':'Post-production')+'</button>'
   +'<button class="btn btn-ghost btn-sm" onclick="scSendToStudio()" title="'+(pt?'Use para controlar o fluxo inteiro: modelos, referências, storyboard, pós-produção, galeria e publicação.':'Use it to control the entire workflow: models, references, storyboard, post-production, gallery and publishing.')+'">⚙️ '+(pt?'Studio completo':'Full Studio')+'</button>'
@@ -3731,46 +3744,47 @@ function viewSimpleCreate(){
   +'<button class="btn btn-ghost btn-sm" onclick="scChooseModel()" style="font-size:11px;padding:2px 8px">'+(pt?'Trocar':'Change')+'</button>'
   +'</div>'
 
-  // Dropdown row
+  // Dropdown row — scTypeSelect hidden (type set via Criar Vídeo / Criar Imagem buttons)
   +'<div class="sc-compact-row">'
-  +'<select class="sc-select" id="scTypeSelect" onchange="scSetType(this.value)">'
+  +'<select class="sc-select" id="scTypeSelect" onchange="scSetType(this.value)" style="display:none">'
   +'<option value="video"'+ (_scType==='video'?' selected':'')+'>🎬 '+(pt?'Vídeo':'Video')+'</option>'
   +'<option value="image"'+ (_scType==='image'?' selected':'')+'>🖼 '+(pt?'Imagem':'Image')+'</option>'
   +'</select>'
-  +'<select class="sc-select" id="scAspectSelect">'
+  +'<select class="sc-select" id="scAspectSelect" onchange="scSetFormat(this.value)">'
   +'<option value="16:9"'+(_scFormat==='16:9'?' selected':'')+'>16:9</option>'
   +'<option value="9:16"'+(_scFormat==='9:16'?' selected':'')+'>9:16</option>'
   +'<option value="1:1"'+(_scFormat==='1:1'?' selected':'')+'>1:1</option>'
   +'<option value="4:5"'+(_scFormat==='4:5'?' selected':'')+'>4:5</option>'
   +'</select>'
-  +'<select class="sc-select" id="scDurSelect" style="display:'+(_scType==='video'?'':'none')+'">'
+  +'<select class="sc-select" id="scDurSelect" style="display:'+(_scType==='video'?'':'none')+'" onchange="scSetDuration(this.value)">'
   +'<option value="5"'+(_scDuration==='5s'?' selected':'')+'>5s</option>'
   +'<option value="8"'+(_scDuration==='8s'||_scDuration==='8'?' selected':'')+'>8s</option>'
   +'<option value="10"'+(_scDuration==='10s'?' selected':'')+'>10s</option>'
   +'<option value="15"'+(_scDuration==='15s'?' selected':'')+'>15s</option>'
   +'</select>'
-  +'<select class="sc-select" id="scStyleSelect">'
+  +'<div class="sc-select-group">'
+  +'<span class="sc-select-lbl">'+(pt?'Estilo visual':'Visual style')+'</span>'
+  +'<select class="sc-select" id="scStyleSelect" onchange="scSetStyle(this.value)">'
   +'<option value="cinematico"'+(_scStyle==='Cinemático'?' selected':'')+'>'+(pt?'Cinemático':'Cinematic')+'</option>'
   +'<option value="realista"'+(_scStyle==='Realista'?' selected':'')+'>'+(pt?'Realista':'Realistic')+'</option>'
   +'<option value="comercial"'+(_scStyle==='Comercial'?' selected':'')+'>'+(pt?'Comercial':'Commercial')+'</option>'
   +'<option value="luxo"'+(_scStyle==='Luxo'?' selected':'')+'>'+(pt?'Luxo':'Luxury')+'</option>'
   +'<option value="viral"'+(_scStyle==='Viral'?' selected':'')+'>Viral</option>'
-  +'</select>'
-  +'<select class="sc-select" id="scQualSelect">'
+  +'</select></div>'
+  +'<div class="sc-select-group">'
+  +'<span class="sc-select-lbl">'+(pt?'Modo de geração':'Generation mode')+'</span>'
+  +'<select class="sc-select" id="scQualSelect" onchange="scSetQuality(this.value);scUpdateRecommendation()">'
   +'<option value="balanced"'+(_scQuality==='Equilibrado'?' selected':'')+'>'+(pt?'Equilibrado':'Balanced')+'</option>'
   +'<option value="fast"'+(_scQuality==='Rápido'?' selected':'')+'>'+(pt?'Rápido':'Fast')+'</option>'
   +'<option value="premium"'+(_scQuality==='Premium'?' selected':'')+'>Premium</option>'
-  +'</select>'
-  +'<select class="sc-select" id="scDirectorSelect" onchange="scSetDirector(this.value)" title="'+(pt?'Direção / Mentor criativo':'Direction / Creative mentor')+'">'
+  +'</select></div>'
+  +'<div class="sc-select-group">'
+  +'<span class="sc-select-lbl">'+(pt?'Direção criativa':'Creative direction')+'</span>'
+  +'<select class="sc-select" id="scDirectorSelect" onchange="scSetDirector(this.value)" title="'+(pt?'Direção criativa':'Creative direction')+'">'
   +_scMentorOptionsHtml(pt)
-  +'</select>'
+  +'</select></div>'
   +'</div>'
 
-  // CTAs primárias de geração
-  +'<div class="sc-actions">'
-  +'<button class="btn btn-primary" style="padding:9px 18px;font-size:13.5px" onclick="handleCreateVideo()">🎬 '+(pt?'Criar Vídeo':'Create Video')+'</button>'
-  +'<button class="btn btn-primary" style="padding:9px 18px;font-size:13.5px" onclick="handleCreateImage()">🖼 '+(pt?'Criar Imagem':'Create Image')+'</button>'
-  +'</div>'
 
   +'</div>'  // end .sc-prompt-bar
   +'</div>'  // end .sc-center
@@ -4272,7 +4286,7 @@ function _scMentorOptionsHtml(pt){
   var sampleIds=['auto','cinematico','publicitario','luxo','viral','narrativo','fotografo','social','nolan','villeneuve','kubrick','spielberg','scorsese','fincher'];
   var icons={auto:'🤖',cinematico:'🎬',publicitario:'📺',fotografo:'📷',narrativo:'📖',luxo:'💎',social:'📱',viral:'🔥'};
   var cur=window._scMentor||'';
-  var html='<option value=""'+(cur===''?' selected':'')+'>'+(pt?'🎭 Direção / Mentor':'🎭 Direction / Mentor')+'</option>';
+  var html='<option value=""'+(cur===''?' selected':'')+'>'+(pt?'🎭 Automático':'🎭 Automatic')+'</option>';
   sampleIds.forEach(function(id){
     var m=_scMentorById(id);
     if(!m||!m.isEnabled)return;
@@ -4447,8 +4461,10 @@ function _scPickerBodyHtml(){
   }
   var badge=function(m){
     var st=m.status||'active';
-    var lbl=st==='active'?(pt?'ativo':'active'):(st==='beta'?'beta':(st==='external'?(pt?'externo':'external'):st));
-    var col=st==='active'?'#22a06b':(st==='beta'?'#b08a2e':'#888');
+    var isExternal=(st==='externo'||st==='external');
+    var needsCfg=(st==='requer configuração');
+    var col=st==='active'?'#22a06b':(st==='beta'?'#b08a2e':(needsCfg?'#e06a27':(isExternal?'#888':'#aaa')));
+    var lbl=st==='active'?(pt?'ativo':'active'):(st==='beta'?'beta':(needsCfg?(pt?'requer config':'needs config'):(isExternal?(pt?'externo':'external'):(st==='em breve'?(pt?'em breve':'coming soon'):st))));
     var b='<span style="font-size:10px;font-weight:700;border:1px solid '+col+';color:'+col+';border-radius:6px;padding:1px 6px">'+lbl+'</span>';
     if(m.isPremium)b+=' <span style="font-size:10px;font-weight:700;border:1px solid var(--accent);color:var(--accent);border-radius:6px;padding:1px 6px">'+(pt?'requer plano':'plan required')+'</span>';
     return b;
@@ -4481,6 +4497,14 @@ function scPickModel(id){
   var nc=document.getElementById('scRecCredits');if(nc&&m)nc.textContent=m.estimatedCredits||3;
   var md=document.getElementById('scQuickModal');if(md)md.remove();
   toast((S.lang==='pt'?'Modelo selecionado: ':'Model selected: ')+(m?m.name:id),'ok');
+  // Warn if model requires external access or admin configuration
+  var _warnSt=['externo','external','em breve','requer configuração','requer plano'];
+  if(m&&_warnSt.indexOf(m.status)>=0){
+    var _pt2=S.lang==='pt';
+    setTimeout(function(){
+      showActionFeedback(_pt2?'⚠️ Este modelo precisa ser configurado no admin antes de gerar.':'⚠️ This model must be configured in admin before generation.','info');
+    },400);
+  }
 }
 
 /* ── Agentes de texto (GPT/Claude/Diretor/Doctor/Storyboard/Social) — backend only, sem chaves no front ── */
@@ -4794,8 +4818,10 @@ function scSendToStudio(){
   }
   scRememberInteraction('create',{prompt:s.prompt,mediaType:s.mediaType});
   var active=window._scActivePreview||null;
+  var directorId=(document.getElementById('scDirectorSelect')||{}).value||window._scMentor||'';
   sendToStudio({prompt:s.prompt,modelId:_scModel,mediaUrl:_scRef||(active?active.url:null)||null,source:'simple-create',mediaType:s.mediaType,
     aspectRatio:s.aspectRatio,duration:parseInt(s.duration)||8,style:s.style,quality:s.quality,
+    director:directorId,
     metadata:{activePreview:active?(active.url||null):null,activePreviewPrompt:active?(active.prompt||null):null}});
   // Record to recent gallery
   var galleryItem={
@@ -5160,6 +5186,30 @@ function sendBriefToStudioSuite(payload){
 
 function handleCreateVideo(){_handleCreate('video');}
 function handleCreateImage(){_handleCreate('image');}
+
+/* Compose final prompt: base + visual style instruction + active director influence */
+function _scBuildFinalPrompt(s){
+  var p=(s.prompt||'').trim();
+  if(!p)return p;
+  var styleMap={
+    cinematico:'visual cinematográfico, iluminação dramática, composição premium, profundidade de campo',
+    realista:'aparência natural, fotorealismo, textura real, sem aparência artificial',
+    comercial:'linguagem publicitária, produto/serviço em destaque, acabamento limpo e vendável',
+    luxo:'estética premium, luz sofisticada, materiais nobres, composição elegante',
+    viral:'impacto visual imediato, cena memorável, composição chamativa para redes sociais'
+  };
+  var styleKey=(s.style||'').toLowerCase();
+  var styleHint=styleMap[styleKey]||'';
+  var dirInf='';
+  if(window._scMentor&&typeof _scMentorById==='function'){
+    var dm=_scMentorById(window._scMentor);
+    if(dm&&dm.promptInfluence)dirInf=dm.promptInfluence;
+  }
+  var parts=[p];
+  if(styleHint&&p.toLowerCase().indexOf(styleHint.slice(0,12))<0)parts.push(styleHint);
+  if(dirInf&&p.toLowerCase().indexOf(dirInf.slice(0,12))<0)parts.push(dirInf);
+  return parts.join(', ');
+}
 function _handleCreate(type){
   var pt=S.lang==='pt';
   if(type)scSetType(type);
@@ -5204,7 +5254,7 @@ async function _scRunHomeGeneration(s){
   _scPreviewLoading(true,pt?'Preparando geração... isso pode levar alguns instantes.':'Preparing generation... this may take a moment.');
   showActionFeedback(pt?'🎬 Geração iniciada':'🎬 Generation started','info');
   try{
-    var d=await HsaiBackend.generateMedia({prompt:s.prompt,mediaType:s.mediaType,model:_scModel,
+    var d=await HsaiBackend.generateMedia({prompt:_scBuildFinalPrompt(s),mediaType:s.mediaType,model:_scModel,
       aspectRatio:s.aspectRatio,duration:parseInt(s.duration)||8,style:s.style,quality:s.quality,
       references:_scRef?[_scRef]:[]});
     var url=d&&(d.url||d.outputUrl);
