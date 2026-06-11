@@ -1783,6 +1783,17 @@ body.layout-fullscreen .topbar{display:none!important}
 .sc-enhance-inline{position:absolute;bottom:10px;right:12px;font-size:12px;height:28px;padding:0 10px;background:rgba(0,0,0,.55);border:1px solid rgba(212,168,67,.35);border-radius:20px;color:var(--ink-3);cursor:pointer;line-height:28px;transition:border-color .15s,color .15s,background .15s;z-index:2;white-space:nowrap;font-family:inherit}
 .sc-enhance-inline:hover{border-color:var(--hs-gold,#d4a843);color:var(--hs-gold,#d4a843);background:rgba(212,168,67,.08)}
 .sc-enhance-inline:focus-visible{outline:2px solid var(--hs-gold-light,#f2cf72);outline-offset:2px}
+/* Visual aspect ratio picker */
+.sc-aspect-picker{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.sc-aspect-pill{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 10px;border:1px solid var(--line-2,rgba(255,255,255,.15));border-radius:10px;background:transparent;cursor:pointer;font-size:11px;color:var(--ink-3);transition:border-color .15s,background .15s,color .15s;font-family:inherit;line-height:1}
+.sc-aspect-pill:hover{border-color:var(--hs-gold,#d4a843);background:rgba(212,168,67,.08);color:var(--ink-1)}
+.sc-aspect-pill.active{border-color:var(--hs-gold,#d4a843);background:rgba(212,168,67,.14);color:var(--hs-gold,#d4a843)}
+.sc-aspect-pill:focus-visible{outline:2px solid var(--hs-gold-light,#f2cf72);outline-offset:2px}
+.sc-aspect-icon{border:1.5px solid currentColor;border-radius:2px;display:block;flex-shrink:0}
+.sc-aspect-icon--16-9{width:28px;height:16px}
+.sc-aspect-icon--9-16{width:11px;height:20px}
+.sc-aspect-icon--1-1{width:18px;height:18px}
+.sc-aspect-icon--4-5{width:16px;height:20px}
 @media(max-width:900px){
   .sc-console{height:auto;overflow:visible;min-height:100vh}
   .sc-console-mid{display:flex;flex-direction:column;overflow:visible;padding-bottom:48px}
@@ -1808,6 +1819,7 @@ body.layout-fullscreen .topbar{display:none!important}
   .sc-pa-mentor-mob{display:flex!important}
   .sc-pa-mentor-desk{display:none!important}
   .sc-enhance-inline{min-width:44px;min-height:44px;line-height:44px;height:auto;padding:0 14px;bottom:6px;right:8px}
+  .sc-aspect-pill{min-width:40px;min-height:40px;justify-content:center;padding:4px 8px}
   .sc-pa-model-info{width:100%;background:var(--panel-2);border:1px solid var(--line-2);border-radius:8px;padding:8px 12px;justify-content:space-between;white-space:normal;flex-wrap:wrap;gap:8px;box-sizing:border-box}
   .sc-pa-row--support{flex-wrap:nowrap;gap:6px}
   .sc-pa-row--support .btn{flex:1;justify-content:center;min-height:44px}
@@ -3812,14 +3824,22 @@ function viewSimpleCreate(){
   +'<option value="video"'+ (_scType==='video'?' selected':'')+'>🎬 '+(pt?'Vídeo':'Video')+'</option>'
   +'<option value="image"'+ (_scType==='image'?' selected':'')+'>🖼 '+(pt?'Imagem':'Image')+'</option>'
   +'</select>'
-  +'<div class="sc-select-group">'
+  +'<div class="sc-select-group" style="flex-direction:column;align-items:flex-start">'
   +'<span class="sc-select-lbl">'+(pt?'Formato':'Format')+'</span>'
-  +'<select class="sc-select" id="scAspectSelect" onchange="scSetFormat(this.value)">'
+  +'<div id="scAspectPicker" class="sc-aspect-picker" role="group" aria-label="'+(pt?'Formato':'Format')+'">'
+  +[['16:9',pt?'Horizontal · YouTube / Cinema':'Horizontal · YouTube / Cinema'],
+    ['9:16',pt?'Vertical · Reels / TikTok':'Vertical · Reels / TikTok'],
+    ['1:1', pt?'Quadrado · Feed':'Square · Feed'],
+    ['4:5', pt?'Retrato · Instagram':'Portrait · Instagram']
+  ].map(function(r){var v=r[0],ttl=r[1];var cls=v.replace(':','-');return '<button class="sc-aspect-pill'+(v===_scFormat?' active':'')+'" data-val="'+v+'" onclick="scSetAspect(\''+v+'\')" title="'+ttl+'" aria-pressed="'+(v===_scFormat?'true':'false')+'">'+'<span class="sc-aspect-icon sc-aspect-icon--'+cls+'"></span>'+'<span class="sc-aspect-label">'+v+'</span>'+'</button>';}).join('')
+  +'</div>'
+  +'<select class="sc-select" id="scAspectSelect" style="display:none" onchange="scSetAspect(this.value)">'
   +'<option value="16:9"'+(_scFormat==='16:9'?' selected':'')+'>16:9</option>'
   +'<option value="9:16"'+(_scFormat==='9:16'?' selected':'')+'>9:16</option>'
   +'<option value="1:1"'+(_scFormat==='1:1'?' selected':'')+'>1:1</option>'
   +'<option value="4:5"'+(_scFormat==='4:5'?' selected':'')+'>4:5</option>'
-  +'</select></div>'
+  +'</select>'
+  +'</div>'
   +'<div class="sc-select-group" id="scDurGroup" style="display:'+(_scType==='video'?'flex':'none')+'">'
   +'<span class="sc-select-lbl">'+(pt?'Tempo':'Duration')+'</span>'
   +'<select class="sc-select" id="scDurSelect" onchange="scSetDuration(this.value)">'
@@ -4048,10 +4068,7 @@ function useHomeInspiration(i,attach){
   var el=document.getElementById('scPrompt');
   if(el)el.value=item.prompt||'';
   if(item.type&&typeof scSetType==='function')scSetType(item.type==='video'?'video':'image');
-  if(item.aspectRatio){
-    _scFormat=item.aspectRatio;
-    var asp=document.getElementById('scAspectSelect');if(asp)asp.value=item.aspectRatio;
-  }
+  if(item.aspectRatio){if(typeof scSetAspect==='function')scSetAspect(item.aspectRatio);else _scFormat=item.aspectRatio;}
   if(item.type==='video'&&item.duration){
     _scDuration=item.duration;
     var dur=document.getElementById('scDurSelect');if(dur)dur.value=String(parseInt(item.duration)||8);
@@ -4472,7 +4489,15 @@ function scSetType(t){
   if(durGrp)durGrp.style.display=t==='video'?'flex':'none';
   scUpdateRecommendation();
 }
-function scSetFormat(f){_scFormat=f;}
+function scSetAspect(val){
+  _scFormat=val;
+  var sel=document.getElementById('scAspectSelect');
+  if(sel)sel.value=val;
+  var picker=document.getElementById('scAspectPicker');
+  if(picker){picker.querySelectorAll('.sc-aspect-pill').forEach(function(btn){var a=btn.dataset.val===val;btn.classList.toggle('active',a);btn.setAttribute('aria-pressed',String(a));});}
+  scUpdateRecommendation();
+}
+function scSetFormat(f){scSetAspect(f);}
 function scSetDuration(d){_scDuration=d;}
 function scSetQuality(q){_scQuality=q;}
 function scSetStyle(s){_scStyle=s;}
@@ -4961,8 +4986,7 @@ function scGalleryReutilizar(id){
   if(el){el.value=item.prompt||'';el.focus();}
   var typeEl=document.getElementById('scTypeSelect');
   if(typeEl&&item.mediaType){typeEl.value=item.mediaType;scSetType(item.mediaType);}
-  var aspectEl=document.getElementById('scAspectSelect');
-  if(aspectEl&&item.aspectRatio)aspectEl.value=item.aspectRatio;
+  if(item.aspectRatio&&typeof scSetAspect==='function')scSetAspect(item.aspectRatio);
   var styleEl=document.getElementById('scStyleSelect');
   if(styleEl&&item.style)styleEl.value=item.style;
   var qualEl=document.getElementById('scQualSelect');
