@@ -1779,6 +1779,10 @@ body.layout-fullscreen .topbar{display:none!important}
 .sc-pa-row--config .sc-select{height:34px;font-size:12px;padding:0 8px}
 /* Mobile-only Mentor: hidden on desktop */
 .sc-pa-mentor-mob{display:none!important}
+/* Enhance button inside textarea */
+.sc-enhance-inline{position:absolute;bottom:10px;right:12px;font-size:12px;height:28px;padding:0 10px;background:rgba(0,0,0,.55);border:1px solid rgba(212,168,67,.35);border-radius:20px;color:var(--ink-3);cursor:pointer;line-height:28px;transition:border-color .15s,color .15s,background .15s;z-index:2;white-space:nowrap;font-family:inherit}
+.sc-enhance-inline:hover{border-color:var(--hs-gold,#d4a843);color:var(--hs-gold,#d4a843);background:rgba(212,168,67,.08)}
+.sc-enhance-inline:focus-visible{outline:2px solid var(--hs-gold-light,#f2cf72);outline-offset:2px}
 @media(max-width:900px){
   .sc-console{height:auto;overflow:visible;min-height:100vh}
   .sc-console-mid{display:flex;flex-direction:column;overflow:visible;padding-bottom:48px}
@@ -1803,6 +1807,7 @@ body.layout-fullscreen .topbar{display:none!important}
   .sc-pa-left .btn{width:100%;justify-content:center;min-height:44px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .sc-pa-mentor-mob{display:flex!important}
   .sc-pa-mentor-desk{display:none!important}
+  .sc-enhance-inline{min-width:44px;min-height:44px;line-height:44px;height:auto;padding:0 14px;bottom:6px;right:8px}
   .sc-pa-model-info{width:100%;background:var(--panel-2);border:1px solid var(--line-2);border-radius:8px;padding:8px 12px;justify-content:space-between;white-space:normal;flex-wrap:wrap;gap:8px;box-sizing:border-box}
   .sc-pa-row--support{flex-wrap:nowrap;gap:6px}
   .sc-pa-row--support .btn{flex:1;justify-content:center;min-height:44px}
@@ -3775,23 +3780,25 @@ function viewSimpleCreate(){
   +'<p class="sub">'+(pt?'Comece rápido aqui. Quando quiser mais controle, envie para o Studio completo.':'Start fast here. When you want more control, send it to the Full Studio.')+'</p>'
   +'</div>'
   +'<div class="sc-prompt-bar">'
-  +'<textarea class="sc-prompt-field" id="scPrompt" rows="3" placeholder="'+(pt?'Descreva sua ideia...':'Describe your idea...')+'" oninput="scUpdateRecommendation()" style="width:100%;resize:none;min-height:88px;padding:12px 16px;font-size:15px"></textarea>'
+  // Textarea with inline enhance button
+  +'<div style="position:relative">'
+  +'<textarea class="sc-prompt-field" id="scPrompt" rows="3" placeholder="'+(pt?'Descreva sua ideia...':'Describe your idea...')+'" oninput="scUpdateRecommendation()" style="width:100%;resize:none;min-height:88px;padding:12px 16px 46px 16px;font-size:15px;box-sizing:border-box"></textarea>'
+  +'<button class="sc-enhance-inline" onclick="handleEnhancePrompt()" title="'+(pt?'Aprimorar Prompt':'Enhance Prompt')+'" aria-label="'+(pt?'Aprimorar Prompt':'Enhance Prompt')+'">✨ '+(pt?'Aprimorar':'Enhance')+'</button>'
+  +'</div>'
   +'<div id="scRefPreview" style="display:none;margin-top:6px"></div>'
   +'<input type="file" id="scRefInput" class="hide" style="display:none" accept="image/*,video/*,.pdf,.txt" onchange="scOnRefFile(this)">'
   +'<div id="scEnhanceUndo" style="display:none;margin-top:6px;gap:8px;flex-wrap:wrap;align-items:center"></div>'
 
-  // 3-row action block attached to textarea
+  // Action block
   +'<div class="sc-prompt-actions">'
 
-  // Row 1: primary action buttons (left) + model info (right, inline on desktop)
+  // Row 1: primary action buttons (left) + model info (right)
   +'<div class="sc-pa-row sc-pa-row--primary">'
   +'<div class="sc-pa-left">'
   +'<button class="btn btn-primary btn-sm" onclick="handleCreateVideo()" title="'+(pt?'Gerar vídeo com IA usando o prompt e referências atuais':'Generate AI video with current prompt and references')+'">🎬 '+(pt?'Criar Vídeo':'Create Video')+'</button>'
   +'<button class="btn btn-primary btn-sm" onclick="handleCreateImage()" title="'+(pt?'Gerar imagem com IA usando o prompt e referências atuais':'Generate AI image with current prompt and references')+'">🖼 '+(pt?'Criar Imagem':'Create Image')+'</button>'
   +'<button class="btn btn-ghost btn-sm" onclick="scAttachRef()" title="'+(pt?'Anexe imagem, vídeo ou áudio como referência':'Attach image, video or audio as reference')+'">📎 '+(pt?'Referência':'Reference')+'</button>'
   +'<button class="btn btn-ghost btn-sm" onclick="scOpenModelPicker()" title="'+(pt?'Escolha ou compare modelos de IA':'Choose or compare AI models')+'">🎛 '+(pt?'Modelos':'Models')+'</button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="handleEnhancePrompt()" title="'+(pt?'Aprimore seu prompt com IA':'Enhance your prompt with AI')+'">✨ '+(pt?'Aprimorar Prompt':'Enhance Prompt')+'</button>'
-  +'<button class="btn btn-ghost btn-sm sc-pa-mentor-mob" onclick="handleMentor()" title="'+(pt?'Aplique a visão de um mentor criativo':'Apply a creative mentor\'s vision')+'">🎭 Mentor</button>'
   +'</div>'
   +'<div class="sc-pa-model-info" id="scModelRec">'
   +'<span>'+(pt?'Modelo':'Model')+': <b id="scRecModelName" style="color:var(--ink)">'+(rec?rec.name:'Seedance Fast')+'</b> · ~<span id="scRecCredits">'+(recResult.estimatedCredits||3)+'</span> '+(pt?'créditos':'credits')+'</span>'
@@ -3799,32 +3806,28 @@ function viewSimpleCreate(){
   +'</div>'
   +'</div>'
 
-  // Row 2: support buttons (Mentor desktop-only + Storyboard + Post-prod + Studio)
-  +'<div class="sc-pa-row sc-pa-row--support">'
-  +'<button class="btn btn-ghost btn-sm sc-pa-mentor-desk" onclick="handleMentor()" title="'+(pt?'Aplique a visão de um mentor criativo':'Apply a creative mentor\'s vision')+'">🎭 Mentor</button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="handleStoryboard()" title="'+(pt?'Transforme a ideia em cenas de storyboard':'Turn the idea into storyboard scenes')+'">📋 Storyboard</button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="handlePostProduction()" title="'+(pt?'Pós-produção: resolução, redes sociais, legenda, briefing':'Post-production: resolution, social media, caption, briefing')+'">🛠 '+(pt?'Pós-produção':'Post-production')+'</button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="scSendToStudio()" title="'+(pt?'Use para controlar o fluxo inteiro: modelos, referências, storyboard, pós-produção, galeria e publicação.':'Use it to control the entire workflow: models, references, storyboard, post-production, gallery and publishing.')+'">⚙️ '+(pt?'Studio completo':'Full Studio')+'</button>'
-  +'</div>'
-
-  // Row 3: config selects (aspect · duration · style · mode · direction)
+  // Row 2: config selects (Formato · Tempo · Estilo visual · Modo · Direção)
   +'<div class="sc-pa-row sc-pa-row--config">'
   +'<select class="sc-select" id="scTypeSelect" onchange="scSetType(this.value)" style="display:none">'
   +'<option value="video"'+ (_scType==='video'?' selected':'')+'>🎬 '+(pt?'Vídeo':'Video')+'</option>'
   +'<option value="image"'+ (_scType==='image'?' selected':'')+'>🖼 '+(pt?'Imagem':'Image')+'</option>'
   +'</select>'
+  +'<div class="sc-select-group">'
+  +'<span class="sc-select-lbl">'+(pt?'Formato':'Format')+'</span>'
   +'<select class="sc-select" id="scAspectSelect" onchange="scSetFormat(this.value)">'
   +'<option value="16:9"'+(_scFormat==='16:9'?' selected':'')+'>16:9</option>'
   +'<option value="9:16"'+(_scFormat==='9:16'?' selected':'')+'>9:16</option>'
   +'<option value="1:1"'+(_scFormat==='1:1'?' selected':'')+'>1:1</option>'
   +'<option value="4:5"'+(_scFormat==='4:5'?' selected':'')+'>4:5</option>'
-  +'</select>'
-  +'<select class="sc-select" id="scDurSelect" style="display:'+(_scType==='video'?'':'none')+'" onchange="scSetDuration(this.value)">'
+  +'</select></div>'
+  +'<div class="sc-select-group" id="scDurGroup" style="display:'+(_scType==='video'?'flex':'none')+'">'
+  +'<span class="sc-select-lbl">'+(pt?'Tempo':'Duration')+'</span>'
+  +'<select class="sc-select" id="scDurSelect" onchange="scSetDuration(this.value)">'
   +'<option value="5"'+(_scDuration==='5s'?' selected':'')+'>5s</option>'
   +'<option value="8"'+(_scDuration==='8s'||_scDuration==='8'?' selected':'')+'>8s</option>'
   +'<option value="10"'+(_scDuration==='10s'?' selected':'')+'>10s</option>'
   +'<option value="15"'+(_scDuration==='15s'?' selected':'')+'>15s</option>'
-  +'</select>'
+  +'</select></div>'
   +'<div class="sc-select-group">'
   +'<span class="sc-select-lbl">'+(pt?'Estilo visual':'Visual style')+'</span>'
   +'<select class="sc-select" id="scStyleSelect" onchange="scSetStyle(this.value)">'
@@ -3846,6 +3849,14 @@ function viewSimpleCreate(){
   +'<select class="sc-select" id="scDirectorSelect" onchange="scSetDirector(this.value)" title="'+(pt?'Direção criativa':'Creative direction')+'">'
   +_scMentorOptionsHtml(pt)
   +'</select></div>'
+  +'</div>'
+
+  // Row 3: support buttons (Mentor · Storyboard · Pós-produção · Studio completo)
+  +'<div class="sc-pa-row sc-pa-row--support">'
+  +'<button class="btn btn-ghost btn-sm" onclick="handleMentor()" title="'+(pt?'Aplique a visão de um mentor criativo':'Apply a creative mentor\'s vision')+'">🎭 Mentor</button>'
+  +'<button class="btn btn-ghost btn-sm" onclick="handleStoryboard()" title="'+(pt?'Transforme a ideia em cenas de storyboard':'Turn the idea into storyboard scenes')+'">📋 Storyboard</button>'
+  +'<button class="btn btn-ghost btn-sm" onclick="handlePostProduction()" title="'+(pt?'Pós-produção: resolução, redes sociais, legenda, briefing':'Post-production: resolution, social media, caption, briefing')+'">🛠 '+(pt?'Pós-produção':'Post-production')+'</button>'
+  +'<button class="btn btn-ghost btn-sm" onclick="scSendToStudio()" title="'+(pt?'Use para controlar o fluxo inteiro: modelos, referências, storyboard, pós-produção, galeria e publicação.':'Use it to control the entire workflow: models, references, storyboard, post-production, gallery and publishing.')+'">⚙️ '+(pt?'Studio completo':'Full Studio')+'</button>'
   +'</div>'
 
   +'</div>'  // end .sc-prompt-actions
@@ -4457,6 +4468,8 @@ function scSetType(t){
   if(sel&&sel.value!==t)sel.value=t;
   var durSel=document.getElementById('scDurSelect');
   if(durSel)durSel.style.display=t==='video'?'':'none';
+  var durGrp=document.getElementById('scDurGroup');
+  if(durGrp)durGrp.style.display=t==='video'?'flex':'none';
   scUpdateRecommendation();
 }
 function scSetFormat(f){_scFormat=f;}
