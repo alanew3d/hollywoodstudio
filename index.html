@@ -2940,11 +2940,33 @@ function init(){
   initGoogle();
   // Retorno do OAuth Supabase (#access_token=… no hash) → fecha o gate e mostra estado logado
   if(detectSupabaseOAuthReturn())return;
-  // Restore admin session from short-lived sessionStorage token (max 1h)
-  const _adminTok=sessionStorage.getItem('hsai_admin_token');
-  if(_adminTok&&_adminTok.startsWith('hsai-admin-')){const _ts=parseInt(_adminTok.split('-')[2]||'0',10);if(_ts&&Date.now()-_ts<3600000){S.user={uid:'admin',email:'admin',name:'Admin',admin:true};upsertUser(S.user);loadUserState();enterApp();}else{sessionStorage.removeItem('hsai_admin_token');if(localStorage.getItem('hsai_user')){S.user=JSON.parse(localStorage.getItem('hsai_user'));if(S.user&&!S.user.uid)S.user.uid=S.user.email==='admin'?'admin':'u_'+(S.user.email||'guest').replace(/[^a-z0-9]/gi,'').toLowerCase();upsertUser(S.user);loadUserState();enterApp();}else{setupGuest();enterApp();}}}
-  else if(localStorage.getItem('hsai_user')){ S.user=JSON.parse(localStorage.getItem('hsai_user')); if(S.user&&!S.user.uid)S.user.uid=S.user.email==='admin'?'admin':'u_'+(S.user.email||'guest').replace(/[^a-z0-9]/gi,'').toLowerCase(); upsertUser(S.user); loadUserState(); enterApp(); }
-  else { setupGuest(); enterApp(); }   // sem login → entra como VISITANTE direto na tela principal
+  // Session restore — wrapped in try/catch: any parse/runtime error must NOT block enterApp()
+  var _enteredApp=false;
+  try{
+    const _adminTok=sessionStorage.getItem('hsai_admin_token');
+    if(_adminTok&&_adminTok.startsWith('hsai-admin-')){
+      const _parts=_adminTok.split('-');
+      const _ts=parseInt(_parts[2]||'0',10);
+      if(_ts&&!isNaN(_ts)&&Date.now()-_ts<3600000){
+        S.user={uid:'admin',email:'admin',name:'Admin',admin:true};upsertUser(S.user);loadUserState();enterApp();_enteredApp=true;
+      }else{
+        sessionStorage.removeItem('hsai_admin_token');
+        const _raw=localStorage.getItem('hsai_user');
+        if(_raw){S.user=JSON.parse(_raw);if(S.user&&!S.user.uid)S.user.uid=S.user.email==='admin'?'admin':'u_'+(S.user.email||'guest').replace(/[^a-z0-9]/gi,'').toLowerCase();upsertUser(S.user);loadUserState();enterApp();_enteredApp=true;}
+        else{setupGuest();enterApp();_enteredApp=true;}
+      }
+    }else{
+      const _raw=localStorage.getItem('hsai_user');
+      if(_raw){S.user=JSON.parse(_raw);if(S.user&&!S.user.uid)S.user.uid=S.user.email==='admin'?'admin':'u_'+(S.user.email||'guest').replace(/[^a-z0-9]/gi,'').toLowerCase();upsertUser(S.user);loadUserState();enterApp();_enteredApp=true;}
+      else{setupGuest();enterApp();_enteredApp=true;}   // sem login → entra como VISITANTE direto na tela principal
+    }
+  }catch(e){
+    console.warn('[HSAI] Session restore error — falling back to guest:',e);
+    try{sessionStorage.removeItem('hsai_admin_token');localStorage.removeItem('hsai_user');}catch(e2){}
+    if(!_enteredApp){try{setupGuest();enterApp();_enteredApp=true;}catch(e3){}}
+  }
+  // Hard safety net: if enterApp() never fired (e.g. silent DOM error), force guest entry
+  if(!_enteredApp){setTimeout(function(){try{var app=document.getElementById('app');if(app&&app.classList.contains('hide')){setupGuest();enterApp();}}catch(e){}},800);}
 }
 /* Detecta o retorno do OAuth do Supabase (fluxo implícito) sem precisar do supabase-js.
    Retorna true se assumiu o boot (vai chamar finishAuth ao terminar). */
@@ -3083,7 +3105,8 @@ function finishAuth(){
 function _initialView(){
   try{
     var h=decodeURIComponent((location.hash||'').replace(/^#/,''));
-    if(/^[a-z][a-z0-9-]*$/.test(h)&&h.indexOf('access_token')<0)return h;
+    // 'login' is not a routable view — visitors who land on #login should see the home
+    if(/^[a-z][a-z0-9-]*$/.test(h)&&h.indexOf('access_token')<0&&h!=='login')return h;
   }catch(e){}
   return 'criar';
 }
@@ -3202,9 +3225,9 @@ function exploreAsGuest(){
   const ar=document.getElementById('authReason');if(ar)ar.style.display='none';
   document.getElementById('authScreen').classList.add('hide');
   document.getElementById('app').classList.remove('hide');
-  document.getElementById('userChip').textContent=(S.user.name||'V')[0].toUpperCase();
+  const _chip=document.getElementById('userChip');if(_chip)_chip.textContent=(S.user.name||'V')[0].toUpperCase();
   try{document.getElementById('app').classList.toggle('sidebar-collapsed',localStorage.getItem('hsai_sidebar_collapsed')==='1'&&window.innerWidth>860);}catch(e){}
-  buildNav(); go(_initialView()); updateCredits(); guestBanner();
+  buildNav(); go('criar'); updateCredits(); guestBanner();
   syncSidebarToggle();
 }
 // Faixa de incentivo no topo do conteúdo, só para visitantes.
