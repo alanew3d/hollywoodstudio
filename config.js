@@ -17,7 +17,8 @@ window.HSAI_CONFIG = {
   SITE_NAME:    'Hollywood Studio AI',
   SITE_URL:     'https://hollywoodstudio.ai',
   ADMIN_USER:   'admin',
-  ADMIN_PASS:   'CHANGE_ME',
+  // Admin password is now verified server-side via ADMIN_PASS env var in Vercel. Do not set here.
+  ADMIN_PASS:   '',
   ADMIN_EMAIL:  '',
 
   // ── FEATURES PÚBLICAS (sem segredos) ───────────────────────────────────────
