@@ -23,7 +23,8 @@
 <meta property="og:locale" content="pt_BR">
 <meta property="og:locale:alternate" content="en_US">
 <link rel="image_src" href="https://hollywoodstudio.ai/assets/social/hero-hollywoodstudio-ai.jpg">
-<link rel="preload" as="image" href="assets/social/hero-hollywoodstudio-ai.jpg">
+<link rel="preload" as="image" href="assets/social/hero-hollywoodstudio-ai.jpg" media="(min-width:769px)">
+<link rel="preload" as="image" href="assets/social/hero-hollywoodstudio-ai-vert.png" media="(max-width:768px)">
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Hollywood Studio AI — Geração de vídeo, imagem e áudio por IA">
@@ -2005,7 +2006,7 @@ input:focus,textarea:focus,select:focus{
 #hsai-splash-skip{position:absolute;right:28px;bottom:28px;border:1px solid rgba(216,169,58,.7);background:rgba(0,0,0,.58);color:#fff;border-radius:999px;padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 4px 18px rgba(0,0,0,.45);transition:background .2s ease,color .2s ease,border-color .2s ease}
 #hsai-splash-skip:hover,#hsai-splash-skip:focus-visible{background:#d8a93a;color:#000;border-color:#d8a93a}
 body.hsai-splash-lock{overflow:hidden}
-@media(max-width:768px){#hsai-splash-skip{right:auto;left:50%;transform:translateX(-50%);bottom:22px}}
+@media(max-width:768px){#hsai-splash-skip{right:auto;left:50%;transform:translateX(-50%);bottom:calc(22px + env(safe-area-inset-bottom,0px))}}
 /* ── Production Health Check dashboard ── */
 .hc-score-card{display:flex;align-items:center;gap:20px;flex-wrap:wrap;border:1px solid var(--hs-gold-border,rgba(229,182,79,.35));background:linear-gradient(135deg,rgba(229,182,79,.08),transparent 60%);border-radius:16px;padding:18px 22px;margin-bottom:14px}
 .hc-score-num{font-size:38px;font-weight:800;color:var(--accent);font-family:var(--mono);line-height:1}
@@ -2046,13 +2047,21 @@ body.hsai-splash-lock{overflow:hidden}
 
 <!-- ══ SPLASH CINEMATOGRÁFICO (1× por sessão; replay via window.HSAIReplaySplash) ══ -->
 <div id="hsai-splash" aria-label="Abertura cinematográfica Hollywood Studio AI">
-  <img src="assets/social/hero-hollywoodstudio-ai.jpg" alt="Hollywood Studio AI">
+  <img alt="Hollywood Studio AI">
   <button id="hsai-splash-skip" type="button">Pular →</button>
 </div>
 <script>
 (function(){
   var KEY='hsaiSplashSeen';
   function seen(){try{return sessionStorage.getItem(KEY)==='true';}catch(e){return false;}}
+  // Imagem responsiva: horizontal no desktop, vertical no mobile (≤768px).
+  function splashImageSrc(){
+    try{
+      if(window.matchMedia&&window.matchMedia('(max-width:768px)').matches)
+        return 'assets/social/hero-hollywoodstudio-ai-vert.png';
+    }catch(e){}
+    return 'assets/social/hero-hollywoodstudio-ai.jpg';
+  }
   function wire(splash){
     var img=splash.querySelector('img');
     var skip=splash.querySelector('#hsai-splash-skip');
@@ -2077,7 +2086,11 @@ body.hsai-splash-lock{overflow:hidden}
   var splash=document.getElementById('hsai-splash');
   if(splash){
     if(seen()){if(splash.parentNode)splash.parentNode.removeChild(splash);}
-    else{wire(splash);}
+    else{
+      var im=splash.querySelector('img');
+      if(im)im.src=splashImageSrc();
+      wire(splash);
+    }
   }
   // Replay manual (ex.: "Ver abertura cinematográfica")
   window.HSAIReplaySplash=function(){
@@ -2088,7 +2101,7 @@ body.hsai-splash-lock{overflow:hidden}
     div.id='hsai-splash';
     div.setAttribute('aria-label','Abertura cinematográfica Hollywood Studio AI');
     var img=document.createElement('img');
-    img.src='assets/social/hero-hollywoodstudio-ai.jpg';
+    img.src=splashImageSrc();
     img.alt='Hollywood Studio AI';
     var btn=document.createElement('button');
     btn.id='hsai-splash-skip';
