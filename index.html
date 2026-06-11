@@ -1747,6 +1747,13 @@ body.layout-fullscreen .topbar{display:none!important}
 .sc-select:hover,.sc-select:focus{border-color:var(--accent)}
 .sc-select-group{display:flex;flex-direction:column;gap:2px}
 .sc-select-lbl{font-size:9px;letter-spacing:.7px;text-transform:uppercase;color:var(--ink-4);font-weight:600;padding:0 2px}
+/* Hollywood TV compact card in left panel */
+.sc-tv-card{flex-shrink:0;margin-top:14px;background:var(--panel-2);border:1px solid var(--line-2);border-radius:12px;padding:11px 13px;cursor:pointer;transition:border-color .15s,background .15s}
+.sc-tv-card:hover{border-color:var(--accent);background:var(--elev)}
+.sc-tv-card-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.sc-tv-card-desc{font-size:11px;color:var(--ink-3);line-height:1.45;margin-bottom:6px}
+.sc-tv-card-btn{font-size:11.5px;color:var(--accent);font-weight:600}
+@media(max-width:860px){.sc-tv-card{display:none}}
 .sc-compact-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin:10px 0}
 .sc-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
 /* Linhas de ação compactas coladas ao prompt (2 fileiras) */
@@ -2850,10 +2857,10 @@ const NAV=[
   {group:'community',items:[
     {id:'public',ic:'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM2 12h20M12 2c3 3 4.5 6.5 4.5 10s-1.5 7-4.5 10c-3-3-4.5-6.5-4.5-10S9 5 12 2z'},
     {id:'inspo',ic:'M3 3h7v10H3zM14 3h7v6h-7zM14 13h7v8h-7zM3 17h7v4H3z'},
-    {id:'tv',ic:'M3 8h18v12H3zM8 3l4 4 4-4M8 16l2.5-4 2 2.5L15 12l1.5 4z'},
     {id:'tube',ic:'M22 8.5a4 4 0 0 0-3-3.8C17 4.2 12 4.2 12 4.2s-5 0-7 .5a4 4 0 0 0-3 3.8 42 42 0 0 0 0 7 4 4 0 0 0 3 3.8c2 .5 7 .5 7 .5s5 0 7-.5a4 4 0 0 0 3-3.8 42 42 0 0 0 0-7zM10 15V9l5 3z'},
-    {id:'instagram',ic:'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z'},
-    {id:'opportunities',ic:'M4 7h16v13H4zM8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M4 12h16'}
+    {id:'tv',ic:'M3 8h18v12H3zM8 3l4 4 4-4M8 16l2.5-4 2 2.5L15 12l1.5 4z'},
+    {id:'opportunities',ic:'M4 7h16v13H4zM8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M4 12h16'},
+    {id:'instagram',ic:'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z'}
   ]},
   {group:'learn',items:[
     {id:'models',ic:'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z'},
@@ -3670,8 +3677,7 @@ function viewSimpleCreate(){
   var modeCtl='<button class="btn btn-primary btn-sm mode-btn" onclick="go(\'criar\')" title="'+(pt?'Use para gerar uma imagem, vídeo, prompt ou storyboard em poucos segundos.':'Use it to generate an image, video, prompt or storyboard in seconds.')+'">✨ <span class="lbl">'+(pt?'Criar rápido':'Quick create')+'</span></button>'
     +'<button class="btn btn-ghost btn-sm mode-btn" onclick="go(\'studio\')" title="'+(pt?'Use para controlar o fluxo inteiro: modelos, referências, storyboard, pós-produção, galeria e publicação.':'Use it to control the entire workflow: models, references, storyboard, post-production, gallery and publishing.')+'">🎛️ <span class="lbl">'+(pt?'Studio completo':'Full Studio')+'</span></button>'
     +'<button class="mode-diff-link" onclick="hsaiModeDiff()">'+(pt?'Qual a diferença?':'What\'s the difference?')+'</button>';
-  var tvCtl='<button class="btn btn-primary btn-sm" onclick="go(\'tv\')" title="'+(pt?'Inspirações em vídeo com IA, em sequência.':'AI video inspirations, in sequence.')+'">📺 <span class="lbl">Hollywood TV</span></button>';
-  var topRight=modeCtl+tvCtl+langCtl+themeCtl+plansCtl+userCtl;
+  var topRight=modeCtl+langCtl+themeCtl+plansCtl+userCtl;
 
   return '<div class="sc-console" id="scPage">'
 
@@ -3695,6 +3701,14 @@ function viewSimpleCreate(){
   +'<div class="sc-side-title" style="margin-top:14px">'+(pt?'Inspirações rápidas':'Quick inspirations')+'</div>'
   +'<div style="flex-shrink:0;font-size:11px;color:var(--ink-4);margin:-4px 0 8px">'+(pt?'Clique para ver no preview · 📎 anexa como referência.':'Click to view in the preview · 📎 attaches as reference.')+'</div>'
   +'<div class="sc-inspo-wrap"><div class="sc-inspo-grid" id="scHomeInspirations" onmouseenter="window._scInspPaused=true" onmouseleave="window._scInspPaused=false">'+scRenderHomeInspirations()+'</div></div>'
+
+  // Hollywood TV compact card — hidden on mobile (≤860px)
+  +'<div class="sc-tv-card" onclick="go(\'tv\')" title="'+(pt?'Hollywood TV — Criações IA em sequência':'Hollywood TV — AI creations in sequence')+'">'
+  +'<div class="sc-tv-card-title">📺 Hollywood TV</div>'
+  +'<div class="sc-tv-card-desc">'+(pt?'Criações IA em sequência, como uma TV non-stop.':'AI creations in sequence, like a non-stop TV.')+'</div>'
+  +'<span class="sc-tv-card-btn">'+(pt?'Assistir agora →':'Watch now →')+'</span>'
+  +'</div>'
+
   +'</div>'
 
   // Center: demo/último resultado em cima (altura limitada) + título + PROMPT visível sem rolagem
