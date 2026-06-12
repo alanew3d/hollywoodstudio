@@ -3322,7 +3322,7 @@ function render(){
   const m=document.getElementById('main');
   const R={home:viewHome,criar:viewSimpleCreate,studio:viewStudio,images:viewImages,audio:viewAudio,characters:viewCharacters,storyboard:viewStoryboard,favorites:viewFavoritesPage,editing:viewEditing,batch:viewBatch,agents:viewAgents,docs:viewDocs,spaces:viewSpaces,
     flow:viewFlow,council:viewCouncil,analytics:viewAnalytics,opportunities:viewOpportunities,public:viewPublic,models:viewModelsCatalog,
-    academy:viewAcademy,news:viewNews,festivals:viewFestivals,'gemini-avatar':viewGeminiAvatar,gallery:viewGallery,uploads:viewUploadGallery,templates:viewTemplates,contactsheet:viewContactSheet,plans:viewPlans,admin:viewAdmin,'admin-health':viewAdminHealth,marketing:viewMarketingPage,tube:viewTube,tv:viewHollywoodTV,instagram:viewInstagram,inspo:viewInspo,posprodu:viewPosProdu,finisher:viewFinishingLab};
+    academy:viewAcademy,news:viewNews,festivals:viewFestivals,'gemini-avatar':viewGeminiAvatar,gallery:viewGallery,uploads:viewUploadGallery,templates:viewTemplates,contactsheet:viewContactSheet,plans:viewPlans,admin:viewAdmin,'admin-health':viewAdminChecklist,'checklist':viewAdminChecklist,marketing:viewMarketingPage,tube:viewTube,tv:viewHollywoodTV,instagram:viewInstagram,inspo:viewInspo,posprodu:viewPosProdu,finisher:viewFinishingLab};
   let body;
   if(S.view&&S.view.indexOf('custom:')===0)body=viewCustom(S.view.slice(7));
   else body=(R[S.view]||viewStudio)();
@@ -9198,47 +9198,290 @@ function exportHealthChecklist(){
   a.download='hollywoodstudio-checklist-'+new Date().toISOString().slice(0,10)+'.md';
   document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},400);
 }
-function viewAdminHealth(){
-  const pt=S.lang==='pt';
-  if(!(S.user&&S.user.admin))return areaHeader({kicker:t('admin'),title:pt?'Checklist de Produção':'Production Checklist',desc:'',area:'admin'})+
-    `<div class="card" style="text-align:center;padding:40px"><p style="color:var(--ink-2)">${pt?'Acesso restrito a administradores.':'Admin-only access.'}</p></div>`;
-  let html=areaHeader({
-    kicker:t('admin'),title:pt?'Checklist de Produção':'Production Checklist',
-    desc:pt?'Diagnóstico completo do que está pronto e do que falta para vender com segurança.':'Full diagnosis of what is ready and what is missing to sell safely.',
-    area:'admin'
-  });
-  html+=`<div id="hcScore" class="hc-score-card"></div>
-  <div class="hc-topbar">
-    <button id="hcRunAll" class="btn btn-primary btn-sm" onclick="runAllHealthChecks(false)">▶ ${pt?'Rodar todos os testes':'Run all tests'}</button>
-    <button class="btn btn-sm" onclick="runAllHealthChecks(true)">⚡ ${pt?'Testar somente críticos':'Test critical only'}</button>
-    <button class="btn btn-sm" onclick="copyHealthReport()">📋 ${pt?'Copiar relatório':'Copy report'}</button>
-    <button class="btn btn-sm" onclick="exportHealthChecklist()">⬇ ${pt?'Exportar checklist':'Export checklist'}</button>
-  </div>
-  <div class="hc-links">${HC_LINKS.map(l=>`<a href="${l.url}" target="_blank" rel="noopener">${l.label} ↗</a>`).join('')}</div>`;
-  let lastCat='';
-  HEALTH_CHECKS.forEach(c=>{
-    const cat=hcT(c.cat);
-    if(cat!==lastCat){if(lastCat)html+='</div>';html+=`<div class="hc-cat-title">${cat}</div><div class="hc-grid">`;lastCat=cat;}
-    const r=_HC.results[c.id];const st=r?r.status:'unknown';const m=HC_STATUS_META[st]||HC_STATUS_META.unknown;
-    const title=typeof c.title==='string'?c.title:hcT(c.title);
-    html+=`<div class="hc-card" id="hcCard-${c.id}">
-      <h5><span>${title}</span><span class="hc-pill ${st}" id="hcPill-${c.id}">${m.icon} ${pt?m.pt:m.en}</span></h5>
-      <p>${hcT(c.desc)}</p>
-      <div class="hc-detail" id="hcDetail-${c.id}">${r&&r.detail?r.detail:''}</div>
-      <div class="hc-meta"><span class="hc-prio ${c.priority}">${c.priority}</span><span id="hcTime-${c.id}">${r&&r.at?new Date(r.at).toLocaleTimeString(pt?'pt-BR':'en-US'):''}</span></div>
-      <div class="hc-actions">
-        <button class="btn btn-sm" onclick="runHealthCheck('${c.id}')">${c.actionLabel?hcT(c.actionLabel):(pt?'Testar':'Test')}</button>
-        ${c.docsUrl?`<a class="btn btn-sm" href="${c.docsUrl}" target="_blank" rel="noopener">${pt?'Abrir link':'Open link'} ↗</a>`:''}
-        ${c.adminLink?`<button class="btn btn-sm" onclick="go('admin')">${pt?'Configurar agora':'Configure now'}</button>`:''}
+function viewAdminChecklist() {
+  document.title = 'Checklist de Produção — Hollywood Studio AI';
+
+  const checks = [
+    // 1. IDENTIDADE DO SITE
+    { cat:'Identidade do site', id:'https',     label:'HTTPS ativo',                    test:()=>location.protocol==='https:', hint:'Verifique configuração do domínio na Vercel' },
+    { cat:'Identidade do site', id:'domain',    label:'Domínio hollywoodstudio.ai',     test:()=>location.hostname.includes('hollywoodstudio.ai')||location.hostname==='localhost', hint:'Configure domínio na Vercel' },
+    { cat:'Identidade do site', id:'favicon',   label:'Favicon configurado',            test:()=>!!document.querySelector('link[rel*="icon"]'), hint:'Adicione <link rel="icon"> no head' },
+    { cat:'Identidade do site', id:'og-image',  label:'og:image configurado',           test:()=>!!document.querySelector('meta[property="og:image"]'), hint:'Adicione og:image no head' },
+    { cat:'Identidade do site', id:'og-new',    label:'Imagem OG usa filename 2026',    test:()=>{ const m=document.querySelector('meta[property="og:image"]'); return !!(m&&(m.content.includes('20260612')||m.content.includes('og-20260'))); }, hint:'Use hollywoodstudio-ai-og-20260612.jpg para forçar cache-bust no WhatsApp' },
+    { cat:'Identidade do site', id:'seo-title', label:'Title tag configurado',          test:()=>!!document.title&&document.title.includes('Hollywood'), hint:'Verifique <title> no head' },
+
+    // 2. AUTENTICAÇÃO
+    { cat:'Autenticação', id:'login-local',   label:'Login local/demo funcional',     test:()=>typeof finishAuth==='function'||typeof go==='function', hint:'Função finishAuth não encontrada' },
+    { cat:'Autenticação', id:'admin-access',  label:'Admin acessível',               test:()=>!!CFG&&(!!CFG.ADMIN_PASS||!!CFG.ADMIN_RECOVERY_MODE), hint:'Configure ADMIN_PASS ou ative ADMIN_RECOVERY_MODE' },
+    { cat:'Autenticação', id:'recovery-mode', label:'Modo recuperação DESLIGADO',    test:()=>!CFG.ADMIN_RECOVERY_MODE, hint:'⚠️ Desative ADMIN_RECOVERY_MODE antes do lançamento', warnOnly:true },
+    { cat:'Autenticação', id:'google-oauth',  label:'Google OAuth configurado',      test:()=>!!(CFG&&CFG.GOOGLE_CLIENT_ID&&CFG.GOOGLE_CLIENT_ID.length>10), hint:'Configure GOOGLE_CLIENT_ID no config.js' },
+    { cat:'Autenticação', id:'sb-url',        label:'Supabase URL configurada',      test:()=>!!(CFG&&CFG.SUPABASE_URL&&CFG.SUPABASE_URL.includes('supabase.co')), hint:'Configure SUPABASE_URL no config.js' },
+    { cat:'Autenticação', id:'sb-anon',       label:'Supabase anon key configurada', test:()=>!!(CFG&&CFG.SUPABASE_ANON_KEY&&CFG.SUPABASE_ANON_KEY.length>20), hint:'Configure SUPABASE_ANON_KEY no config.js' },
+
+    // 3. BANCO DE DADOS
+    { cat:'Banco de dados', id:'sb-no-secret', label:'Service role ausente do frontend', test:()=>!CFG.SUPABASE_SERVICE_ROLE_KEY, hint:'🔒 NUNCA coloque service_role no config.js — use apenas Vercel env vars', security:true },
+    { cat:'Banco de dados', id:'profiles',     label:'Tabela profiles (via Supabase)',   test:async()=>{ try{ if(!window._supabaseClient)return null; const{error}=await window._supabaseClient.from('profiles').select('id').limit(1); return !error; }catch{return null;} }, async:true, hint:'Execute SUPABASE_SCHEMA.sql no Supabase SQL Editor' },
+    { cat:'Banco de dados', id:'credits-tbl',  label:'Tabela credit_transactions',       test:async()=>{ try{ if(!window._supabaseClient)return null; const{error}=await window._supabaseClient.from('credit_transactions').select('id').limit(1); return !error; }catch{return null;} }, async:true, hint:'Execute SUPABASE_SCHEMA.sql no Supabase SQL Editor' },
+    { cat:'Banco de dados', id:'gen-logs',     label:'Tabela generation_logs',           test:async()=>{ try{ if(!window._supabaseClient)return null; const{error}=await window._supabaseClient.from('generation_logs').select('id').limit(1); return !error; }catch{return null;} }, async:true, hint:'Execute SUPABASE_SCHEMA.sql no Supabase SQL Editor' },
+    { cat:'Banco de dados', id:'subscriptions',label:'Tabela subscriptions',             test:async()=>{ try{ if(!window._supabaseClient)return null; const{error}=await window._supabaseClient.from('subscriptions').select('id').limit(1); return !error; }catch{return null;} }, async:true, hint:'Execute SUPABASE_SCHEMA.sql no Supabase SQL Editor' },
+
+    // 4. PLANOS E PAGAMENTOS
+    { cat:'Planos e pagamentos', id:'plans-page',  label:'Página de planos',              test:()=>typeof viewPlans==='function', hint:'Verifique viewPlans() no index.html' },
+    { cat:'Planos e pagamentos', id:'checkout-fn', label:'Função startCheckout existe',   test:()=>typeof startCheckout==='function', hint:'Adicione startCheckout() no index.html' },
+    { cat:'Planos e pagamentos', id:'checkout-ep', label:'Endpoint /api/create-checkout-session', test:async()=>{ try{ const r=await fetch('/api/create-checkout-session',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'}); return r.status!==404; }catch{return false;} }, async:true, hint:'Crie api/create-checkout-session.js' },
+    { cat:'Planos e pagamentos', id:'webhook-ep',  label:'Endpoint /api/stripe-webhook',  test:async()=>{ try{ const r=await fetch('/api/stripe-webhook',{method:'POST',body:'test'}); return r.status!==404; }catch{return false;} }, async:true, hint:'Crie api/stripe-webhook.js' },
+    { cat:'Planos e pagamentos', id:'no-stripe-secret', label:'Stripe secret ausente do frontend', test:()=>!CFG.STRIPE_SECRET_KEY, hint:'🔒 NUNCA coloque STRIPE_SECRET_KEY no config.js', security:true },
+
+    // 5. IA E GERAÇÃO
+    { cat:'IA e geração', id:'health-ep',    label:'Endpoint /api/health/details',   test:async()=>{ try{ const r=await fetch('/api/health/details'); return r.ok; }catch{return false;} }, async:true, hint:'Verifique api/index.js para rota /health/details' },
+    { cat:'IA e geração', id:'enhance-fn',   label:'Função aprimorar prompt',        test:()=>typeof scEnhance==='function'||typeof window.scEnhance==='function', hint:'Verifique scEnhance() no index.html' },
+    { cat:'IA e geração', id:'hsengine-fn',  label:'HS Engine (viewAILAN)',          test:()=>typeof viewAILAN==='function', hint:'Verifique viewAILAN() no index.html' },
+    { cat:'IA e geração', id:'storyboard-fn',label:'Storyboard funcional',          test:()=>typeof viewStoryboard==='function'||typeof viewStoryboardDetail==='function', hint:'Verifique viewStoryboard() no index.html' },
+    { cat:'IA e geração', id:'fallback-ai',  label:'Fallback local sem API',        test:()=>typeof ailanLocalPlan==='function', hint:'Verifique ailanLocalPlan() no index.html' },
+
+    // 6. CRÉDITOS
+    { cat:'Créditos', id:'credits-visible', label:'Saldo de créditos visível',     test:()=>!!document.querySelector('[data-credits-display],[id*="credit"],[class*="credit"]'), hint:'Adicione elemento com data-credits-display' },
+    { cat:'Créditos', id:'getUserCredits',  label:'Função getUserCredits existe',  test:()=>typeof getUserCredits==='function'||typeof window.getUserCredits==='function', hint:'Verifique js/services/credits-service.js ou index.html' },
+    { cat:'Créditos', id:'estimate-cost',   label:'Estimativa de custo',           test:()=>typeof estimateGenerationCost==='function'||typeof window.estimateGenerationCost==='function', hint:'Adicione estimateGenerationCost() no index.html ou credits-service.js' },
+
+    // 7. MÍDIA E PRODUÇÃO
+    { cat:'Mídia e produção', id:'gallery',      label:'Galeria rápida na home',      test:()=>!!document.querySelector('.sc-gallery,.sc-quick-gallery,[id*="gallery"]'), hint:'Verifique galeria rápida no viewSimpleCreate()' },
+    { cat:'Mídia e produção', id:'models-list',  label:'Lista de modelos de IA',      test:()=>!!(window.HSAI_MODELS&&window.HSAI_MODELS.length>5), hint:'Verifique window.HSAI_MODELS no index.html' },
+    { cat:'Mídia e produção', id:'video-models', label:'Modelos de vídeo disponíveis',test:()=>!!(window.HSAI_MODELS&&window.HSAI_MODELS.some(m=>m.type==='video')), hint:'Adicione modelos com type:video em HSAI_MODELS' },
+    { cat:'Mídia e produção', id:'image-models', label:'Modelos de imagem disponíveis',test:()=>!!(window.HSAI_MODELS&&window.HSAI_MODELS.some(m=>m.type==='image')), hint:'Adicione modelos com type:image em HSAI_MODELS' },
+
+    // 8. MOBILE E UX
+    { cat:'Mobile e UX', id:'no-horiz-scroll', label:'Sem scroll horizontal',       test:()=>document.documentElement.scrollWidth<=window.innerWidth+5, hint:'Verifique CSS overflow-x no layout' },
+    { cat:'Mobile e UX', id:'home-view',       label:'Home Simple Create abre',     test:()=>typeof viewSimpleCreate==='function', hint:'Verifique viewSimpleCreate() no index.html' },
+    { cat:'Mobile e UX', id:'no-dup-buttons',  label:'Sem botões duplicados visíveis',test:()=>{ const btns=document.querySelectorAll('.sc-pa-row--support'); return btns.length<=1; }, hint:'Verifique se há duplicatas de .sc-pa-row--support na home' },
+
+    // 9. ADMIN E SEGURANÇA
+    { cat:'Admin e segurança', id:'admin-protected', label:'Admin exige autenticação',    test:()=>typeof S!=='undefined'&&(!S.user||!S.user.admin), hint:'Verifique guard de admin no render()' },
+    { cat:'Admin e segurança', id:'no-secrets-cfg',  label:'config.js sem secrets',       test:()=>!CFG.STRIPE_SECRET_KEY&&!CFG.SUPABASE_SERVICE_ROLE_KEY&&!CFG.STRIPE_WEBHOOK_SECRET, hint:'🔒 Remova secrets do config.js — use Vercel env vars', security:true },
+    { cat:'Admin e segurança', id:'recovery-off',    label:'Recovery mode OFF (produção)', test:()=>!CFG.ADMIN_RECOVERY_MODE, hint:'Desative ADMIN_RECOVERY_MODE antes do lançamento', warnOnly:true },
+    { cat:'Admin e segurança', id:'health-report',   label:'Relatório copiável',           test:()=>typeof ahCopyReport==='function'||typeof copyHealthReport==='function'||typeof chklCopyReport==='function', hint:'Adicione função copyHealthReport() ao checklist' },
+  ];
+
+  window._checklistChecks = checks;
+
+  const cats = [...new Set(checks.map(c=>c.cat))];
+
+  const phases = [
+    { label:'MVP testável', icon:'🚀', need:40 },
+    { label:'Beta',         icon:'🔬', need:60 },
+    { label:'Vendas',       icon:'💰', need:80 },
+    { label:'Escala',       icon:'🌍', need:95 },
+  ];
+
+  let html = `
+  <div class="view-wrap" style="max-width:960px;margin:0 auto;padding:20px 16px 80px">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:24px">
+      <div>
+        <h1 style="margin:0 0 4px;font-size:1.5rem">🩺 Checklist de Produção</h1>
+        <p style="margin:0;opacity:.65;font-size:.9rem">Teste automático de conexões, APIs, configurações e prontidão do HollywoodStudio.ai para produção.</p>
       </div>
-    </div>`;
-  });
-  if(lastCat)html+='</div>';
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="chklRunAll()" style="padding:10px 18px;background:linear-gradient(135deg,#f2cf72,#d8a93a);color:#080808;border:none;border-radius:8px;cursor:pointer;font-weight:700">▶ Rodar todos</button>
+        <button onclick="chklRunCritical()" style="padding:10px 18px;background:rgba(255,80,80,.15);border:1px solid rgba(255,80,80,.35);border-radius:8px;cursor:pointer;color:inherit">🔴 Só críticos</button>
+        <button onclick="chklTestEngine()" style="padding:10px 18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;cursor:pointer;color:inherit">🤖 Testar motor</button>
+        <button onclick="chklCopyReport()" style="padding:10px 18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;cursor:pointer;color:inherit">📋 Copiar relatório</button>
+      </div>
+    </div>
+
+    <!-- Score -->
+    <div id="chkl-score" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:20px 24px;margin-bottom:24px">
+      <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+        <div style="text-align:center;min-width:80px">
+          <div id="chkl-pct" style="font-size:2.5rem;font-weight:800;line-height:1">—</div>
+          <div style="font-size:.75rem;opacity:.55;margin-top:4px">Score geral</div>
+        </div>
+        <div style="flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px">
+          ${phases.map(p=>`<div id="phase-${p.label.replace(/\s/g,'-').toLowerCase()}" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px">
+            <div style="font-size:.85rem;font-weight:600">${p.icon} ${p.label}</div>
+            <div style="font-size:.75rem;opacity:.55;margin-top:2px">Requer ${p.need}% do score</div>
+            <div class="phase-bar" style="height:4px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:8px"><div class="phase-fill" style="height:100%;width:0;background:#f2cf72;border-radius:2px;transition:width .5s"></div></div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- External Links -->
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px">
+      ${[
+        {label:'▲ Vercel',     url:'https://vercel.com/dashboard'},
+        {label:'⚡ Supabase',  url:'https://supabase.com/dashboard'},
+        {label:'💳 Stripe',    url:'https://dashboard.stripe.com'},
+        {label:'📧 Resend',    url:'https://resend.com'},
+        {label:'🤖 Claude',    url:'https://console.anthropic.com'},
+        {label:'🧠 OpenAI',    url:'https://platform.openai.com'},
+        {label:'🐙 GitHub',    url:'https://github.com/alanew3d/hollywoodstudio'},
+        {label:'🔍 OG Debug',  url:'https://developers.facebook.com/tools/debug/'},
+      ].map(l=>`<a href="${l.url}" target="_blank" style="padding:6px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:20px;text-decoration:none;color:inherit;font-size:.82rem">${l.label}</a>`).join('')}
+    </div>
+
+    <!-- Checks by category -->
+    <div id="chkl-grid" style="display:flex;flex-direction:column;gap:24px">`;
+
+  for (const cat of cats) {
+    const catChecks = checks.filter(c=>c.cat===cat);
+    html += `
+      <div>
+        <div style="font-size:.75rem;font-weight:700;letter-spacing:.1em;opacity:.45;margin-bottom:10px;text-transform:uppercase">${cat}</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          ${catChecks.map(ch=>`
+          <div id="chkl-card-${ch.id}" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px">
+            <span id="chkl-icon-${ch.id}" style="font-size:1.3rem;flex-shrink:0">⏳</span>
+            <div style="flex:1;min-width:0">
+              <div style="font-weight:600;font-size:.92rem">${ch.label}${ch.security?' 🔒':''}</div>
+              <div id="chkl-hint-${ch.id}" style="font-size:.8rem;opacity:.55;margin-top:2px">${ch.hint}</div>
+            </div>
+            <button onclick="chklRunOne('${ch.id}')" style="padding:5px 12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:6px;cursor:pointer;color:inherit;font-size:.8rem;flex-shrink:0">Testar</button>
+          </div>`).join('')}
+        </div>
+      </div>`;
+  }
+
+  html += `
+    </div>
+  </div>`;
+
   return html;
 }
+
+async function chklRunOne(id) {
+  const ch = (window._checklistChecks||[]).find(c=>c.id===id);
+  if (!ch) return;
+  const icon = document.getElementById('chkl-icon-'+id);
+  const hint = document.getElementById('chkl-hint-'+id);
+  if (!icon||!hint) return;
+  icon.textContent = '⏳';
+  try {
+    let result;
+    if (ch.async) result = await ch.test();
+    else result = ch.test();
+
+    if (result === true) {
+      ch._result = ch.warnOnly ? 'warn' : true;
+      icon.textContent = ch.warnOnly ? '⚠️' : '✅';
+      hint.textContent = ch.warnOnly ? '⚠️ '+ch.hint : 'OK';
+    } else if (result === false) {
+      ch._result = false;
+      icon.textContent = ch.security ? '🔒' : '❌';
+      hint.textContent = ch.hint;
+    } else if (result === null || result === undefined) {
+      ch._result = 'skip';
+      icon.textContent = 'ℹ️';
+      hint.textContent = 'Não testável sem configuração ativa';
+    } else {
+      ch._result = 'warn';
+      icon.textContent = '⚠️';
+      hint.textContent = ch.hint;
+    }
+  } catch(e) {
+    ch._result = false;
+    icon.textContent = '❌';
+    hint.textContent = 'Erro: '+e.message;
+  }
+  chklUpdateScore();
+}
+
+async function chklRunAll() {
+  for (const ch of (window._checklistChecks||[])) await chklRunOne(ch.id);
+}
+
+async function chklRunCritical() {
+  const critical = (window._checklistChecks||[]).filter(c=>c.security||c.cat==='Admin e segurança'||c.cat==='Banco de dados'||c.cat==='Planos e pagamentos');
+  for (const ch of critical) await chklRunOne(ch.id);
+}
+
+function chklTestEngine() {
+  const results = [];
+  try {
+    if (typeof ailanLocalPlan === 'function') {
+      const plan = ailanLocalPlan({ idea:'Comercial premium 30s', type:'Comercial', platform:'Instagram/Reels', tone:'Premium', goal:'Vender' });
+      results.push('✅ HS Engine local: plano gerado com '+plan.scenes.length+' cenas');
+    } else results.push('⚠️ HS Engine: ailanLocalPlan() não encontrada');
+
+    if (typeof estimateGenerationCost === 'function') {
+      const cost = estimateGenerationCost('video','seedance-2',8,'standard');
+      results.push('✅ Estimativa de crédito: '+cost+' créditos para seedance-2 8s');
+    } else results.push('⚠️ estimateGenerationCost() não encontrada');
+
+    if (window.HSAI_MODELS&&window.HSAI_MODELS.length) {
+      results.push('✅ Modelos: '+window.HSAI_MODELS.length+' modelos carregados');
+    }
+  } catch(e) { results.push('❌ Erro: '+e.message); }
+
+  const msg = results.join('\n');
+  alert('Teste do motor:\n\n'+msg);
+}
+
+function chklUpdateScore() {
+  const checks = window._checklistChecks||[];
+  const total  = checks.length;
+  const ok     = checks.filter(c=>c._result===true).length;
+  const warn   = checks.filter(c=>c._result==='warn').length;
+  const pct    = total ? Math.round(((ok+warn*0.5)/total)*100) : 0;
+
+  const pctEl = document.getElementById('chkl-pct');
+  if (pctEl) { pctEl.textContent = pct+'%'; pctEl.style.color = pct>=80?'#6ef06e':pct>=50?'#f2cf72':'#ff6060'; }
+
+  const phases = [
+    {label:'MVP testável', need:40, id:'phase-mvp-testável'},
+    {label:'Beta',         need:60, id:'phase-beta'},
+    {label:'Vendas',       need:80, id:'phase-vendas'},
+    {label:'Escala',       need:95, id:'phase-escala'},
+  ];
+  phases.forEach(p=>{
+    const fill = document.querySelector('#'+p.id+' .phase-fill');
+    if (fill) { fill.style.width=Math.min(100,Math.round(pct/p.need*100))+'%'; fill.style.background=pct>=p.need?'#6ef06e':'#f2cf72'; }
+  });
+}
+
+function chklCopyReport() {
+  const checks = window._checklistChecks||[];
+  const total  = checks.length;
+  const ok     = checks.filter(c=>c._result===true).length;
+  const warn   = checks.filter(c=>c._result==='warn').length;
+  const fail   = checks.filter(c=>c._result===false);
+  const pct    = total ? Math.round(((ok+warn*0.5)/total)*100) : 0;
+
+  const lines = [
+    'HOLLYWOOD STUDIO AI — RELATÓRIO DE PRODUÇÃO',
+    new Date().toLocaleString('pt-BR'),
+    '',
+    'Score geral: '+pct+'%',
+    'Testados: '+(ok+warn+fail.length)+'/'+total,
+    '',
+  ];
+
+  if (fail.length) {
+    lines.push('CRÍTICOS / FALTANDO:');
+    fail.forEach(c=>lines.push('  ❌ '+c.label+' — '+c.hint));
+    lines.push('');
+  }
+
+  lines.push('PRÓXIMOS PASSOS:');
+  const steps = [];
+  if (!window.CFG?.SUPABASE_URL?.includes('supabase.co')) steps.push('Configurar Supabase (URL + anon key no config.js)');
+  if (!window.CFG?.STRIPE_SECRET_KEY) steps.push('Configurar Stripe (STRIPE_SECRET_KEY na Vercel)');
+  if (window.CFG?.ADMIN_RECOVERY_MODE) steps.push('Desativar ADMIN_RECOVERY_MODE no config.js');
+  if (typeof startCheckout!=='function') steps.push('Verificar startCheckout() para checkout funcionar');
+  if (!steps.length) steps.push('Tudo OK — pronto para produção!');
+  steps.forEach((s,i)=>lines.push('  '+(i+1)+'. '+s));
+
+  const text = lines.join('\n');
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(()=>{ if(typeof showToast==='function')showToast('Relatório copiado!','ok'); });
+  } else {
+    const ta=document.createElement('textarea'); ta.value=text;
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+    if(typeof showToast==='function')showToast('Relatório copiado!','ok');
+  }
+}
+
 function afterAdminHealth(){
-  hcRenderScore();
-  if(!_HC.ranOnce&&S.user&&S.user.admin){_HC.ranOnce=true;setTimeout(()=>runAllHealthChecks(false),350);}
+  chklUpdateScore();
 }
 function viewAdmin(){
   return areaHeader({
