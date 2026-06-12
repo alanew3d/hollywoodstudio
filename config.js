@@ -32,7 +32,7 @@ window.HSAI_CONFIG = {
   GOOGLE_CLIENT_ID: '1080113912210-medhqckkq2qp38j9ggqoegik2n9inue3.apps.googleusercontent.com',
 
   // ── PROVEDORES IA — chaves vazias no frontend ───────────────────────────────
-  API_KEY:   '',
+  API_KEY:   'apikey-737d0571d9ed45be8363dc039c6b61de',
   API_BASE:  'https://api.atlascloud.ai',
   PROVIDER:  'atlascloud',
   PROVIDERS: {

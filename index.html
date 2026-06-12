@@ -40,6 +40,49 @@
 <script>console.log("Hollywood Studio AI loaded - build ok");</script>
 <link rel="manifest" href="/manifest.json">
 <script>
+/*
+ * HOLLYWOOD STUDIO AI — MAPA DE MÓDULOS
+ *
+ * index.html  : shell HTML, SEO, Open Graph, script loading
+ * js/app.js   : inicialização da aplicação
+ * js/router.js: rotas SPA (go, render, history)
+ * js/state.js : estado global (S object)
+ *
+ * DADOS (migração segura — apenas arrays/objetos estáticos):
+ * js/data/models.js          : window.HSAI_MODELS
+ * js/data/credits-pricing.js : tabela de custos por operação
+ * js/data/plans.js           : planos e pacotes de créditos
+ * js/data/directors.js       : window.HSAI_MENTORS
+ * js/data/demo-reel.js       : HOME_INSPIRATIONS, REEL_IMAGES
+ *
+ * VIEWS (migração posterior):
+ * js/views/home.js           : viewSimpleCreate()
+ * js/views/studio.js         : viewStudio()
+ * js/views/hs-engine.js      : viewAILAN() — HS Cinematic Engine
+ * js/views/storyboard.js     : viewStoryboard*, saveStoryboard()
+ * js/views/credits-modal.js  : creditsInfo()
+ * js/views/health-check.js   : viewAdminHealth()
+ * js/views/admin.js          : viewAdmin, viewAdminUsers, viewAdminCredits
+ * js/views/login.js          : viewLogin, googleSignIn, emailLogin
+ * js/views/plans.js          : viewPlans()
+ *
+ * SERVIÇOS (migração posterior):
+ * js/services/ai-service.js         : HsaiBackend, enhance, plan generation
+ * js/services/credits-service.js    : getCredits, deductCredits, estimateCost
+ * js/services/auth-service.js       : signIn, signOut, finishAuth
+ * js/services/payments-service.js   : Stripe checkout
+ *
+ * COMPONENTES:
+ * js/components/modal.js    : openModal, closeModal
+ * js/components/toast.js    : showToast
+ * js/components/sidebar.js  : renderSidebar
+ * js/components/topbar.js   : renderTopbar
+ *
+ * UTILITÁRIOS:
+ * js/utils/dom.js        : $id, $q, $qa
+ * js/utils/i18n.js       : t(), STRINGS, syncLang
+ * js/utils/storage.js    : lsGet, lsSet, ssGet, ssSet
+ */
 /* ════════ HOLLYWOOD STUDIO AI — Script #0 (data layer + helpers) ════════ */
 /* Rewritten with template literals to avoid quote-escaping issues */
 
