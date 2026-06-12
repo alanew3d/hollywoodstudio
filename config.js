@@ -17,7 +17,7 @@ window.HSAI_CONFIG = {
   SITE_NAME:    'Hollywood Studio AI',
   SITE_URL:     'https://hollywoodstudio.ai',
   ADMIN_USER:   'admin',
-  ADMIN_PASS:   'hs2026!',
+  ADMIN_PASS:   'admin',
   ADMIN_EMAIL:  'mail@alanlegend.com',
 
   // ── FEATURES PÚBLICAS (sem segredos) ───────────────────────────────────────
