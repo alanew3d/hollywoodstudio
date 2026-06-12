@@ -1,12 +1,13 @@
 {
-  "version": 2,
-  "buildCommand": "",
-  "outputDirectory": ".",
-  "functions": {
-    "api/*.js": { "maxDuration": 30 }
-  },
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/acheiproducao", "destination": "/acheiproducao/index.html" },
+    { "source": "/oceanmarine",   "destination": "/oceanmarine/index.html"   },
+    { "source": "/demos",         "destination": "/demos/index.html"         }
+  ],
+  "headers": [
+    {
+      "source": "/(acheiproducao|oceanmarine|demos)/(.*)",
+      "headers": [{ "key": "X-Frame-Options", "value": "SAMEORIGIN" }]
+    }
   ]
 }
