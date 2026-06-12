@@ -807,16 +807,17 @@ if(typeof document !== 'undefined' && document.addEventListener){
 }
 
 </script>
-<link rel="icon" type="image/jpeg" href="/assets/logos/favicon.jpg">
+<link rel="icon" type="image/png" href="/favicon.png">
 <script>
-// Favicon fallback
+// Favicon fallback — tenta várias localizações em ordem
 (function(){
-  var paths=['/assets/logos/favicon.jpg','/assets/logos/favicon.png','/assets/favicon.jpg','/favicon.ico'];
+  var paths=['/favicon.png','/icon.png','/assets/logos/favicon.png','/assets/logos/favicon.jpg','/favicon.ico'];
   var i=0;
   function tryNext(){
     if(i>=paths.length)return;
     var l=document.querySelector('link[rel="icon"]');
     if(!l){l=document.createElement('link');l.rel='icon';document.head.appendChild(l);}
+    l.type=paths[i].endsWith('.jpg')?'image/jpeg':paths[i].endsWith('.ico')?'image/x-icon':'image/png';
     l.href=paths[i];
     l.onerror=function(){i++;tryNext();};
     i++;
@@ -824,7 +825,7 @@ if(typeof document !== 'undefined' && document.addEventListener){
   tryNext();
 })();
 </script>
-<link rel="shortcut icon" type="image/jpeg" href="/assets/logos/favicon.jpg">
+<link rel="shortcut icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" href="assets/icon.png?v=3">
 <link rel="apple-touch-icon" href="assets/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2210,6 +2211,11 @@ body.hsai-splash-lock{overflow:hidden}
     <div class="inner">
       <div id="authReason" style="display:none;background:linear-gradient(135deg,var(--accent-dim),transparent);border:1px solid var(--accent-dim);border-left:3px solid var(--accent);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:12.5px;line-height:1.5;color:var(--ink-1)"></div>
       <div class="tabs"><button id="tabLogin" class="on" onclick="authTab('login')">Entrar</button><button id="tabReg" onclick="authTab('reg')">Criar conta</button></div>
+      <!-- Botão admin 1-clique: visível somente quando ADMIN_RECOVERY_MODE:true -->
+      <div id="adminQuickBtn" style="display:none;margin-bottom:12px">
+        <button class="btn btn-primary" style="width:100%;background:linear-gradient(135deg,#c89828,#a97920);font-size:13px;padding:11px" onclick="doAdminQuickLogin()">🛡 Entrar como Admin (1 clique)</button>
+        <p style="font-size:11px;color:var(--ink-3);text-align:center;margin-top:5px">Modo recuperação ativo · sem senha necessária</p>
+      </div>
       <div class="field"><span class="label">E-mail</span><input class="input" id="auEmail" type="email" placeholder="voce@estudio.com"></div>
       <div class="field"><span class="label">Senha</span><input class="input" id="auPass" type="password" placeholder="••••••••"></div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin:4px 0 10px;font-size:12px">
@@ -2409,12 +2415,12 @@ const I18N={
     council:'Conselho Criativo',analytics:'Estatísticas',opportunities:'Oportunidades',public:'Galeria Pública',
     academy:'Academy',news:'Notícias',festivals:'Festivais',gallery:'Galeria',plans:'Planos',admin:'Admin',marketing:'Marketing',models:'Modelos',batch:'Edição em Lote',contactsheet:'Contact Sheet',templates:'Templates',uploads:'Meus Uploads',posprodu:'Pós-Produção',tube:'YouTube',tv:'Hollywood TV',instagram:'Instagram',inspo:'Inspiração',
     create:'Criação',intelligence:'Inteligência',manage:'Gestão',community:'Comunidade',learn:'Aprender',account:'Conta',
-    generate:'Gerar',prompt:'Prompt',welcome:'Bem-vindo de volta','gemini-avatar':'Avatar IA',criar:'Criar rápido',ailan:'HS Engine'},
+    generate:'Gerar',prompt:'Prompt',welcome:'Bem-vindo de volta','gemini-avatar':'Avatar IA',criar:'Criar rápido',ailan:'HS Engine',influencers:'AI Influencers'},
   en:{home:'Home',studio:'Full Studio',images:'Images',audio:'Audio',characters:'Characters',storyboard:'Storyboard',favorites:'Favorites',editing:'Editing',agents:'Agents',docs:'Documents',spaces:'Spaces',flow:'Assistant',
     council:'Conselho Criativo',analytics:'Analytics',opportunities:'Opportunities',public:'Public Gallery',
     academy:'Academy',news:'News',festivals:'Festivals',gallery:'Gallery',plans:'Plans',admin:'Admin',models:'Models',batch:'Batch Edit',contactsheet:'Contact Sheet',templates:'Templates',uploads:'My Uploads',posprodu:'Post Production',tube:'YouTube',tv:'Hollywood TV',instagram:'Instagram',inspo:'Inspiration',
     create:'Create',intelligence:'Intelligence',manage:'Manage',community:'Community',learn:'Learn',account:'Account',
-    generate:'Generate',prompt:'Prompt',welcome:'Welcome back','gemini-avatar':'AI Avatar',criar:'Quick create',ailan:'HS Engine'}
+    generate:'Generate',prompt:'Prompt',welcome:'Welcome back','gemini-avatar':'AI Avatar',criar:'Quick create',ailan:'HS Engine',influencers:'AI Influencers'}
 };
 
 // FEEDS CONFIG
@@ -2918,7 +2924,8 @@ const NAV=[
   {group:'create',items:[
     {id:'criar',ic:'M12 3l1.4 3.6L17 8l-3.6 1.4L12 13l-1.4-3.6L7 8l3.6-1.4L12 3zM5 16l.9 2.2 2.2.9-2.2.9L5 22l-.9-2.2L2 18.9l2.2-.9L5 16z'},
     {id:'studio',ic:'M4 5h16v14H4zM4 9h16M9 5v14'},
-    {id:'ailan',ic:'M15 10l4-2v8l-4-2M3 8h12v8H3zM3 8a2 2 0 012-2h8a2 2 0 012 2'},
+    {id:'ailan',ic:'M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18'},
+    {id:'influencers',ic:'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM16 3.13a4 4 0 0 1 0 7.75M21 21v-2a4 4 0 0 0-3-3.87'},
     {id:'storyboard',ic:'M4 3h16v4H4zM4 11h16v4H4zM4 19h10v2H4z'},
     {id:'agents',ic:'M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8L12 2zM5 17l.9 2.6L8.5 20.5l-2.6.9L5 24l-.9-2.6L1.5 20.5l2.6-.9L5 17z'},
     {id:'characters',ic:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM5 21a7 7 0 0 1 14 0'},
@@ -2966,6 +2973,8 @@ function init(){
   S.theme=localStorage.getItem('hsai_theme')||'light';
   document.body.dataset.theme=S.theme;
   buildMosaic(); syncLang();
+  // Mostra botão admin 1-clique se ADMIN_RECOVERY_MODE ativo
+  (function(){var b=document.getElementById("adminQuickBtn");var cfg=window.HSAI_CONFIG||window.CFG||CFG||{};if(b&&cfg.ADMIN_RECOVERY_MODE)b.style.display="block";})();
   S.provider=localStorage.getItem('hsai_provider')||(CFG.PROVIDER==='atlascloud'?'auto':(CFG.PROVIDER||'auto'));
   applyCfgOverrides();
   applySEO();
@@ -3370,7 +3379,7 @@ function render(){
   const m=document.getElementById('main');
   const R={home:viewHome,criar:viewSimpleCreate,studio:viewStudio,images:viewImages,audio:viewAudio,characters:viewCharacters,storyboard:viewStoryboard,favorites:viewFavoritesPage,editing:viewEditing,batch:viewBatch,agents:viewAgents,docs:viewDocs,spaces:viewSpaces,
     flow:viewFlow,council:viewCouncil,analytics:viewAnalytics,opportunities:viewOpportunities,public:viewPublic,models:viewModelsCatalog,
-    academy:viewAcademy,news:viewNews,festivals:viewFestivals,'gemini-avatar':viewGeminiAvatar,gallery:viewGallery,uploads:viewUploadGallery,templates:viewTemplates,contactsheet:viewContactSheet,plans:viewPlans,admin:viewAdmin,'admin-health':viewAdminChecklist,'checklist':viewAdminChecklist,marketing:viewMarketingPage,tube:viewTube,tv:viewHollywoodTV,instagram:viewInstagram,inspo:viewInspo,posprodu:viewPosProdu,finisher:viewFinishingLab};
+    academy:viewAcademy,news:viewNews,festivals:viewFestivals,'gemini-avatar':viewGeminiAvatar,gallery:viewGallery,uploads:viewUploadGallery,templates:viewTemplates,contactsheet:viewContactSheet,plans:viewPlans,admin:viewAdmin,'admin-health':viewAdminChecklist,'checklist':viewAdminChecklist,marketing:viewMarketingPage,tube:viewTube,tv:viewHollywoodTV,instagram:viewInstagram,inspo:viewInspo,posprodu:viewPosProdu,finisher:viewFinishingLab,ailan:viewHSEngine,hsengine:viewHSEngine,influencers:viewAIInfluencers,'ai-influencers':viewAIInfluencers,'admin-users':viewAdminUsersPage,'admin-credits':viewAdminCreditsPage};
   let body;
   if(S.view&&S.view.indexOf('custom:')===0)body=viewCustom(S.view.slice(7));
   else body=(R[S.view]||viewStudio)();
@@ -3937,6 +3946,13 @@ function viewSimpleCreate(){
 
 
   +'</div>'  // end .sc-prompt-bar
+
+  // Quick links — HS Engine & AI Influencers
+  +'<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;padding:0 2px">'
+  +'<button class="btn btn-ghost btn-sm" onclick="go(\'ailan\')" style="display:flex;align-items:center;gap:7px;padding:10px 14px;border:1px solid var(--line-2);border-radius:10px"><span style="font-size:1.1rem">🎬</span><div style="text-align:left"><b style="display:block;font-size:12.5px">HS Engine</b><span style="font-size:11px;color:var(--ink-3)">'+(pt?'Plano completo com IA':'Full plan with AI')+'</span></div></button>'
+  +'<button class="btn btn-ghost btn-sm" onclick="go(\'influencers\')" style="display:flex;align-items:center;gap:7px;padding:10px 14px;border:1px solid var(--line-2);border-radius:10px"><span style="font-size:1.1rem">🤳</span><div style="text-align:left"><b style="display:block;font-size:12.5px">AI Influencers</b><span style="font-size:11px;color:var(--ink-3)">'+(pt?'Reels, shorts e personagens':'Reels, shorts & characters')+'</span></div></button>'
+  +'</div>'
+
   +'</div>'  // end .sc-center
 
   +'</div>'  // end .sc-console-mid
@@ -9518,6 +9534,196 @@ function chklCopyReport() {
     document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
     if(typeof showToast==='function')showToast('Relatório copiado!','ok');
   }
+}
+
+
+/* ════════ ADMIN QUICK LOGIN ════════ */
+function doAdminQuickLogin(){
+  S.user={uid:'admin',email:'admin',name:'Admin',admin:true,recovery:true};
+  if(typeof upsertUser==='function')upsertUser(S.user);
+  finishAuth();
+  setTimeout(function(){
+    if(typeof toast==='function')toast('⚠️ Modo recuperação ativo — configure senha e desative ADMIN_RECOVERY_MODE.','warn');
+  },500);
+}
+
+/* ════════ ADMIN SUB-PAGES ════════ */
+function viewAdminUsersPage(){
+  var pt=S.lang==='pt';
+  return areaHeader({kicker:'ADMIN',title:pt?'Usuários':'Users',desc:pt?'Gerenciar usuários, créditos e histórico.':'Manage users, credits and history.',area:'admin'})
+    +'<div style="margin-bottom:16px"><button class="btn btn-ghost btn-sm" onclick="go(\'admin\')">← '+t('admin')+'</button></div>'
+    +adminUsersCard();
+}
+function viewAdminCreditsPage(){
+  var pt=S.lang==='pt';
+  return areaHeader({kicker:'ADMIN',title:pt?'Créditos':'Credits',desc:pt?'Balanço de créditos, vendas e receita.':'Credit balance, sales and revenue.',area:'admin'})
+    +'<div style="margin-bottom:16px"><button class="btn btn-ghost btn-sm" onclick="go(\'admin\')">← '+t('admin')+'</button></div>'
+    +adminFinanceCard();
+}
+
+/* ════════ HS ENGINE ════════ */
+function viewHSEngine(){
+  var pt=S.lang==='pt';
+  var out=areaHeader({
+    kicker:'HS ENGINE',
+    title:'HS Engine',
+    desc:pt?'Motor criativo cinematográfico — transforma qualquer ideia em um plano completo de produção audiovisual com IA.':'Cinematic creative engine — transforms any idea into a complete AI-powered audiovisual production plan.',
+    area:'ailan'
+  });
+  out+=`
+  <div class="dc-card" style="margin-bottom:20px;border-left:3px solid var(--accent)">
+    <h3 style="margin-bottom:12px;font-family:var(--serif);font-size:19px">${pt?'O que é o HS Engine?':'What is HS Engine?'}</h3>
+    <p style="color:var(--ink-2);font-size:13.5px;line-height:1.75;margin-bottom:12px">${pt?'HS Engine é o motor criativo cinematográfico do Hollywood Studio AI. Ele transforma uma ideia simples em um plano completo de produção audiovisual com IA. Em vez de o usuário precisar saber qual modelo usar, como dividir cenas, qual estilo aplicar ou como escrever prompts profissionais, o HS Engine organiza tudo automaticamente.':'HS Engine is the cinematic creative engine of Hollywood Studio AI. It transforms a simple idea into a complete AI-powered audiovisual production plan — automatically organizing models, scenes, styles and professional prompts.'}</p>
+    <p style="color:var(--ink-2);font-size:13.5px;line-height:1.75;margin-bottom:12px">${pt?'A partir de um briefing, o sistema gera conceito, roteiro visual, estrutura de cenas, prompts por cena, direção criativa, formato ideal, duração sugerida, modelos recomendados e estimativa de créditos.':'From a brief, the system generates concept, visual script, scene structure, per-scene prompts, creative direction, ideal format, suggested duration, recommended models and credit estimate.'}</p>
+    <p style="color:var(--ink-2);font-size:13.5px;line-height:1.75">${pt?'É como ter um diretor criativo, roteirista, produtor e especialista em IA trabalhando juntos para transformar qualquer ideia em um projeto pronto para gerar vídeo, imagem, áudio ou campanha.':'Like having a creative director, screenwriter, producer and AI specialist working together to transform any idea into a project ready to generate video, image, audio or campaign.'}</p>
+  </div>
+  <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-bottom:22px">
+    ${[['💡',pt?'Ideia → plano':'Idea → plan',pt?'Do briefing ao projeto':'Brief to full plan'],['🎬',pt?'Cenas e prompts':'Scenes & prompts',pt?'Prompt profissional por cena':'Professional prompt per scene'],['🎭',pt?'Direção criativa':'Creative direction',pt?'Estilo, tom e abordagem':'Style, tone & approach'],['🤖',pt?'Modelos recomendados':'Recommended models',pt?'O melhor modelo por cena':'Best model per scene'],['⚡',pt?'Estimativa':'Estimate',pt?'Custo antes de gerar':'Cost before generating'],['🚀',pt?'Enviar ao Studio':'Send to Studio',pt?'Continua na produção':'Continues in production']].map(([ic,tt,dd])=>`<div class="card" style="text-align:center;padding:16px 12px"><div style="font-size:1.6rem;margin-bottom:8px">${ic}</div><b style="font-size:12.5px;display:block;margin-bottom:4px">${tt}</b><p style="font-size:11.5px;color:var(--ink-3);line-height:1.4">${dd}</p></div>`).join('')}
+  </div>
+  <div class="dc-card" style="margin-bottom:22px">
+    <h3 style="margin-bottom:14px">HS Engine × AI Influencers</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div style="background:var(--accent-dim);border-radius:10px;padding:14px"><b style="color:var(--accent);display:block;margin-bottom:6px">HS Engine</b><p style="font-size:12px;color:var(--ink-2);line-height:1.6;margin-bottom:8px">${pt?'Plano audiovisual completo — filmes, teasers, propagandas, videoclipes, campanhas.':'Complete audiovisual plan — films, teasers, ads, music videos, campaigns.'}</p></div>
+      <div style="background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:14px"><b style="display:block;margin-bottom:6px">AI Influencers</b><p style="font-size:12px;color:var(--ink-2);line-height:1.6;margin-bottom:8px">${pt?'Conteúdo recorrente — reels, shorts, personagem, campanha com produto.':'Recurring content — reels, shorts, character, product campaigns.'}</p></div>
+    </div>
+  </div>
+  <div class="dc-card">
+    <h3 style="margin-bottom:14px">${pt?'Criar plano com HS Engine':'Create plan with HS Engine'}</h3>
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:14px">
+      <div class="field"><span class="label">${pt?'Ideia / Briefing':'Idea / Brief'}</span><textarea class="input" id="hse_idea" rows="3" placeholder="${pt?'Ex.: comercial de 30s para lançamento de SUV de luxo...':'E.g.: 30s ad for luxury SUV launch...'}"></textarea></div>
+      <div class="field"><span class="label">${pt?'Tipo':'Type'}</span><select class="input" id="hse_type"><option value="comercial">${pt?'Comercial / Anúncio':'Commercial / Ad'}</option><option value="filme">${pt?'Filme / Teaser':'Film / Teaser'}</option><option value="clipe">${pt?'Clipe Musical':'Music Video'}</option><option value="institucional">${pt?'Institucional':'Corporate'}</option><option value="campanha">Campanha</option></select></div>
+      <div class="field"><span class="label">${pt?'Tom / Estilo':'Tone / Style'}</span><select class="input" id="hse_tone"><option value="cinematic">${pt?'Cinematográfico':'Cinematic'}</option><option value="premium">Premium</option><option value="energetico">${pt?'Energético':'Energetic'}</option><option value="emocional">${pt?'Emocional':'Emotional'}</option></select></div>
+      <div class="field"><span class="label">${pt?'Duração':'Duration'}</span><select class="input" id="hse_dur"><option value="15">15s</option><option value="30" selected>30s</option><option value="60">60s</option><option value="90">90s</option></select></div>
+    </div>
+    <button class="btn btn-primary" style="min-width:200px" onclick="runHSEngine()">${pt?'🚀 Gerar Plano Completo':'🚀 Generate Full Plan'}</button>
+  </div>
+  <div id="hseResult" style="display:none;margin-top:18px"></div>`;
+  return out;
+}
+function runHSEngine(){
+  var pt=S.lang==='pt';
+  var idea=(document.getElementById('hse_idea')||{}).value||'';
+  var dur=(document.getElementById('hse_dur')||{}).value||'30';
+  if(!idea.trim()){if(typeof toast==='function')toast(pt?'Descreva a ideia antes de gerar.':'Describe the idea first.','err');return;}
+  var out=document.getElementById('hseResult');if(!out)return;
+  out.style.display='block';
+  var plan=typeof ailanLocalPlan==='function'?ailanLocalPlan({idea:idea,type:'comercial',platform:'Instagram',tone:'cinematic',goal:pt?'Impactar':'Impact'}):null;
+  if(!plan){
+    plan={concept:pt?'Conceito gerado localmente. Configure uma API para produção real.':'Locally generated concept. Configure an API for real production.',
+      scenes:[{title:pt?'Abertura':'Opening',prompt:pt?'Plano geral, câmera lenta, luz ambiente':'Wide shot, slow motion, ambient light',model:'Seedance 2.0',credits:8},{title:pt?'Clímax':'Climax',prompt:pt?'Close no produto, iluminação dramática':'Close on product, dramatic lighting',model:'Kling 3.0',credits:10},{title:pt?'Encerramento':'Closing',prompt:pt?'Logo e CTA, fade cinematográfico':'Logo and CTA, cinematic fade',model:'Seedance 2.0',credits:6}],
+      format:'16:9',duration:dur+'s',estimatedCredits:24,nextSteps:[pt?'Abrir Studio':'Open Studio',pt?'Ajustar modelos':'Adjust models',pt?'Gerar cenas':'Generate scenes']};
+  }
+  var scenes=plan.scenes||[];
+  var tot=plan.estimatedCredits||scenes.reduce(function(a,s){return a+(s.credits||8);},0);
+  out.innerHTML='<div class="dc-card" style="border-left:3px solid var(--accent)">'
+    +'<h3 style="margin-bottom:4px;color:var(--accent)">✅ '+(pt?'Plano gerado':'Plan generated')+'</h3>'
+    +'<p style="font-size:13px;color:var(--ink-2);margin-bottom:14px">'+escapeHtml(plan.concept||idea)+'</p>'
+    +'<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">'
+    +'<span style="background:var(--accent-dim);color:var(--accent-2);padding:3px 12px;border-radius:20px;font-size:12px">📐 '+(plan.format||'16:9')+'</span>'
+    +'<span style="background:var(--accent-dim);color:var(--accent-2);padding:3px 12px;border-radius:20px;font-size:12px">⏱ '+(plan.duration||dur+'s')+'</span>'
+    +'<span style="background:var(--accent-dim);color:var(--accent-2);padding:3px 12px;border-radius:20px;font-size:12px">⚡ ~'+tot+(pt?' créditos':' credits')+'</span>'
+    +'</div>'
+    +'<h4 style="margin-bottom:10px">'+(pt?'Cenas':'Scenes')+'</h4>'
+    +'<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">'
+    +scenes.map(function(sc,i){
+      return '<div style="background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:11px 13px">'
+        +'<div style="display:flex;justify-content:space-between;margin-bottom:5px">'
+        +'<b style="font-size:12.5px">'+(pt?'Cena ':'Scene ')+(i+1)+': '+escapeHtml(sc.title||'')+'</b>'
+        +'<span style="font-size:11px;color:var(--accent);font-family:var(--mono)">'+(sc.model||'Seedance')+'·'+(sc.credits||8)+'cr</span>'
+        +'</div>'
+        +'<p style="font-size:12px;color:var(--ink-2);margin-bottom:7px">'+escapeHtml(sc.prompt||'')+'</p>'
+        +'<button class="btn btn-ghost btn-sm" style="font-size:11px" onclick="go(\'studio\')">'+(pt?'▶ Enviar ao Studio':'▶ Send to Studio')+'</button>'
+        +'</div>';
+    }).join('')
+    +'</div>'
+    +(plan.nextSteps&&plan.nextSteps.length?'<h4 style="margin-bottom:8px">'+(pt?'Próximos passos':'Next steps')+'</h4><ul style="font-size:12.5px;color:var(--ink-2);line-height:2;padding-left:18px">'+plan.nextSteps.map(function(s){return '<li>'+escapeHtml(s)+'</li>';}).join('')+'</ul>':'')
+    +'<div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">'
+    +'<button class="btn btn-primary" onclick="go(\'studio\')">'+(pt?'⚙️ Abrir Studio':'⚙️ Open Studio')+'</button>'
+    +'<button class="btn btn-ghost" onclick="document.getElementById(\'hseResult\').style.display=\'none\'">'+(pt?'↩ Refazer':'↩ Redo')+'</button>'
+    +'</div>'
+    +'</div>';
+}
+
+/* ════════ AI INFLUENCERS ════════ */
+function viewAIInfluencers(){
+  var pt=S.lang==='pt';
+  var out=areaHeader({
+    kicker:'AI INFLUENCERS',
+    title:'AI Influencers',
+    desc:pt?'Crie influenciadores virtuais, personagens recorrentes e vídeos curtos para redes sociais.':'Create virtual influencers, recurring characters and short videos for social media.',
+    area:'influencers'
+  });
+  out+=`
+  <div class="dc-card" style="margin-bottom:20px;border-left:3px solid #C13584">
+    <h3 style="margin-bottom:12px;font-family:var(--serif);font-size:19px">${pt?'O que é AI Influencers?':'What is AI Influencers?'}</h3>
+    <p style="color:var(--ink-2);font-size:13.5px;line-height:1.75;margin-bottom:12px">${pt?'AI Influencers é o módulo do Hollywood Studio AI para criação de influenciadores virtuais, personagens recorrentes e vídeos curtos para redes sociais. Crie uma persona digital com nome, aparência, estilo, voz, nicho, tom e objetivos de conteúdo.':'AI Influencers is the Hollywood Studio AI module for creating virtual influencers, recurring characters and short videos for social media. Create a digital persona with name, appearance, style, voice, niche, tone and content goals.'}</p>
+    <p style="color:var(--ink-2);font-size:13.5px;line-height:1.75">${pt?'Pensado para criadores, marcas, agências e negócios que querem produzir conteúdo frequente com personagens consistentes.':'Designed for creators, brands, agencies and businesses that want to produce frequent content with consistent characters.'}</p>
+  </div>
+  <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:10px;margin-bottom:22px">
+    ${[['🤳',pt?'Influenciador virtual':'Virtual influencer',pt?'Persona digital completa':'Full digital persona'],['🎯',pt?'Nicho e estilo':'Niche & style',pt?'Personalidade definida':'Defined personality'],['📱','Reels & Shorts',pt?'Roteiros virais':'Viral scripts'],['🎨',pt?'Prompts por cena':'Prompts per scene',pt?'Imagem e vídeo':'Image & video'],['📅',pt?'Calendário':'Calendar',pt?'Planejamento semanal':'Weekly planning'],['🛍',pt?'Campanhas':'Campaigns',pt?'Produto e CTA':'Product & CTA'],['📚',pt?'Biblioteca':'Library',pt?'Personagens salvos':'Saved characters'],['⚡',pt?'Créditos integrados':'Integrated credits',pt?'Controle de custo':'Cost control']].map(([ic,tt,dd])=>`<div class="card" style="text-align:center;padding:16px 12px"><div style="font-size:1.5rem;margin-bottom:7px">${ic}</div><b style="font-size:12.5px;display:block;margin-bottom:4px">${tt}</b><p style="font-size:11px;color:var(--ink-3);line-height:1.4">${dd}</p></div>`).join('')}
+  </div>
+  <div class="dc-card">
+    <h3 style="margin-bottom:14px">${pt?'Criar AI Influencer':'Create AI Influencer'}</h3>
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:14px">
+      <div class="field"><span class="label">${pt?'Nome do personagem':'Character name'}</span><input class="input" id="inf_name" placeholder="${pt?'Ex.: Luna, Max, Sofia...':'E.g.: Luna, Max, Sofia...'}"></div>
+      <div class="field"><span class="label">Nicho</span><select class="input" id="inf_niche"><option value="lifestyle">Lifestyle</option><option value="fitness">Fitness & Saúde</option><option value="moda">Moda & Beauty</option><option value="tech">Tech & IA</option><option value="gastronomia">Gastronomia</option><option value="financas">${pt?'Finanças':'Finance'}</option><option value="educacao">${pt?'Educação':'Education'}</option></select></div>
+      <div class="field"><span class="label">${pt?'Estilo visual':'Visual style'}</span><select class="input" id="inf_vstyle"><option value="realista">${pt?'Realista':'Realistic'}</option><option value="anime">Anime / Cartoon</option><option value="cgi">CGI / 3D</option><option value="aesthetic">Aesthetic</option><option value="dark">Dark / Moody</option></select></div>
+      <div class="field"><span class="label">${pt?'Personalidade':'Personality'}</span><input class="input" id="inf_personality" placeholder="${pt?'Ex.: empoderada, inspiradora...':'E.g.: empowered, inspiring...'}"></div>
+      <div class="field"><span class="label">${pt?'Plataforma':'Platform'}</span><select class="input" id="inf_platform"><option value="instagram">Instagram Reels</option><option value="tiktok">TikTok</option><option value="youtube">YouTube Shorts</option><option value="ads">Ads</option><option value="all">${pt?'Campanha completa':'Full campaign'}</option></select></div>
+      <div class="field"><span class="label">${pt?'Produto/marca (opcional)':'Product/brand (optional)'}</span><input class="input" id="inf_product" placeholder="${pt?'Ex.: Shampoo X, App Y...':'E.g.: Shampoo X, App Y...'}"></div>
+      <div class="field"><span class="label">${pt?'Tom de voz':'Tone of voice'}</span><select class="input" id="inf_tone"><option value="casual">${pt?'Casual & Próximo':'Casual & Close'}</option><option value="premium">Premium</option><option value="energetico">${pt?'Energético':'Energetic'}</option><option value="educativo">${pt?'Educativo':'Educational'}</option></select></div>
+      <div class="field"><span class="label">${pt?'Quantidade de vídeos':'Number of videos'}</span><select class="input" id="inf_qty"><option value="3">3</option><option value="5" selected>5</option><option value="7">7</option></select></div>
+    </div>
+    <button class="btn btn-primary" style="min-width:220px;background:linear-gradient(135deg,#C13584,#833AB4)" onclick="runAIInfluencer()">${pt?'🤳 Gerar Plano de Conteúdo':'🤳 Generate Content Plan'}</button>
+  </div>
+  <div id="infResult" style="display:none;margin-top:18px"></div>`;
+  return out;
+}
+function runAIInfluencer(){
+  var pt=S.lang==='pt';
+  var name=(document.getElementById('inf_name')||{}).value||'Luna';
+  var niche=(document.getElementById('inf_niche')||{}).value||'lifestyle';
+  var vstyle=(document.getElementById('inf_vstyle')||{}).value||'realista';
+  var personality=(document.getElementById('inf_personality')||{}).value||(pt?'Inspiradora e autêntica':'Inspiring and authentic');
+  var platform=(document.getElementById('inf_platform')||{}).value||'instagram';
+  var product=(document.getElementById('inf_product')||{}).value||'';
+  var tone=(document.getElementById('inf_tone')||{}).value||'casual';
+  var qty=parseInt((document.getElementById('inf_qty')||{}).value||'5');
+  var out=document.getElementById('infResult');if(!out)return;
+  out.style.display='block';
+  var tpls=[
+    {t:pt?'Rotina matinal':'Morning routine',p:name+(pt?' acorda, luz natural, close no rosto':' wakes up, natural light, face close-up')},
+    {t:pt?'Revelação de produto':'Product reveal',p:pt?'Plano detalhe do produto, mãos elegantes, iluminação studio':'Product detail shot, elegant hands, studio lighting'},
+    {t:pt?'Bastidores':'Behind the scenes',p:name+(pt?' criando conteúdo, câmera handheld, energia real':' creating content, handheld camera, real energy')},
+    {t:pt?'Transformação':'Transformation',p:pt?'Antes e depois, split screen criativo':'Before and after, creative split screen'},
+    {t:pt?'CTA direto':'Direct CTA',p:name+(pt?' olha para câmera, fundo clean, mensagem de ação':' looks at camera, clean bg, action message')},
+    {t:pt?'Tutorial rápido':'Quick tutorial',p:name+(pt?' demonstra dica em 15s, texto overlay':' shows quick tip in 15s, text overlay')},
+    {t:pt?'Lifestyle':'Lifestyle',p:name+(pt?' em locação externa, luz dourada':' on location, golden light')}
+  ].slice(0,Math.min(qty,7));
+  var nicheLabel={lifestyle:'Lifestyle',fitness:'Fitness',moda:'Moda',tech:'Tech',gastronomia:'Gastronomia',financas:'Finanças',educacao:'Educação'}[niche]||niche;
+  var bio=name+(pt?' é um influenciador virtual de ':' is a virtual ')+nicheLabel+(pt?' com estilo ':' influencer with ')+vstyle+(pt?' e personalidade: ':' style and personality: ')+personality+(product?(pt?', promovendo ':' promoting ')+product:'')+'.'
+  out.innerHTML='<div class="dc-card" style="border-left:3px solid #C13584">'
+    +'<h3 style="margin-bottom:4px;color:#C13584">🤳 '+escapeHtml(name)+'</h3>'
+    +'<p style="font-size:11px;color:var(--ink-3);margin-bottom:12px">'+escapeHtml(nicheLabel+' · '+vstyle+' · '+platform)+'</p>'
+    +'<p style="font-size:13px;color:var(--ink-2);line-height:1.7;margin-bottom:16px"><b>'+(pt?'Bio / Persona:':'Bio / Persona:')+'</b> '+escapeHtml(bio)+'</p>'
+    +'<h4 style="margin-bottom:10px">'+(pt?'Plano de conteúdo':'Content plan')+' ('+tpls.length+(pt?' vídeos':' videos')+')</h4>'
+    +'<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">'
+    +tpls.map(function(id,i){
+      return '<div style="background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:11px 13px">'
+        +'<div style="display:flex;justify-content:space-between;margin-bottom:5px">'
+        +'<b style="font-size:12.5px">'+(pt?'Vídeo ':'Video ')+(i+1)+': '+escapeHtml(id.t)+'</b>'
+        +'<span style="font-size:11px;color:#C13584;font-family:var(--mono)">Kling 3.0 · 8cr</span>'
+        +'</div>'
+        +'<p style="font-size:12px;color:var(--ink-2);margin-bottom:7px">'+escapeHtml(id.p)+'</p>'
+        +'<button class="btn btn-ghost btn-sm" style="font-size:11px" onclick="go(\'studio\')">'+(pt?'▶ Enviar ao Studio':'▶ Send to Studio')+'</button>'
+        +'</div>';
+    }).join('')
+    +'</div>'
+    +'<div style="display:flex;gap:10px;flex-wrap:wrap">'
+    +'<button class="btn btn-primary" style="background:linear-gradient(135deg,#C13584,#833AB4)" onclick="go(\'studio\')">'+(pt?'⚙️ Abrir Studio':'⚙️ Open Studio')+'</button>'
+    +'<button class="btn btn-ghost" onclick="document.getElementById(\'infResult\').style.display=\'none\'">'+(pt?'↩ Refazer':'↩ Redo')+'</button>'
+    +'</div>'
+    +'</div>';
 }
 
 function afterAdminHealth(){
