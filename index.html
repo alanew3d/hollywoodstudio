@@ -939,7 +939,7 @@ a{color:inherit;text-decoration:none}
 .main{padding:4px 4px 32px 0;grid-area:main;overflow-y:auto;position:relative;background:
   radial-gradient(1100px 480px at 78% -8%,rgba(212,168,87,.05),transparent 60%) ,var(--bg)}
 
-/* ── Mode buttons: Criar rápido vs Studio completo ── */
+/* ── Mode buttons: Criar rápido vs HS Studio ── */
 .mode-btn{white-space:nowrap}
 .mode-diff-link{background:none;border:none;color:var(--ink-4);font-size:11px;cursor:pointer;text-decoration:underline;padding:2px 4px;white-space:nowrap}
 .mode-diff-link:hover{color:var(--accent)}
@@ -2270,7 +2270,7 @@ body.hsai-splash-lock{overflow:hidden}
     <div class="tb-title serif" id="topTitle">Estúdio</div>
     <div class="tb-spacer"></div>
     <button class="btn btn-primary btn-sm mode-btn" onclick="go('criar')" title="Use para gerar uma imagem, vídeo, prompt ou storyboard em poucos segundos.">✨ <span class="lbl" id="tbQuickLbl">Criar rápido</span></button>
-    <button class="btn btn-ghost btn-sm mode-btn" onclick="go('studio')" title="Use para controlar o fluxo inteiro: modelos, referências, storyboard, pós-produção, galeria e publicação.">🎛️ <span class="lbl" id="tbStudioLbl">Studio completo</span></button>
+    <button class="btn btn-ghost btn-sm mode-btn" onclick="go('studio')" title="Use para controlar o fluxo inteiro: modelos, referências, storyboard, pós-produção, galeria e publicação.">🎛️ <span class="lbl" id="tbStudioLbl">HS Studio</span></button>
     <button class="mode-diff-link" id="tbDiffLbl" onclick="hsaiModeDiff()">Qual a diferença?</button>
     <div class="lang-toggle lang-tog"><button id="tlPT" class="on" onclick="setLang('pt')">PT</button><button id="tlEN" onclick="setLang('en')">EN</button></div>
     <button class="icon-btn theme-tog" onclick="toggleTheme()" title="Tema"><svg id="themeIc" viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3v2M12 19v2M5 12H3M21 12h-2M6 6l1.5 1.5M16.5 16.5L18 18M18 6l-1.5 1.5M7.5 16.5L6 18"/><circle cx="12" cy="12" r="4"/></svg></button>
@@ -2411,14 +2411,14 @@ const S = {
 
 /* ════════ i18n ════════ */
 const I18N={
-  pt:{home:'Home',studio:'Studio completo',images:'Imagens',audio:'Áudio',characters:'Personagens',storyboard:'Storyboard',favorites:'Favoritos',editing:'Edição',agents:'Agentes',docs:'Documentos',spaces:'Spaces',flow:'Assistente',
+  pt:{home:'Home',studio:'HS Studio',images:'Imagens',audio:'Áudio',characters:'Personagens',storyboard:'Storyboard',favorites:'Favoritos',editing:'Edição',agents:'Agentes',docs:'Documentos',spaces:'Spaces',flow:'Assistente',
     council:'Conselho Criativo',analytics:'Estatísticas',opportunities:'Oportunidades',public:'Galeria Pública',
-    academy:'Academy',news:'Notícias',festivals:'Festivais',gallery:'Galeria',plans:'Planos',admin:'Admin',marketing:'Marketing',models:'Modelos',batch:'Edição em Lote',contactsheet:'Contact Sheet',templates:'Templates',uploads:'Meus Uploads',posprodu:'Pós-Produção',tube:'YouTube',tv:'Hollywood TV',instagram:'Instagram',inspo:'Inspiração',
+    academy:'Academy',news:'Notícias',festivals:'Festivais',gallery:'Galeria',plans:'Planos',admin:'Admin',marketing:'Marketing',models:'Modelos',batch:'Edição em Lote',contactsheet:'Contact Sheet',templates:'Templates',apresentacao:'Apresentação',uploads:'Meus Uploads',posprodu:'Pós-Produção',tube:'YouTube',tv:'Hollywood TV',instagram:'Instagram',inspo:'Inspiração',
     create:'Criação',intelligence:'Inteligência',manage:'Gestão',community:'Comunidade',learn:'Aprender',account:'Conta',
     generate:'Gerar',prompt:'Prompt',welcome:'Bem-vindo de volta','gemini-avatar':'Avatar IA',criar:'Criar rápido',ailan:'HS Engine',influencers:'AI Influencers'},
-  en:{home:'Home',studio:'Full Studio',images:'Images',audio:'Audio',characters:'Characters',storyboard:'Storyboard',favorites:'Favorites',editing:'Editing',agents:'Agents',docs:'Documents',spaces:'Spaces',flow:'Assistant',
+  en:{home:'Home',studio:'HS Studio',images:'Images',audio:'Audio',characters:'Characters',storyboard:'Storyboard',favorites:'Favorites',editing:'Editing',agents:'Agents',docs:'Documents',spaces:'Spaces',flow:'Assistant',
     council:'Conselho Criativo',analytics:'Analytics',opportunities:'Opportunities',public:'Public Gallery',
-    academy:'Academy',news:'News',festivals:'Festivals',gallery:'Gallery',plans:'Plans',admin:'Admin',models:'Models',batch:'Batch Edit',contactsheet:'Contact Sheet',templates:'Templates',uploads:'My Uploads',posprodu:'Post Production',tube:'YouTube',tv:'Hollywood TV',instagram:'Instagram',inspo:'Inspiration',
+    academy:'Academy',news:'News',festivals:'Festivals',gallery:'Gallery',plans:'Plans',admin:'Admin',models:'Models',batch:'Batch Edit',contactsheet:'Contact Sheet',templates:'Templates',apresentacao:'Pro Intro',uploads:'My Uploads',posprodu:'Post Production',tube:'YouTube',tv:'Hollywood TV',instagram:'Instagram',inspo:'Inspiration',
     create:'Create',intelligence:'Intelligence',manage:'Manage',community:'Community',learn:'Learn',account:'Account',
     generate:'Generate',prompt:'Prompt',welcome:'Welcome back','gemini-avatar':'AI Avatar',criar:'Quick create',ailan:'HS Engine',influencers:'AI Influencers'}
 };
@@ -2935,11 +2935,12 @@ const NAV=[
     {id:'uploads',ic:'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12'},
         {id:'docs',ic:'M6 2h9l5 5v15H6zM15 2v5h5M9 13h6M9 17h6'},
     {id:'templates',ic:'M4 5h16v3H4zM4 10h16v3H4zM4 15h10v3H4z'},
+    {id:'apresentacao',ic:'M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z'},
     {id:'posprodu',ic:'M2 8h20v10H2zM6 8V5h12v3M2 12h3M19 12h3M6 12h12'}
   ]},
   {group:'intelligence',items:[
     {id:'flow',ic:'M12 3v4M12 17v4M3 12h4M17 12h4M6 6l3 3M18 6l-3 3M6 18l3-3M18 18l-3-3M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z'},
-    {id:'council',ic:'M3 11v2h4l5 5V6L7 11H3zm13.5 1A4.5 4.5 0 0014 8v8a4.5 4.5 0 002.5-8z'}
+    {id:'council',ic:'M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm0 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4zm-6-3c1.7 0 3-1.3 3-3S7.7 5 6 5 3 6.3 3 8s1.3 3 3 3zm0 1.5c-1.2 0-3.5.6-3.5 1.8V18h3.5v-1.2c0-1 .5-2 1.3-2.7-.5-.1-.9-.1-1.3-.1zm12-1.5c1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3 1.3 3 3 3zm0 1.5c-.4 0-.8 0-1.3.1.8.7 1.3 1.7 1.3 2.7V18H21v-1.2c0-1.2-2.3-1.8-3.5-1.8z'}
   ]},
   {group:'manage',items:[
     {id:'analytics',ic:'M4 20V10M10 20V4M16 20v-7M22 20H2'},
@@ -3020,7 +3021,16 @@ function detectSupabaseOAuthReturn(){
 }
 /* AI-generated/cinematic imagery. Reel uses bundled local files (guaranteed to load);
    override with CFG.REEL_IMAGES (array of URLs) to use your own AI-generated images. */
-const LOCAL_REEL=Array.from({length:12},(_,i)=>`assets/reel/r${i+1}.jpg`);
+const LOCAL_REEL=[
+  '/assets/home-carousel/inspiration-01.jpg','/assets/home-carousel/inspiration-02.jpg',
+  '/assets/home-carousel/inspiration-03.jpg','/assets/home-carousel/inspiration-04.jpg',
+  '/assets/home-carousel/inspiration-05.webp','/assets/home-carousel/inspiration-06.jpg',
+  '/assets/home-carousel/inspiration-07.jpg','/assets/home-carousel/inspiration-08.webp',
+  '/assets/home-carousel/inspiration-09.jpg','/assets/home-carousel/inspiration-10.jpg',
+  '/assets/home-carousel/inspiration-11.jpg','/assets/home-carousel/inspiration-12.jpg',
+  '/assets/home-carousel/inspiration-13.jpg','/assets/home-carousel/inspiration-14.webp',
+  '/assets/home-carousel/inspiration-15.jpg',
+];
 // Unsplash fallback: usado automaticamente quando o arquivo local falhar (servidor sem pasta /assets/reel)
 const FALLBACK_REEL=[
   'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=900&q=70&auto=format&fit=crop', // film
@@ -3067,7 +3077,7 @@ function syncLang(){
   if(q)q.textContent=S.lang==='pt'?'A direção cinematográfica encontra a inteligência generativa.':'Cinematic direction meets generative intelligence.';
   const cil=document.getElementById('credInfoLbl');if(cil)cil.textContent=S.lang==='pt'?'Como funcionam os créditos':'How credits work';
   const mq=document.getElementById('tbQuickLbl');if(mq)mq.textContent=S.lang==='pt'?'Criar rápido':'Quick create';
-  const ms=document.getElementById('tbStudioLbl');if(ms)ms.textContent=S.lang==='pt'?'Studio completo':'Full Studio';
+  const ms=document.getElementById('tbStudioLbl');if(ms)ms.textContent=S.lang==='pt'?'HS Studio':'HS Studio';
   const md=document.getElementById('tbDiffLbl');if(md)md.textContent=S.lang==='pt'?'Qual a diferença?':"What's the difference?";
 }
 function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';document.body.dataset.theme=S.theme;localStorage.setItem('hsai_theme',S.theme);}
@@ -3379,7 +3389,7 @@ function render(){
   const m=document.getElementById('main');
   const R={home:viewHome,criar:viewSimpleCreate,studio:viewStudio,images:viewImages,audio:viewAudio,characters:viewCharacters,storyboard:viewStoryboard,favorites:viewFavoritesPage,editing:viewEditing,batch:viewBatch,agents:viewAgents,docs:viewDocs,spaces:viewSpaces,
     flow:viewFlow,council:viewCouncil,analytics:viewAnalytics,opportunities:viewOpportunities,public:viewPublic,models:viewModelsCatalog,
-    academy:viewAcademy,news:viewNews,festivals:viewFestivals,'gemini-avatar':viewGeminiAvatar,gallery:viewGallery,uploads:viewUploadGallery,templates:viewTemplates,contactsheet:viewContactSheet,plans:viewPlans,admin:viewAdmin,'admin-health':viewAdminChecklist,'checklist':viewAdminChecklist,marketing:viewMarketingPage,tube:viewTube,tv:viewHollywoodTV,instagram:viewInstagram,inspo:viewInspo,posprodu:viewPosProdu,finisher:viewFinishingLab,ailan:viewHSEngine,hsengine:viewHSEngine,influencers:viewAIInfluencers,'ai-influencers':viewAIInfluencers,'admin-users':viewAdminUsersPage,'admin-credits':viewAdminCreditsPage};
+    academy:viewAcademy,news:viewNews,festivals:viewFestivals,'gemini-avatar':viewGeminiAvatar,gallery:viewGallery,uploads:viewUploadGallery,templates:viewTemplates,apresentacao:viewApresentacao,contactsheet:viewContactSheet,plans:viewPlans,admin:viewAdmin,'admin-health':viewAdminChecklist,'checklist':viewAdminChecklist,marketing:viewMarketingPage,tube:viewTube,tv:viewHollywoodTV,instagram:viewInstagram,inspo:viewInspo,posprodu:viewPosProdu,finisher:viewFinishingLab,ailan:viewHSEngine,hsengine:viewHSEngine,influencers:viewAIInfluencers,'ai-influencers':viewAIInfluencers,'admin-users':viewAdminUsersPage,'admin-credits':viewAdminCreditsPage};
   let body;
   if(S.view&&S.view.indexOf('custom:')===0)body=viewCustom(S.view.slice(7));
   else body=(R[S.view]||viewStudio)();
@@ -3436,14 +3446,24 @@ function modeCats(mode){return mode==='image'?'image':mode==='audio'?'audio':'vi
    Suba a pasta /assets/demo/ no servidor (surf.mp4, dog-soccer.mp4, dog-tightrope.mp4).
    Se um arquivo faltar, o app cai no placeholder "Lights, Camera, AI" automaticamente. */
 const DEMO_REEL=[
-  {url:'/assets/demo/surf.mp4',         model:'Seedance 2.0',modelId:'seedance2',ratio:'16:9',dur:11,
+  // When assets/demo/*.mp4 exist on server they take priority.
+  // Fallback: high-quality Unsplash images that always load.
+  {url:'/assets/social/surf.mp4',
+   fallbackImg:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80&auto=format&fit=crop',
+   model:'Seedance 2.0',modelId:'seedance2',ratio:'16:9',dur:11,
    prompt:'homem surfando na indonésia — cinematic shot, 35mm lens, shallow depth of field, volumetric lighting, film color grading, smooth camera movement, high realism 4k'},
-  {url:'/assets/demo/fairy.mp4',        model:'Seedance 2.0',modelId:'seedance2',ratio:'16:9',dur:8,
-   prompt:'magical fairy with iridescent wings in enchanted forest — cinematic shot, 35mm lens, shallow depth of field, volumetric lighting, magical particles, film color grading, high realism 4k'},
-  {url:'/assets/demo/dog-soccer.mp4',   model:'Seedance 2.0',modelId:'seedance2',ratio:'16:9',dur:8,
-   prompt:'dog playing soccer — plano cinematográfico, lente 35mm, profundidade de campo rasa, iluminação volumétrica, color grading de cinema, movimento de câmera suave, alto realismo 4k'},
-  {url:'/assets/demo/dog-tightrope.mp4',model:'Seedance 2.0',modelId:'seedance2',ratio:'16:9',dur:8,
-   prompt:'cão na corda bamba — plano cinematográfico, lente 35mm, profundidade de campo rasa, iluminação volumétrica, color grading de cinema, movimento de câmera suave, alto realismo 4k'},
+  {url:'/assets/social/fairy.mp4',
+   fallbackImg:'https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=1200&q=80&auto=format&fit=crop',
+   model:'Seedance 2.0',modelId:'seedance2',ratio:'16:9',dur:8,
+   prompt:'fairy in an enchanted forest, magical lighting, ethereal atmosphere, cinematic 4K'},
+  {url:'/assets/social/dog-soccer.mp4',
+   fallbackImg:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80&auto=format&fit=crop',
+   model:'Kling 3.0',modelId:'kling3',ratio:'16:9',dur:7,
+   prompt:'dog playing soccer on a professional field, cinematic slow motion, crowd cheering'},
+  {url:'/assets/social/dog-tightrope.mp4',
+   fallbackImg:'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1200&q=80&auto=format&fit=crop',
+   model:'Kling 3.0',modelId:'kling3',ratio:'16:9',dur:8,
+   prompt:'dog walking tightrope between skyscrapers, cinematic aerial shot, sunset lighting'},
 ];
 function pickDemo(){ if(!window._demoPick)window._demoPick=DEMO_REEL[0]; return window._demoPick; }
 function demoByUrl(url){return DEMO_REEL.find(d=>d.url===url);}
@@ -3608,7 +3628,7 @@ function viewHome(){
     +'</div>';
   var ctaBlock='<div style="display:flex;gap:10px;flex-wrap:wrap">'
     +'<button class="btn btn-primary" style="padding:13px 28px;font-size:15px" onclick="go(\'criar\')">'+(pt?'✨ Criar Agora →':'✨ Create Now →')+'</button>'
-    +'<button class="btn btn-hero-outline" style="padding:13px 22px" onclick="go(\'studio\')">'+(pt?'⚙️ Abrir Studio Completo':'⚙️ Full Studio')+'</button>'
+    +'<button class="btn btn-hero-outline" style="padding:13px 22px" onclick="go(\'studio\')">'+(pt?'⚙️ Abrir HS Studio':'⚙️ HS Studio')+'</button>'
     +'<button class="btn btn-hero-outline" style="padding:13px 18px" onclick="go(\'models\')">'+(pt?'Ver modelos':'View models')+'</button>'
     +'</div>';
   var creditsBadge=!isGuest()?('<div style="margin-top:16px;display:inline-flex;align-items:center;gap:8px;background:rgba(212,168,87,.1);border:1px solid rgba(212,168,87,.2);border-radius:20px;padding:6px 14px;font-size:13px;color:var(--accent)"><b>'+credits+'</b> '+(pt?'créditos disponíveis':'credits available')+'<button class="btn btn-ghost btn-sm" style="padding:2px 8px;font-size:11px;margin:0" onclick="go(\'plans\')">'+(pt?'Recarregar':'Top up')+'</button></div>'):'';
@@ -3815,7 +3835,7 @@ function viewSimpleCreate(){
       +'<div class="user-wrap"><div class="user-chip" id="scUserChip" onclick="userMenu(\'scUserPop\')">'+avInner+'</div><div class="user-pop" id="scUserPop"></div></div>';
   }
   var modeCtl='<button class="btn btn-primary btn-sm mode-btn" onclick="go(\'criar\')" title="'+(pt?'Use para gerar uma imagem, vídeo, prompt ou storyboard em poucos segundos.':'Use it to generate an image, video, prompt or storyboard in seconds.')+'">✨ <span class="lbl">'+(pt?'Criar rápido':'Quick create')+'</span></button>'
-    +'<button class="btn btn-ghost btn-sm mode-btn" onclick="go(\'studio\')" title="'+(pt?'Use para controlar o fluxo inteiro: modelos, referências, storyboard, pós-produção, galeria e publicação.':'Use it to control the entire workflow: models, references, storyboard, post-production, gallery and publishing.')+'">🎛️ <span class="lbl">'+(pt?'Studio completo':'Full Studio')+'</span></button>'
+    +'<button class="btn btn-ghost btn-sm mode-btn" onclick="go(\'studio\')" title="'+(pt?'Use para controlar o fluxo inteiro: modelos, referências, storyboard, pós-produção, galeria e publicação.':'Use it to control the entire workflow: models, references, storyboard, post-production, gallery and publishing.')+'">🎛️ <span class="lbl">'+(pt?'HS Studio':'HS Studio')+'</span></button>'
     +'<button class="mode-diff-link" onclick="hsaiModeDiff()">'+(pt?'Qual a diferença?':'What\'s the difference?')+'</button>';
   var topRight=modeCtl+langCtl+themeCtl+plansCtl+userCtl;
 
@@ -3865,8 +3885,9 @@ function viewSimpleCreate(){
   +'</div>'
 
   +'<div class="sc-center-hero" id="quick-create-anchor">'
+  +'<div class="sc-mobile-logo">Hollywood Studio <span>★AI</span></div>'
   +'<h1>'+(pt?'O que vamos <em>criar</em> hoje?':'What are we <em>creating</em> today?')+'</h1>'
-  +'<p class="sub">'+(pt?'Comece rápido aqui. Quando quiser mais controle, envie para o Studio completo.':'Start fast here. When you want more control, send it to the Full Studio.')+'</p>'
+  +'<p class="sub">'+(pt?'Comece rápido aqui. Quando quiser mais controle, envie para o HS Studio.':'Start fast here. When you want more control, send it to the HS Studio.')+'</p>'
   +'</div>'
   +'<div class="sc-prompt-bar">'
   +'<textarea class="sc-prompt-field" id="scPrompt" rows="3" placeholder="'+(pt?'Descreva sua ideia...':'Describe your idea...')+'" oninput="scUpdateRecommendation()" style="width:100%;resize:none;min-height:88px;padding:12px 16px;font-size:15px"></textarea>'
@@ -3894,12 +3915,7 @@ function viewSimpleCreate(){
   +'</div>'
 
   // Row 2: support buttons (Mentor desktop-only + Storyboard + Post-prod + Studio)
-  +'<div class="sc-pa-row sc-pa-row--support sc-pa-row2">'
-  +'<button class="btn btn-ghost btn-sm sc-pa-mentor-desk" onclick="handleMentor()" title="'+(pt?'Aplique a visão de um mentor criativo':'Apply a creative mentor\'s vision')+'">🎭 Mentor</button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="handleStoryboard()" title="'+(pt?'Transforme a ideia em cenas de storyboard':'Turn the idea into storyboard scenes')+'">📋 Storyboard</button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="handlePostProduction()" title="'+(pt?'Pós-produção: resolução, redes sociais, legenda, briefing':'Post-production: resolution, social media, caption, briefing')+'">🛠 '+(pt?'Pós-produção':'Post-production')+'</button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="scSendToStudio()" title="'+(pt?'Use para controlar o fluxo inteiro: modelos, referências, storyboard, pós-produção, galeria e publicação.':'Use it to control the entire workflow: models, references, storyboard, post-production, gallery and publishing.')+'">⚙️ '+(pt?'Studio completo':'Full Studio')+'</button>'
-  +'</div>'
+  
 
   // Row 3: config selects (aspect · duration · style · mode · direction)
   +'<div class="sc-pa-row sc-pa-row--config">'
@@ -3947,11 +3963,8 @@ function viewSimpleCreate(){
 
   +'</div>'  // end .sc-prompt-bar
 
-  // Quick links — HS Engine & AI Influencers
-  +'<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;padding:0 2px">'
-  +'<button class="btn btn-ghost btn-sm" onclick="go(\'ailan\')" style="display:flex;align-items:center;gap:7px;padding:10px 14px;border:1px solid var(--line-2);border-radius:10px"><span style="font-size:1.1rem">🎬</span><div style="text-align:left"><b style="display:block;font-size:12.5px">HS Engine</b><span style="font-size:11px;color:var(--ink-3)">'+(pt?'Plano completo com IA':'Full plan with AI')+'</span></div></button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="go(\'influencers\')" style="display:flex;align-items:center;gap:7px;padding:10px 14px;border:1px solid var(--line-2);border-radius:10px"><span style="font-size:1.1rem">🤳</span><div style="text-align:left"><b style="display:block;font-size:12.5px">AI Influencers</b><span style="font-size:11px;color:var(--ink-3)">'+(pt?'Reels, shorts e personagens':'Reels, shorts & characters')+'</span></div></button>'
-  +'</div>'
+  // Quick links — 4 buttons same style as original
+  +'<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;padding:0 2px">'  +'<button class="btn btn-ghost btn-sm" onclick="go(\'studio\')" style="display:flex;align-items:center;gap:7px;padding:10px 14px;border:1px solid var(--line-2);border-radius:10px"><span style="font-size:1.1rem">🎛️</span><div style="text-align:left"><b style="display:block;font-size:12.5px">HS Studio</b><span style="font-size:11px;color:var(--ink-3)">'+(pt?'Controle total':'Full control')+'</span></div></button>'  +'<button class="btn btn-ghost btn-sm" onclick="go(\'ailan\')" style="display:flex;align-items:center;gap:7px;padding:10px 14px;border:1px solid var(--line-2);border-radius:10px"><span style="font-size:1.1rem">🎬</span><div style="text-align:left"><b style="display:block;font-size:12.5px">HS Engine</b><span style="font-size:11px;color:var(--ink-3)">'+(pt?'Plano completo com IA':'Full plan with AI')+'</span></div></button>'  +'<button class="btn btn-ghost btn-sm" onclick="go(\'apresentacao\')" style="display:flex;align-items:center;gap:7px;padding:10px 14px;border:1px solid var(--line-2);border-radius:10px"><span style="font-size:1.1rem">🎙️</span><div style="text-align:left"><b style="display:block;font-size:12.5px">'+(pt?'Apresentação':'Pro Intro')+'</b><span style="font-size:11px;color:var(--ink-3)">'+(pt?'Vídeo profissional':'Professional intro')+'</span></div></button>'  +'<button class="btn btn-ghost btn-sm" onclick="go(\'influencers\')" style="display:flex;align-items:center;gap:7px;padding:10px 14px;border:1px solid var(--line-2);border-radius:10px"><span style="font-size:1.1rem">🤳</span><div style="text-align:left"><b style="display:block;font-size:12.5px">AI Influencers</b><span style="font-size:11px;color:var(--ink-3)">'+(pt?'Reels, shorts e personagens':'Reels, shorts & characters')+'</span></div></button>'  +'</div>'
 
   +'</div>'  // end .sc-center
 
@@ -3998,21 +4011,21 @@ window.scRefExpand=scRefExpand;
 
 /* ── Inspirações rápidas (home) — mosaico de referências cinematográficas ── */
 window.HOME_INSPIRATIONS=[
-  {title:'Cena cinematográfica noturna',type:'video',mediaUrl:'assets/home-carousel/inspiration-01.jpg',prompt:'Cena cinematográfica noturna em uma metrópole iluminada por neon, câmera em travelling lateral suave, reflexos molhados no asfalto, profundidade de campo rasa, color grading teal & orange, atmosfera de thriller premium, 4K',modelId:'seedance-fast',aspectRatio:'16:9',duration:'8s'},
-  {title:'Estúdio criativo IA',type:'image',mediaUrl:'assets/home-carousel/inspiration-02.jpg',prompt:'Interior de um estúdio criativo futurista com telas holográficas e luz volumétrica dourada, equipe produzindo um filme com IA, composição ampla e elegante, fotografia editorial premium, alto detalhe',modelId:'flux-dev',aspectRatio:'16:9'},
-  {title:'Hollywood visual',type:'video',mediaUrl:'assets/home-carousel/inspiration-03.jpg',prompt:'Plano aéreo cinematográfico sobre um letreiro de cinema clássico ao pôr do sol, lens flare anamórfico, grão de filme sutil, trilha épica implícita no ritmo da câmera, estética Hollywood premium',modelId:'seedance-fast',aspectRatio:'16:9',duration:'8s'},
-  {title:'Produção audiovisual',type:'image',mediaUrl:'assets/home-carousel/inspiration-04.jpg',prompt:'Set de filmagem profissional com câmera de cinema, rebatedores e fumaça suave atravessada por luz dura, bastidores de uma produção audiovisual de alto orçamento, fotografia documental cinematográfica',modelId:'flux-dev',aspectRatio:'16:9'},
-  {title:'Retrato dramático',type:'image',mediaUrl:'assets/home-carousel/inspiration-05.webp',prompt:'Retrato dramático em close-up com iluminação Rembrandt, fundo escuro com névoa sutil, olhar intenso, textura de pele realista, lente 85mm f/1.4, fotografia de cinema premiada',modelId:'gpt-image-1',aspectRatio:'4:5'},
-  {title:'Produto premium',type:'video',mediaUrl:'assets/home-carousel/inspiration-06.jpg',prompt:'Comercial de produto premium: frasco de vidro girando lentamente sobre superfície espelhada, gotas de água congeladas no ar, iluminação de estúdio dourada, macro cinematográfico, slow motion elegante',modelId:'seedance-fast',aspectRatio:'16:9',duration:'8s'},
-  {title:'Paisagem épica',type:'image',mediaUrl:'assets/home-carousel/inspiration-07.jpg',prompt:'Paisagem épica de montanhas ao amanhecer com mar de nuvens, luz dourada rasante, escala monumental com figura humana minúscula, composição widescreen de cinema, ultra detalhado',modelId:'flux-dev',aspectRatio:'16:9'},
-  {title:'Ficção científica',type:'video',mediaUrl:'assets/home-carousel/inspiration-08.webp',prompt:'Corredor de nave espacial com luzes pulsando em sequência, astronauta caminhando em direção à câmera, dolly reverso lento, atmosfera de ficção científica premium, iluminação fria com acentos âmbar',modelId:'seedance-fast',aspectRatio:'16:9',duration:'8s'},
-  {title:'Moda editorial',type:'image',mediaUrl:'assets/home-carousel/inspiration-09.jpg',prompt:'Editorial de moda em arquitetura brutalista, modelo com figurino esculpido, sombras geométricas duras, paleta monocromática com acento vermelho, fotografia de vanguarda para revista de luxo',modelId:'gpt-image-1',aspectRatio:'4:5'},
-  {title:'Cidade futurista',type:'video',mediaUrl:'assets/home-carousel/inspiration-10.jpg',prompt:'Voo de drone cinematográfico entre arranha-céus futuristas ao entardecer, tráfego aéreo luminoso, nuvens volumétricas, transição suave de luz natural para neon, world building épico em 4K',modelId:'seedance-fast',aspectRatio:'16:9',duration:'8s'},
-  {title:'Gastronomia cinematográfica',type:'image',mediaUrl:'assets/home-carousel/inspiration-11.jpg',prompt:'Prato de alta gastronomia fotografado em estilo cinematográfico dark & moody, vapor subindo iluminado em contraluz, texturas macro, mesa de madeira rústica, direção de arte de comercial premium',modelId:'flux-dev',aspectRatio:'1:1'},
-  {title:'Documentário urbano',type:'video',mediaUrl:'assets/home-carousel/inspiration-12.jpg',prompt:'Sequência documental urbana em preto e branco, multidão atravessando faixa de pedestres em câmera lenta, um personagem em foco caminhando contra o fluxo, contraste alto, estética de festival de cinema',modelId:'seedance-fast',aspectRatio:'16:9',duration:'8s'},
-  {title:'Natureza mística',type:'image',mediaUrl:'assets/home-carousel/inspiration-13.jpg',prompt:'Floresta mística com raios de luz atravessando a neblina entre árvores centenárias, partículas flutuando no ar, paleta esmeralda e dourado, atmosfera de fantasia cinematográfica, hiper-realista',modelId:'flux-dev',aspectRatio:'16:9'},
-  {title:'Herói em ação',type:'video',mediaUrl:'assets/home-carousel/inspiration-14.webp',prompt:'Cena de ação cinematográfica: silhueta de herói caminhando em direção à câmera saindo de explosão de faíscas ao fundo, slow motion, retroiluminação intensa, poeira no ar, blockbuster de Hollywood',modelId:'seedance-fast',aspectRatio:'16:9',duration:'8s'},
-  {title:'Estúdio de som',type:'image',mediaUrl:'assets/home-carousel/inspiration-15.jpg',prompt:'Estúdio de gravação de trilha sonora com orquestra em sessão, maestro em primeiro plano desfocado, luz quente de spots sobre as partituras, atmosfera intimista de bastidores de cinema, fotografia editorial',modelId:'gpt-image-1',aspectRatio:'16:9'}
+  {title:'Cena cinematográfica noturna',type:'video',mediaUrl:'/assets/home-carousel/inspiration-01.jpg',prompt:'Cena cinematográfica noturna em uma metrópole iluminada por neon, câmera em travelling lateral suave, reflexos molhados no asfalto, profundidade de campo rasa, color grading teal & orange, atmosfera de thriller premium, 4K',modelId:'seedance-fast',aspectRatio:'16:9',duration:'8s'},
+  {title:'Estúdio criativo IA',type:'image',mediaUrl:'/assets/home-carousel/inspiration-02.jpg',prompt:'Interior de um estúdio criativo futurista com telas holográficas e luz volumétrica dourada, equipe produzindo um filme com IA, composição ampla e elegante, fotografia editorial premium, alto detalhe',modelId:'flux-dev',aspectRatio:'16:9'},
+  {title:'Hollywood visual',type:'video',mediaUrl:'/assets/home-carousel/inspiration-03.jpg',prompt:'Plano aéreo cinematográfico sobre um letreiro de cinema clássico ao pôr do sol, lens flare anamórfico, grão de filme sutil, trilha épica implícita no ritmo da câmera, estética Hollywood premium',modelId:'seedance-fast',aspectRatio:'16:9',duration:'8s'},
+  {title:'Produção audiovisual',type:'image',mediaUrl:'/assets/home-carousel/inspiration-04.jpg',prompt:'Set de filmagem profissional com câmera de cinema, rebatedores e fumaça suave atravessada por luz dura, bastidores de uma produção audiovisual de alto orçamento, fotografia documental cinematográfica',modelId:'flux-dev',aspectRatio:'16:9'},
+  {title:'Retrato dramático',type:'image',mediaUrl:'/assets/home-carousel/inspiration-05.webp',prompt:'Retrato dramático em close-up com iluminação Rembrandt, fundo escuro com névoa sutil, olhar intenso, textura de pele realista, lente 85mm f/1.4, fotografia de cinema premiada',modelId:'gpt-image-1',aspectRatio:'4:5'},
+  {title:'Produto premium',type:'video',mediaUrl:'/assets/home-carousel/inspiration-06.jpg',prompt:'Comercial de produto premium: frasco de vidro girando lentamente sobre superfície espelhada, gotas de água congeladas no ar, iluminação de estúdio dourada, macro cinematográfico, slow motion elegante',modelId:'seedance-fast',aspectRatio:'16:9',duration:'8s'},
+  {title:'Paisagem épica',type:'image',mediaUrl:'/assets/home-carousel/inspiration-07.jpg',prompt:'Paisagem épica de montanhas ao amanhecer com mar de nuvens, luz dourada rasante, escala monumental com figura humana minúscula, composição widescreen de cinema, ultra detalhado',modelId:'flux-dev',aspectRatio:'16:9'},
+  {title:'Ficção científica',type:'video',mediaUrl:'/assets/home-carousel/inspiration-08.webp',prompt:'Corredor de nave espacial com luzes pulsando em sequência, astronauta caminhando em direção à câmera, dolly reverso lento, atmosfera de ficção científica premium, iluminação fria com acentos âmbar',modelId:'seedance-fast',aspectRatio:'16:9',duration:'8s'},
+  {title:'Moda editorial',type:'image',mediaUrl:'/assets/home-carousel/inspiration-09.jpg',prompt:'Editorial de moda em arquitetura brutalista, modelo com figurino esculpido, sombras geométricas duras, paleta monocromática com acento vermelho, fotografia de vanguarda para revista de luxo',modelId:'gpt-image-1',aspectRatio:'4:5'},
+  {title:'Cidade futurista',type:'video',mediaUrl:'/assets/home-carousel/inspiration-10.jpg',prompt:'Voo de drone cinematográfico entre arranha-céus futuristas ao entardecer, tráfego aéreo luminoso, nuvens volumétricas, transição suave de luz natural para neon, world building épico em 4K',modelId:'seedance-fast',aspectRatio:'16:9',duration:'8s'},
+  {title:'Gastronomia cinematográfica',type:'image',mediaUrl:'/assets/home-carousel/inspiration-11.jpg',prompt:'Prato de alta gastronomia fotografado em estilo cinematográfico dark & moody, vapor subindo iluminado em contraluz, texturas macro, mesa de madeira rústica, direção de arte de comercial premium',modelId:'flux-dev',aspectRatio:'1:1'},
+  {title:'Documentário urbano',type:'video',mediaUrl:'/assets/home-carousel/inspiration-12.jpg',prompt:'Sequência documental urbana em preto e branco, multidão atravessando faixa de pedestres em câmera lenta, um personagem em foco caminhando contra o fluxo, contraste alto, estética de festival de cinema',modelId:'seedance-fast',aspectRatio:'16:9',duration:'8s'},
+  {title:'Natureza mística',type:'image',mediaUrl:'/assets/home-carousel/inspiration-13.jpg',prompt:'Floresta mística com raios de luz atravessando a neblina entre árvores centenárias, partículas flutuando no ar, paleta esmeralda e dourado, atmosfera de fantasia cinematográfica, hiper-realista',modelId:'flux-dev',aspectRatio:'16:9'},
+  {title:'Herói em ação',type:'video',mediaUrl:'/assets/home-carousel/inspiration-14.webp',prompt:'Cena de ação cinematográfica: silhueta de herói caminhando em direção à câmera saindo de explosão de faíscas ao fundo, slow motion, retroiluminação intensa, poeira no ar, blockbuster de Hollywood',modelId:'seedance-fast',aspectRatio:'16:9',duration:'8s'},
+  {title:'Estúdio de som',type:'image',mediaUrl:'/assets/home-carousel/inspiration-15.jpg',prompt:'Estúdio de gravação de trilha sonora com orquestra em sessão, maestro em primeiro plano desfocado, luz quente de spots sobre as partituras, atmosfera intimista de bastidores de cinema, fotografia editorial',modelId:'gpt-image-1',aspectRatio:'16:9'}
 ];
 
 /* Mosaico fixo: 6 cards visíveis (2×3); o pool completo gira por rotação automática. */
@@ -4172,17 +4185,43 @@ window.scRenderHomeInspirations=scRenderHomeInspirations;
 /* ── Single combined demo slideshow (center) ──
    Pool unificado: criações recentes do usuário logado primeiro, depois demos de vídeo/imagem intercalados. */
 function _scBuildSlidePool(){
+  // 1. User's own gallery — latest first
   var user=[];
-  if(typeof isGuest==='function'&&!isGuest()){
-    user=scGalleryLoad().filter(function(i){return i.outputUrl||i.previewUrl;}).map(function(i){
-      return{kind:i.mediaType==='video'?'video':'image',url:i.outputUrl||i.previewUrl,prompt:i.prompt||'',isVideoFile:i.mediaType==='video'&&!!i.outputUrl,id:i.id};
+  try{
+    var raw=(typeof scGalleryLoad==='function')?scGalleryLoad():(S.gallery||[]);
+    // Sort newest first
+    raw=raw.slice().sort(function(a,b){return (b.createdAt||b.date||0)-(a.createdAt||a.date||0);});
+    user=raw.filter(function(i){return i.outputUrl||i.previewUrl||i.url;}).slice(0,6).map(function(i){
+      return{kind:i.mediaType==='video'?'video':'image',
+             url:i.outputUrl||i.previewUrl||i.url,
+             prompt:i.prompt||'',
+             isVideoFile:i.mediaType==='video'&&!!(i.outputUrl||i.url),
+             id:i.id,isUser:true};
     });
-  }
-  var demoVids=(typeof DEMO_REEL!=='undefined'?DEMO_REEL:[]).map(function(d){return{kind:'video',url:d.url,prompt:d.prompt||'',isVideoFile:true};});
-  var demoImgs=(typeof REEL_IMGS!=='undefined'?REEL_IMGS:[]).slice(0,8).map(function(u){return{kind:'image',url:u,prompt:''};});
+  }catch(e){}
+  // 2. Demo videos with image fallback
+  var demoVids=(typeof DEMO_REEL!=='undefined'?DEMO_REEL:[]).map(function(d){
+    return{kind:'video',url:d.url,fallbackImg:d.fallbackImg||null,prompt:d.prompt||'',isVideoFile:true};
+  });
+  // Also add fallback images from DEMO_REEL so carousel always has content
+  var demoFallbacks=(typeof DEMO_REEL!=='undefined'?DEMO_REEL:[]).filter(function(d){return d.fallbackImg;}).map(function(d){
+    return{kind:'image',url:d.fallbackImg,prompt:d.prompt||'',isDemoFallback:true};
+  });
+  // 3. Fallback images (always work)
+  var demoImgs=(typeof REEL_IMGS!=='undefined'?REEL_IMGS:[]).slice(0,10).map(function(u){
+    return{kind:'image',url:u,prompt:''};
+  });
+  // Interleave demo vids + imgs
   var demos=[],n=Math.max(demoVids.length,demoImgs.length);
-  for(var i=0;i<n;i++){if(demoVids[i])demos.push(demoVids[i]);if(demoImgs[i])demos.push(demoImgs[i]);}
-  return user.concat(demos);
+  for(var i=0;i<n;i++){
+    if(demoVids[i])demos.push(demoVids[i]);
+    if(demoImgs[i])demos.push(demoImgs[i]);
+  }
+  // User first, then demos (so latest generation always visible)
+  // Put demoFallbacks after user items but before other demos
+  // so something always shows even if videos don't load
+  var allDemos=demoFallbacks.concat(demos.filter(function(d){return !d.isDemoFallback;}));
+  return user.concat(allDemos.length?allDemos:demos);
 }
 /* ── Orientação da mídia: dimensões reais quando possível → aspectRatio → tipo ── */
 function getMediaOrientation(item,onRefine){
@@ -4928,17 +4967,17 @@ async function scEnhancePrompt(){
   finally{el.disabled=false;}
 }
 
-/* ── "Qual a diferença?" — Criar rápido vs Studio completo ── */
+/* ── "Qual a diferença?" — Criar rápido vs HS Studio ── */
 function hsaiModeDiff(){
   var pt=S.lang==='pt';
   showQuickModal('<div style="padding:4px">'
-    +'<h3 style="margin-bottom:10px">✨ '+(pt?'Criar rápido × 🎛️ Studio completo':'Quick create × 🎛️ Full Studio')+'</h3>'
+    +'<h3 style="margin-bottom:10px">✨ '+(pt?'Criar rápido × 🎛️ HS Studio':'Quick create × 🎛️ HS Studio')+'</h3>'
     +'<p style="font-size:13.5px;color:var(--ink-2);line-height:1.6">'+(pt
       ?'Criar rápido e Studio usam o mesmo motor. Criar é a entrada simples para começar agora. Studio é o modo completo para organizar, refinar e finalizar projetos profissionais.'
       :'Quick create and Studio use the same engine. Create is the simple entry point to start now. Studio is the full mode to organize, refine and finish professional projects.')+'</p>'
     +'<div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">'
     +'<button class="btn btn-primary btn-sm" onclick="document.getElementById(\'scQuickModal\').remove();go(\'criar\')">✨ '+(pt?'Criar rápido':'Quick create')+'</button>'
-    +'<button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'scQuickModal\').remove();go(\'studio\')">🎛️ '+(pt?'Studio completo':'Full Studio')+'</button>'
+    +'<button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'scQuickModal\').remove();go(\'studio\')">🎛️ '+(pt?'HS Studio':'HS Studio')+'</button>'
     +'</div></div>');
 }
 window.hsaiModeDiff=hsaiModeDiff;
@@ -5272,7 +5311,7 @@ function scShowNoCreditsModal(){
     +'<p style="font-size:13px;color:var(--ink-2);line-height:1.6;margin:0 0 18px">'+(pt?'Seu projeto está montado. Para gerar em alta qualidade, escolha um plano ou compre créditos.':'Your project is ready. To generate in high quality, choose a plan or buy credits.')+'</p>'
     +'<div style="display:grid;gap:8px">'
     +'<button class="btn btn-primary" onclick="document.getElementById(\'scQuickModal\').remove();go(\'plans\')">'+(pt?'🎟 Ver planos':'🎟 View plans')+'</button>'
-    +'<button class="btn btn-ghost" onclick="document.getElementById(\'scQuickModal\').remove();scSendToStudio()">'+(pt?'⚙️ Abrir Studio Completo':'⚙️ Open Full Studio')+'</button>'
+    +'<button class="btn btn-ghost" onclick="document.getElementById(\'scQuickModal\').remove();scSendToStudio()">'+(pt?'⚙️ Abrir HS Studio':'⚙️ Open HS Studio')+'</button>'
     +'<button class="btn btn-ghost" onclick="document.getElementById(\'scQuickModal\').remove()">'+(pt?'Continuar editando':'Keep editing')+'</button>'
     +'</div></div>');
 }
@@ -8362,6 +8401,17 @@ function buildWelcomeEmailHTML(user, pt){
   .credits b{color:#f0b429;font-size:24px}
   .footer{background:#f4f4f4;padding:24px;text-align:center;font-size:12px;color:#999}
   a{color:#f0b429}
+
+
+
+/* ── Mobile: headline + logo above anchor ── */
+.sc-mobile-logo{display:none}
+@media(max-width:699px){
+  .sc-mobile-logo{display:flex;align-items:center;gap:8px;padding:10px 0 8px;font-family:var(--serif);font-size:13px;font-weight:700;color:var(--ink);letter-spacing:.5px}
+  .sc-mobile-logo span{color:var(--accent)}
+  .sc-center-hero h1{font-size:clamp(16px,5.5vw,26px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}
+
 </style></head>
 <body><div class="wrap">
   <div class="header"><div style="color:#f0b429;font-size:22px;font-weight:bold">HOLLYWOOD STUDIO ★AI</div></div>
@@ -9564,42 +9614,77 @@ function viewAdminCreditsPage(){
 /* ════════ HS ENGINE ════════ */
 function viewHSEngine(){
   var pt=S.lang==='pt';
-  var out=areaHeader({
-    kicker:'HS ENGINE',
-    title:'HS Engine',
-    desc:pt?'Motor criativo cinematográfico — transforma qualquer ideia em um plano completo de produção audiovisual com IA.':'Cinematic creative engine — transforms any idea into a complete AI-powered audiovisual production plan.',
-    area:'ailan'
-  });
-  out+=`
-  <div class="dc-card" style="margin-bottom:20px;border-left:3px solid var(--accent)">
-    <h3 style="margin-bottom:12px;font-family:var(--serif);font-size:19px">${pt?'O que é o HS Engine?':'What is HS Engine?'}</h3>
-    <p style="color:var(--ink-2);font-size:13.5px;line-height:1.75;margin-bottom:12px">${pt?'HS Engine é o motor criativo cinematográfico do Hollywood Studio AI. Ele transforma uma ideia simples em um plano completo de produção audiovisual com IA. Em vez de o usuário precisar saber qual modelo usar, como dividir cenas, qual estilo aplicar ou como escrever prompts profissionais, o HS Engine organiza tudo automaticamente.':'HS Engine is the cinematic creative engine of Hollywood Studio AI. It transforms a simple idea into a complete AI-powered audiovisual production plan — automatically organizing models, scenes, styles and professional prompts.'}</p>
-    <p style="color:var(--ink-2);font-size:13.5px;line-height:1.75;margin-bottom:12px">${pt?'A partir de um briefing, o sistema gera conceito, roteiro visual, estrutura de cenas, prompts por cena, direção criativa, formato ideal, duração sugerida, modelos recomendados e estimativa de créditos.':'From a brief, the system generates concept, visual script, scene structure, per-scene prompts, creative direction, ideal format, suggested duration, recommended models and credit estimate.'}</p>
-    <p style="color:var(--ink-2);font-size:13.5px;line-height:1.75">${pt?'É como ter um diretor criativo, roteirista, produtor e especialista em IA trabalhando juntos para transformar qualquer ideia em um projeto pronto para gerar vídeo, imagem, áudio ou campanha.':'Like having a creative director, screenwriter, producer and AI specialist working together to transform any idea into a project ready to generate video, image, audio or campaign.'}</p>
-  </div>
-  <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-bottom:22px">
-    ${[['💡',pt?'Ideia → plano':'Idea → plan',pt?'Do briefing ao projeto':'Brief to full plan'],['🎬',pt?'Cenas e prompts':'Scenes & prompts',pt?'Prompt profissional por cena':'Professional prompt per scene'],['🎭',pt?'Direção criativa':'Creative direction',pt?'Estilo, tom e abordagem':'Style, tone & approach'],['🤖',pt?'Modelos recomendados':'Recommended models',pt?'O melhor modelo por cena':'Best model per scene'],['⚡',pt?'Estimativa':'Estimate',pt?'Custo antes de gerar':'Cost before generating'],['🚀',pt?'Enviar ao Studio':'Send to Studio',pt?'Continua na produção':'Continues in production']].map(([ic,tt,dd])=>`<div class="card" style="text-align:center;padding:16px 12px"><div style="font-size:1.6rem;margin-bottom:8px">${ic}</div><b style="font-size:12.5px;display:block;margin-bottom:4px">${tt}</b><p style="font-size:11.5px;color:var(--ink-3);line-height:1.4">${dd}</p></div>`).join('')}
-  </div>
-  <div class="dc-card" style="margin-bottom:22px">
-    <h3 style="margin-bottom:14px">HS Engine × AI Influencers</h3>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div style="background:var(--accent-dim);border-radius:10px;padding:14px"><b style="color:var(--accent);display:block;margin-bottom:6px">HS Engine</b><p style="font-size:12px;color:var(--ink-2);line-height:1.6;margin-bottom:8px">${pt?'Plano audiovisual completo — filmes, teasers, propagandas, videoclipes, campanhas.':'Complete audiovisual plan — films, teasers, ads, music videos, campaigns.'}</p></div>
-      <div style="background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:14px"><b style="display:block;margin-bottom:6px">AI Influencers</b><p style="font-size:12px;color:var(--ink-2);line-height:1.6;margin-bottom:8px">${pt?'Conteúdo recorrente — reels, shorts, personagem, campanha com produto.':'Recurring content — reels, shorts, character, product campaigns.'}</p></div>
-    </div>
-  </div>
-  <div class="dc-card">
-    <h3 style="margin-bottom:14px">${pt?'Criar plano com HS Engine':'Create plan with HS Engine'}</h3>
-    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:14px">
-      <div class="field"><span class="label">${pt?'Ideia / Briefing':'Idea / Brief'}</span><textarea class="input" id="hse_idea" rows="3" placeholder="${pt?'Ex.: comercial de 30s para lançamento de SUV de luxo...':'E.g.: 30s ad for luxury SUV launch...'}"></textarea></div>
-      <div class="field"><span class="label">${pt?'Tipo':'Type'}</span><select class="input" id="hse_type"><option value="comercial">${pt?'Comercial / Anúncio':'Commercial / Ad'}</option><option value="filme">${pt?'Filme / Teaser':'Film / Teaser'}</option><option value="clipe">${pt?'Clipe Musical':'Music Video'}</option><option value="institucional">${pt?'Institucional':'Corporate'}</option><option value="campanha">Campanha</option></select></div>
-      <div class="field"><span class="label">${pt?'Tom / Estilo':'Tone / Style'}</span><select class="input" id="hse_tone"><option value="cinematic">${pt?'Cinematográfico':'Cinematic'}</option><option value="premium">Premium</option><option value="energetico">${pt?'Energético':'Energetic'}</option><option value="emocional">${pt?'Emocional':'Emotional'}</option></select></div>
-      <div class="field"><span class="label">${pt?'Duração':'Duration'}</span><select class="input" id="hse_dur"><option value="15">15s</option><option value="30" selected>30s</option><option value="60">60s</option><option value="90">90s</option></select></div>
-    </div>
-    <button class="btn btn-primary" style="min-width:200px" onclick="runHSEngine()">${pt?'🚀 Gerar Plano Completo':'🚀 Generate Full Plan'}</button>
-  </div>
-  <div id="hseResult" style="display:none;margin-top:18px"></div>`;
+  var f=window._hse||(window._hse={step:0,idea:'',tipo:'',plataforma:'',formato:'9:16',duracao:'30',tom:'',publico:'',objetivo:'',extra:'',plan:null,loading:false});
+  var step=f.step||0;
+  var stepNames=pt?['Ideia','Tipo','Plataforma','Detalhes','Plano']:['Idea','Type','Platform','Details','Plan'];
+  var prog='<div style="display:flex;gap:4px;margin-bottom:22px">'
+    +stepNames.map(function(s,i){var done=i<step,active=i===step;return '<div style="flex:1;text-align:center"><div style="height:3px;border-radius:2px;background:'+(done?'var(--ok)':active?'var(--accent)':'var(--line-2)')+';margin-bottom:4px"></div><div style="font-size:9px;font-weight:'+(active||done?700:400)+';color:'+(done?'var(--ok)':active?'var(--accent)':'var(--ink-4)')+'">'+(done?'✓ ':'')+s+'</div></div>';}).join('')+'</div>';
+  var tipos=pt?[{id:'comercial',e:'📺',l:'Comercial',d:'Produto, serviço ou marca'},{id:'institucional',e:'🏢',l:'Institucional',d:'Empresa, identidade, cultura'},{id:'social',e:'📱',l:'Conteúdo Social',d:'Reels, TikTok, Stories'},{id:'politico',e:'🎙️',l:'Comunicação Política',d:'Campanha, discurso'},{id:'clipe',e:'🎵',l:'Clipe Musical',d:'Videoclipe, lyric video'},{id:'cinematico',e:'🎬',l:'Curta / Teaser',d:'Narrativa, trailer'},{id:'produto',e:'✨',l:'Product Hero',d:'Showcase, demonstração'},{id:'educacional',e:'📚',l:'Educacional',d:'Tutorial, how-to'}]:
+              [{id:'comercial',e:'📺',l:'Commercial',d:'Product, service or brand'},{id:'institucional',e:'🏢',l:'Institutional',d:'Company, identity'},{id:'social',e:'📱',l:'Social Content',d:'Reels, TikTok, Stories'},{id:'politico',e:'🎙️',l:'Political',d:'Campaign, speech'},{id:'clipe',e:'🎵',l:'Music Video',d:'Clip, lyric video'},{id:'cinematico',e:'🎬',l:'Short / Teaser',d:'Narrative, trailer'},{id:'produto',e:'✨',l:'Product Hero',d:'Showcase, demo'},{id:'educacional',e:'📚',l:'Educational',d:'Tutorial, how-to'}];
+  var plataformas=[{id:'instagram',l:'Instagram Reels',r:'9:16',dur:'15-30s'},{id:'tiktok',l:'TikTok',r:'9:16',dur:'15-60s'},{id:'youtube',l:'YouTube',r:'16:9',dur:'30s-3min'},{id:'linkedin',l:'LinkedIn',r:'16:9',dur:'30-90s'},{id:'tv',l:'TV / Cinema',r:'16:9',dur:'15-60s'},{id:'multiplo',l:pt?'Multi-plataforma':'Multi-platform',r:'16:9+9:16',dur:pt?'variável':'variable'}];
+  var toms=pt?['Cinematográfico','Energético','Emocional','Premium / Luxo','Minimalista','Urbano']:['Cinematic','Energetic','Emotional','Premium / Luxury','Minimalist','Urban'];
+  var body='';
+  if(step===0){
+    body='<h3 style="margin:0 0 8px;font-family:var(--serif);font-size:18px">'+(pt?'Qual é a sua ideia?':'What is your idea?')+'</h3>'
+      +'<p style="font-size:13px;color:var(--ink-3);margin:0 0 14px">'+(pt?'Descreva livremente — o HS Engine transforma em plano completo de produção audiovisual.':'Describe freely — HS Engine transforms it into a complete production plan.')+'</p>'
+      +'<textarea id="hseIdea" style="width:100%;min-height:110px;padding:12px;background:var(--elev);border:1px solid var(--line-2);border-radius:8px;color:var(--ink);font-size:14px;line-height:1.6;resize:vertical" placeholder="'+(pt?'Ex.: comercial para clínica odontológica de luxo em SP, 30s, Instagram e TV...\nEx.: clipe para banda de rock indie, atmosfera noturna urbana...':'E.g.: luxury dental clinic ad in São Paulo, 30s, Instagram and TV...')+'">'+(f.idea||'')+'</textarea>'
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">'
+      +(pt?['🦷 Clínica odontológica, mood premium','👗 Lançamento de coleção moda','🏘️ Loteamento residencial em área verde','🎬 Teaser para curta de suspense']:
+           ['🏠 Luxury real estate, golden hour','📱 App launch, tech startup','🎵 Music video, urban night','🎬 Suspense short film teaser'])
+      .map(function(ex){return '<button class="btn btn-ghost btn-sm" style="font-size:11px" onclick="var el=document.getElementById(\'hseIdea\');if(el){el.value=\''+ex.replace(/'/g,'')+'\';window._hse.idea=\''+ex.replace(/'/g,'')+'\'}">'+ex+'</button>';}).join('')+'</div>';
+  } else if(step===1){
+    body='<h3 style="margin:0 0 8px;font-family:var(--serif);font-size:18px">'+(pt?'Que tipo de vídeo?':'What type of video?')+'</h3>'
+      +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px">'
+      +tipos.map(function(t){var sel=f.tipo===t.id;return '<button onclick="window._hse.tipo=\''+t.id+'\';hseRerender()" style="text-align:left;padding:12px;border-radius:10px;border:2px solid '+(sel?'var(--accent)':'var(--line-2)')+';background:'+(sel?'rgba(212,167,51,.1)':'var(--elev)')+';cursor:pointer;width:100%"><div style="font-size:22px;margin-bottom:4px">'+t.e+'</div><div style="font-weight:700;font-size:12.5px">'+t.l+'</div><div style="font-size:11px;color:var(--ink-3)">'+t.d+'</div></button>';}).join('')+'</div>';
+  } else if(step===2){
+    body='<h3 style="margin:0 0 8px;font-family:var(--serif);font-size:18px">'+(pt?'Para qual plataforma?':'Target platform?')+'</h3>'
+      +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px">'
+      +plataformas.map(function(p){var sel=f.plataforma===p.id;return '<button onclick="window._hse.plataforma=\''+p.id+'\';window._hse.formato=\''+p.r+'\';window._hse.duracao=\''+p.dur+'\';hseRerender()" style="text-align:left;padding:14px;border-radius:10px;border:2px solid '+(sel?'var(--accent)':'var(--line-2)')+';background:'+(sel?'rgba(212,167,51,.1)':'var(--elev)')+';cursor:pointer;width:100%"><div style="font-weight:700;font-size:13px;margin-bottom:4px">'+p.l+'</div><div style="font-size:11px;color:var(--ink-3)">'+p.r+' · '+p.dur+'</div></button>';}).join('')+'</div>';
+  } else if(step===3){
+    body='<h3 style="margin:0 0 8px;font-family:var(--serif);font-size:18px">'+(pt?'Contexto adicional':'Additional context')+'</h3>'
+      +'<div style="display:grid;gap:14px">'
+      +'<div><div style="font-size:10px;letter-spacing:1px;font-weight:700;color:var(--ink-3);margin-bottom:8px">'+(pt?'TOM / ESTILO':'TONE / STYLE')+'</div><div style="display:flex;gap:6px;flex-wrap:wrap">'+toms.map(function(t){var sel=f.tom===t;return '<button onclick="window._hse.tom=\''+t+'\';hseRerender()" class="btn btn-sm" style="background:'+(sel?'var(--accent)':'var(--elev)')+';color:'+(sel?'#1a1408':'var(--ink)')+';border:1px solid '+(sel?'var(--accent)':'var(--line-2)')+'">'+t+'</button>';}).join('')+'</div></div>'
+      +'<div><div style="font-size:10px;letter-spacing:1px;font-weight:700;color:var(--ink-3);margin-bottom:6px">'+(pt?'PÚBLICO-ALVO':'TARGET AUDIENCE')+'</div><input style="width:100%;padding:10px 12px;background:var(--elev);border:1px solid var(--line-2);border-radius:8px;color:var(--ink);font-size:13.5px" placeholder="'+(pt?'Ex.: Mulheres 25-45, classe AB...':'E.g.: Women 25-45, health interest...')+'" value="'+(f.publico||'')+'" oninput="window._hse.publico=this.value"></div>'
+      +'<div><div style="font-size:10px;letter-spacing:1px;font-weight:700;color:var(--ink-3);margin-bottom:8px">'+(pt?'OBJETIVO':'GOAL')+'</div><div style="display:flex;gap:6px;flex-wrap:wrap">'+(pt?['Branding','Vendas diretas','Engajamento','Conscientização']:['Branding','Direct sales','Engagement','Awareness']).map(function(o){var sel=f.objetivo===o;return '<button onclick="window._hse.objetivo=\''+o+'\'" class="btn btn-sm" style="background:'+(sel?'var(--accent)':'var(--elev)')+';color:'+(sel?'#1a1408':'var(--ink)')+';border:1px solid '+(sel?'var(--accent)':'var(--line-2)')+'">'+o+'</button>';}).join('')+'</div></div>'
+      +'<div><div style="font-size:10px;letter-spacing:1px;font-weight:700;color:var(--ink-3);margin-bottom:6px">'+(pt?'DETALHES EXTRAS':'EXTRA DETAILS')+'</div><input style="width:100%;padding:10px 12px;background:var(--elev);border:1px solid var(--line-2);border-radius:8px;color:var(--ink);font-size:13.5px" placeholder="'+(pt?'Cores, referências, restrições...':'Colors, references, restrictions...')+'" value="'+(f.extra||'')+'" oninput="window._hse.extra=this.value"></div>'
+      +'</div>';
+  } else if(step===4){
+    var tipoObj=tipos.find(function(t){return t.id===f.tipo;});
+    var platObj=plataformas.find(function(p){return p.id===f.plataforma;});
+    body=f.loading
+      ?'<div style="text-align:center;padding:40px"><div style="font-size:36px;margin-bottom:12px">⚙️</div><div style="font-size:15px;font-weight:700;margin-bottom:8px">'+(pt?'HS Engine processando...':'HS Engine processing...')+'</div><div style="font-size:12.5px;color:var(--ink-3)">'+(pt?'Gerando plano audiovisual completo...':'Generating full audiovisual plan...')+'</div></div>'
+      :f.plan
+      ?'<div style="line-height:1.8;font-size:13.5px;white-space:pre-wrap;color:var(--ink-1)">'+f.plan.replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>')+'</div>'
+       +'<div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap"><button class="btn btn-primary" onclick="hseUseScene()">'+(pt?'🎬 Gerar no Studio':'🎬 Generate in Studio')+'</button><button class="btn btn-ghost" onclick="navigator.clipboard.writeText(window._hse.plan||\'\')">'+(pt?'📋 Copiar':'📋 Copy')+'</button><button class="btn btn-ghost btn-sm" onclick="go(\'storyboard\')">Storyboard</button></div>'
+      :'<div style="text-align:center;padding:30px"><h3 style="font-family:var(--serif)">'+(pt?'Pronto! Gere o plano completo.':'Ready! Generate the full plan.')+'</h3>'
+       +'<div style="font-size:12.5px;color:var(--ink-3);margin:12px 0">'+(tipoObj?tipoObj.e+' '+tipoObj.l+' · ':'')+f.formato+' · '+f.duracao+(f.tom?' · '+f.tom:'')+'</div>'
+       +'<button class="btn btn-primary" style="font-size:14px;padding:12px 28px;margin-top:8px" onclick="hseGenerate()">'+(pt?'⚡ Gerar Plano Completo':'⚡ Generate Full Plan')+'</button>'
+       +'<p style="font-size:11.5px;color:var(--ink-4);margin-top:12px">'+(pt?'Cenas, prompts, modelos, CTA e próximos passos.':'Scenes, prompts, models, CTA and next steps.')+'</p></div>';
+  }
+  var navBtns='<div style="display:flex;gap:8px;margin-top:20px">'
+    +(step>0?'<button class="btn btn-ghost" onclick="window._hse.step--;hseRerender()">← '+(pt?'Voltar':'Back')+'</button>':'')
+    +(step<4?'<button class="btn btn-primary" style="margin-left:auto" onclick="hseNext()">'+(pt?'Próximo':'Next')+' →</button>':'')
+    +(step===4&&f.plan?'<button class="btn btn-ghost btn-sm" onclick="window._hse={step:0,idea:\'\',tipo:\'\',plataforma:\'\',formato:\'9:16\',duracao:\'30\',tom:\'\',publico:\'\',objetivo:\'\',extra:\'\',plan:null,loading:false};hseRerender()">'+(pt?'↺ Novo':'↺ New')+'</button>':'')
+    +'</div>';
+  var out=areaHeader({kicker:'HS ENGINE',title:'HS Cinematic Engine',
+    desc:pt?'Transforme uma ideia em um plano audiovisual completo: briefing, cenas, prompts, estilo visual, modelos e fluxo de produção.':'Transform an idea into a complete audiovisual plan: scenes, prompts, visual style, models and production flow.',
+    area:'ailan'});
+  out+='<div class="dc-card"><div style="max-width:700px">'+prog+'<div id="hseStepBody">'+body+'</div>'+navBtns+'</div></div>';
   return out;
 }
+
+
+
+window.hseRerender=function(){if(S.view!=='ailan')return;var m=document.getElementById('main');if(!m)return;var v=document.createElement('div');v.className='view';v.innerHTML=viewHSEngine();m.replaceChild(v,m.querySelector('.view'));};
+window.hseNext=function(){var pt=S.lang==='pt';var f=window._hse||{};if(f.step===0){var el=document.getElementById('hseIdea');if(el)f.idea=el.value.trim();if(!f.idea){toast(pt?'Descreva sua ideia':'Describe your idea','err');return;}}if(f.step===1&&!f.tipo){toast(pt?'Selecione o tipo':'Select type','err');return;}if(f.step===2&&!f.plataforma){toast(pt?'Selecione a plataforma':'Select platform','err');return;}f.step=Math.min((f.step||0)+1,4);hseRerender();};
+window.hseGenerate=function(){var pt=S.lang==='pt';var f=window._hse||{};f.loading=true;hseRerender();var mods=['Seedance 2.0','Kling 3.0','Veo 3.1','Nano Banana Pro'];var sc_=pt?['Abertura','Apresentação','Benefícios','CTA']:['Opening','Presentation','Benefits','CTA'];var pr_=['Cinematic opening, dramatic lighting, 4K atmosphere','Hero shot, professional environment, golden hour','Close-up detail shots, texture, smooth movement','Brand reveal, memorable final frame'];function fallback(){var n=parseInt(f.duracao)||30;var lines=['═══════════════════════════════',(pt?'🎬 PLANO: ':'🎬 PLAN: ')+(f.idea||'').slice(0,50).toUpperCase(),'═══════════════════════════════','',pt?'TIPO: ':'TYPE: '+(f.tipo||'—'),(f.formato||'9:16')+' · '+(f.duracao||'30s')+(f.tom?' · '+f.tom:''),'',pt?'━━ CENAS ━━':'━━ SCENES ━━'];var sc=n>30?4:3;for(var i=0;i<sc;i++){lines.push('');lines.push((pt?'CENA ':'SCENE ')+(i+1)+' — '+sc_[i%sc_.length]);lines.push((pt?'Duração: ':'Duration: ')+Math.round(n/sc)+'s');lines.push('Prompt: '+pr_[i%pr_.length]);lines.push((pt?'Modelo: ':'Model: ')+mods[i%mods.length]);}lines.push('','━━ '+(pt?'PRÓXIMOS PASSOS':'NEXT STEPS')+' ━━');lines.push('1. '+(pt?'Use os prompts no Studio com Seedance 2.0 ou Kling 3.0':'Use prompts in Studio with Seedance 2.0 or Kling 3.0'));lines.push('2. '+(pt?'Organize no Storyboard':'Organize in Storyboard'));lines.push('3. '+(pt?'Finalize no CapCut (Pós-Produção)':'Finalize in CapCut (Post-Production)'));lines.push('','💡 '+(pt?'Configure Claude no Admin para planos mais detalhados.':'Configure Claude in Admin for detailed plans.'));return lines.join('\n');}
+var prompt=(pt?'Crie PLANO AUDIOVISUAL COMPLETO em pt-BR:\n':'Create COMPLETE AUDIOVISUAL PLAN:\n')+f.idea+(f.tipo?'\nTipo: '+f.tipo:'')+(f.plataforma?'\nPlataforma: '+f.plataforma+' '+f.formato+' '+f.duracao:'')+(f.tom?'\nTom: '+f.tom:'')+(f.publico?'\nPúblico: '+f.publico:'')+(pt?'\n\nInclua: 1.TÍTULO 2.RESUMO 3.DIREÇÃO CRIATIVA 4.CENAS(nome,duração,prompt inglês,modelo) 5.TRILHA 6.CTA 7.PRÓXIMOS PASSOS':'\n\nInclude: 1.TITLE 2.SUMMARY 3.CREATIVE DIRECTION 4.SCENES(name,duration,EN prompt,model) 5.SOUNDTRACK 6.CTA 7.NEXT STEPS');
+function done(t){f.plan=t||fallback();f.loading=false;hseRerender();}
+if(typeof claudeText==='function'&&typeof hasClaude==='function'&&hasClaude())claudeText(prompt,'').then(done).catch(function(){done(null);});
+else if(typeof geminiText==='function'&&typeof hasGemini==='function'&&hasGemini())geminiText(prompt,'').then(done).catch(function(){done(null);});
+else done(fallback());};
+window.hseUseScene=function(){var f=window._hse||{};if(!f.plan)return;var m=f.plan.match(/Prompt:\s*(.+)/i);var p=m?m[1].trim():f.idea;if(typeof scSendToStudio==='function')scSendToStudio(p);else if(typeof go==='function')go('studio');};
+
 function runHSEngine(){
   var pt=S.lang==='pt';
   var idea=(document.getElementById('hse_idea')||{}).value||'';
@@ -11497,9 +11582,10 @@ function creditsInfo(){
       <button class="btn btn-primary btn-sm" onclick="closeModal('credInfoModal');go('plans')">${pt?'Ver planos':'See plans'}</button>
     </div>
   </div>`;
-  let m=document.getElementById('credInfoModal');
-  if(!m){m=document.createElement('div');m.id='credInfoModal';m.className='modal';m.setAttribute('onclick',"closeModal('credInfoModal')");document.body.appendChild(m);}
-  m.innerHTML=html;m.classList.add('open');
+  let ov=document.getElementById('credInfoModal');
+  if(!ov){ov=document.createElement('div');ov.id='credInfoModal';ov.className='overlay';ov.onclick=e=>{if(e.target===ov)closeModal('credInfoModal');};document.body.appendChild(ov);}
+  ov.innerHTML='<div class="modal" onclick="event.stopPropagation()">'+html+'</div>';
+  ov.classList.add('open');
 }
 function toast(msg,kind){const e=document.getElementById('toast');e.textContent=msg;e.className='toast show '+(kind||'');clearTimeout(window._toastT);window._toastT=setTimeout(()=>e.className='toast',3000);}
 function emptyState(txt){return `<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><path d="M4 7h16v13H4zM4 7l3-3h10l3 3M9 12h6"/></svg><div>${txt}</div></div>`;}
@@ -11638,7 +11724,238 @@ illusFB=function(i){return NEWS_THUMBS[Math.abs(i)%NEWS_THUMBS.length];};
 /* Global action exposure for inline handlers */
 Object.assign(window,{sendToStudio,sendGalleryToStudio,sendModelToStudio,galFavToggle,toggleFavorite,runCouncil,runJudge,openDirectorFavOpinion,editChar,openChangePassword,applyAdminUserAction,betaToast});
 
+/* ═══════════════════════════════════════════════════════════════
+   APRESENTAÇÃO PROFISSIONAL — Formulário guiado → prompt → geração
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Dados do formulário ── */
+var _apForm = {
+  step: 0,
+  profissao: '', nome: '', cidade: '', especialidade: '',
+  diferencial: '', publico: '', tom: 'profissional_acolhedor',
+  duracao: '30', formato: '9:16', modelo: 'kling3',
+  extra: '', generatedPrompt: ''
+};
+
+var AP_TOMS = [
+  {id:'profissional_acolhedor', label:'Profissional & Acolhedor', emoji:'🤝',
+   desc:'Confiança com calor humano — ideal para saúde, psicologia, coaching'},
+  {id:'autoridade_direta',      label:'Autoridade Direta',        emoji:'💼',
+   desc:'Objetivo e assertivo — ideal para advogados, consultores, finanças'},
+  {id:'criativo_inspirador',    label:'Criativo & Inspirador',    emoji:'✨',
+   desc:'Energia e movimento — ideal para marketing, design, educação'},
+  {id:'tecnico_preciso',        label:'Técnico & Preciso',        emoji:'🔬',
+   desc:'Foco em competência — ideal para engenharia, TI, arquitetura'},
+];
+
+var AP_PROFISSOES = [
+  'Médico / Médica','Dentista','Psicólogo(a)','Advogado(a)',
+  'Arquiteto(a)','Engenheiro(a)','Consultor(a)','Coach / Mentor(a)',
+  'Professor(a)','Designer','Fotógrafo(a)','Personal Trainer',
+  'Nutricionista','Terapeuta','Contador(a)','Corretor(a) de Imóveis',
+  'Empresário(a)','Outro'
+];
+
+/* ── Construtor de prompt ── */
+function apBuildPrompt(){
+  var f=_apForm, pt=S.lang==='pt';
+  var tonMap={
+    profissional_acolhedor:'warm professional tone, confident yet approachable, trustworthy',
+    autoridade_direta:'authoritative direct tone, confident expert, sharp and decisive',
+    criativo_inspirador:'creative inspiring energy, dynamic, passionate and motivating',
+    tecnico_preciso:'technical precision, focused expertise, methodical and competent',
+  };
+  var tonStr=tonMap[f.tom]||'professional tone';
+  var dur=parseInt(f.duracao)||30;
+
+  var prompt=
+    (f.nome?f.nome+', ':'')+
+    (f.profissao?f.profissao+' ':'professional ')+
+    'presentation video, '+
+    (f.cidade?'based in '+f.cidade+', ':'')+
+    (f.especialidade?'specializing in '+f.especialidade+', ':'')+
+    tonStr+', '+
+    (f.publico?'speaking to '+f.publico+', ':'')+
+    (f.diferencial?'unique value: '+f.diferencial+', ':'')+
+    'cinematic portrait, professional office or relevant environment, '+
+    'speaking directly to camera with confidence, '+
+    'soft bokeh background, professional lighting, '+
+    'high-end commercial quality, '+
+    (dur<=15?'short punchy intro':'engaging professional narrative')+
+    (f.extra?', '+f.extra:'');
+
+  _apForm.generatedPrompt=prompt;
+  return prompt;
+}
+
+/* ── Vista principal ── */
+function viewApresentacao(){
+  var pt=S.lang==='pt';
+  var f=_apForm;
+  var step=f.step||0;
+
+  // Progress bar
+  var steps_pt=['Profissão','Identidade','Tom','Formato','Revisar'];
+  var prog='<div style="display:flex;gap:6px;margin-bottom:24px">'
+    +steps_pt.map(function(s,i){
+      var active=i===step,done=i<step;
+      return '<div style="flex:1;text-align:center">'
+        +'<div style="height:3px;border-radius:2px;background:'+(done?'var(--ok)':(active?'var(--accent)':'var(--line)'))+';margin-bottom:5px"></div>'
+        +'<div style="font-size:9.5px;font-weight:'+(active||done?'700':'400')+';color:'+(done?'var(--ok)':(active?'var(--accent)':'var(--ink-4)'))+'">'+(done?'✓ ':'')+s+'</div>'
+        +'</div>';
+    }).join('')+'</div>';
+
+  var body='';
+
+  if(step===0){
+    body='<h3 style="margin:0 0 6px">'+(pt?'Qual é a sua profissão?':'What is your profession?')+'</h3>'
+      +'<p style="font-size:13px;color:var(--ink-3);margin:0 0 18px">'+(pt?'Isso personaliza o estilo visual e a narração do vídeo.':'This personalizes the visual style and narration.')+'</p>'
+      +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:18px">'
+      +AP_PROFISSOES.map(function(p){
+        return '<button onclick="_apForm.profissao=\''+p+'\';apRerender()" class="btn btn-sm" style="text-align:left;justify-content:flex-start;padding:10px 12px;background:'+(f.profissao===p?'var(--accent)':'var(--elev)')+';color:'+(f.profissao===p?'#1a1408':'var(--ink)')+';border:1.5px solid '+(f.profissao===p?'var(--accent)':'var(--line)')+';border-radius:10px">'+p+'</button>';
+      }).join('')
+      +'</div>'
+      +(f.profissao==='Outro'?'<input class="input" placeholder="Descreva sua profissão" value="'+f.profissao+'" oninput="_apForm.profissao=this.value" style="margin-bottom:14px">':'');
+  }
+
+  else if(step===1){
+    body='<h3 style="margin:0 0 6px">'+(pt?'Quem é você?':'Who are you?')+'</h3>'
+      +'<p style="font-size:13px;color:var(--ink-3);margin:0 0 18px">'+(pt?'Alguns dados para personalizar o vídeo. Só o que você quiser compartilhar.':'Some details to personalize the video.')+'</p>'
+      +'<div style="display:grid;gap:12px">'
+      +'<div><span class="label" style="font-size:10px">'+(pt?'NOME (opcional)':'NAME (optional)')+'</span><input class="input" placeholder="'+(pt?'Ex.: Dra. Ana Silva':'E.g.: Dr. John Smith')+'" value="'+f.nome+'" oninput="_apForm.nome=this.value"></div>'
+      +'<div><span class="label" style="font-size:10px">'+(pt?'CIDADE / LOCALIZAÇÃO':'CITY / LOCATION')+'</span><input class="input" placeholder="'+(pt?'Ex.: São Paulo, SP':'E.g.: New York, NY')+'" value="'+f.cidade+'" oninput="_apForm.cidade=this.value"></div>'
+      +'<div><span class="label" style="font-size:10px">'+(pt?'ESPECIALIDADE':'SPECIALTY')+'</span><input class="input" placeholder="'+(pt?'Ex.: Ortopedia pediátrica, Direito trabalhista...':'E.g.: Pediatric orthopedics, Employment law...')+'" value="'+f.especialidade+'" oninput="_apForm.especialidade=this.value"></div>'
+      +'<div><span class="label" style="font-size:10px">'+(pt?'SEU DIFERENCIAL':'YOUR DIFFERENTIATOR')+'</span><input class="input" placeholder="'+(pt?'O que te torna único? Ex.: 20 anos de experiência, método próprio...':'What makes you unique?')+'" value="'+f.diferencial+'" oninput="_apForm.diferencial=this.value"></div>'
+      +'<div><span class="label" style="font-size:10px">'+(pt?'PÚBLICO-ALVO':'TARGET AUDIENCE')+'</span><input class="input" placeholder="'+(pt?'Ex.: Mães com filhos de 0-12 anos, Pequenos empresários...':'E.g.: Small business owners...')+'" value="'+f.publico+'" oninput="_apForm.publico=this.value"></div>'
+      +'</div>';
+  }
+
+  else if(step===2){
+    body='<h3 style="margin:0 0 6px">'+(pt?'Qual tom para o seu vídeo?':'What tone for your video?')+'</h3>'
+      +'<p style="font-size:13px;color:var(--ink-3);margin:0 0 18px">'+(pt?'Define a energia e o estilo visual.':'Sets the energy and visual style.')+'</p>'
+      +'<div style="display:grid;gap:10px">'
+      +AP_TOMS.map(function(t){
+        var sel=f.tom===t.id;
+        return '<button onclick="_apForm.tom=\''+t.id+'\';apRerender()" style="text-align:left;padding:14px 16px;border-radius:12px;border:2px solid '+(sel?'var(--accent)':'var(--line)')+';background:'+(sel?'rgba(212,167,51,.08)':'var(--elev)')+';cursor:pointer;transition:.15s">'
+          +'<div style="font-size:18px;margin-bottom:4px">'+t.emoji+'</div>'
+          +'<div style="font-weight:700;font-size:13.5px;margin-bottom:3px">'+t.label+'</div>'
+          +'<div style="font-size:12px;color:var(--ink-3)">'+t.desc+'</div>'
+          +'</button>';
+      }).join('')
+      +'</div>';
+  }
+
+  else if(step===3){
+    var dur_opts=['15','30','60'];
+    var fmt_opts=[{v:'9:16',l:'9:16 — Reels/Stories'},{v:'16:9',l:'16:9 — YouTube/LinkedIn'},{v:'1:1',l:'1:1 — Feed'}];
+    var mod_opts=[
+      {v:'kling3',l:'Kling 3.0',desc:pt?'Alta qualidade, movimento natural':'High quality, natural motion'},
+      {v:'seedance2',l:'Seedance 2.0',desc:pt?'Rápido, excelente para retratos':'Fast, excellent for portraits'},
+      {v:'veo31',l:'Google Veo 3.1',desc:pt?'Premium, máxima qualidade':'Premium, maximum quality'},
+    ];
+    body='<h3 style="margin:0 0 6px">'+(pt?'Formato do vídeo':'Video format')+'</h3>'
+      +'<p style="font-size:13px;color:var(--ink-3);margin:0 0 18px">'+(pt?'Escolha duração, proporção e modelo de IA.':'Choose duration, aspect ratio and AI model.')+'</p>'
+      +'<div style="display:grid;gap:16px">'
+      +'<div><span class="label" style="font-size:10px">'+(pt?'DURAÇÃO':'DURATION')+'</span><div style="display:flex;gap:8px;margin-top:6px">'
+      +dur_opts.map(function(d){return '<button onclick="_apForm.duracao=\''+d+'\';apRerender()" class="btn btn-sm" style="background:'+(f.duracao===d?'var(--accent)':'var(--elev)')+';color:'+(f.duracao===d?'#1a1408':'var(--ink)')+';border:1.5px solid '+(f.duracao===d?'var(--accent)':'var(--line)')+'">'+d+'s</button>';}).join('')+'</div></div>'
+      +'<div><span class="label" style="font-size:10px">'+(pt?'PROPORÇÃO':'ASPECT RATIO')+'</span><div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">'
+      +fmt_opts.map(function(o){return '<button onclick="_apForm.formato=\''+o.v+'\';apRerender()" class="btn btn-sm" style="background:'+(f.formato===o.v?'var(--accent)':'var(--elev)')+';color:'+(f.formato===o.v?'#1a1408':'var(--ink)')+';border:1.5px solid '+(f.formato===o.v?'var(--accent)':'var(--line)')+'">'+o.l+'</button>';}).join('')+'</div></div>'
+      +'<div><span class="label" style="font-size:10px">'+(pt?'MODELO DE IA':'AI MODEL')+'</span><div style="display:grid;gap:8px;margin-top:6px">'
+      +mod_opts.map(function(o){return '<button onclick="_apForm.modelo=\''+o.v+'\';apRerender()" style="text-align:left;padding:10px 14px;border-radius:10px;border:2px solid '+(f.modelo===o.v?'var(--accent)':'var(--line)')+';background:'+(f.modelo===o.v?'rgba(212,167,51,.08)':'var(--elev)')+';cursor:pointer"><b style="font-size:13px">'+o.l+'</b><span style="font-size:11.5px;color:var(--ink-3);margin-left:8px">'+o.desc+'</span></button>';}).join('')
+      +'</div></div>'
+      +'<div><span class="label" style="font-size:10px">'+(pt?'DETALHE EXTRA (opcional)':'EXTRA DETAIL (optional)')+'</span><input class="input" style="margin-top:6px" placeholder="'+(pt?'Ex.: usar cores azul e branco, mostrar consultório, incluir diploma...':'E.g.: blue and white colors, show office...')+'" value="'+f.extra+'" oninput="_apForm.extra=this.value"></div>'
+      +'</div>';
+  }
+
+  else if(step===4){
+    var pmt=apBuildPrompt();
+    var ton=AP_TOMS.find(function(t){return t.id===f.tom;})||AP_TOMS[0];
+    body='<h3 style="margin:0 0 6px">'+(pt?'Tudo certo! Revise e gere.':'All set! Review and generate.')+'</h3>'
+      +'<div style="display:grid;gap:10px;margin-bottom:20px">'
+      +[
+        [pt?'Profissão':'Profession', f.profissao||'—'],
+        [pt?'Nome':'Name', f.nome||'—'],
+        [pt?'Especialidade':'Specialty', f.especialidade||'—'],
+        [pt?'Diferencial':'Differentiator', f.diferencial||'—'],
+        [pt?'Público':'Audience', f.publico||'—'],
+        [pt?'Tom':'Tone', ton.emoji+' '+ton.label],
+        [pt?'Duração':'Duration', f.duracao+'s'],
+        [pt?'Formato':'Format', f.formato],
+        [pt?'Modelo':'Model', f.modelo],
+      ].map(function(row){
+        return '<div style="display:flex;gap:8px;font-size:13px"><span style="color:var(--ink-3);width:110px;flex-shrink:0">'+row[0]+'</span><span style="font-weight:600">'+row[1]+'</span></div>';
+      }).join('')
+      +'</div>'
+      +'<div><span class="label" style="font-size:10px">PROMPT '+(pt?'GERADO (editável)':'GENERATED (editable)')+'</span>'
+      +'<textarea id="apPromptEdit" class="input" style="width:100%;min-height:90px;resize:vertical;font-size:12px;margin-top:6px;font-family:monospace">'+pmt+'</textarea></div>'
+      +'<div style="display:flex;gap:10px;margin-top:16px">'
+      +'<button class="btn btn-primary" style="flex:2;font-size:14px;padding:12px" onclick="apGenerate()">'
+      +'🎬 '+(pt?'Gerar Vídeo':'Generate Video')
+      +'<span style="font-size:11px;opacity:.7;margin-left:8px">('+f.duracao+'s · '+f.formato+' · '+f.modelo+')</span>'
+      +'</button>'
+      +'<button class="btn btn-ghost" onclick="_apForm.step=0;apRerender()" style="flex:1">'+(pt?'↺ Recomeçar':'↺ Restart')+'</button>'
+      +'</div>';
+  }
+
+  // Nav buttons
+  var navBtns='<div style="display:flex;gap:8px;margin-top:20px">'
+    +(step>0?'<button class="btn btn-ghost" onclick="_apForm.step--;apRerender()">← '+(pt?'Voltar':'Back')+'</button>':'')
+    +(step<4?'<button class="btn btn-primary" style="margin-left:auto" onclick="apNext()">'+( pt?'Próximo':'Next')+' →</button>':'')
+    +'</div>';
+
+  return '<div class="view-head"><div class="kicker">'+(pt?'PRESENÇA DIGITAL':'DIGITAL PRESENCE')+'</div>'
+    +'<h1 class="serif">'+(pt?'Apresentação Profissional':'Professional Intro')+'</h1>'
+    +'<p>'+(pt?'Crie seu vídeo de apresentação em menos de 2 minutos. Preencha os campos — o sistema monta o prompt e gera automaticamente.':'Create your professional intro video in under 2 minutes. Fill in the fields — the system builds the prompt and generates automatically.')+'</p>'
+    +'</div>'
+    +'<div class="card" style="max-width:680px">'
+    +prog
+    +'<div id="apStepBody">'+body+'</div>'
+    +navBtns
+    +'</div>';
+}
+
+window.apRerender = function apRerender(){
+  var m=document.getElementById('main');
+  if(m&&S.view==='apresentacao'){
+    var v=document.createElement('div');v.className='view';
+    v.innerHTML=viewApresentacao();
+    m.replaceChild(v,m.querySelector('.view'));
+  }
+};
+
+window.apNext = function apNext(){
+  if(_apForm.step===0&&!_apForm.profissao){
+    toast(S.lang==='pt'?'Selecione sua profissão':'Select your profession','err');return;
+  }
+  _apForm.step=Math.min(_apForm.step+1,4);
+  apRerender();
+};
+
+window.apGenerate = function apGenerate(){
+  var el=document.getElementById('apPromptEdit');
+  var prompt=el?el.value.trim():apBuildPrompt();
+  if(!prompt){toast(S.lang==='pt'?'Prompt vazio':'Empty prompt','err');return;}
+  var f=_apForm;
+  sendToStudio({prompt:prompt,modelId:f.modelo});
+  // Adjust ratio after going to studio
+  setTimeout(function(){
+    var ratioEl=document.getElementById('ratioSel')||document.getElementById('ratioSel2');
+    if(ratioEl){ratioEl.value=f.formato;}
+    var durEl=document.getElementById('durSel')||document.getElementById('durSel2');
+    if(durEl){
+      // Find closest duration option
+      var opts=Array.from(durEl.options).map(function(o){return parseFloat(o.value);});
+      var target=parseFloat(f.duracao);
+      var closest=opts.reduce(function(a,b){return Math.abs(b-target)<Math.abs(a-target)?b:a;});
+      durEl.value=closest;
+    }
+    toast(S.lang==='pt'?'✓ Vídeo de apresentação carregado no Estúdio!':'✓ Intro video loaded in Studio!','ok');
+  },500);
+};
+
 init();
+
+(function(){if(window.innerWidth>699)return;function s(){var a=document.getElementById('quick-create-anchor');if(a)a.scrollIntoView({behavior:'smooth',block:'start'});}setTimeout(s,400);})();
 
 
 
