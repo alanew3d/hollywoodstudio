@@ -18,8 +18,9 @@
 <meta property="og:description" content="Produza vídeos, imagens e áudio cinematográficos com IA. Direção criativa, personagens, presets, agentes e créditos flexíveis.">
 <meta property="og:url" content="https://hollywoodstudio.ai">
 <meta property="og:image" content="https://hollywoodstudio.ai/assets/social/hero-hollywoodstudio-ai.jpg">
-<meta property="og:image:width" content="1733">
-<meta property="og:image:height" content="907">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/jpeg">
 <meta property="og:locale" content="pt_BR">
 <meta property="og:locale:alternate" content="en_US">
 <link rel="image_src" href="https://hollywoodstudio.ai/assets/social/hero-hollywoodstudio-ai.jpg">
@@ -1795,7 +1796,8 @@ body.layout-fullscreen .topbar{display:none!important}
   .sc-demo-card{min-height:170px}
   .sc-demo-single{flex:none;min-height:200px}
   .sc-demo-block .sc-demo-single{aspect-ratio:16/9;max-height:240px}
-  .sc-center-hero h1{font-size:22px}
+  .sc-center-hero h1{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #scMobileLogo{display:block!important}
   .sc-side{overflow:visible}
   .sc-gal-scroll{overflow:visible;max-height:none}
   .sc-gal-grid{display:flex;overflow-x:auto;gap:8px;padding-bottom:6px;scrollbar-width:thin}
@@ -2330,7 +2332,7 @@ body.hsai-splash-lock{overflow:hidden}
 /* ════════ CONFIG (overridden by config.js if present) ════════ */
 const CFG = window.HSAI_CONFIG || {
   API_KEY:'', API_BASE:'https://api.atlascloud.ai', PROVIDER:'atlascloud',
-  ADMIN_USER:'admin', ADMIN_PASS:'CHANGE_ME', COMMUNITY_ENABLED:true, FREE_CREDITS:3,
+  ADMIN_USER:'admin', ADMIN_PASS:'CHANGE_ME', ADMIN_RECOVERY_MODE:true, COMMUNITY_ENABLED:true, FREE_CREDITS:3,
   PROVIDERS:{
     atlascloud:{ base:'https://api.atlascloud.ai',                key:'' },
     fal:       { base:'https://fal.run',                          key:'' },
@@ -3302,7 +3304,7 @@ function render(){
   const m=document.getElementById('main');
   const R={home:viewHome,criar:viewSimpleCreate,studio:viewStudio,images:viewImages,audio:viewAudio,characters:viewCharacters,storyboard:viewStoryboard,favorites:viewFavoritesPage,editing:viewEditing,batch:viewBatch,agents:viewAgents,docs:viewDocs,spaces:viewSpaces,
     flow:viewFlow,council:viewCouncil,analytics:viewAnalytics,opportunities:viewOpportunities,public:viewPublic,models:viewModelsCatalog,
-    academy:viewAcademy,news:viewNews,festivals:viewFestivals,'gemini-avatar':viewGeminiAvatar,gallery:viewGallery,uploads:viewUploadGallery,templates:viewTemplates,contactsheet:viewContactSheet,plans:viewPlans,admin:viewAdmin,'admin-health':viewAdminHealth,marketing:viewMarketingPage,tube:viewTube,tv:viewHollywoodTV,instagram:viewInstagram,inspo:viewInspo,posprodu:viewPosProdu,finisher:viewFinishingLab};
+    academy:viewAcademy,news:viewNews,festivals:viewFestivals,'gemini-avatar':viewGeminiAvatar,gallery:viewGallery,uploads:viewUploadGallery,templates:viewTemplates,contactsheet:viewContactSheet,plans:viewPlans,admin:viewAdmin,users:viewUsers,credits:viewCredits,'admin-health':viewAdminHealth,marketing:viewMarketingPage,tube:viewTube,tv:viewHollywoodTV,instagram:viewInstagram,inspo:viewInspo,posprodu:viewPosProdu,finisher:viewFinishingLab};
   let body;
   if(S.view&&S.view.indexOf('custom:')===0)body=viewCustom(S.view.slice(7));
   else body=(R[S.view]||viewStudio)();
@@ -3787,6 +3789,9 @@ function viewSimpleCreate(){
   +'<div id="scResultBlock" style="display:none"></div>'
   +'</div>'
 
+  +'<div id="scMobileLogo" style="display:none;text-align:center;padding:10px 0 2px">'
+  +'<img src="/logo.png" alt="Hollywood Studio AI" style="height:26px;object-fit:contain" onerror="this.style.display=\'none\'">'
+  +'</div>'
   +'<div class="sc-center-hero">'
   +'<h1>'+(pt?'O que vamos <em>criar</em> hoje?':'What are we <em>creating</em> today?')+'</h1>'
   +'<p class="sub">'+(pt?'Comece rápido aqui. Quando quiser mais controle, envie para o Studio completo.':'Start fast here. When you want more control, send it to the Full Studio.')+'</p>'
@@ -3831,10 +3836,10 @@ function viewSimpleCreate(){
   +'<option value="image"'+ (_scType==='image'?' selected':'')+'>🖼 '+(pt?'Imagem':'Image')+'</option>'
   +'</select>'
   +'<select class="sc-select" id="scAspectSelect" onchange="scSetFormat(this.value)">'
-  +'<option value="16:9"'+(_scFormat==='16:9'?' selected':'')+'>16:9</option>'
-  +'<option value="9:16"'+(_scFormat==='9:16'?' selected':'')+'>9:16</option>'
-  +'<option value="1:1"'+(_scFormat==='1:1'?' selected':'')+'>1:1</option>'
-  +'<option value="4:5"'+(_scFormat==='4:5'?' selected':'')+'>4:5</option>'
+  +'<option value="16:9"'+(_scFormat==='16:9'?' selected':'')+'>📺 16:9</option>'
+  +'<option value="9:16"'+(_scFormat==='9:16'?' selected':'')+'>📱 9:16</option>'
+  +'<option value="1:1"'+(_scFormat==='1:1'?' selected':'')+'>⬛ 1:1</option>'
+  +'<option value="4:5"'+(_scFormat==='4:5'?' selected':'')+'>🖼 4:5</option>'
   +'</select>'
   +'<select class="sc-select" id="scDurSelect" style="display:'+(_scType==='video'?'':'none')+'" onchange="scSetDuration(this.value)">'
   +'<option value="5"'+(_scDuration==='5s'?' selected':'')+'>5s</option>'
@@ -3866,12 +3871,7 @@ function viewSimpleCreate(){
   +'</div>'
 
   // Row 3: support buttons (Mentor · Storyboard · Pós-produção · Studio completo)
-  +'<div class="sc-pa-row sc-pa-row--support sc-pa-row2">'
-  +'<button class="btn btn-ghost btn-sm" onclick="handleMentor()" title="'+(pt?'Aplique a visão de um mentor criativo':'Apply a creative mentor\'s vision')+'">🎭 Mentor</button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="handleStoryboard()" title="'+(pt?'Transforme a ideia em cenas de storyboard':'Turn the idea into storyboard scenes')+'">📋 Storyboard</button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="handlePostProduction()" title="'+(pt?'Pós-produção: resolução, redes sociais, legenda, briefing':'Post-production: resolution, social media, caption, briefing')+'">🛠 '+(pt?'Pós-produção':'Post-production')+'</button>'
-  +'<button class="btn btn-ghost btn-sm" onclick="scSendToStudio()" title="'+(pt?'Use para controlar o fluxo inteiro: modelos, referências, storyboard, pós-produção, galeria e publicação.':'Use it to control the entire workflow: models, references, storyboard, post-production, gallery and publishing.')+'">⚙️ '+(pt?'Studio completo':'Full Studio')+'</button>'
-  +'</div>'
+  
 
   +'</div>'  // end .sc-prompt-actions
 
@@ -3884,6 +3884,8 @@ function viewSimpleCreate(){
 }
 
 function afterSimpleCreate(){
+  var logoEl=document.getElementById('scMobileLogo');
+  if(logoEl){logoEl.style.display=window.innerWidth<=768?'block':'none';}
   _scRenderRefPreview();
   _scStartSlides();
   _scStartInspRotation();
@@ -9198,6 +9200,97 @@ function afterAdminHealth(){
   hcRenderScore();
   if(!_HC.ranOnce&&S.user&&S.user.admin){_HC.ranOnce=true;setTimeout(()=>runAllHealthChecks(false),350);}
 }
+
+function viewUsers(){
+  var pt=S.lang==='pt';
+  var u=loadUsers();
+  var list=Object.values(u).sort(function(a,b){return b.createdAt-a.createdAt;});
+  var totalCredits=list.reduce(function(s,r){return s+(r.credits|0);},0);
+  var statsHtml='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px">'
+    +'<div class="kpi"><div class="kl">'+(pt?'Total usuários':'Total users')+'</div><div class="kv">'+list.length+'</div></div>'
+    +'<div class="kpi"><div class="kl">'+(pt?'Créditos em circulação':'Credits in circulation')+'</div><div class="kv gold">'+totalCredits+'s</div></div>'
+    +'<div class="kpi"><div class="kl">'+(pt?'Admins':'Admins')+'</div><div class="kv">'+list.filter(function(r){return r.role==='admin'||r.admin;}).length+'</div></div>'
+    +'<div class="kpi"><div class="kl">'+(pt?'Com Google':'Google login')+'</div><div class="kv">'+list.filter(function(r){return r.google;}).length+'</div></div>'
+    +'</div>';
+  var rows=list.length?list.map(function(r){
+    var avatar=r.picture
+      ?('<img src="'+r.picture+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover" referrerpolicy="no-referrer">')
+      :'<span style="font-weight:700;color:var(--accent)">'+(r.name||'?')[0].toUpperCase()+'</span>';
+    return '<div style="display:grid;grid-template-columns:36px 1.5fr 1fr 90px 110px auto;gap:10px;align-items:center;padding:11px 14px;border-bottom:1px solid var(--line)">'
+      +'<div style="width:32px;height:32px;border-radius:50%;background:var(--accent-dim);display:grid;place-items:center">'+avatar+'</div>'
+      +'<div><b style="font-size:13px">'+escapeHtml(r.name||'—')+'</b>'
+      +'<div style="font-size:11px;color:var(--ink-3)">'+escapeHtml(r.email||r.uid)+(r.google?' · Google':'')+'</div></div>'
+      +'<div style="font-size:11px;color:var(--ink-3)">'+new Date(r.createdAt).toLocaleDateString()+'</div>'
+      +'<div style="display:flex;gap:3px;align-items:center">'
+      +'<input class="input" style="padding:5px 6px;font-size:12px;width:68px" type="number" id="cr_'+r.uid+'" value="'+(r.credits|0)+'">'
+      +'<button class="btn btn-ghost btn-sm" style="padding:4px 7px;font-size:13px;color:var(--ok)" onclick="applyAdminUserAction(\''+r.uid+'\',\'credits\',document.getElementById(\'cr_'+r.uid+'\').value);toast(\'✓\',\'ok\')">✓</button>'
+      +'</div>'
+      +'<select class="input" style="padding:5px 8px;font-size:12px" onchange="(function(el){applyAdminUserAction(\''+r.uid+'\',\'role\',el.value);toast(S.lang===\'pt\'?\'Papel atualizado\':\'Role updated\',\'ok\');setTimeout(()=>render(),200);})(this)">'
+      +'<option value="user"'+(r.role==='user'?' selected':'')+'>'+(pt?'Usuário':'User')+'</option>'
+      +'<option value="admin"'+(r.role==='admin'||r.admin?' selected':'')+'">Admin</option>'
+      +'</select>'
+      +'<div style="display:flex;gap:4px">'
+      +'<button class="btn btn-ghost btn-sm" style="padding:4px 8px;font-size:11px" onclick="applyAdminUserAction(\''+r.uid+'\',\'addCredits\',prompt(\''+(pt?'Créditos a adicionar:':'Credits to add:')+'\'||\'\',\'100\'))">+cr</button>'
+      +'<button class="btn btn-ghost btn-sm" style="padding:4px 8px;font-size:11px;color:var(--err)" onclick="if(confirm(\''+(pt?'Excluir conta?':'Delete account?')+'\'))applyAdminUserAction(\''+r.uid+'\',\'delete\')">✕</button>'
+      +'</div>'
+      +'</div>';
+  }).join('')
+  :'<div style="padding:32px;text-align:center;color:var(--ink-3)">'+(pt?'Nenhum usuário cadastrado ainda.':'No users registered yet.')+'</div>';
+
+  return areaHeader({kicker:'admin',title:pt?'Usuários':'Users',desc:pt?'Gerencie todos os usuários cadastrados no Hollywood Studio AI.':'Manage all users registered in Hollywood Studio AI.',area:'users'})
+    +statsHtml
+    +'<div class="card" style="padding:0;overflow:hidden">'
+    +'<div style="display:grid;grid-template-columns:36px 1.5fr 1fr 90px 110px auto;gap:10px;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-4);padding:8px 14px;border-bottom:1px solid var(--line-2)">'
+    +'<span></span><span>'+(pt?'Pessoa':'Person')+'</span><span>'+(pt?'Cadastro':'Joined')+'</span><span>'+(pt?'Créditos':'Credits')+'</span><span>'+(pt?'Papel':'Role')+'</span><span></span>'
+    +'</div>'
+    +rows
+    +'</div>';
+}
+
+function viewCredits(){
+  var pt=S.lang==='pt';
+  var credits=isGuest()?0:S.credits;
+  var plans=[
+    {name:'Básico',price:'R$99',secs:'150s',badge:'',color:'var(--line)'},
+    {name:'Premium',price:'R$199',secs:'300s',badge:pt?'Popular':'Popular',color:'var(--accent)'},
+    {name:'Avançado',price:'R$349',secs:'600s',badge:'Pro',color:'#7c5cbf'},
+  ];
+  var plansHtml='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:28px">'
+    +plans.map(function(p){
+      return '<div class="card" style="border:2px solid '+(p.badge?p.color:'var(--line)')+';position:relative;text-align:center;padding:24px 16px">'
+        +(p.badge?'<span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:'+p.color+';color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px">'+p.badge+'</span>':'')
+        +'<div style="font-size:20px;font-weight:700;margin-bottom:4px">'+p.name+'</div>'
+        +'<div style="font-size:28px;font-weight:800;color:var(--accent);margin:8px 0">'+p.price+'</div>'
+        +'<div style="font-size:13px;color:var(--ink-3);margin-bottom:16px">'+p.secs+' '+(pt?'de vídeo/imagem':'video/image seconds')+'</div>'
+        +'<button class="btn btn-primary" style="width:100%" onclick="go(\'plans\')">'+(pt?'Assinar':'Subscribe')+'</button>'
+        +'</div>';
+    }).join('')
+    +'</div>';
+
+  var hist=typeof loadHistory==='function'?loadHistory():[]; 
+  var histHtml=hist.length?'<div class="card" style="padding:0;overflow:hidden">'
+    +'<div style="padding:14px 16px 10px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-4);font-weight:600;border-bottom:1px solid var(--line-2)">'+(pt?'Histórico de uso':'Usage history')+'</div>'
+    +hist.slice(0,20).map(function(h){
+      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--line-2);font-size:13px">'
+        +'<div><b>'+escapeHtml(h.model||h.type||'—')+'</b><span style="color:var(--ink-3);font-size:11px;margin-left:8px">'+new Date(h.createdAt||h.ts||0).toLocaleString()+'</span></div>'
+        +'<span style="color:var(--err);font-weight:600">−'+(h.creditsUsed||h.credits||1)+'s</span>'
+        +'</div>';
+    }).join('')
+    +'</div>'
+    :'<div class="card" style="text-align:center;color:var(--ink-3);padding:28px">'+(pt?'Nenhuma geração realizada ainda. Gere seu primeiro vídeo!':'No generations yet. Create your first video!')+'</div>';
+
+  return areaHeader({kicker:pt?'conta':'account',title:pt?'Créditos':'Credits',desc:pt?'Seus créditos, planos e histórico de uso.':'Your credits, plans and usage history.',area:'credits'})
+    +'<div style="background:linear-gradient(135deg,rgba(212,168,67,.12),transparent);border:1px solid rgba(212,168,67,.25);border-radius:14px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;gap:16px">'
+    +'<div style="font-size:42px;font-weight:800;color:var(--accent)">'+credits+'<span style="font-size:18px;font-weight:400;color:var(--ink-3)">s</span></div>'
+    +'<div><div style="font-size:14px;font-weight:600">'+(pt?'créditos disponíveis':'credits available')+'</div>'
+    +'<div style="font-size:12px;color:var(--ink-3);margin-top:4px">'+(pt?'1 crédito = ~1 segundo de vídeo ou 1 imagem':'1 credit = ~1 second of video or 1 image')+'</div>'
+    +'<button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="go(\'plans\')">⚡ '+(pt?'Recarregar créditos':'Top up credits')+'</button>'
+    +'</div></div>'
+    +'<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);font-weight:600;margin-bottom:12px">'+(pt?'PLANOS DISPONÍVEIS':'AVAILABLE PLANS')+'</div>'
+    +plansHtml
+    +'<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);font-weight:600;margin-bottom:12px">'+(pt?'HISTÓRICO':'HISTORY')+'</div>'
+    +histHtml;
+}
 function viewAdmin(){
   return areaHeader({
     kicker:t('admin'),title:S.lang==='pt'?'Painel admin':'Admin panel',
@@ -9955,34 +10048,34 @@ function inspoLoadMore(){
 const INSPO_SEED=[
   {url:'https://images.unsplash.com/photo-1518929458119-e5bf444c30f4?w=900&q=80',prompt:'cinematic hero shot, golden hour, 35mm film grain, teal and orange grade',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=900&q=80',prompt:"director's clapper board, film set, dramatic lighting, bokeh",src:'unsplash'},
-  {url:'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=900&q=80',prompt:'abstract light trails, neon, long exposure, urban night, cyberpunk',src:'unsplash'},
-  {url:'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=900&q=80',prompt:'editorial fashion, haute couture, dramatic studio lighting, Vogue',src:'unsplash'},
+  {url:'assets/home-carousel/inspiration-04.jpg',prompt:'abstract light trails, neon, long exposure, urban night, cyberpunk',src:'unsplash'},
+  {url:'assets/home-carousel/inspiration-09.jpg',prompt:'editorial fashion, haute couture, dramatic studio lighting, Vogue',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=900&q=80',prompt:'luxury villa exterior, golden hour, infinity pool, photorealistic',src:'unsplash'},
-  {url:'https://images.unsplash.com/photo-1518877593221-1f28583780b4?w=900&q=80',prompt:'aerial mountain landscape, misty peaks, sunrise, cinematic drone shot',src:'unsplash'},
-  {url:'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=900&q=80',prompt:'gourmet dish close-up, steam rising, macro lens, food photography',src:'unsplash'},
+  {url:'assets/home-carousel/inspiration-07.jpg',prompt:'aerial mountain landscape, misty peaks, sunrise, cinematic drone shot',src:'unsplash'},
+  {url:'assets/home-carousel/inspiration-11.jpg',prompt:'gourmet dish close-up, steam rising, macro lens, food photography',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=900&q=80',prompt:'AI neural network visualization, glowing nodes, dark background, 4K',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=80',prompt:'concert stage, massive crowd, light show, fog, aerial shot, Rock in Rio',src:'unsplash'},
-  {url:'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=900&q=80',prompt:'musician in recording studio, analog equipment, warm light',src:'unsplash'},
-  {url:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=900&q=80',prompt:'portrait, studio lighting, Rembrandt light, skin texture, 85mm',src:'unsplash'},
-  {url:'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=900&q=80',prompt:'athlete in motion, action freeze, dynamic composition, sports photography',src:'unsplash'},
-  {url:'https://images.unsplash.com/photo-1543286386-713bdd548da4?w=900&q=80',prompt:'space exploration, satellite view of earth, cinematic, NASA aesthetic',src:'unsplash'},
+  {url:'assets/home-carousel/inspiration-15.jpg',prompt:'musician in recording studio, analog equipment, warm light',src:'unsplash'},
+  {url:'assets/home-carousel/inspiration-05.webp',prompt:'portrait, studio lighting, Rembrandt light, skin texture, 85mm',src:'unsplash'},
+  {url:'assets/home-carousel/inspiration-14.webp',prompt:'athlete in motion, action freeze, dynamic composition, sports photography',src:'unsplash'},
+  {url:'assets/home-carousel/inspiration-08.webp',prompt:'space exploration, satellite view of earth, cinematic, NASA aesthetic',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=900&q=80',prompt:'cyberpunk city at night, neon reflections, rain, dystopian future',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=900&q=80',prompt:'luxury watch product shot, macro, dark background, dramatic side light',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=900&q=80',prompt:'modern living room interior, natural light, minimalist design, warm tones',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1518098268026-4e89f1a2cd8e?w=900&q=80',prompt:'tropical beach, crystal water, aerial 4K, magic hour, paradise',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=900&q=80',prompt:'cocktail bar, mixologist, bokeh lights, warm amber, lifestyle',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&q=80',prompt:'model walking runway, fashion week, crowd blurred, telephoto 85mm',src:'unsplash'},
-  {url:'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=900&q=80',prompt:'premium perfume bottle, studio shot, reflections, elegant fragrance campaign',src:'unsplash'},
-  {url:'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=900&q=80',prompt:'robot hand touching human hand, photorealistic, shallow DOF, concept art',src:'unsplash'},
+  {url:'assets/home-carousel/inspiration-06.jpg',prompt:'premium perfume bottle, studio shot, reflections, elegant fragrance campaign',src:'unsplash'},
+  {url:'assets/home-carousel/inspiration-02.jpg',prompt:'robot hand touching human hand, photorealistic, shallow DOF, concept art',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=900&q=80',prompt:'abstract fluid art, vibrant colors, macro, fine art print',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=900&q=80',prompt:'UGC authentic portrait, natural light window, casual, social media',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=900&q=80',prompt:'social media app on phone, lifestyle, flat lay, tech photography',src:'unsplash'},
   // Extra AI-focused inspirations
-  {url:'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=900&q=80',prompt:'AI avatar portrait, hyperrealistic digital human, studio lighting, 8K detail',src:'unsplash'},
+  {url:'assets/home-carousel/inspiration-01.jpg',prompt:'AI avatar portrait, hyperrealistic digital human, studio lighting, 8K detail',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=900&q=80',prompt:'Fashion model editorial, AI generated, cinematic color grade',src:'unsplash'},
-  {url:'https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2?w=900&q=80',prompt:'Cyberpunk cityscape aerial night, neon lights, blade runner aesthetic, 4K',src:'unsplash'},
-  {url:'https://images.unsplash.com/photo-1543286386-713bdd548da4?w=900&q=80',prompt:'Planet Earth from space, orbital view, atmosphere glow, cinematic NASA style',src:'unsplash'},
-  {url:'https://images.unsplash.com/photo-1518877593221-1f28583780b4?w=900&q=80',prompt:'Epic mountain range, sunrise timelapse, clouds below, IMAX quality',src:'unsplash'},
+  {url:'assets/home-carousel/inspiration-10.jpg',prompt:'Cyberpunk cityscape aerial night, neon lights, blade runner aesthetic, 4K',src:'unsplash'},
+  {url:'assets/home-carousel/inspiration-08.webp',prompt:'Planet Earth from space, orbital view, atmosphere glow, cinematic NASA style',src:'unsplash'},
+  {url:'assets/home-carousel/inspiration-07.jpg',prompt:'Epic mountain range, sunrise timelapse, clouds below, IMAX quality',src:'unsplash'},
   {url:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=80',prompt:'Luxury watch macro, Swiss movement detail, chrome reflections',src:'unsplash'}
 ];
 function afterInspo(){
@@ -15375,7 +15468,7 @@ var PUBLIC_GALLERY_SEED = [
 
   // Tecnologia / Futurista
   {id:'seed_08',uid:'u_thiago',author:'Thiago Oliveira',avatar:'https://i.pravatar.cc/40?img=3',
-   url:'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=900&q=80',
+   url:'assets/home-carousel/inspiration-02.jpg',
    type:'image',prompt:'Futuristic AI interface, holographic display, neural network visualization, neon cyan, dark background, sci-fi corporate',
    model:'Seedream 5',ratio:'16:9',date:Date.now()-3600000*36,likes:118,comments:['Perfeito pra pitch deck!','Usei na apresentação da startup','Que visual!'],views:832},
 
