@@ -36,15 +36,16 @@ window.HSAI_CONFIG = {
   API_BASE:  'https://api.atlascloud.ai',
   PROVIDER:  'atlascloud',
   PROVIDERS: {
-    atlascloud: { key: '', base: 'https://api.atlascloud.ai' },
-    modelark:   { key: '', base: 'https://ark.ap-southeast.bytepluses.com' },
-    fal:        { key: '', base: 'https://fal.run' },
+    atlascloud: { key: 'apikey-737d0571d9ed45be8363dc039c6b61de', base: 'https://api.atlascloud.ai' },
+    modelark:   { key: 'ark-87502de2-394b-455c-aa6c-41f9b04bb471-3618f', base: 'https://ark.ap-southeast.bytepluses.com' },
+    fal:        { key: 'ba18fb24-388d-46a2-9859-3125ace05bab:6cc1327677b1f93d17889c628bb32e4d', base: 'https://fal.run' },
   },
-  CLAUDE_API_KEY: '',
-  OPENAI_API_KEY: '',
-  GEMINI_API_KEY: '',
+  CLAUDE_API_KEY: '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
+',
+  OPENAI_API_KEY: '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',
+  GEMINI_API_KEY: 'AIzaSyDLZbSY5OyaL_dvuMQcNB0-86z1hYXvnLw',
   GEMINI_MODEL:   'gemini-2.0-flash',
-  YOUTUBE_API_KEY: '',
+  YOUTUBE_API_KEY: 'AIzaSyCAMNc0nzrViGgxiuJ21bRnG4QG4a3HNbQ',
 
   // ── LISTA PÚBLICA DE MODELOS (referência — catálogo completo no app) ────────
   publicModelList: ['seedance2', 'kling3', 'veo3', 'sora2', 'flux-pro', 'nano-banana', 'suno', 'heygen'],
