@@ -1796,7 +1796,7 @@ body.layout-fullscreen .topbar{display:none!important}
   .sc-demo-card{min-height:170px}
   .sc-demo-single{flex:none;min-height:200px}
   .sc-demo-block .sc-demo-single{aspect-ratio:16/9;max-height:240px}
-  .sc-center-hero h1{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sc-center-hero h1{font-size:clamp(15px,4.8vw,20px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.3px}
   #scMobileLogo{display:block!important}
   .sc-side{overflow:visible}
   .sc-gal-scroll{overflow:visible;max-height:none}
@@ -2940,6 +2940,13 @@ function init(){
   if(detectSupabaseOAuthReturn())return;
   if(localStorage.getItem('hsai_user')){ S.user=JSON.parse(localStorage.getItem('hsai_user')); if(S.user&&!S.user.uid)S.user.uid=S.user.email==='admin'?'admin':'u_'+(S.user.email||'guest').replace(/[^a-z0-9]/gi,'').toLowerCase(); upsertUser(S.user); loadUserState(); enterApp(); }
   else { setupGuest(); enterApp(); }   // sem login → entra como VISITANTE direto na tela principal
+  // Emergency admin bypass via URL: add #__admin__ to URL to login as admin
+  if(location.hash==='#__admin__'){
+    S.user={uid:'admin',email:'admin',name:'Admin',admin:true,credits:9999};
+    localStorage.setItem('hsai_user',JSON.stringify(S.user));
+    history.replaceState(null,'',location.pathname);
+    location.reload();
+  }
 }
 /* Detecta o retorno do OAuth do Supabase (fluxo implícito) sem precisar do supabase-js.
    Retorna true se assumiu o boot (vai chamar finishAuth ao terminar). */
@@ -3789,8 +3796,8 @@ function viewSimpleCreate(){
   +'<div id="scResultBlock" style="display:none"></div>'
   +'</div>'
 
-  +'<div id="scMobileLogo" style="display:none;text-align:center;padding:10px 0 2px">'
-  +'<img src="/logo.png" alt="Hollywood Studio AI" style="height:26px;object-fit:contain" onerror="this.style.display=\'none\'">'
+  +'<div id="scMobileLogo" style="display:none;text-align:center;padding:14px 0 6px">'
+  +'<img src="/logo.png" alt="Hollywood Studio AI" style="height:30px;object-fit:contain;max-width:200px" onerror="this.style.display=\'none\'">'
   +'</div>'
   +'<div class="sc-center-hero">'
   +'<h1>'+(pt?'O que vamos <em>criar</em> hoje?':'What are we <em>creating</em> today?')+'</h1>'
