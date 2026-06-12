@@ -1,117 +1,125 @@
--- HOLLYWOOD STUDIO AI — Supabase Schema
--- Run in: Supabase Dashboard > SQL Editor
+-- SUPABASE_SCHEMA.sql
+-- Hollywood Studio AI — Schema base
+-- Cole no SQL Editor do Supabase: https://app.supabase.com → SQL Editor
 
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-
--- ============================================================
--- PROFILES
--- ============================================================
-CREATE TABLE IF NOT EXISTS profiles (
-  id           UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  email        TEXT,
-  name         TEXT,
-  avatar_url   TEXT,
-  role         TEXT DEFAULT 'user',
-  plan         TEXT DEFAULT 'free',
-  credits      INTEGER DEFAULT 0,
-  created_at   TIMESTAMPTZ DEFAULT NOW(),
-  updated_at   TIMESTAMPTZ DEFAULT NOW()
+-- ─────────────────────────────────────────────
+-- 1. PROFILES
+-- ─────────────────────────────────────────────
+create table if not exists profiles (
+  id            uuid primary key default gen_random_uuid(),
+  user_id       text not null unique,           -- uid local (ex: u_alangabriel) ou sub do OAuth
+  email         text,
+  name          text,
+  picture       text,
+  credits       integer not null default 0,
+  plan          text not null default 'free',   -- free | pro | ultra
+  admin         boolean not null default false,
+  created_at    timestamptz not null default now(),
+  updated_at    timestamptz not null default now()
 );
 
-CREATE OR REPLACE FUNCTION handle_new_user()
-RETURNS TRIGGER AS $func$
-BEGIN
-  INSERT INTO public.profiles (id, email, name, credits)
-  VALUES (NEW.id, NEW.email, COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.email), 3)
-  ON CONFLICT (id) DO NOTHING;
-  RETURN NEW;
-END;
-$func$ LANGUAGE plpgsql SECURITY DEFINER;
+alter table profiles enable row level security;
 
-DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION handle_new_user();
+-- Usuário lê/atualiza apenas o próprio perfil; NUNCA altera créditos diretamente
+create policy "Usuário vê próprio perfil"
+  on profiles for select
+  using (auth.uid()::text = user_id);
 
-CREATE OR REPLACE FUNCTION set_updated_at()
-RETURNS TRIGGER AS $func$
-BEGIN NEW.updated_at = NOW(); RETURN NEW; END;
-$func$ LANGUAGE plpgsql;
+create policy "Usuário atualiza nome/foto"
+  on profiles for update
+  using (auth.uid()::text = user_id)
+  with check (
+    auth.uid()::text = user_id
+    and credits = (select credits from profiles where user_id = auth.uid()::text)
+  );
 
--- ============================================================
--- CREDIT TRANSACTIONS
--- ============================================================
-CREATE TABLE IF NOT EXISTS credit_transactions (
-  id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id           UUID REFERENCES profiles(id) ON DELETE CASCADE,
-  type              TEXT NOT NULL CHECK (type IN ('purchase','debit','refund','bonus','adjustment')),
-  amount            INTEGER NOT NULL,
-  reason            TEXT,
-  stripe_session_id TEXT,
-  stripe_event_id   TEXT UNIQUE,
-  metadata          JSONB DEFAULT '{}',
-  created_at        TIMESTAMPTZ DEFAULT NOW()
+-- Service Role (backend/webhook) tem acesso total via chave service_role
+-- (não precisa de policy — service_role bypassa RLS)
+
+-- ─────────────────────────────────────────────
+-- 2. CREDIT_TRANSACTIONS
+-- ─────────────────────────────────────────────
+create table if not exists credit_transactions (
+  id                  uuid primary key default gen_random_uuid(),
+  user_id             text not null,
+  amount              integer not null,          -- positivo = crédito, negativo = débito
+  type                text not null,             -- purchase | generation | refund | grant
+  description         text,
+  model_id            text,
+  stripe_session_id   text,
+  created_at          timestamptz not null default now()
 );
 
--- ============================================================
--- GENERATION LOGS
--- ============================================================
-CREATE TABLE IF NOT EXISTS generation_logs (
-  id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id         UUID REFERENCES profiles(id) ON DELETE SET NULL,
-  type            TEXT CHECK (type IN ('video','image','audio','postproduction','hsengine')),
-  model_id        TEXT,
-  prompt          TEXT,
-  cost_estimated  INTEGER DEFAULT 0,
-  cost_final      INTEGER DEFAULT 0,
-  status          TEXT DEFAULT 'pending' CHECK (status IN ('pending','processing','completed','failed','refunded')),
-  result_url      TEXT,
-  error_message   TEXT,
-  metadata        JSONB DEFAULT '{}',
-  created_at      TIMESTAMPTZ DEFAULT NOW(),
-  updated_at      TIMESTAMPTZ DEFAULT NOW()
+alter table credit_transactions enable row level security;
+
+create policy "Usuário vê próprias transações"
+  on credit_transactions for select
+  using (auth.uid()::text = user_id);
+
+-- Usuário NÃO pode inserir transações diretamente (apenas via service role)
+-- (nenhuma policy de insert para usuários = bloqueado por RLS)
+
+-- ─────────────────────────────────────────────
+-- 3. GENERATION_LOGS
+-- ─────────────────────────────────────────────
+create table if not exists generation_logs (
+  id           uuid primary key default gen_random_uuid(),
+  user_id      text not null,
+  prompt       text,
+  model_id     text,
+  type         text,           -- video | image | audio
+  credits_used integer,
+  result_url   text,
+  status       text,           -- pending | ok | error
+  error_msg    text,
+  created_at   timestamptz not null default now()
 );
 
-CREATE TRIGGER set_generation_logs_updated_at
-  BEFORE UPDATE ON generation_logs
-  FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+alter table generation_logs enable row level security;
 
--- ============================================================
--- SUBSCRIPTIONS
--- ============================================================
-CREATE TABLE IF NOT EXISTS subscriptions (
-  id                      UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id                 UUID REFERENCES profiles(id) ON DELETE CASCADE,
-  stripe_customer_id      TEXT,
-  stripe_subscription_id  TEXT UNIQUE,
-  stripe_session_id       TEXT,
-  plan                    TEXT,
-  status                  TEXT DEFAULT 'active',
-  credits_granted         INTEGER DEFAULT 0,
-  current_period_start    TIMESTAMPTZ,
-  current_period_end      TIMESTAMPTZ,
-  metadata                JSONB DEFAULT '{}',
-  created_at              TIMESTAMPTZ DEFAULT NOW(),
-  updated_at              TIMESTAMPTZ DEFAULT NOW()
+create policy "Usuário vê próprios logs"
+  on generation_logs for select
+  using (auth.uid()::text = user_id);
+
+create policy "Usuário insere próprios logs"
+  on generation_logs for insert
+  with check (auth.uid()::text = user_id);
+
+-- ─────────────────────────────────────────────
+-- 4. SUBSCRIPTIONS
+-- ─────────────────────────────────────────────
+create table if not exists subscriptions (
+  id                      uuid primary key default gen_random_uuid(),
+  user_id                 text not null unique,
+  plan                    text not null,
+  stripe_customer_id      text,
+  stripe_subscription_id  text,
+  status                  text not null default 'active', -- active | cancelled | past_due
+  created_at              timestamptz not null default now(),
+  updated_at              timestamptz not null default now()
 );
 
-CREATE TRIGGER set_subscriptions_updated_at
-  BEFORE UPDATE ON subscriptions
-  FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+alter table subscriptions enable row level security;
 
--- ============================================================
--- ROW LEVEL SECURITY
--- ============================================================
-ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE credit_transactions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE generation_logs ENABLE ROW LEVEL SECURITY;
-ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
+create policy "Usuário vê própria assinatura"
+  on subscriptions for select
+  using (auth.uid()::text = user_id);
 
-CREATE POLICY "profiles_select_own" ON profiles FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "profiles_update_own" ON profiles FOR UPDATE USING (auth.uid() = id)
-  WITH CHECK (auth.uid() = id AND credits = (SELECT credits FROM profiles WHERE id = auth.uid()));
+-- ─────────────────────────────────────────────
+-- 5. FUNÇÃO: increment_credits (chamada pelo webhook)
+-- ─────────────────────────────────────────────
+create or replace function increment_credits(p_user_id text, p_amount integer)
+returns void language plpgsql security definer as $$
+begin
+  insert into profiles (user_id, credits)
+    values (p_user_id, p_amount)
+    on conflict (user_id)
+    do update set credits = profiles.credits + p_amount,
+                  updated_at = now();
+end;
+$$;
 
-CREATE POLICY "transactions_select_own" ON credit_transactions FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "logs_select_own"         ON generation_logs FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "subscriptions_select_own" ON subscriptions FOR SELECT USING (auth.uid() = user_id);
+-- ─────────────────────────────────────────────
+-- PRONTO — Copie este arquivo e cole no SQL Editor do Supabase
+-- Após rodar, configure as variáveis de ambiente na Vercel (ver SETUP_PAYMENTS.md)
+-- ─────────────────────────────────────────────
