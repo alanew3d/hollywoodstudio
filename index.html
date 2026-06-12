@@ -8379,6 +8379,37 @@ async function buyPlan(id,secs){
   document.getElementById('checkoutModal').classList.add('open');
 }
 
+async function startCheckout(plan) {
+  const btn = event && event.target;
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Aguarde...'; }
+
+  try {
+    const body = {
+      plan,
+      userId:    S.user ? S.user.uid : undefined,
+      userEmail: S.user ? S.user.email : undefined,
+    };
+
+    const resp = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    const data = await resp.json();
+
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      throw new Error(data.error || 'Checkout não disponível');
+    }
+  } catch (err) {
+    console.error('[startCheckout]', err);
+    if (typeof showToast === 'function') showToast('Erro ao iniciar pagamento: ' + err.message, 'err');
+    if (btn) { btn.disabled = false; btn.textContent = 'Assinar'; }
+  }
+}
+
 /* ════════ ADMIN ════════ */
 /* ════════ GALERIA PÚBLICA — usuários compartilham para inspirar uns aos outros ════════ */
 function loadPublic(){try{return JSON.parse(localStorage.getItem('hsai_public_gallery')||'[]');}catch(e){return[];}}
