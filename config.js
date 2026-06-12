@@ -17,7 +17,11 @@ window.HSAI_CONFIG = {
   SITE_NAME:    'Hollywood Studio AI',
   SITE_URL:     'https://hollywoodstudio.ai',
   ADMIN_USER:   'admin',
-  ADMIN_PASS:   'hs2026!',
+  ADMIN_PASS:   'admin123temp',
+  // TEMPORÁRIO: permite login admin sem senha para recuperação.
+  // Depois de configurar o Admin, trocar para:
+  // ADMIN_RECOVERY_MODE: false
+  ADMIN_RECOVERY_MODE: true,
   ADMIN_EMAIL:  'mail@alanlegend.com',
 
   // ── FEATURES PÚBLICAS (sem segredos) ───────────────────────────────────────
@@ -36,21 +40,24 @@ window.HSAI_CONFIG = {
   API_BASE:  'https://api.atlascloud.ai',
   PROVIDER:  'atlascloud',
   PROVIDERS: {
-    atlascloud: { key: 'apikey-737d0571d9ed45be8363dc039c6b61de', base: 'https://api.atlascloud.ai' },
-    modelark:   { key: 'ark-87502de2-394b-455c-aa6c-41f9b04bb471-3618f', base: 'https://ark.ap-southeast.bytepluses.com' },
-    fal:        { key: 'ba18fb24-388d-46a2-9859-3125ace05bab:6cc1327677b1f93d17889c628bb32e4d', base: 'https://fal.run' },
+    atlascloud: { key: '', base: 'https://api.atlascloud.ai' },
+    modelark:   { key: '', base: 'https://ark.ap-southeast.bytepluses.com' },
+    fal:        { key: '', base: 'https://fal.run' },
   },
-  CLAUDE_API_KEY: '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
-',
-  OPENAI_API_KEY: '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',
-  GEMINI_API_KEY: 'AIzaSyDLZbSY5OyaL_dvuMQcNB0-86z1hYXvnLw',
+  CLAUDE_API_KEY: ''   // BACKEND ONLY - add ANTHROPIC_API_KEY to Vercel env   // BACKEND ONLY - use ANTHROPIC_API_KEY in Vercel env vars,
+  OPENAI_API_KEY: ''   // BACKEND ONLY - add OPENAI_API_KEY to Vercel env  // BACKEND ONLY - use OPENAI_API_KEY in Vercel env vars,
+  GEMINI_API_KEY: ''   // BACKEND ONLY - add GEMINI_API_KEY to Vercel env    // BACKEND ONLY - use GEMINI_API_KEY in Vercel env vars,
   GEMINI_MODEL:   'gemini-2.0-flash',
-  YOUTUBE_API_KEY: 'AIzaSyCAMNc0nzrViGgxiuJ21bRnG4QG4a3HNbQ',
+  YOUTUBE_API_KEY: ''  // BACKEND ONLY - add YOUTUBE_API_KEY to Vercel env  // BACKEND ONLY - use YOUTUBE_API_KEY in Vercel env vars,
 
   // ── LISTA PÚBLICA DE MODELOS (referência — catálogo completo no app) ────────
   publicModelList: ['seedance2', 'kling3', 'veo3', 'sora2', 'flux-pro', 'nano-banana', 'suno', 'heygen'],
 
-  // ── PAGAMENTOS — links públicos (Payment Links Stripe) ──────────────────────
+  // SUPABASE (publicos - anon key apenas)
+  SUPABASE_URL:      '',   // ex: https://xxxx.supabase.co
+  SUPABASE_ANON_KEY: '',   // Supabase anon/public key (seguro para frontend)
+
+  // PAGAMENTOS — links públicos (Payment Links Stripe) ──────────────────────
   publicPaymentLinks: {
     stripe: { basico: '', premium: '', avancado: '' },
     topups: { t100: '', t300: '', t700: '' },

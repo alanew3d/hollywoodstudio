@@ -3036,16 +3036,36 @@ function doAuth(){
   const email=document.getElementById('auEmail').value.trim();
   const pass=document.getElementById('auPass').value;
   if(!email||!pass){toast(S.lang==='pt'?'Preencha e-mail e senha':'Fill email and password','err');return;}
-  // admin
-  if(email===CFG.ADMIN_USER||email==='admin'){
-    if(pass===CFG.ADMIN_PASS){S.user={uid:'admin',email:'admin',name:'Admin',admin:true};upsertUser(S.user);finishAuth();return;}
-    toast(S.lang==='pt'?'Senha admin incorreta':'Wrong admin password','err');return;
-  }
-  // admin login via ADMIN_EMAIL + ADMIN_PASS (config.js)
-  if(pass === CFG.ADMIN_PASS && (email === CFG.ADMIN_EMAIL || !CFG.ADMIN_EMAIL)){
-    S.user={uid:'admin',email:CFG.ADMIN_EMAIL||'admin',name:'Admin',admin:true};
-    if(typeof upsertUser==='function')upsertUser(S.user);
-    finishAuth();return;
+  // admin login
+  const isAdminLogin = email === 'admin' || email === (CFG.ADMIN_USER || 'admin') || (CFG.ADMIN_EMAIL && email === CFG.ADMIN_EMAIL);
+
+  if (isAdminLogin) {
+    const recoveryOn = !!CFG.ADMIN_RECOVERY_MODE;
+    const passOk = pass === CFG.ADMIN_PASS;
+
+    if (recoveryOn || passOk) {
+      S.user = {
+        uid: 'admin',
+        email: CFG.ADMIN_EMAIL || 'admin',
+        name: 'Admin',
+        admin: true,
+        recovery: recoveryOn && !passOk
+      };
+      if (typeof upsertUser === 'function') upsertUser(S.user);
+      finishAuth();
+
+      if (recoveryOn && !passOk) {
+        setTimeout(function () {
+          if (typeof showToast === 'function') showToast('⚠️ Modo recuperação admin ativo — configure uma senha.', 'warn');
+          else if (typeof toast === 'function') toast('⚠️ Modo recuperação admin ativo — configure uma senha.', 'warn');
+        }, 500);
+      }
+      return;
+    }
+
+    if (typeof showToast === 'function') showToast(S.lang === 'pt' ? 'Senha admin incorreta' : 'Wrong admin password', 'err');
+    else if (typeof toast === 'function') toast(S.lang === 'pt' ? 'Senha admin incorreta' : 'Wrong admin password', 'err');
+    return;
   }
   const uid='u_'+email.replace(/[^a-z0-9]/gi,'').toLowerCase();
   S.user={uid,email,name:document.getElementById('auName').value||email.split('@')[0],admin:false};
@@ -8334,6 +8354,28 @@ function confirmPendingPayment(){
       }
     }).catch(()=>{});
 }
+async function startCheckout(plan) {
+  if (!S || !S.user || !S.user.uid) {
+    if (typeof showToast === 'function') showToast('Faca login para assinar um plano.', 'warn');
+    go('login');
+    return;
+  }
+  const btn = (typeof event !== 'undefined' && event && event.target) ? event.target : null;
+  if (btn) { btn.disabled = true; btn.dataset.orig = btn.textContent; btn.textContent = '...'; }
+  try {
+    const resp = await fetch('/api/create-checkout-session', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ plan, userId: S.user.uid, email: S.user.email }),
+    });
+    const data = await resp.json();
+    if (!resp.ok || !data.url) throw new Error(data.error || 'Checkout indisponivel');
+    window.location.href = data.url;
+  } catch(err) {
+    console.error('[startCheckout]', err);
+    if (typeof showToast === 'function') showToast('Erro: ' + err.message, 'err');
+    if (btn) { btn.disabled = false; btn.textContent = btn.dataset.orig || 'Assinar'; }
+  }
+}
 async function buyPlan(id,secs){
   if(isGuest())return showAuthGate('default');
   const p=PLANS.find(x=>x.id===id);if(!p)return;
@@ -9203,7 +9245,24 @@ function viewAdmin(){
     kicker:t('admin'),title:S.lang==='pt'?'Painel admin':'Admin panel',
     desc:S.lang==='pt'?'Configuração do estúdio, créditos, publicações e chaves de API.':'Studio configuration, credits, publications and API keys.',
     area:'admin'
-  })+`
+  })+
+  (CFG.ADMIN_RECOVERY_MODE ? `
+<div style="background:rgba(255,180,0,.14);border:2px solid rgba(255,180,0,.5);border-radius:12px;padding:16px 20px;margin-bottom:24px;display:flex;align-items:flex-start;gap:12px">
+  <span style="font-size:1.5rem;flex-shrink:0">⚠️</span>
+  <div style="flex:1">
+    <strong style="display:block;margin-bottom:6px">Modo recuperação admin ativo</strong>
+    <p style="margin:0 0 12px;opacity:.85;font-size:.9rem">O painel Admin está acessível sem senha. Configure uma nova senha e desative <code>ADMIN_RECOVERY_MODE</code> no <code>config.js</code> antes de divulgar o site.</p>
+    <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:12px;font-family:monospace;font-size:.82rem;white-space:pre;margin-bottom:12px">ADMIN_USER: "admin",
+ADMIN_PASS: "NOVA_SENHA_FORTE",
+ADMIN_RECOVERY_MODE: false</div>
+    <button onclick="navigator.clipboard&&navigator.clipboard.writeText('ADMIN_USER: \\'admin\\',\\nADMIN_PASS: \\'NOVA_SENHA_FORTE\\',\\nADMIN_RECOVERY_MODE: false').then(()=>{ if(typeof showToast==='function')showToast('Copiado! Cole no config.js','ok'); })" style="padding:8px 16px;background:linear-gradient(135deg,#f2cf72,#d8a93a);color:#080808;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:.85rem">📋 Copiar bloco config</button>
+  </div>
+</div>` : '')
+  +`
+  <!-- Admin quick-nav -->
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+    <button onclick="go('admin-health')" style="padding:9px 18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:8px;cursor:pointer;color:inherit;font-size:.88rem;font-weight:600">🩺 Checklist</button>
+  </div>
   <!-- Community Toggle -->
   <div class="card" style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
     <div>
