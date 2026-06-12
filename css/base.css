@@ -1,0 +1,9 @@
+/*
+ * HOLLYWOOD STUDIO AI — css/base.css
+ * CSS reset, custom properties (CSS variables), and base element styles.
+ * Variables: --hs-gold, --hs-gold-light, --hs-gold-hover, --hs-dark, --panel, --text
+ * Dark theme: :root { color-scheme: dark; }
+ * Light theme: [data-theme="light"] { ... }
+ *
+ * Currently: CSS variables and base styles in index.html <style>.
+ */
