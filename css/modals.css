@@ -1,0 +1,8 @@
+/*
+ * HOLLYWOOD STUDIO AI — css/modals.css
+ * Modal and overlay styles.
+ * Classes: .overlay, .overlay-visible, .modal-card
+ * Pattern: .overlay wraps .modal-card; click outside closes.
+ *
+ * Currently: modal CSS inline in index.html <style>.
+ */

@@ -1,0 +1,11 @@
+/*
+ * HOLLYWOOD STUDIO AI — css/themes.css
+ * Dark and light theme variable overrides.
+ * :root = dark theme (default)
+ * [data-theme="light"] = light theme overrides
+ *
+ * Gold palette: #f2cf72 (light), #d8a93a (base), #b8891a (dark), #ffe08a (hover)
+ * Button rule: NEVER use black text on dark background for non-gold buttons.
+ *
+ * Currently: theme variables in index.html <style>.
+ */

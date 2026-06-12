@@ -3078,18 +3078,43 @@ function authTab(m){document.getElementById('tabLogin').classList.toggle('on',m=
 function doAuth(){
   const email=document.getElementById('auEmail').value.trim();
   const pass=document.getElementById('auPass').value;
-  if(!email||!pass){toast(S.lang==='pt'?'Preencha e-mail e senha':'Fill email and password','err');return;}
-  // admin
-  if(email===CFG.ADMIN_USER||email==='admin'){
-    if(pass===CFG.ADMIN_PASS){S.user={uid:'admin',email:'admin',name:'Admin',admin:true};upsertUser(S.user);finishAuth();return;}
-    toast(S.lang==='pt'?'Senha admin incorreta':'Wrong admin password','err');return;
+
+  const isAdminLogin = (email === (CFG.ADMIN_USER||'admin') || email === 'admin' || (CFG.ADMIN_EMAIL && email === CFG.ADMIN_EMAIL));
+
+  if(isAdminLogin){
+    const recoveryOn = !!CFG.ADMIN_RECOVERY_MODE;
+    const passOk = pass === CFG.ADMIN_PASS;
+
+    if(recoveryOn || passOk){
+      S.user = {
+        uid: 'admin',
+        email: CFG.ADMIN_EMAIL || 'admin',
+        name: 'Admin',
+        admin: true,
+        recovery: recoveryOn && !passOk
+      };
+      if(typeof upsertUser === 'function') upsertUser(S.user);
+      finishAuth();
+
+      if(recoveryOn && !passOk && typeof showToast === 'function'){
+        setTimeout(function(){
+          showToast('⚠️ Modo recuperação admin ativo — configure uma senha e desative ADMIN_RECOVERY_MODE.', 'warn');
+        }, 600);
+      }
+      return;
+    }
+
+    if(typeof showToast === 'function') showToast(S.lang==='pt' ? 'Senha admin incorreta' : 'Wrong admin password', 'err');
+    else if(typeof toast === 'function') toast(S.lang==='pt' ? 'Senha admin incorreta' : 'Wrong admin password', 'err');
+    return;
   }
-  // admin login via ADMIN_EMAIL + ADMIN_PASS (config.js)
-  if(pass === CFG.ADMIN_PASS && (email === CFG.ADMIN_EMAIL || !CFG.ADMIN_EMAIL)){
-    S.user={uid:'admin',email:CFG.ADMIN_EMAIL||'admin',name:'Admin',admin:true};
-    if(typeof upsertUser==='function')upsertUser(S.user);
-    finishAuth();return;
+
+  if(!email || !pass){
+    if(typeof showToast === 'function') showToast(S.lang==='pt' ? 'Preencha e-mail e senha' : 'Fill email and password', 'err');
+    else if(typeof toast === 'function') toast(S.lang==='pt' ? 'Preencha e-mail e senha' : 'Fill email and password', 'err');
+    return;
   }
+
   const uid='u_'+email.replace(/[^a-z0-9]/gi,'').toLowerCase();
   S.user={uid,email,name:document.getElementById('auName').value||email.split('@')[0],admin:false};
   upsertUser(S.user);
@@ -9246,7 +9271,24 @@ function viewAdmin(){
     kicker:t('admin'),title:S.lang==='pt'?'Painel admin':'Admin panel',
     desc:S.lang==='pt'?'Configuração do estúdio, créditos, publicações e chaves de API.':'Studio configuration, credits, publications and API keys.',
     area:'admin'
-  })+`
+  })+
+  (CFG.ADMIN_RECOVERY_MODE ? `
+<div style="background:rgba(255,180,0,.15);border:2px solid rgba(255,180,0,.5);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px">
+  <span style="font-size:1.4rem;flex-shrink:0">⚠️</span>
+  <div style="flex:1">
+    <div style="font-weight:700;margin-bottom:6px">Modo recuperação admin ativo</div>
+    <p style="margin:0 0 12px;opacity:.85;font-size:.9rem">O admin está acessível sem senha. Configure uma nova senha e desative <code>ADMIN_RECOVERY_MODE</code> no <code>config.js</code> antes de divulgar o site.</p>
+    <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:12px;font-family:monospace;font-size:.82rem;margin-bottom:12px;white-space:pre">ADMIN_USER:          '${CFG.ADMIN_USER||'admin'}'
+ADMIN_PASS:          '${CFG.ADMIN_PASS||'(vazia — INSEGURO)'}' 
+ADMIN_EMAIL:         '${CFG.ADMIN_EMAIL||''}'
+ADMIN_RECOVERY_MODE: false  ← mudar para false após configurar</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button onclick="(function(){const txt='ADMIN_USER: \\'${(CFG.ADMIN_USER||'admin').replace(/'/g,"\\'")}\\',\\nADMIN_PASS: \\'NOVA_SENHA_AQUI\\',\\nADMIN_EMAIL: \\'${(CFG.ADMIN_EMAIL||'').replace(/'/g,"\\'")}\\',\\nADMIN_RECOVERY_MODE: false,';navigator.clipboard&&navigator.clipboard.writeText(txt).then(()=>showToast&&showToast('Copiado! Cole no config.js e mude a senha.','ok'))})()" style="padding:8px 16px;background:linear-gradient(135deg,#f2cf72,#d8a93a);color:#080808;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:.85rem">📋 Copiar config.js atualizado</button>
+      <button onclick="go('admin-settings')" style="padding:8px 16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;cursor:pointer;color:inherit;font-size:.85rem">⚙️ Abrir configurações</button>
+    </div>
+  </div>
+</div>` : '')
+  +`
   <!-- Community Toggle -->
   <div class="card" style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
     <div>
