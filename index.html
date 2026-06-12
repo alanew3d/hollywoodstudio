@@ -11,25 +11,25 @@
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#0d0c0f">
 <link rel="canonical" href="https://hollywoodstudio.ai/">
-<!-- Open Graph -->
+<!-- Open Graph / Twitter -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Hollywood Studio AI">
 <meta property="og:title" content="Hollywood Studio AI — Geração de vídeo, imagem e áudio por IA">
 <meta property="og:description" content="Produza vídeos, imagens e áudio cinematográficos com IA. Direção criativa, personagens, presets, agentes e créditos flexíveis.">
-<meta property="og:url" content="https://hollywoodstudio.ai">
-<meta property="og:image" content="https://hollywoodstudio.ai/assets/social/hero-hollywoodstudio-ai.jpg">
-<meta property="og:image:width" content="1733">
-<meta property="og:image:height" content="907">
+<meta property="og:url" content="https://hollywoodstudio.ai/">
+<meta property="og:image" content="https://hollywoodstudio.ai/assets/social/hollywoodstudio-ai-og-20260612.jpg">
+<meta property="og:image:secure_url" content="https://hollywoodstudio.ai/assets/social/hollywoodstudio-ai-og-20260612.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:locale" content="pt_BR">
 <meta property="og:locale:alternate" content="en_US">
-<link rel="image_src" href="https://hollywoodstudio.ai/assets/social/hero-hollywoodstudio-ai.jpg">
-<link rel="preload" as="image" href="assets/social/hero-hollywoodstudio-ai.jpg" media="(min-width:769px)">
+<link rel="image_src" href="https://hollywoodstudio.ai/assets/social/hollywoodstudio-ai-og-20260612.jpg">
 <link rel="preload" as="image" href="assets/social/hero-hollywoodstudio-ai-vert.png" media="(max-width:768px)">
-<!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Hollywood Studio AI — Geração de vídeo, imagem e áudio por IA">
 <meta name="twitter:description" content="Produza vídeos, imagens e áudio cinematográficos com IA. Direção criativa, personagens, presets, agentes e créditos flexíveis.">
-<meta name="twitter:image" content="https://hollywoodstudio.ai/assets/social/hero-hollywoodstudio-ai.jpg">
+<meta name="twitter:image" content="https://hollywoodstudio.ai/assets/social/hollywoodstudio-ai-og-20260612.jpg">
 <script type="application/ld+json" id="ldjson">
 {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Hollywood Studio AI","applicationCategory":"MultimediaApplication","operatingSystem":"Web","description":"Plataforma de workflow audiovisual com IA — da ideia ao corte final. Gere vídeos, imagens e áudio cinematográficos com Seedance, Kling, Veo, Sora, Flux e mais.","url":"https://hollywoodstudio.ai/","offers":[{"@type":"Offer","name":"Básico","price":"99","priceCurrency":"BRL"},{"@type":"Offer","name":"Premium","price":"299","priceCurrency":"BRL"}],"author":{"@type":"Organization","name":"Hollywood Studio AI","url":"https://hollywoodstudio.ai/"},"screenshot":"https://hollywoodstudio.ai/assets/logos/logo-hero.png","featureList":"Geração de vídeo com IA, Texto para vídeo, Imagem para vídeo, Geração de imagem, Áudio com IA, Storyboard, Pós-produção, Galeria, Templates"}
 </script>
@@ -8334,6 +8334,29 @@ function confirmPendingPayment(){
       }
     }).catch(()=>{});
 }
+async function startCheckout(plan) {
+  if (!S || !S.user || !S.user.uid) {
+    if (typeof showToast === 'function') showToast('Faça login para assinar um plano.', 'warn');
+    go('login');
+    return;
+  }
+  const btn = (typeof event !== 'undefined' && event && event.target) ? event.target : null;
+  if (btn) { btn.disabled = true; btn.dataset.orig = btn.textContent; btn.textContent = '⏳ Aguarde…'; }
+  try {
+    const resp = await fetch('/api/create-checkout-session', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ plan, userId: S.user.uid, email: S.user.email }),
+    });
+    const data = await resp.json();
+    if (!resp.ok || !data.url) throw new Error(data.error || 'Checkout indisponível');
+    window.location.href = data.url;
+  } catch(err) {
+    console.error('[startCheckout]', err);
+    if (typeof showToast === 'function') showToast('Erro: ' + err.message, 'err');
+    if (btn) { btn.disabled = false; btn.textContent = btn.dataset.orig || 'Assinar'; }
+  }
+}
+
 async function buyPlan(id,secs){
   if(isGuest())return showAuthGate('default');
   const p=PLANS.find(x=>x.id===id);if(!p)return;
