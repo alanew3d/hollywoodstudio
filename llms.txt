@@ -1,0 +1,28 @@
+# Hollywood Studio AI
+> Plataforma de workflow audiovisual com IA — da ideia ao corte final.
+
+## O que é
+Estúdio web que conecta ideia, prompt, referências, modelos de IA, templates, galeria, pós-produção e redes sociais em um fluxo único.
+
+## Público-alvo
+Criadores de conteúdo, agências, produtoras, social media, filmmakers e marcas que usam IA generativa para vídeo, imagem e áudio.
+
+## Principais recursos
+- Studio: geração de vídeo, imagem e áudio com múltiplos modelos
+- Modelos: Seedance, Kling, Veo, Sora, Flux, HeyGen, Fal.ai e mais
+- Templates por nicho (imóveis, moda, gastronomia, fitness, etc.)
+- Galeria pessoal e Galeria Pública
+- Favoritos e referências visuais
+- Conselho Criativo (análise estética e direção)
+- Storyboard cinematográfico
+- Pós-Produção e exportação social
+- Planos por assinatura e créditos
+
+## Posicionamento
+Complementa ferramentas como Runway, Luma, CapCut e DaVinci — organiza o workflow antes e depois da geração.
+
+## URL principal
+https://hollywoodstudio.ai
+
+## Contato
+https://hollywoodstudio.ai

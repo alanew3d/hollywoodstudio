@@ -1,0 +1,17 @@
+Add AILAN Cinematic Engine v1
+
+New creative direction mode inside Studio Suite. Generates structured
+audiovisual production plans with per-scene prompts using 100% local
+algorithmic generation (no external AI API calls).
+
+- Route ailan registered in router; sidebar item in Create group
+- viewAILAN: Phase 1 input form + Phase 2 rich plan output
+- ailanGeneratePlan: deterministic engine with 8 project types,
+  duration tables, scene templates, camera movement bank, keyword
+  extraction, prompt builder, model recommendation from HSAI_MODELS,
+  audio suggestions bank (8 types x 3 suggestions)
+- Per-scene: copy prompt, inline edit, generate scene, add to Studio
+- Plan actions: send to Studio, export .txt, regenerate, reset
+- CSS: .ailan-pill/.ailan-pill-on selectors, .ailan-scene-card hover
+- /api/ailan/generate stub preserving API surface for future AI wiring
+- Syntax check: 0 errors across 11 script blocks

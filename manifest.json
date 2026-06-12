@@ -1,0 +1,22 @@
+{
+  "name": "Hollywood Studio AI",
+  "short_name": "HSAI",
+  "description": "Workflow audiovisual com IA — da ideia ao corte final.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0c",
+  "theme_color": "#0d0c0f",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/assets/logos/favicon.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/assets/logos/logo-hero.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
