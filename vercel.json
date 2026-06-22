@@ -1,5 +1,21 @@
 {
   "rewrites": [
+    {
+      "source": "/kbc",
+      "destination": "/kbc/index.html"
+    },
+    {
+      "source": "/kbc/(.*)",
+      "destination": "/kbc/index.html"
+    },
+    {
+      "source": "/((?!kbc).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+{
+  "rewrites": [
     { "source": "/acheiproducao", "destination": "/acheiproducao/index.html" },
     { "source": "/oceanmarine",   "destination": "/oceanmarine/index.html"   },
     { "source": "/demos",         "destination": "/demos/index.html"         }
