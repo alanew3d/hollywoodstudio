@@ -3380,7 +3380,7 @@ function render(){
   const R={home:viewHome,criar:viewSimpleCreate,studio:viewStudio,images:viewImages,audio:viewAudio,characters:viewCharacters,storyboard:viewStoryboard,favorites:viewFavoritesPage,editing:viewEditing,batch:viewBatch,agents:viewAgents,docs:viewDocs,spaces:viewSpaces,
     flow:viewFlow,council:viewCouncil,analytics:viewAnalytics,opportunities:viewOpportunities,public:viewPublic,models:viewModelsCatalog,
     academy:viewAcademy,news:viewNews,festivals:viewFestivals,'gemini-avatar':viewGeminiAvatar,gallery:viewGallery,uploads:viewUploadGallery,templates:viewTemplates,contactsheet:viewContactSheet,plans:viewPlans,admin:viewAdmin,users:viewUsers,credits:viewCredits,'admin-health':viewAdminHealth,marketing:viewMarketingPage,tube:viewTube,tv:viewHollywoodTV,instagram:viewInstagram,inspo:viewInspo,posprodu:viewPosProdu,finisher:viewFinishingLab,
-    'admin-users':viewUsers,'admin-credits':viewCredits,ailan:viewHsEngine,account:viewAccount};
+    'admin-users':viewUsers,'admin-credits':viewCredits,ailan:viewHsEngine};
   let body;
   if(S.view&&S.view.indexOf('custom:')===0)body=viewCustom(S.view.slice(7));
   else body=(R[S.view]||viewStudio)();
@@ -3542,7 +3542,6 @@ const AREA_THEMES={
   admin:     {icon:'🛡️',gradient:'135deg,#0a0c0a,#141810'},
   'admin-users':  {icon:'👥',gradient:'135deg,#0a0a1a,#0a1a2e'},
   'admin-credits':{icon:'⚡',gradient:'135deg,#14120a,#1a100a'},
-  account:{icon:'👤',gradient:'135deg,#0c0a14,#140c0a'},
   ailan:          {icon:'🤖',gradient:'135deg,#0a0818,#180820'},
   account:   {icon:'👤',gradient:'135deg,#0c0a14,#140c0a'},
   instagram: {icon:'📸',gradient:'135deg,#1a0820,#200818'},
@@ -9443,69 +9442,6 @@ function viewHsEngine(){
     +configHtml;
 }
 
-function viewAccount(){
-  var pt=S.lang==='pt';
-  var u=S.user||{};
-  var isG=isGuest();
-  var avatar=u.picture
-    ?('<img src="'+u.picture+'" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--accent)" referrerpolicy="no-referrer">')
-    :'<div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent-2),var(--accent));display:grid;place-items:center;font-size:32px;font-weight:800;color:#fff">'+(u.name||'?')[0].toUpperCase()+'</div>';
-
-  var profileCard='<div class="card" style="padding:24px;margin-bottom:20px">'
-    +'<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);font-weight:600;margin-bottom:16px">'+(pt?'PERFIL':'PROFILE')+'</div>'
-    +'<div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:20px">'
-    +avatar
-    +'<div>'
-    +'<div style="font-size:20px;font-weight:700">'+escapeHtml(u.name||'—')+'</div>'
-    +'<div style="font-size:13px;color:var(--ink-3);margin-top:2px">'+escapeHtml(u.email||u.uid||'—')+'</div>'
-    +(u.google?'<div style="margin-top:6px;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink-4)">🔵 '+(pt?'Conta Google conectada':'Google account connected')+'</div>':'')
-    +'</div>'
-    +'</div>'
-    +'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px">'
-    +'<div style="padding:14px;background:var(--bg-2);border-radius:10px;text-align:center">'
-    +'<div style="font-size:24px;font-weight:800;color:var(--accent)">'+(S.credits||0)+'</div>'
-    +'<div style="font-size:11px;color:var(--ink-3);margin-top:2px">'+(pt?'Créditos':'Credits')+'</div>'
-    +'</div>'
-    +'<div style="padding:14px;background:var(--bg-2);border-radius:10px;text-align:center">'
-    +'<div style="font-size:24px;font-weight:800">'+(u.plan?({basic:pt?'Básico':'Basic',premium:'Premium',advanced:pt?'Avançado':'Advanced'}[u.plan]||u.plan):(pt?'Básico':'Basic'))+'</div>'
-    +'<div style="font-size:11px;color:var(--ink-3);margin-top:2px">'+(pt?'Plano':'Plan')+'</div>'
-    +'</div>'
-    +'<div style="padding:14px;background:var(--bg-2);border-radius:10px;text-align:center">'
-    +'<div style="font-size:24px;font-weight:800">'+(u.admin||u.role==='admin'?'Admin':'User')+'</div>'
-    +'<div style="font-size:11px;color:var(--ink-3);margin-top:2px">'+(pt?'Papel':'Role')+'</div>'
-    +'</div>'
-    +'</div>'
-    +'</div>';
-
-  var actionsCard='<div class="card" style="padding:20px 24px;margin-bottom:20px">'
-    +'<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);font-weight:600;margin-bottom:14px">'+(pt?'CONTA':'ACCOUNT')+'</div>'
-    +'<div style="display:grid;gap:10px">'
-    +'<button class="btn btn-ghost" style="justify-content:flex-start;gap:10px;padding:12px 16px;text-align:left" onclick="go('admin-credits')">'
-    +'<span style="font-size:18px">⚡</span><div><b>'+(pt?'Gerenciar créditos':'Manage credits')+'</b><div style="font-size:11px;color:var(--ink-3)">'+(pt?'Ver saldo e histórico de uso':'View balance and usage history')+'</div></div>'
-    +'</button>'
-    +'<button class="btn btn-ghost" style="justify-content:flex-start;gap:10px;padding:12px 16px;text-align:left" onclick="go('plans')">'
-    +'<span style="font-size:18px">🎟</span><div><b>'+(pt?'Ver planos':'View plans')+'</b><div style="font-size:11px;color:var(--ink-3)">'+(pt?'Básico · Premium · Avançado':'Basic · Premium · Advanced')+'</div></div>'
-    +'</button>'
-    +(u.admin||u.role==='admin'?'<button class="btn btn-ghost" style="justify-content:flex-start;gap:10px;padding:12px 16px;text-align:left" onclick="go('admin')"><span style="font-size:18px">🛡️</span><div><b>Admin Panel</b><div style="font-size:11px;color:var(--ink-3)">'+(pt?'Configurações do estúdio e API':'Studio settings and API')+'</div></div></button>':'')
-    +'<button class="btn btn-ghost" style="justify-content:flex-start;gap:10px;padding:12px 16px;text-align:left;color:var(--err)" onclick="if(confirm(''+(pt?'Sair da conta?':'Sign out?')+'')){logout()}">'
-    +'<span style="font-size:18px">🚪</span><div><b>'+(pt?'Sair':'Sign out')+'</b><div style="font-size:11px;color:var(--err);opacity:.7">'+(pt?'Encerrar sessão':'End session')+'</div></div>'
-    +'</button>'
-    +'</div>'
-    +'</div>';
-
-  var dangerCard=''+(u.admin?''
-    :'<div class="card" style="padding:20px 24px;border:1px solid rgba(200,80,80,.2)">'
-    +'<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--err);font-weight:600;margin-bottom:12px">'+(pt?'ZONA DE PERIGO':'DANGER ZONE')+'</div>'
-    +'<div style="font-size:13px;color:var(--ink-2);margin-bottom:14px">'+(pt?'Excluir sua conta remove todos os seus dados permanentemente.':'Deleting your account removes all your data permanently.')+'</div>'
-    +'<button class="btn" style="background:rgba(200,80,80,.15);color:var(--err);border:1px solid rgba(200,80,80,.3)" onclick="if(confirm(''+(pt?'Tem certeza? Esta ação não pode ser desfeita.':'Are you sure? This cannot be undone.')+'')){deleteAccount()}">'+(pt?'Excluir minha conta':'Delete my account')+'</button>'
-    +'</div>');
-
-  return areaHeader({kicker:pt?'conta':'account',title:pt?'Minha Conta':'My Account',desc:pt?'Perfil, plano e configurações da sua conta.':'Profile, plan and account settings.',area:'account'})
-    +profileCard
-    +actionsCard
-    +dangerCard;
-}
-
 function viewUsers(){
   var pt=S.lang==='pt';
   var u=loadUsers();
@@ -9554,108 +9490,48 @@ function viewUsers(){
 
 function viewCredits(){
   var pt=S.lang==='pt';
-  var u=isGuest()?{}:(S.user||{});
-  var credits=isGuest()?0:(S.credits||0);
-  var planMap={basic:{name:pt?'Básico':'Basic',price:'R$99',secs:150,color:'var(--line)',badge:''},
-               premium:{name:'Premium',price:'R$199',secs:300,color:'var(--accent)',badge:pt?'Popular':'Popular'},
-               advanced:{name:pt?'Avançado':'Advanced',price:'R$349',secs:600,color:'#7c5cbf',badge:'Pro'}};
-  var currentPlanId=u.plan||'basic';
-  var currentPlan=planMap[currentPlanId]||planMap.basic;
-  var planTotal=currentPlan.secs;
-  var pct=planTotal?Math.max(4,Math.min(100,Math.round(credits/planTotal*100))):0;
-  var now=new Date();
-  var renewal=new Date(now.getFullYear(),now.getMonth()+1,1);
-  var renewalStr=renewal.toLocaleDateString(pt?'pt-BR':'en-US',{day:'numeric',month:'long',year:'numeric'});
-  var hist=typeof loadHistory==='function'?loadHistory():[];
-
-  var creditCard='<div class="card" style="padding:24px 28px;margin-bottom:20px">'
-    +'<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px">'
-    +'<div>'
-    +'<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);font-weight:600;margin-bottom:6px">'+(pt?'Meus créditos':'My credits')+'</div>'
-    +'<div style="display:flex;align-items:baseline;gap:6px">'
-    +'<span style="font-size:52px;font-weight:800;color:var(--accent);line-height:1">'+credits+'</span>'
-    +'<span style="font-size:16px;color:var(--ink-3)">/ '+planTotal+'s</span>'
-    +'</div>'
-    +'<div style="font-size:12px;color:var(--ink-3);margin-top:4px">'+(pt?'Renovação em':'Renews on')+' '+renewalStr+'</div>'
-    +'</div>'
-    +'<button class="btn btn-primary" onclick="go(\'plans\')">⚡ '+(pt?'Adicionar créditos':'Add credits')+'</button>'
-    +'</div>'
-    +'<div style="height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin-bottom:8px">'
-    +'<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--accent-2),var(--accent));border-radius:6px;transition:width .4s"></div>'
-    +'</div>'
-    +'<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ink-4)">'
-    +'<span>'+pct+'% '+(pt?'restantes':'remaining')+'</span>'
-    +'<span>1 '+(pt?'crédito ≈ 1s vídeo ou 1 imagem':'credit ≈ 1s video or 1 image')+'</span>'
-    +'</div>'
-    +'</div>';
-
-  var subscCard='<div class="card" style="padding:20px 24px;margin-bottom:20px">'
-    +'<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);font-weight:600;margin-bottom:14px">'+(pt?'ASSINATURA ATUAL':'CURRENT SUBSCRIPTION')+'</div>'
-    +'<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">'
-    +'<div style="flex:1;min-width:180px">'
-    +'<div style="display:flex;align-items:center;gap:10px">'
-    +'<div style="font-size:24px;font-weight:800">'+currentPlan.name+'</div>'
-    +(currentPlan.badge?'<span style="background:'+currentPlan.color+';color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:8px">'+currentPlan.badge+'</span>':'')
-    +'</div>'
-    +'<div style="font-size:28px;font-weight:800;color:var(--accent);margin:6px 0">'+currentPlan.price+'<span style="font-size:14px;font-weight:400;color:var(--ink-3)">/mês</span></div>'
-    +'<div style="font-size:12px;color:var(--ink-3)">'+planTotal+'s '+(pt?'de geração por mês':'generation / month')+'</div>'
-    +'</div>'
-    +'<div style="display:flex;flex-direction:column;gap:8px">'
-    +'<button class="btn btn-primary" onclick="go(\'plans\')">⬆ '+(pt?'Fazer upgrade':'Upgrade')+'</button>'
-    +'<button class="btn btn-ghost btn-sm" onclick="go(\'plans\')">'+(pt?'Ver planos':'All plans')+'</button>'
-    +'</div>'
-    +'</div>'
-    +'</div>';
-
-  var plans2=[
-    {id:'basic',name:pt?'Básico':'Basic',price:'R$99',secs:150,badge:'',color:'var(--line-2)'},
-    {id:'premium',name:'Premium',price:'R$199',secs:300,badge:pt?'Popular':'Popular',color:'var(--accent)'},
-    {id:'advanced',name:pt?'Avançado':'Advanced',price:'R$349',secs:600,badge:'Pro',color:'#7c5cbf'},
+  var credits=isGuest()?0:S.credits;
+  var plans=[
+    {name:'Básico',price:'R$99',secs:'150s',badge:'',color:'var(--line)'},
+    {name:'Premium',price:'R$199',secs:'300s',badge:pt?'Popular':'Popular',color:'var(--accent)'},
+    {name:'Avançado',price:'R$349',secs:'600s',badge:'Pro',color:'#7c5cbf'},
   ];
-  var plansHtml='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:24px">'
-    +plans2.map(function(p){
-      var active=p.id===currentPlanId;
-      return '<div class="card" style="border:2px solid '+(active?'var(--ok)':p.badge?p.color:'var(--line-2)')+';position:relative;text-align:center;padding:20px 14px;'+(active?'background:rgba(80,200,120,.06)':'')+'">'
-        +(active?'<span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--ok);color:#fff;font-size:9px;font-weight:700;padding:2px 10px;border-radius:10px">'+(pt?'ATUAL':'CURRENT')+'</span>'
-                :p.badge?'<span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:'+p.color+';color:#fff;font-size:9px;font-weight:700;padding:2px 10px;border-radius:10px">'+p.badge+'</span>':'')
-        +'<div style="font-size:18px;font-weight:700;margin-bottom:2px">'+p.name+'</div>'
-        +'<div style="font-size:26px;font-weight:800;color:var(--accent);margin:6px 0">'+p.price+'</div>'
-        +'<div style="font-size:12px;color:var(--ink-3);margin-bottom:14px">'+p.secs+'s</div>'
-        +'<button class="btn '+(active?'btn-ghost':'btn-primary')+' btn-sm" style="width:100%" onclick="go(\'plans\')">'
-        +(active?(pt?'Plano atual':'Current plan'):(pt?'Assinar':'Subscribe'))+'</button>'
+  var plansHtml='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:28px">'
+    +plans.map(function(p){
+      return '<div class="card" style="border:2px solid '+(p.badge?p.color:'var(--line)')+';position:relative;text-align:center;padding:24px 16px">'
+        +(p.badge?'<span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:'+p.color+';color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px">'+p.badge+'</span>':'')
+        +'<div style="font-size:20px;font-weight:700;margin-bottom:4px">'+p.name+'</div>'
+        +'<div style="font-size:28px;font-weight:800;color:var(--accent);margin:8px 0">'+p.price+'</div>'
+        +'<div style="font-size:13px;color:var(--ink-3);margin-bottom:16px">'+p.secs+' '+(pt?'de vídeo/imagem':'video/image seconds')+'</div>'
+        +'<button class="btn btn-primary" style="width:100%" onclick="go(\'plans\')">'+(pt?'Assinar':'Subscribe')+'</button>'
         +'</div>';
-    }).join('')+'</div>';
+    }).join('')
+    +'</div>';
 
-  var histHtml=hist.length
-    ?'<div class="card" style="padding:0;overflow:hidden">'
-      +'<div style="padding:12px 16px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);font-weight:600;border-bottom:1px solid var(--line-2);display:flex;justify-content:space-between;align-items:center">'
-      +(pt?'HISTÓRICO DE USO':'USAGE HISTORY')
-      +'<span style="font-size:11px;font-weight:400;color:var(--ink-4);text-transform:none">'+hist.length+' '+(pt?'gerações':'generations')+'</span>'
-      +'</div>'
-      +hist.slice(0,25).map(function(h){
-        var m=modelById(h.modelId||h.model||'');
-        var mname=m?m.name:(h.model||'—');
-        var cr=h.creditsUsed||h.credits||1;
-        var ic=h.type==='image'?'🖼':'🎬';
-        return '<div style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line-2);font-size:13px">'
-          +'<div style="width:28px;height:28px;border-radius:8px;background:var(--accent-dim);display:grid;place-items:center;flex-shrink:0;font-size:14px">'+ic+'</div>'
-          +'<div style="flex:1;min-width:0"><b style="font-size:13px">'+escapeHtml(mname)+'</b>'
-          +'<div style="font-size:11px;color:var(--ink-3)">'+new Date(h.createdAt||h.ts||0).toLocaleString(pt?'pt-BR':'en-US')+'</div></div>'
-          +'<span style="color:var(--err);font-weight:700;font-size:13px">−'+cr+'s</span>'
-          +'</div>';
-      }).join('')+'</div>'
-    :'<div class="card" style="text-align:center;color:var(--ink-3);padding:32px;font-size:14px">'
-      +(pt?'🎬 Nenhuma geração ainda — crie seu primeiro vídeo!':'🎬 No generations yet — create your first video!')+'</div>';
+  var hist=typeof loadHistory==='function'?loadHistory():[]; 
+  var histHtml=hist.length?'<div class="card" style="padding:0;overflow:hidden">'
+    +'<div style="padding:14px 16px 10px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-4);font-weight:600;border-bottom:1px solid var(--line-2)">'+(pt?'Histórico de uso':'Usage history')+'</div>'
+    +hist.slice(0,20).map(function(h){
+      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--line-2);font-size:13px">'
+        +'<div><b>'+escapeHtml(h.model||h.type||'—')+'</b><span style="color:var(--ink-3);font-size:11px;margin-left:8px">'+new Date(h.createdAt||h.ts||0).toLocaleString()+'</span></div>'
+        +'<span style="color:var(--err);font-weight:600">−'+(h.creditsUsed||h.credits||1)+'s</span>'
+        +'</div>';
+    }).join('')
+    +'</div>'
+    :'<div class="card" style="text-align:center;color:var(--ink-3);padding:28px">'+(pt?'Nenhuma geração realizada ainda. Gere seu primeiro vídeo!':'No generations yet. Create your first video!')+'</div>';
 
-  return areaHeader({kicker:pt?'conta':'account',title:pt?'Créditos & Plano':'Credits & Plan',desc:pt?'Seus créditos, plano atual e histórico de gerações.':'Your credits, current plan and generation history.',area:'admin-credits'})
-    +creditCard
-    +subscCard
+  return areaHeader({kicker:pt?'conta':'account',title:pt?'Créditos':'Credits',desc:pt?'Seus créditos, planos e histórico de uso.':'Your credits, plans and usage history.',area:'admin-credits'})
+    +'<div style="background:linear-gradient(135deg,rgba(212,168,67,.12),transparent);border:1px solid rgba(212,168,67,.25);border-radius:14px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;gap:16px">'
+    +'<div style="font-size:42px;font-weight:800;color:var(--accent)">'+credits+'<span style="font-size:18px;font-weight:400;color:var(--ink-3)">s</span></div>'
+    +'<div><div style="font-size:14px;font-weight:600">'+(pt?'créditos disponíveis':'credits available')+'</div>'
+    +'<div style="font-size:12px;color:var(--ink-3);margin-top:4px">'+(pt?'1 crédito = ~1 segundo de vídeo ou 1 imagem':'1 credit = ~1 second of video or 1 image')+'</div>'
+    +'<button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="go(\'plans\')">⚡ '+(pt?'Recarregar créditos':'Top up credits')+'</button>'
+    +'</div></div>'
     +'<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);font-weight:600;margin-bottom:12px">'+(pt?'PLANOS DISPONÍVEIS':'AVAILABLE PLANS')+'</div>'
     +plansHtml
     +'<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);font-weight:600;margin-bottom:12px">'+(pt?'HISTÓRICO':'HISTORY')+'</div>'
     +histHtml;
 }
-
 function viewAdmin(){
   return areaHeader({
     kicker:t('admin'),title:S.lang==='pt'?'Painel admin':'Admin panel',

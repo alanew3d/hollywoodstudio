@@ -36,14 +36,14 @@ window.HSAI_CONFIG = {
   // ── PROVEDORES IA ──────────────────────────────────────────────────────────
   // muapi.ai = provider primário (105+ modelos: Seedance 2.0, Kling 3.0, Veo3, Sora 2, etc)
   // atlascloud = fallback secundário
-  API_KEY:   'ac8abd0c7cbb78e6df8d19a92c34889a486756c1da9443e44116dd811473fda3',
+  API_KEY:   '',
   API_BASE:  'https://api.muapi.ai',
   PROVIDER:  'muapi',
 
   PROVIDERS: {
     // ── MUAPI (primário) ──────────────────────────────────────────────────
     muapi: {
-      key:  (typeof process !== 'undefined' && process.env && process.env.MUAPI_KEY) || 'ac8abd0c7cbb78e6df8d19a92c34889a486756c1da9443e44116dd811473fda3',  // Cole aqui OU configure MUAPI_KEY nas Vercel Environment Variables
+      key:  (typeof process !== 'undefined' && process.env && process.env.MUAPI_KEY) || '',  // Cole aqui OU configure MUAPI_KEY nas Vercel Environment Variables
       base: 'https://api.muapi.ai',
     },
     // ── ATLAS CLOUD (fallback) ────────────────────────────────────────────
