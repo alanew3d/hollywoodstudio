@@ -38,7 +38,9 @@
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"O que é o Hollywood Studio AI?","acceptedAnswer":{"@type":"Answer","text":"Hollywood Studio AI é uma plataforma de workflow audiovisual com IA que permite criar vídeos, imagens e áudio cinematográficos usando modelos como Seedance, Kling, Veo, Sora e Flux, tudo em um único lugar organizado."}},{"@type":"Question","name":"Preciso saber programar para usar?","acceptedAnswer":{"@type":"Answer","text":"Não. A plataforma é visual e intuitiva. Você descreve sua cena em texto e a IA gera o conteúdo. Templates prontos aceleram o processo para quem está começando."}},{"@type":"Question","name":"Como funcionam os créditos?","acceptedAnswer":{"@type":"Answer","text":"Créditos representam segundos de vídeo ou imagens geradas. Novos usuários recebem créditos de teste. Para produção real, adquira um plano mensal ou pacote avulso de créditos."}},{"@type":"Question","name":"Quais modelos de IA estão disponíveis?","acceptedAnswer":{"@type":"Answer","text":"Mais de 30 modelos: Seedance 2.0, Kling 3.0, Veo 3, Sora 2, Flux Pro, Seedream, Nano Banana, Suno, HeyGen e outros, com novos modelos adicionados continuamente."}},{"@type":"Question","name":"Posso usar o conteúdo gerado comercialmente?","acceptedAnswer":{"@type":"Answer","text":"Sim, desde que respeitadas as políticas de uso de cada modelo de IA. Para uso comercial, recomendamos o plano Premium que inclui uso comercial explícito."}}]}
 </script>
 <script src="/config.js"></script>
-<script>console.log("Hollywood Studio AI loaded - build ok");</script>
+<script>console.log("Hollywood Studio AI loaded - build ok");
+// Fallback para thumbnails de galeria sem URL válida
+document.addEventListener('error', function(e){ const t=e.target; if(t&&t.tagName==='VIDEO'&&!t.dataset.errored){t.dataset.errored='1';t.poster='';t.style.background='#1a1a20';} if(t&&t.tagName==='IMG'&&!t.dataset.errored&&!t.src.startsWith('data:')){t.dataset.errored='1';t.style.background='linear-gradient(135deg,#1a1a20,#2a2a35)';t.style.minHeight='80px';} }, true);</script>
 <link rel="manifest" href="/manifest.json">
 <script>
 /* ════════ HOLLYWOOD STUDIO AI — Script #0 (data layer + helpers) ════════ */
@@ -2426,6 +2428,18 @@ const MODELS=[
    desc:{pt:'Versão acelerada — metade do tempo de render por um pequeno custo em detalhe. Perfeita para iterar variações antes do take final.',
          en:'Accelerated build — half the render time for a small detail trade-off. Perfect for iterating variations before the final take.'},
    refSpec:{start:true, end:false, refs:0, video:false, audio:false}},
+  {id:'seedance2mini',name:'Seedance 2.0 Mini',sub:'bytedance · live',status:'live',cat:'video',
+   res:'480p',max:'10s',durs:[3,5,8,10],ratio:'16:9 · 9:16',ref:'Texto/Imagem',
+   badge:'RÁPIDO',desc:'Versão compacta e econômica do Seedance 2.0. Ideal para testes rápidos e iteração criativa.',cost:2,usdPerSec:0.010},
+  {id:'ltx2pro',name:'LTX-2 Pro',sub:'lightricks · live',status:'live',cat:'video',
+   res:'1080p',max:'15s',durs:[3,5,8,10,15],ratio:'16:9 · 9:16 · 1:1',ref:'Texto/Imagem→Vídeo',
+   badge:'NOVO',desc:'Modelo open-source de alta qualidade da Lightricks. Excelente custo-benefício para narrativa cinematográfica.',cost:4,usdPerSec:0.025},
+  {id:'ltx2fast',name:'LTX-2 Fast',sub:'lightricks · live',status:'live',cat:'video',
+   res:'720p',max:'12s',durs:[3,5,8,12],ratio:'16:9 · 9:16',ref:'Texto/Imagem',
+   badge:'RÁPIDO',desc:'Versão rápida do LTX-2. Geração em segundos para prototipagem e testes de cenas.',cost:2,usdPerSec:0.012},
+  {id:'ray23',name:'Luma Ray 2.3',sub:'luma ai · live',status:'live',cat:'video',featured:true,
+   res:'4K',max:'10s',durs:[3,5,8,10],ratio:'16:9 · 9:16 · 1:1 · 21:9',ref:'Texto/Imagem · câmera fluida',
+   badge:'NOVO',desc:'Mais recente modelo da Luma AI. Movimento de câmera excepcional, física realista e qualidade 4K nativa.',cost:7,usdPerSec:0.042},
   {id:'kling3',img:'https://images.unsplash.com/photo-1518929458119-e5bf444c30f4?w=900&q=70&auto=format&fit=crop',name:'Kling 3.0',sub:'kuaishou · live',status:'live',cat:'video',featured:true,
    res:'4K',max:'15s',durs:[3,5,8,10,15],ratio:'16:9 · 9:16 · 1:1',ref:'Texto/Imagem→Vídeo · Start+End · Áudio nativo',
    desc:{pt:'Excelente expressão facial, transferência de movimento e continuidade de personagem. Gera com áudio. Forte para conteúdo com pessoas e UGC.',
@@ -2482,6 +2496,33 @@ const MODELS=[
    res:'1080p',max:'15s',durs:[3,5,8,15],ratio:'16:9 · 9:16',ref:'Texto + imagem + áudio',
    desc:{pt:'Modelo de vídeo+áudio #1 da Alibaba. Forte em movimento natural e sincronia de som.',
          en:'Alibaba\'s #1 ranked video+audio model. Strong natural motion and sound sync.'}},
+  {id:'hailuo02',name:'Hailuo 02',sub:'minimax · live',status:'live',cat:'video',
+   res:'1080p',max:'10s',durs:[3,6,10],ratio:'16:9 · 9:16 · 4:3',ref:'Start+End · Ações físicas',
+   badge:'NOVO',desc:'Excelente para movimento físico realista e cenas de ação. Renderização de física corporal precisa.',cost:4,img:'https://images.unsplash.com/photo-1547347298-4074fc3086f0?w=900&q=70&auto=format&fit=crop'},
+  {id:'kling26',name:'Kling 2.6',sub:'kuaishou · live',status:'live',cat:'video',
+   res:'1080p',max:'10s',durs:[5,8,10],ratio:'16:9 · 9:16',ref:'Start+End · Áudio',
+   badge:'NOVO',desc:'Expressão facial avançada e consistência de personagem. Transição suave entre frames com estabilidade 1080p.',cost:6,img:'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=900&q=70&auto=format&fit=crop'},
+  {id:'kling21',name:'Kling 2.1',sub:'kuaishou · live',status:'live',cat:'video',
+   res:'1080p',max:'10s',durs:[5,8,10],ratio:'16:9 · 9:16',ref:'Start+End',
+   desc:'Movimento natural com alta aderência ao prompt. Versão anterior do Kling, estável e confiável.',cost:5},
+  {id:'ltx23',name:'LTX 2.3',sub:'lightricks · fast',status:'live',cat:'video',featured:true,
+   res:'4K',max:'20s',durs:[6,8,10,15,20],ratio:'16:9 · 9:16 · 1:1',ref:'Start+End · Áudio',
+   badge:'RÁPIDO',desc:'Next-gen open-source da Lightricks. Vídeos 4K até 20 segundos com geração ultra-rápida.',cost:5,img:'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=900&q=70&auto=format&fit=crop'},
+  {id:'viduq3',name:'Vidu Q3',sub:'vidu · live',status:'live',cat:'video',
+   res:'1080p',max:'16s',durs:[1,5,8,12,16],ratio:'16:9 · 9:16 · 4:3',ref:'StartFrame · Áudio',
+   desc:'Ideal para storyboards e vídeos narrativos com áudio. Interface de câmera única com trilha sonora.',cost:4},
+  {id:'viduq2',name:'Vidu Q2',sub:'vidu · live',status:'live',cat:'video',
+   res:'1080p',max:'8s',durs:[5,8],ratio:'16:9 · 9:16',ref:'Ref + Start/End',
+   desc:'Especializado em cenas anime e storyboards com referência visual forte.',cost:3},
+  {id:'pixverseV6',name:'PixVerse V6',sub:'pixverse · live',status:'live',cat:'video',
+   res:'1080p',max:'15s',durs:[1,5,10,15],ratio:'16:9 · 9:16 · 1:1',ref:'Start+End · Ref · Áudio',
+   badge:'NOVO',desc:'Versão mais recente do PixVerse com referência de personagem e áudio nativo.',cost:4},
+  {id:'wan26vid',name:'Wan 2.6',sub:'alibaba · live',status:'live',cat:'video',
+   res:'1080p',max:'15s',durs:[5,8,10,15],ratio:'16:9 · 9:16',ref:'StartFrame · Multi-shots · Áudio',
+   desc:'Vídeos cinematográficos multi-shots da Alibaba. Controle de câmera e início+fim de cena.',cost:5},
+  {id:'seedance1',name:'Seedance 1',sub:'bytedance · live',status:'live',cat:'video',
+   res:'1080p',max:'10s',durs:[5,8,10],ratio:'16:9 · 9:16',ref:'Start+End · Multi-shots',
+   desc:'Versão clássica do Seedance. Narrativa com multi-shots e transições suaves.',cost:3},
   {id:'grokvid',name:'Grok Imagine (vídeo)',sub:'xai · live',status:'live',cat:'video',
    res:'720p',max:'15s',durs:[1,5,10,15],ratio:'16:9 · 9:16',ref:'Texto + imagem',
    desc:{pt:'Vídeo com áudio sincronizado da xAI. Estilos versáteis e geração rápida.',
@@ -2556,6 +2597,33 @@ const MODELS=[
    res:'áudio',max:'audio',durs:[],ratio:'—',ref:'Letra + estilo',
    desc:{pt:'Trilha sonora original a partir de letra e estilo (rock, synth-pop, cinematográfico…). Para abertura, fundo e jingles.',
          en:'Original soundtrack from lyrics and style (rock, synth-pop, cinematic…). For openings, backing tracks and jingles.'}},
+  {id:'recraft4',name:'Recraft V4',sub:'recraft · live',status:'live',cat:'image',featured:true,
+   res:'2K',max:'still',durs:[],ratio:'qualquer',ref:'SVG nativo',
+   badge:'NOVO',desc:'Único modelo com geração nativa de SVG vetorial. Excelente para logos, ícones e arte vetorial escalável.',img:'https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?w=900&q=70&auto=format&fit=crop'},
+  {id:'wan27img',name:'Wan 2.7 Imagem',sub:'alibaba · live',status:'live',cat:'image',
+   res:'4K',max:'still',durs:[],ratio:'qualquer',ref:'Ref facial · Texto',
+   badge:'NOVO',desc:'Modelo de imagem da Alibaba com controle facial avançado e renderização de texto na imagem.',},
+  {id:'seedream5lite',name:'Seedream 5.0 Lite',sub:'bytedance · live',status:'live',cat:'image',
+   res:'3K',max:'still',durs:[],ratio:'qualquer',ref:'Ref',
+   desc:'Versão leve e rápida do Seedream 5.0. Ideal para iteração criativa e geração em volume.',},
+  {id:'seedream4',name:'Seedream 4.0',sub:'bytedance · live',status:'live',cat:'image',
+   res:'4K',max:'still',durs:[],ratio:'qualquer',ref:'Ref',
+   desc:'Modelo padrão Bytedance com excelente qualidade fotorrealista.',},
+  {id:'qwenimg2',name:'Qwen Image 2',sub:'alibaba · fast',status:'live',cat:'image',
+   res:'2K',max:'still',durs:[],ratio:'qualquer',ref:'Open-source',
+   badge:'RÁPIDO',desc:'Modelo open-source da Alibaba com realismo aprimorado e renderização de texto na imagem.',},
+  {id:'flux2pro',name:'Flux 2 Pro',sub:'blackforest · live',status:'live',cat:'image',featured:true,
+   res:'4K',max:'still',durs:[],ratio:'qualquer',ref:'Ref · multi-ref',
+   badge:'TOP',desc:'Versão premium do Flux 2. Velocidade aprimorada com suporte a múltiplas referências visuais.',img:'https://images.unsplash.com/photo-1509228627152-72ae9ae6848d?w=900&q=70&auto=format&fit=crop'},
+  {id:'flux2max',name:'Flux 2 Max',sub:'blackforest · live',status:'live',cat:'image',
+   res:'4K',max:'still',durs:[],ratio:'qualquer',ref:'Ref',
+   desc:'Máxima qualidade e aderência ao prompt do Flux 2. Para renderizações finais e entregáveis premium.',},
+  {id:'fluxkontextmax',name:'Flux Kontext Max',sub:'blackforest · live',status:'live',cat:'image',
+   res:'4K',max:'still',durs:[],ratio:'qualquer',ref:'Ref · edição',
+   desc:'Especializado em edição contextual precisa — altera elementos específicos preservando o restante.',},
+  {id:'nanobanana',name:'Nano Banana',sub:'google · live',status:'live',cat:'image',
+   res:'2K',max:'still',durs:[],ratio:'qualquer',ref:'Ref',
+   desc:'Versão padrão do modelo de imagem Google Gemini. Rápido e eficiente para imagens de referência.',},
   {id:'mmaudio',img:'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=900&q=70&auto=format&fit=crop',name:'MMAudio',sub:'sfx · live',status:'live',cat:'audio',func:'sfx',
    res:'áudio',max:'audio',durs:[],ratio:'—',ref:'Vídeo + descrição',
    desc:{pt:'Efeitos sonoros sincronizados ao vídeo (foley): passos, vento, impactos, ambiente. Gera o som a partir do que acontece na cena.',
@@ -2786,14 +2854,14 @@ function recommendModelForIntent(opts){
   };
 }
 /* per-model credit cost: video = credits/second, image = credits/image, audio = flat */
-const MODEL_COST={geminiflash:8,seedance2:6,seedance2fast:3,kling3:8,klingmotion:9,klinglip:7,veo31:12,veo31lite:6,sora2:10,wan27:5,hailuo:3,happyhorse:6,grokvid:4,seedance15pro:7,higgsdop:8,geminiomni:35,nanobanana2:18,seedream45:26,fluxflex:14,flux2:24,grokimg:12,reve:16,runway:11,pixverse:4,
+const MODEL_COST={geminiflash:8,seedance2:6,seedance2fast:3,seedance2mini:2,kling3:8,kling26:6,kling21:5,ltx2pro:4,ltx2fast:2,ltx23:5,ray23:7,hailuo02:4,viduq3:4,viduq2:3,pixverseV6:4,wan26vid:5,seedance1:3,recraft4:3,wan27img:4,seedream5lite:3,seedream4:4,qwenimg2:2,flux2pro:8,flux2max:8,fluxkontextmax:6,nanobanana:3,klingmotion:9,klinglip:7,veo31:12,veo31lite:6,sora2:10,wan27:5,hailuo:3,happyhorse:6,grokvid:4,seedance15pro:7,higgsdop:8,geminiomni:35,nanobanana2:18,seedream45:26,fluxflex:14,flux2:24,grokimg:12,reve:16,runway:11,pixverse:4,
   seedream5:30,nanobananapro:40,gptimage2:25,fluxpro:20,suno:40,mmaudio:15,elevenvoice:10};
 const RES_MULT={'720p':0.7,'1080p':1,'4K':1.8};
 /* ════════ CUSTOS DOS PROVEDORES (USD) — para calcular lucro real ════════ */
 // Atualize conforme tabela oficial do provedor. Valores em USD por segundo (vídeo) ou por imagem.
 const MODEL_COST_USD={
   // VÍDEO — USD por segundo (Atlas Cloud)
-  seedance2:0.10, seedance2fast:0.022, kling3:0.04, klingmotion:0.05, klinglip:0.05,
+  seedance2:0.10, seedance2fast:0.022, seedance2mini:0.010, kling3:0.04, kling26:0.035, kling21:0.030, klingmotion:0.05, klinglip:0.05, ltx2pro:0.025, ltx2fast:0.012, ltx23:0.030, ray23:0.042, hailuo02:0.025, viduq3:0.022, viduq2:0.018, pixverseV6:0.025, wan26vid:0.030, seedance1:0.015, recraft4:0.02, wan27img:0.025, seedream5lite:0.018, seedream4:0.022, qwenimg2:0.010, flux2pro:0.05, flux2max:0.05, fluxkontextmax:0.04, nanobanana:0.015,
   veo31:0.30, veo31lite:0.10, sora2:0.30, wan27:0.05, hailuo:0.04,
   // IMAGEM — USD por imagem
   seedream5:0.025, seedream45:0.025, flux:0.04, fluxpro:0.04,
@@ -3311,7 +3379,8 @@ function render(){
   const m=document.getElementById('main');
   const R={home:viewHome,criar:viewSimpleCreate,studio:viewStudio,images:viewImages,audio:viewAudio,characters:viewCharacters,storyboard:viewStoryboard,favorites:viewFavoritesPage,editing:viewEditing,batch:viewBatch,agents:viewAgents,docs:viewDocs,spaces:viewSpaces,
     flow:viewFlow,council:viewCouncil,analytics:viewAnalytics,opportunities:viewOpportunities,public:viewPublic,models:viewModelsCatalog,
-    academy:viewAcademy,news:viewNews,festivals:viewFestivals,'gemini-avatar':viewGeminiAvatar,gallery:viewGallery,uploads:viewUploadGallery,templates:viewTemplates,contactsheet:viewContactSheet,plans:viewPlans,admin:viewAdmin,users:viewUsers,credits:viewCredits,'admin-health':viewAdminHealth,marketing:viewMarketingPage,tube:viewTube,tv:viewHollywoodTV,instagram:viewInstagram,inspo:viewInspo,posprodu:viewPosProdu,finisher:viewFinishingLab};
+    academy:viewAcademy,news:viewNews,festivals:viewFestivals,'gemini-avatar':viewGeminiAvatar,gallery:viewGallery,uploads:viewUploadGallery,templates:viewTemplates,contactsheet:viewContactSheet,plans:viewPlans,admin:viewAdmin,users:viewUsers,credits:viewCredits,'admin-health':viewAdminHealth,marketing:viewMarketingPage,tube:viewTube,tv:viewHollywoodTV,instagram:viewInstagram,inspo:viewInspo,posprodu:viewPosProdu,finisher:viewFinishingLab,
+    'admin-users':viewUsers,'admin-credits':viewCredits,ailan:viewHsEngine,account:viewAccount};
   let body;
   if(S.view&&S.view.indexOf('custom:')===0)body=viewCustom(S.view.slice(7));
   else body=(R[S.view]||viewStudio)();
@@ -3368,14 +3437,14 @@ function modeCats(mode){return mode==='image'?'image':mode==='audio'?'audio':'vi
    Suba a pasta /assets/demo/ no servidor (surf.mp4, dog-soccer.mp4, dog-tightrope.mp4).
    Se um arquivo faltar, o app cai no placeholder "Lights, Camera, AI" automaticamente. */
 const DEMO_REEL=[
-  {url:'/assets/demo/surf.mp4',         model:'Seedance 2.0',modelId:'seedance2',ratio:'16:9',dur:11,
+  {url:'https://assets.mixkit.co/videos/preview/mixkit-surfer-coming-out-of-the-water-in-slow-motion-4643-large.mp4',model:'Seedance 2.0',modelId:'seedance2',ratio:'16:9',dur:8,
    prompt:'homem surfando na indonésia — cinematic shot, 35mm lens, shallow depth of field, volumetric lighting, film color grading, smooth camera movement, high realism 4k'},
-  {url:'/assets/demo/fairy.mp4',        model:'Seedance 2.0',modelId:'seedance2',ratio:'16:9',dur:8,
+  {url:'https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4',model:'Seedance 2.0',modelId:'seedance2',ratio:'16:9',dur:8,
    prompt:'magical fairy with iridescent wings in enchanted forest — cinematic shot, 35mm lens, shallow depth of field, volumetric lighting, magical particles, film color grading, high realism 4k'},
-  {url:'/assets/demo/dog-soccer.mp4',   model:'Seedance 2.0',modelId:'seedance2',ratio:'16:9',dur:8,
+  {url:'https://assets.mixkit.co/videos/preview/mixkit-dog-playing-in-the-park-with-a-ball-in-his-mouth-4619-large.mp4',model:'Seedance 2.0',modelId:'seedance2',ratio:'16:9',dur:8,
    prompt:'dog playing soccer — plano cinematográfico, lente 35mm, profundidade de campo rasa, iluminação volumétrica, color grading de cinema, movimento de câmera suave, alto realismo 4k'},
-  {url:'/assets/demo/dog-tightrope.mp4',model:'Seedance 2.0',modelId:'seedance2',ratio:'16:9',dur:8,
-   prompt:'cão na corda bamba — plano cinematográfico, lente 35mm, profundidade de campo rasa, iluminação volumétrica, color grading de cinema, movimento de câmera suave, alto realismo 4k'},
+  {url:'https://assets.mixkit.co/videos/preview/mixkit-woman-runs-past-ground-level-camera-32623-large.mp4',model:'Kling 3.0',modelId:'kling3',ratio:'16:9',dur:8,
+   prompt:'cinematic chase scene — woman running, ground level camera, slow motion, dramatic lighting, film grain, Hollywood blockbuster style'},
 ];
 function pickDemo(){ if(!window._demoPick)window._demoPick=DEMO_REEL[0]; return window._demoPick; }
 function demoByUrl(url){return DEMO_REEL.find(d=>d.url===url);}
@@ -3471,6 +3540,10 @@ const AREA_THEMES={
   council:   {icon:'🎭',gradient:'135deg,#0a0a1a,#1a0a0a'},
   plans:     {icon:'🎟',gradient:'135deg,#14120a,#120a14'},
   admin:     {icon:'🛡️',gradient:'135deg,#0a0c0a,#141810'},
+  'admin-users':  {icon:'👥',gradient:'135deg,#0a0a1a,#0a1a2e'},
+  'admin-credits':{icon:'⚡',gradient:'135deg,#14120a,#1a100a'},
+  account:{icon:'👤',gradient:'135deg,#0c0a14,#140c0a'},
+  ailan:          {icon:'🤖',gradient:'135deg,#0a0818,#180820'},
   account:   {icon:'👤',gradient:'135deg,#0c0a14,#140c0a'},
   instagram: {icon:'📸',gradient:'135deg,#1a0820,#200818'},
   tube:      {icon:'▶️',gradient:'135deg,#200a0a,#100a0a'},
@@ -4568,14 +4641,27 @@ function _scPickerBodyHtml(){
     if(m.isPremium)b+=' <span style="font-size:10px;font-weight:700;border:1px solid var(--accent);color:var(--accent);border-radius:6px;padding:1px 6px">'+(pt?'requer plano':'plan required')+'</span>';
     return b;
   };
-  return '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;max-height:48vh;overflow-y:auto;padding-right:4px">'+list.map(function(m){
-    return '<div style="border:1px solid var(--line-2);border-radius:12px;padding:12px;background:var(--panel-2);display:flex;flex-direction:column;gap:6px">'
-      +'<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap"><b style="font-size:13px">'+escapeHtml(m.name)+'</b><span>'+badge(m)+'</span></div>'
-      +'<div style="font-size:11px;color:var(--ink-3);line-height:1.45">'+escapeHtml(m.bestFor||m.description||'')+'</div>'
-      +'<div style="font-size:11px;color:var(--ink-4)">~'+(m.estimatedCredits||3)+' '+(pt?'créditos':'credits')+' · '+escapeHtml(m.provider||'')+'</div>'
-      +'<button class="btn btn-primary btn-sm" style="margin-top:auto" onclick="scPickModel(\''+m.id+'\')">'+(pt?'Usar este modelo':'Use this model')+'</button>'
+  // Encontrar dados ricos do MODELS[] para thumbnail e custo
+  var enriched=list.map(function(m){
+    var rich=(MODELS||[]).find(function(r){return r.id===m.id||r.id===(m.id||'').replace(/-/g,'');});
+    return {m:m,img:rich&&rich.img||'',badge2:rich&&rich.badge||'',cost:m.estimatedCredits||3};
+  });
+  // Carrossel de destaque: primeiros 3 featured do MODELS para esse tipo
+  var catMap={video:'video',image:'image',audio:'audio'};
+  var featuredM=(MODELS||[]).filter(function(r){return r.cat===catMap[_scPickerTab]&&r.featured&&r.img;}).slice(0,3);
+  var carousel=featuredM.length?'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">'+featuredM.map(function(r){
+    return '<div onclick="scPickModel(\''+r.id+'\');document.getElementById(\'scQuickModal\').remove()" style="cursor:pointer;border-radius:10px;overflow:hidden;position:relative;aspect-ratio:16/9;background:#0a0a14">'      +'<img src="'+r.img+'" style="width:100%;height:100%;object-fit:cover;opacity:.85" loading="lazy" onerror="this.style.display='none'">'      +'<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.7),transparent 50%)"></div>'      +'<div style="position:absolute;bottom:8px;left:8px;right:8px;color:#fff"><b style="font-size:12px;text-shadow:0 1px 3px rgba(0,0,0,.8)">'+r.name+'</b><div style="font-size:10px;opacity:.8;margin-top:1px">'+(r.sub||'')+'</div></div>'      +(r.badge?'<span style="position:absolute;top:6px;right:6px;background:var(--accent);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px">'+r.badge+'</span>':'')
+      +'</div>';
+  }).join('')+'</div>':'';
+  var listHtml='<div style="display:flex;flex-direction:column;gap:2px">'+enriched.map(function(e){    var m=e.m;
+    var selected=(S.model===m.id);
+    return '<div onclick="scPickModel(\''+m.id+'\');document.getElementById(\'scQuickModal\').remove()" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:'+(selected?'var(--accent-dim)':'transparent')+';transition:background .15s" onmouseover="this.style.background='var(--bg-2)'" onmouseout="this.style.background=''+(selected?'var(--accent-dim)':'transparent')+''">'
+      +(e.img?'<img src="'+e.img+'" style="width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0" loading="lazy" onerror="this.style.background='var(--panel-2)';this.removeAttribute('src')">':'<div style="width:40px;height:40px;border-radius:8px;background:var(--panel-2);display:grid;place-items:center;flex-shrink:0;font-size:18px">🎬</div>')
+      +'<div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px"><b style="font-size:13px;white-space:nowrap">'+escapeHtml(m.name)+'</b>'+(e.badge2?'<span style="font-size:9px;font-weight:700;background:var(--accent);color:#fff;padding:1px 6px;border-radius:6px">'+e.badge2+'</span>':'')+'</div><div style="font-size:11px;color:var(--ink-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escapeHtml(m.bestFor||m.description||'')+'</div></div>'
+      +'<div style="text-align:right;flex-shrink:0"><div style="font-size:11px;font-weight:600;color:var(--accent)">'+e.cost+(pt?'cr':'cr')+'</div><div style="font-size:10px;color:var(--ink-4)">'+(m.estimatedCredits>7?'premium':'padrão')+'</div></div>'
       +'</div>';
   }).join('')+'</div>';
+  return carousel+'<div style="max-height:42vh;overflow-y:auto;padding-right:4px">'+listHtml+'</div>';
 }
 function scPickModel(id){
   var m=(window.HSAI_MODELS||[]).find(function(x){return x.id===id;});
@@ -6206,7 +6292,7 @@ const PROVIDER_CHAIN=['muapi','atlascloud','fal','modelark'];
 const PROVIDER_LABEL={muapi:'muapi.ai',atlascloud:'Atlas Cloud',fal:'fal.ai',modelark:'ModelArk · BytePlus'};
 // mapeia o id do modelo do app -> slug do Atlas Cloud
 const ATLAS_SLUG={
-  seedance2:'bytedance/seedance-2.0', seedance2fast:'bytedance/seedance-2.0-fast',
+  seedance2:'bytedance/seedance-2.0', seedance2fast:'bytedance/seedance-2.0-fast', seedance2mini:'bytedance/seedance-2.0-fast', ltx2pro:'lightricks/ltx-2-pro', ltx2fast:'lightricks/ltx-2-fast', ltx23:'lightricks/ltx-2.3', ray23:'luma/ray-2.3', kling26:'kuaishou/kling-2.6', kling21:'kuaishou/kling-2.1', hailuo02:'minimax/hailuo-02', viduq3:'vidu/q3', pixverseV6:'pixverse/v6', wan26vid:'alibaba/wan-2.6', seedance1:'bytedance/seedance-1.0',
   kling3:'kuaishou/kling-3.0', klingmotion:'kuaishou/kling-3.0', klinglip:'kuaishou/kling-3.0',
   veo31:'google/veo-3.1', veo31lite:'google/veo-3.1-lite', sora2:'openai/sora-2',
   wan27:'alibaba/wan-2.7', hailuo:'minimax/hailuo-2.3'
@@ -6273,7 +6359,7 @@ async function muapiGenerate(pc,body){
 
   // Mapa model-id do HSAI → endpoint muapi
   const MUAPI_VID={
-    seedance2:'seedance-v2.0-t2v', seedance2fast:'seedance-v1.5-pro-t2v-fast',
+    seedance2:'seedance-v2.0-t2v', seedance2fast:'seedance-v1.5-pro-t2v-fast', seedance2mini:'seedance-lite-t2v', ltx2pro:'ltx-2-pro-text-to-video', ltx2fast:'ltx-2-fast-text-to-video', ltx23:'ltx-2.3-text-to-video', ray23:'luma-ray-2.3-text-to-video', kling26:'kling-v2.6-t2v', kling21:'kling-v2.1-standard-t2v', hailuo02:'minimax-hailuo-02-t2v', viduq3:'vidu-q3-t2v', pixverseV6:'pixverse-v6-t2v', wan26vid:'wan2.6-t2v', seedance1:'seedance-v1.0-t2v',
     kling3:'kling-v3.0-pro-t2v', klingmotion:'kling-v3.0-pro-t2v', klinglip:'kling-v3.0-pro-t2v',
     veo31:'veo3.1-text-to-video', sora2:'openai-sora-2-text-to-video',
     wan27:'wan2.6-text-to-video', hailuo:'minimax-hailuo-2.3-pro-t2v',
@@ -7353,10 +7439,13 @@ function regenerate(i){const g=S.gallery[i];if(!g)return;
     if(g.group){S.group=g.group;}cUpdateCost&&cUpdateCost();toast(S.lang==='pt'?'Prompt recarregado — ajuste e gere':'Prompt reloaded — tweak and generate','ok');},160);}
 
 /* generate — calls provider via config; graceful demo fallback */
-function progressCard(label){return `<div class="card" style="padding:14px">
-  <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:8px"><span style="color:var(--accent)">${label}</span><span class="pg-pct" style="font-family:var(--mono);color:var(--accent);font-weight:600">0%</span></div>
-  <div style="height:7px;background:var(--line);border-radius:6px;overflow:hidden"><div class="pg-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent-2),var(--accent));transition:width .25s"></div></div>
-  <div class="pg-stage" style="font-size:11px;color:var(--ink-3);margin-top:8px"></div></div>`;}
+function progressCard(label){return `<div class="card" style="padding:16px 18px">
+  <div style="font-size:13px;color:var(--accent);font-weight:600;margin-bottom:10px;line-height:1.4">${label}</div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+    <div style="flex:1;height:7px;background:var(--line);border-radius:6px;overflow:hidden"><div class="pg-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent-2),var(--accent));transition:width .25s"></div></div>
+    <span class="pg-pct" style="font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600;min-width:34px;text-align:right">0%</span>
+  </div>
+  <div class="pg-stage" style="font-size:11.5px;color:var(--ink-3)"></div></div>`;}
 function runProgress(el,label,stages,speed){
   el.innerHTML=progressCard(label);
   const bar=el.querySelector('.pg-bar'),pct=el.querySelector('.pg-pct'),stg=el.querySelector('.pg-stage');
@@ -9296,6 +9385,127 @@ function afterAdminHealth(){
   if(!_HC.ranOnce&&S.user&&S.user.admin){_HC.ranOnce=true;setTimeout(()=>runAllHealthChecks(false),350);}
 }
 
+function viewHsEngine(){
+  var pt=S.lang==='pt';
+  var pipe=[
+    {id:'t2i',ic:'🖼',label:pt?'Texto → Imagem':'Text → Image',desc:pt?'Crie uma imagem de referência a partir de um prompt detalhado':'Create a reference image from a detailed prompt',models:['flux2','gptimage2','geminiomni'],status:'ready'},
+    {id:'i2v',ic:'🎬',label:pt?'Imagem → Vídeo':'Image → Video',desc:pt?'Anime a imagem gerada com movimento cinematográfico':'Animate the generated image with cinematic motion',models:['seedance2','kling3','ray23'],status:'ready'},
+    {id:'lip',ic:'🎤',label:pt?'Lip Sync':'Lip Sync',desc:pt?'Adicione narração sincronizada ao personagem do vídeo':'Add synchronized narration to the video character',models:['klinglip'],status:'ready'},
+    {id:'aud',ic:'🎵',label:pt?'Trilha Sonora':'Soundtrack',desc:pt?'Gere música ou som ambiente para a cena':'Generate music or ambient sound for the scene',models:['suno'],status:'ready'},
+    {id:'fin',ic:'✨',label:pt?'Finalização':'Finishing',desc:pt?'Upscale, color grading e exportação final':'Upscale, color grading and final export',models:[],status:'soon'},
+  ];
+  var statsHtml='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:28px">'
+    +'<div class="kpi"><div class="kl">'+(pt?'Jobs processados':'Jobs processed')+'</div><div class="kv">'+(window._hsEngineJobs||0)+'</div></div>'
+    +'<div class="kpi"><div class="kl">'+(pt?'Modelos ativos':'Active models')+'</div><div class="kv gold">'+Object.values(CFG.PROVIDERS||{}).filter(function(p){return p&&p.key;}).length+'</div></div>'
+    +'<div class="kpi"><div class="kl">Provider</div><div class="kv">'+(S.provider||'—').toUpperCase()+'</div></div>'
+    +'<div class="kpi"><div class="kl">'+(pt?'Fila de jobs':'Job queue')+'</div><div class="kv">'+(window._jobQueue&&window._jobQueue.length||0)+'</div></div>'
+    +'</div>';
+
+  var pipeHtml='<div style="display:grid;gap:12px;margin-bottom:28px">'
+    +pipe.map(function(step,i){
+      var done=step.status==='ready';
+      return '<div class="card" style="display:flex;align-items:flex-start;gap:16px;padding:18px 20px;border-left:3px solid '+(done?'var(--accent)':'var(--line)')+';">'
+        +'<div style="font-size:28px;min-width:36px;text-align:center">'+step.ic+'</div>'
+        +'<div style="flex:1">'
+        +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">'
+        +'<span style="font-weight:700;font-size:14px">'+(i+1)+'. '+step.label+'</span>'
+        +(done?'<span style="background:var(--accent-dim);color:var(--accent);font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px">'+(pt?'ATIVO':'ACTIVE')+'</span>':'<span style="background:var(--line);color:var(--ink-3);font-size:10px;padding:2px 8px;border-radius:8px">'+(pt?'EM BREVE':'SOON')+'</span>')
+        +'</div>'
+        +'<div style="font-size:12.5px;color:var(--ink-3);margin-bottom:8px">'+step.desc+'</div>'
+        +(step.models.length?'<div style="display:flex;gap:6px;flex-wrap:wrap">'+step.models.map(function(m){var md=modelById(m);return md?'<span style="background:var(--bg-2);border:1px solid var(--line);border-radius:8px;padding:3px 10px;font-size:11px;color:var(--ink-2)">'+md.name+'</span>':'';}).join('')+'</div>':'')
+        +'</div>'
+        +'</div>';
+    }).join('')
+    +'</div>';
+
+  var configHtml='<div class="card" style="padding:20px;margin-bottom:20px">'
+    +'<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);font-weight:600;margin-bottom:14px">'+(pt?'CONFIGURAÇÃO DO ENGINE':'ENGINE CONFIGURATION')+'</div>'
+    +'<div style="display:grid;gap:10px">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg-2);border-radius:10px">'
+    +'<div><b style="font-size:13px">muapi.ai</b><span style="font-size:11px;color:var(--ink-3);margin-left:8px">'+(pt?'Provider primário':'Primary provider')+'</span></div>'
+    +'<span style="font-size:12px;padding:3px 10px;border-radius:8px;'+(CFG.PROVIDERS&&CFG.PROVIDERS.muapi&&CFG.PROVIDERS.muapi.key?'background:rgba(80,200,120,.15);color:#50c878':'background:rgba(200,80,80,.12);color:var(--err)')+';">'+(CFG.PROVIDERS&&CFG.PROVIDERS.muapi&&CFG.PROVIDERS.muapi.key?(pt?'✓ Configurado':'✓ Configured'):(pt?'⚠ Chave não inserida':'⚠ Key missing'))+'</span>'
+    +'</div>'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg-2);border-radius:10px">'
+    +'<div><b style="font-size:13px">Atlas Cloud</b><span style="font-size:11px;color:var(--ink-3);margin-left:8px">'+(pt?'Fallback':'Fallback')+'</span></div>'
+    +'<span style="font-size:12px;padding:3px 10px;border-radius:8px;'+(CFG.PROVIDERS&&CFG.PROVIDERS.atlascloud&&CFG.PROVIDERS.atlascloud.key?'background:rgba(80,200,120,.15);color:#50c878':'background:rgba(200,80,80,.12);color:var(--err)')+';">'+(CFG.PROVIDERS&&CFG.PROVIDERS.atlascloud&&CFG.PROVIDERS.atlascloud.key?(pt?'✓ Configurado':'✓ Configured'):(pt?'⚠ Sem chave':'⚠ No key'))+'</span>'
+    +'</div>'
+    +'</div>'
+    +'<div style="margin-top:14px;display:flex;gap:8px">'
+    +'<button class="btn btn-primary btn-sm" onclick="go('admin')">'+(pt?'⚙️ Configurar chaves':'⚙️ Configure keys')+'</button>'
+    +'<button class="btn btn-ghost btn-sm" onclick="go('studio')">'+(pt?'▶ Abrir Studio':'▶ Open Studio')+'</button>'
+    +'</div>'
+    +'</div>';
+
+  return areaHeader({kicker:'engine',title:'HS Cinematic Engine',desc:pt?'Pipeline de automação Dupla Inteligência™ — do prompt à cena finalizada em passos encadeados.':'Dupla Inteligência™ automation pipeline — from prompt to finished scene in chained steps.',area:'ailan'})
+    +statsHtml
+    +'<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);font-weight:600;margin-bottom:14px">'+(pt?'PIPELINE DE AUTOMAÇÃO':'AUTOMATION PIPELINE')+'</div>'
+    +pipeHtml
+    +configHtml;
+}
+
+function viewAccount(){
+  var pt=S.lang==='pt';
+  var u=S.user||{};
+  var isG=isGuest();
+  var avatar=u.picture
+    ?('<img src="'+u.picture+'" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--accent)" referrerpolicy="no-referrer">')
+    :'<div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent-2),var(--accent));display:grid;place-items:center;font-size:32px;font-weight:800;color:#fff">'+(u.name||'?')[0].toUpperCase()+'</div>';
+
+  var profileCard='<div class="card" style="padding:24px;margin-bottom:20px">'
+    +'<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);font-weight:600;margin-bottom:16px">'+(pt?'PERFIL':'PROFILE')+'</div>'
+    +'<div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:20px">'
+    +avatar
+    +'<div>'
+    +'<div style="font-size:20px;font-weight:700">'+escapeHtml(u.name||'—')+'</div>'
+    +'<div style="font-size:13px;color:var(--ink-3);margin-top:2px">'+escapeHtml(u.email||u.uid||'—')+'</div>'
+    +(u.google?'<div style="margin-top:6px;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink-4)">🔵 '+(pt?'Conta Google conectada':'Google account connected')+'</div>':'')
+    +'</div>'
+    +'</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px">'
+    +'<div style="padding:14px;background:var(--bg-2);border-radius:10px;text-align:center">'
+    +'<div style="font-size:24px;font-weight:800;color:var(--accent)">'+(S.credits||0)+'</div>'
+    +'<div style="font-size:11px;color:var(--ink-3);margin-top:2px">'+(pt?'Créditos':'Credits')+'</div>'
+    +'</div>'
+    +'<div style="padding:14px;background:var(--bg-2);border-radius:10px;text-align:center">'
+    +'<div style="font-size:24px;font-weight:800">'+(u.plan?({basic:pt?'Básico':'Basic',premium:'Premium',advanced:pt?'Avançado':'Advanced'}[u.plan]||u.plan):(pt?'Básico':'Basic'))+'</div>'
+    +'<div style="font-size:11px;color:var(--ink-3);margin-top:2px">'+(pt?'Plano':'Plan')+'</div>'
+    +'</div>'
+    +'<div style="padding:14px;background:var(--bg-2);border-radius:10px;text-align:center">'
+    +'<div style="font-size:24px;font-weight:800">'+(u.admin||u.role==='admin'?'Admin':'User')+'</div>'
+    +'<div style="font-size:11px;color:var(--ink-3);margin-top:2px">'+(pt?'Papel':'Role')+'</div>'
+    +'</div>'
+    +'</div>'
+    +'</div>';
+
+  var actionsCard='<div class="card" style="padding:20px 24px;margin-bottom:20px">'
+    +'<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);font-weight:600;margin-bottom:14px">'+(pt?'CONTA':'ACCOUNT')+'</div>'
+    +'<div style="display:grid;gap:10px">'
+    +'<button class="btn btn-ghost" style="justify-content:flex-start;gap:10px;padding:12px 16px;text-align:left" onclick="go('admin-credits')">'
+    +'<span style="font-size:18px">⚡</span><div><b>'+(pt?'Gerenciar créditos':'Manage credits')+'</b><div style="font-size:11px;color:var(--ink-3)">'+(pt?'Ver saldo e histórico de uso':'View balance and usage history')+'</div></div>'
+    +'</button>'
+    +'<button class="btn btn-ghost" style="justify-content:flex-start;gap:10px;padding:12px 16px;text-align:left" onclick="go('plans')">'
+    +'<span style="font-size:18px">🎟</span><div><b>'+(pt?'Ver planos':'View plans')+'</b><div style="font-size:11px;color:var(--ink-3)">'+(pt?'Básico · Premium · Avançado':'Basic · Premium · Advanced')+'</div></div>'
+    +'</button>'
+    +(u.admin||u.role==='admin'?'<button class="btn btn-ghost" style="justify-content:flex-start;gap:10px;padding:12px 16px;text-align:left" onclick="go('admin')"><span style="font-size:18px">🛡️</span><div><b>Admin Panel</b><div style="font-size:11px;color:var(--ink-3)">'+(pt?'Configurações do estúdio e API':'Studio settings and API')+'</div></div></button>':'')
+    +'<button class="btn btn-ghost" style="justify-content:flex-start;gap:10px;padding:12px 16px;text-align:left;color:var(--err)" onclick="if(confirm(''+(pt?'Sair da conta?':'Sign out?')+'')){logout()}">'
+    +'<span style="font-size:18px">🚪</span><div><b>'+(pt?'Sair':'Sign out')+'</b><div style="font-size:11px;color:var(--err);opacity:.7">'+(pt?'Encerrar sessão':'End session')+'</div></div>'
+    +'</button>'
+    +'</div>'
+    +'</div>';
+
+  var dangerCard=''+(u.admin?''
+    :'<div class="card" style="padding:20px 24px;border:1px solid rgba(200,80,80,.2)">'
+    +'<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--err);font-weight:600;margin-bottom:12px">'+(pt?'ZONA DE PERIGO':'DANGER ZONE')+'</div>'
+    +'<div style="font-size:13px;color:var(--ink-2);margin-bottom:14px">'+(pt?'Excluir sua conta remove todos os seus dados permanentemente.':'Deleting your account removes all your data permanently.')+'</div>'
+    +'<button class="btn" style="background:rgba(200,80,80,.15);color:var(--err);border:1px solid rgba(200,80,80,.3)" onclick="if(confirm(''+(pt?'Tem certeza? Esta ação não pode ser desfeita.':'Are you sure? This cannot be undone.')+'')){deleteAccount()}">'+(pt?'Excluir minha conta':'Delete my account')+'</button>'
+    +'</div>');
+
+  return areaHeader({kicker:pt?'conta':'account',title:pt?'Minha Conta':'My Account',desc:pt?'Perfil, plano e configurações da sua conta.':'Profile, plan and account settings.',area:'account'})
+    +profileCard
+    +actionsCard
+    +dangerCard;
+}
+
 function viewUsers(){
   var pt=S.lang==='pt';
   var u=loadUsers();
@@ -9332,7 +9542,7 @@ function viewUsers(){
   }).join('')
   :'<div style="padding:32px;text-align:center;color:var(--ink-3)">'+(pt?'Nenhum usuário cadastrado ainda.':'No users registered yet.')+'</div>';
 
-  return areaHeader({kicker:'admin',title:pt?'Usuários':'Users',desc:pt?'Gerencie todos os usuários cadastrados no Hollywood Studio AI.':'Manage all users registered in Hollywood Studio AI.',area:'users'})
+  return areaHeader({kicker:'admin',title:pt?'Usuários':'Users',desc:pt?'Gerencie todos os usuários cadastrados no Hollywood Studio AI.':'Manage all users registered in Hollywood Studio AI.',area:'admin-users'})
     +statsHtml
     +'<div class="card" style="padding:0;overflow:hidden">'
     +'<div style="display:grid;grid-template-columns:36px 1.5fr 1fr 90px 110px auto;gap:10px;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-4);padding:8px 14px;border-bottom:1px solid var(--line-2)">'
@@ -9344,48 +9554,108 @@ function viewUsers(){
 
 function viewCredits(){
   var pt=S.lang==='pt';
-  var credits=isGuest()?0:S.credits;
-  var plans=[
-    {name:'Básico',price:'R$99',secs:'150s',badge:'',color:'var(--line)'},
-    {name:'Premium',price:'R$199',secs:'300s',badge:pt?'Popular':'Popular',color:'var(--accent)'},
-    {name:'Avançado',price:'R$349',secs:'600s',badge:'Pro',color:'#7c5cbf'},
-  ];
-  var plansHtml='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:28px">'
-    +plans.map(function(p){
-      return '<div class="card" style="border:2px solid '+(p.badge?p.color:'var(--line)')+';position:relative;text-align:center;padding:24px 16px">'
-        +(p.badge?'<span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:'+p.color+';color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px">'+p.badge+'</span>':'')
-        +'<div style="font-size:20px;font-weight:700;margin-bottom:4px">'+p.name+'</div>'
-        +'<div style="font-size:28px;font-weight:800;color:var(--accent);margin:8px 0">'+p.price+'</div>'
-        +'<div style="font-size:13px;color:var(--ink-3);margin-bottom:16px">'+p.secs+' '+(pt?'de vídeo/imagem':'video/image seconds')+'</div>'
-        +'<button class="btn btn-primary" style="width:100%" onclick="go(\'plans\')">'+(pt?'Assinar':'Subscribe')+'</button>'
-        +'</div>';
-    }).join('')
+  var u=isGuest()?{}:(S.user||{});
+  var credits=isGuest()?0:(S.credits||0);
+  var planMap={basic:{name:pt?'Básico':'Basic',price:'R$99',secs:150,color:'var(--line)',badge:''},
+               premium:{name:'Premium',price:'R$199',secs:300,color:'var(--accent)',badge:pt?'Popular':'Popular'},
+               advanced:{name:pt?'Avançado':'Advanced',price:'R$349',secs:600,color:'#7c5cbf',badge:'Pro'}};
+  var currentPlanId=u.plan||'basic';
+  var currentPlan=planMap[currentPlanId]||planMap.basic;
+  var planTotal=currentPlan.secs;
+  var pct=planTotal?Math.max(4,Math.min(100,Math.round(credits/planTotal*100))):0;
+  var now=new Date();
+  var renewal=new Date(now.getFullYear(),now.getMonth()+1,1);
+  var renewalStr=renewal.toLocaleDateString(pt?'pt-BR':'en-US',{day:'numeric',month:'long',year:'numeric'});
+  var hist=typeof loadHistory==='function'?loadHistory():[];
+
+  var creditCard='<div class="card" style="padding:24px 28px;margin-bottom:20px">'
+    +'<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px">'
+    +'<div>'
+    +'<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);font-weight:600;margin-bottom:6px">'+(pt?'Meus créditos':'My credits')+'</div>'
+    +'<div style="display:flex;align-items:baseline;gap:6px">'
+    +'<span style="font-size:52px;font-weight:800;color:var(--accent);line-height:1">'+credits+'</span>'
+    +'<span style="font-size:16px;color:var(--ink-3)">/ '+planTotal+'s</span>'
+    +'</div>'
+    +'<div style="font-size:12px;color:var(--ink-3);margin-top:4px">'+(pt?'Renovação em':'Renews on')+' '+renewalStr+'</div>'
+    +'</div>'
+    +'<button class="btn btn-primary" onclick="go(\'plans\')">⚡ '+(pt?'Adicionar créditos':'Add credits')+'</button>'
+    +'</div>'
+    +'<div style="height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin-bottom:8px">'
+    +'<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--accent-2),var(--accent));border-radius:6px;transition:width .4s"></div>'
+    +'</div>'
+    +'<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ink-4)">'
+    +'<span>'+pct+'% '+(pt?'restantes':'remaining')+'</span>'
+    +'<span>1 '+(pt?'crédito ≈ 1s vídeo ou 1 imagem':'credit ≈ 1s video or 1 image')+'</span>'
+    +'</div>'
     +'</div>';
 
-  var hist=typeof loadHistory==='function'?loadHistory():[]; 
-  var histHtml=hist.length?'<div class="card" style="padding:0;overflow:hidden">'
-    +'<div style="padding:14px 16px 10px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-4);font-weight:600;border-bottom:1px solid var(--line-2)">'+(pt?'Histórico de uso':'Usage history')+'</div>'
-    +hist.slice(0,20).map(function(h){
-      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--line-2);font-size:13px">'
-        +'<div><b>'+escapeHtml(h.model||h.type||'—')+'</b><span style="color:var(--ink-3);font-size:11px;margin-left:8px">'+new Date(h.createdAt||h.ts||0).toLocaleString()+'</span></div>'
-        +'<span style="color:var(--err);font-weight:600">−'+(h.creditsUsed||h.credits||1)+'s</span>'
-        +'</div>';
-    }).join('')
+  var subscCard='<div class="card" style="padding:20px 24px;margin-bottom:20px">'
+    +'<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);font-weight:600;margin-bottom:14px">'+(pt?'ASSINATURA ATUAL':'CURRENT SUBSCRIPTION')+'</div>'
+    +'<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">'
+    +'<div style="flex:1;min-width:180px">'
+    +'<div style="display:flex;align-items:center;gap:10px">'
+    +'<div style="font-size:24px;font-weight:800">'+currentPlan.name+'</div>'
+    +(currentPlan.badge?'<span style="background:'+currentPlan.color+';color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:8px">'+currentPlan.badge+'</span>':'')
     +'</div>'
-    :'<div class="card" style="text-align:center;color:var(--ink-3);padding:28px">'+(pt?'Nenhuma geração realizada ainda. Gere seu primeiro vídeo!':'No generations yet. Create your first video!')+'</div>';
+    +'<div style="font-size:28px;font-weight:800;color:var(--accent);margin:6px 0">'+currentPlan.price+'<span style="font-size:14px;font-weight:400;color:var(--ink-3)">/mês</span></div>'
+    +'<div style="font-size:12px;color:var(--ink-3)">'+planTotal+'s '+(pt?'de geração por mês':'generation / month')+'</div>'
+    +'</div>'
+    +'<div style="display:flex;flex-direction:column;gap:8px">'
+    +'<button class="btn btn-primary" onclick="go(\'plans\')">⬆ '+(pt?'Fazer upgrade':'Upgrade')+'</button>'
+    +'<button class="btn btn-ghost btn-sm" onclick="go(\'plans\')">'+(pt?'Ver planos':'All plans')+'</button>'
+    +'</div>'
+    +'</div>'
+    +'</div>';
 
-  return areaHeader({kicker:pt?'conta':'account',title:pt?'Créditos':'Credits',desc:pt?'Seus créditos, planos e histórico de uso.':'Your credits, plans and usage history.',area:'credits'})
-    +'<div style="background:linear-gradient(135deg,rgba(212,168,67,.12),transparent);border:1px solid rgba(212,168,67,.25);border-radius:14px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;gap:16px">'
-    +'<div style="font-size:42px;font-weight:800;color:var(--accent)">'+credits+'<span style="font-size:18px;font-weight:400;color:var(--ink-3)">s</span></div>'
-    +'<div><div style="font-size:14px;font-weight:600">'+(pt?'créditos disponíveis':'credits available')+'</div>'
-    +'<div style="font-size:12px;color:var(--ink-3);margin-top:4px">'+(pt?'1 crédito = ~1 segundo de vídeo ou 1 imagem':'1 credit = ~1 second of video or 1 image')+'</div>'
-    +'<button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="go(\'plans\')">⚡ '+(pt?'Recarregar créditos':'Top up credits')+'</button>'
-    +'</div></div>'
+  var plans2=[
+    {id:'basic',name:pt?'Básico':'Basic',price:'R$99',secs:150,badge:'',color:'var(--line-2)'},
+    {id:'premium',name:'Premium',price:'R$199',secs:300,badge:pt?'Popular':'Popular',color:'var(--accent)'},
+    {id:'advanced',name:pt?'Avançado':'Advanced',price:'R$349',secs:600,badge:'Pro',color:'#7c5cbf'},
+  ];
+  var plansHtml='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:24px">'
+    +plans2.map(function(p){
+      var active=p.id===currentPlanId;
+      return '<div class="card" style="border:2px solid '+(active?'var(--ok)':p.badge?p.color:'var(--line-2)')+';position:relative;text-align:center;padding:20px 14px;'+(active?'background:rgba(80,200,120,.06)':'')+'">'
+        +(active?'<span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--ok);color:#fff;font-size:9px;font-weight:700;padding:2px 10px;border-radius:10px">'+(pt?'ATUAL':'CURRENT')+'</span>'
+                :p.badge?'<span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:'+p.color+';color:#fff;font-size:9px;font-weight:700;padding:2px 10px;border-radius:10px">'+p.badge+'</span>':'')
+        +'<div style="font-size:18px;font-weight:700;margin-bottom:2px">'+p.name+'</div>'
+        +'<div style="font-size:26px;font-weight:800;color:var(--accent);margin:6px 0">'+p.price+'</div>'
+        +'<div style="font-size:12px;color:var(--ink-3);margin-bottom:14px">'+p.secs+'s</div>'
+        +'<button class="btn '+(active?'btn-ghost':'btn-primary')+' btn-sm" style="width:100%" onclick="go(\'plans\')">'
+        +(active?(pt?'Plano atual':'Current plan'):(pt?'Assinar':'Subscribe'))+'</button>'
+        +'</div>';
+    }).join('')+'</div>';
+
+  var histHtml=hist.length
+    ?'<div class="card" style="padding:0;overflow:hidden">'
+      +'<div style="padding:12px 16px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);font-weight:600;border-bottom:1px solid var(--line-2);display:flex;justify-content:space-between;align-items:center">'
+      +(pt?'HISTÓRICO DE USO':'USAGE HISTORY')
+      +'<span style="font-size:11px;font-weight:400;color:var(--ink-4);text-transform:none">'+hist.length+' '+(pt?'gerações':'generations')+'</span>'
+      +'</div>'
+      +hist.slice(0,25).map(function(h){
+        var m=modelById(h.modelId||h.model||'');
+        var mname=m?m.name:(h.model||'—');
+        var cr=h.creditsUsed||h.credits||1;
+        var ic=h.type==='image'?'🖼':'🎬';
+        return '<div style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line-2);font-size:13px">'
+          +'<div style="width:28px;height:28px;border-radius:8px;background:var(--accent-dim);display:grid;place-items:center;flex-shrink:0;font-size:14px">'+ic+'</div>'
+          +'<div style="flex:1;min-width:0"><b style="font-size:13px">'+escapeHtml(mname)+'</b>'
+          +'<div style="font-size:11px;color:var(--ink-3)">'+new Date(h.createdAt||h.ts||0).toLocaleString(pt?'pt-BR':'en-US')+'</div></div>'
+          +'<span style="color:var(--err);font-weight:700;font-size:13px">−'+cr+'s</span>'
+          +'</div>';
+      }).join('')+'</div>'
+    :'<div class="card" style="text-align:center;color:var(--ink-3);padding:32px;font-size:14px">'
+      +(pt?'🎬 Nenhuma geração ainda — crie seu primeiro vídeo!':'🎬 No generations yet — create your first video!')+'</div>';
+
+  return areaHeader({kicker:pt?'conta':'account',title:pt?'Créditos & Plano':'Credits & Plan',desc:pt?'Seus créditos, plano atual e histórico de gerações.':'Your credits, current plan and generation history.',area:'admin-credits'})
+    +creditCard
+    +subscCard
     +'<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);font-weight:600;margin-bottom:12px">'+(pt?'PLANOS DISPONÍVEIS':'AVAILABLE PLANS')+'</div>'
     +plansHtml
     +'<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);font-weight:600;margin-bottom:12px">'+(pt?'HISTÓRICO':'HISTORY')+'</div>'
     +histHtml;
 }
+
 function viewAdmin(){
   return areaHeader({
     kicker:t('admin'),title:S.lang==='pt'?'Painel admin':'Admin panel',

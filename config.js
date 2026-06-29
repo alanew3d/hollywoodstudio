@@ -43,7 +43,7 @@ window.HSAI_CONFIG = {
   PROVIDERS: {
     // ── MUAPI (primário) ──────────────────────────────────────────────────
     muapi: {
-      key:  'ac8abd0c7cbb78e6df8d19a92c34889a486756c1da9443e44116dd811473fda3',   // Insira sua chave muapi.ai aqui ou em Vercel → MUAPI_KEY
+      key:  (typeof process !== 'undefined' && process.env && process.env.MUAPI_KEY) || 'ac8abd0c7cbb78e6df8d19a92c34889a486756c1da9443e44116dd811473fda3',  // Cole aqui OU configure MUAPI_KEY nas Vercel Environment Variables
       base: 'https://api.muapi.ai',
     },
     // ── ATLAS CLOUD (fallback) ────────────────────────────────────────────
