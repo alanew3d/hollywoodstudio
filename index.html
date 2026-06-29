@@ -41,6 +41,7 @@
 </script>
 <script src="/config.js"></script>
 <script>console.log("Hollywood Studio AI loaded - build ok");
+window._go=function(v){if(typeof go==='function')go(v);};
 // Fallback para thumbnails de galeria sem URL válida
 document.addEventListener('error', function(e){ const t=e.target; if(t&&t.tagName==='VIDEO'&&!t.dataset.errored){t.dataset.errored='1';t.poster='';t.style.background='#1a1a20';} if(t&&t.tagName==='IMG'&&!t.dataset.errored&&!t.src.startsWith('data:')){t.dataset.errored='1';t.style.background='linear-gradient(135deg,#1a1a20,#2a2a35)';t.style.minHeight='80px';} }, true);</script>
 <link rel="manifest" href="/manifest.json">
@@ -2243,7 +2244,7 @@ body.hsai-splash-lock{overflow:hidden}
     <button class="mode-diff-link" id="tbDiffLbl" onclick="hsaiModeDiff()">Qual a diferença?</button>
     <div class="lang-toggle lang-tog"><button id="tlPT" class="on" onclick="setLang('pt')">PT</button><button id="tlEN" onclick="setLang('en')">EN</button></div>
     <button class="icon-btn theme-tog" onclick="toggleTheme()" title="Tema"><svg id="themeIc" viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3v2M12 19v2M5 12H3M21 12h-2M6 6l1.5 1.5M16.5 16.5L18 18M18 6l-1.5 1.5M7.5 16.5L6 18"/><circle cx="12" cy="12" r="4"/></svg></button>
-    <button class="btn-plans" onclick="go('plans')"><svg viewBox="0 0 24 24" width="15" fill="none" stroke="#1a1408" stroke-width="2"><path d="M12 2l2.5 7H22l-6 4.5 2.3 7L12 16l-6.3 4.5L8 13.5 2 9h7.5L12 2z"/></svg>Planos</button>
+    <button class="btn-plans" onclick=\"go(\'plans\')\"><svg viewBox="0 0 24 24" width="15" fill="none" stroke="#1a1408" stroke-width="2"><path d="M12 2l2.5 7H22l-6 4.5 2.3 7L12 16l-6.3 4.5L8 13.5 2 9h7.5L12 2z"/></svg>Planos</button>
     <div class="user-wrap">
       <div class="user-chip" id="userChip" onclick="userMenu()">A</div>
       <div class="user-pop" id="userPop"></div>
@@ -3615,10 +3616,10 @@ function viewHome(){
     +'</div>';
   var ctaBlock='<div style="display:flex;gap:10px;flex-wrap:wrap">'
     +'<button class="btn btn-primary" style="padding:13px 28px;font-size:15px" onclick="go(\'criar\')">'+(pt?'✨ Criar Agora →':'✨ Create Now →')+'</button>'
-    +'<button class="btn btn-hero-outline" style="padding:13px 22px" onclick="go(\'studio\')">'+(pt?'⚙️ Abrir Studio Completo':'⚙️ Full Studio')+'</button>'
+    +'<button class="btn btn-hero-outline" style="padding:13px 22px" onclick=data-go="studio">'+(pt?'⚙️ Abrir Studio Completo':'⚙️ Full Studio')+'</button>'
     +'<button class="btn btn-hero-outline" style="padding:13px 18px" onclick="go(\'models\')">'+(pt?'Ver modelos':'View models')+'</button>'
     +'</div>';
-  var creditsBadge=!isGuest()?('<div style="margin-top:16px;display:inline-flex;align-items:center;gap:8px;background:rgba(212,168,87,.1);border:1px solid rgba(212,168,87,.2);border-radius:20px;padding:6px 14px;font-size:13px;color:var(--accent)"><b>'+credits+'</b> '+(pt?'créditos disponíveis':'credits available')+'<button class="btn btn-ghost btn-sm" style="padding:2px 8px;font-size:11px;margin:0" onclick="go(\'plans\')">'+(pt?'Recarregar':'Top up')+'</button></div>'):'';
+  var creditsBadge=!isGuest()?('<div style="margin-top:16px;display:inline-flex;align-items:center;gap:8px;background:rgba(212,168,87,.1);border:1px solid rgba(212,168,87,.2);border-radius:20px;padding:6px 14px;font-size:13px;color:var(--accent)"><b>'+credits+'</b> '+(pt?'créditos disponíveis':'credits available')+'<button class="btn btn-ghost btn-sm" style="padding:2px 8px;font-size:11px;margin:0" onclick=data-go="plans">'+(pt?'Recarregar':'Top up')+'</button></div>'):'';
   var demoStrip='<div style="margin-top:28px;border-top:1px solid var(--line);padding-top:22px"><div style="font-size:10px;letter-spacing:2px;font-weight:700;color:var(--ink-4);margin-bottom:12px">'+(pt?'EXEMPLOS GERADOS COM IA':'AI-GENERATED EXAMPLES')+'</div>'
     +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">'
     +DEMO_REEL.map(function(d,i){
@@ -3810,7 +3811,7 @@ function viewSimpleCreate(){
   // Top bar right side — controles globais compactos: PT/EN · tema · planos · avatar/login
   var langCtl='<div class="lang-toggle sc-lang-tog"><button class="'+(S.lang==='pt'?'on':'')+'" onclick="setLang(\'pt\')">PT</button><button class="'+(S.lang==='en'?'on':'')+'" onclick="setLang(\'en\')">EN</button></div>';
   var themeCtl='<button class="icon-btn" onclick="toggleTheme()" title="'+(pt?'Tema claro/escuro':'Light/dark theme')+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:16px;height:16px"><path d="M12 3v2M12 19v2M5 12H3M21 12h-2M6 6l1.5 1.5M16.5 16.5L18 18M18 6l-1.5 1.5M7.5 16.5L6 18"/><circle cx="12" cy="12" r="4"/></svg></button>';
-  var plansCtl='<button class="btn btn-ghost btn-sm" onclick="go(\'plans\')">★ '+(pt?'Ver planos':'View plans')+'</button>';
+  var plansCtl='<button class="btn btn-ghost btn-sm" onclick=data-go="plans">★ '+(pt?'Ver planos':'View plans')+'</button>';
   var userCtl='';
   if(isGuest()){
     userCtl='<button class="btn btn-primary btn-sm" onclick="showAuthGate(\'default\')">'+(pt?'Entrar':'Sign in')+'</button>';
@@ -3818,7 +3819,7 @@ function viewSimpleCreate(){
     var _avName=(S.user&&(S.user.name||S.user.email))||'A';
     var avInner=(S.user&&S.user.picture)?'<img src="'+escapeAttr(S.user.picture)+'" referrerpolicy="no-referrer">':(_avName[0]||'A').toUpperCase();
     userCtl='<span class="sc-visitor-pill">⚡ '+(S.credits||0)+' '+(pt?'créditos':'credits')+'</span>'
-      +'<button class="btn btn-ghost btn-sm" onclick="go(\'studio\')">Studio Suite →</button>'
+      +'<button class="btn btn-ghost btn-sm" onclick=data-go="studio">Studio Suite →</button>'
       +'<div class="user-wrap"><div class="user-chip" id="scUserChip" onclick="userMenu(\'scUserPop\')">'+avInner+'</div><div class="user-pop" id="scUserPop"></div></div>';
   }
   var modeCtl='<button class="btn btn-primary btn-sm mode-btn" onclick="go(\'criar\')" title="'+(pt?'Use para gerar uma imagem, vídeo, prompt ou storyboard em poucos segundos.':'Use it to generate an image, video, prompt or storyboard in seconds.')+'">✨ <span class="lbl">'+(pt?'Criar rápido':'Quick create')+'</span></button>'
@@ -4629,42 +4630,54 @@ function _scPickerBodyHtml(){
   if(!list.length){
     return '<div style="padding:24px;text-align:center;color:var(--ink-4);font-size:13px">'
       +(_scPickerTab==='audio'
-        ?(pt?'Modelos de áudio (Suno, ElevenLabs) disponíveis no Studio Suite.':'Audio models (Suno, ElevenLabs) available in Studio Suite.')
+        ?(pt?'Modelos de áudio disponíveis no Studio Suite.':'Audio models available in Studio Suite.')
         :(pt?'Nenhum modelo encontrado.':'No models found.'))
       +'</div>';
   }
-  var badge=function(m){
-    var st=m.status||'active';
-    var isExternal=(st==='externo'||st==='external');
-    var needsCfg=(st==='requer configuração');
-    var col=st==='active'?'#22a06b':(st==='beta'?'#b08a2e':(needsCfg?'#e06a27':(isExternal?'#888':'#aaa')));
-    var lbl=st==='active'?(pt?'ativo':'active'):(st==='beta'?'beta':(needsCfg?(pt?'requer config':'needs config'):(isExternal?(pt?'externo':'external'):(st==='em breve'?(pt?'em breve':'coming soon'):st))));
-    var b='<span style="font-size:10px;font-weight:700;border:1px solid '+col+';color:'+col+';border-radius:6px;padding:1px 6px">'+lbl+'</span>';
-    if(m.isPremium)b+=' <span style="font-size:10px;font-weight:700;border:1px solid var(--accent);color:var(--accent);border-radius:6px;padding:1px 6px">'+(pt?'requer plano':'plan required')+'</span>';
-    return b;
-  };
-  // Encontrar dados ricos do MODELS[] para thumbnail e custo
   var enriched=list.map(function(m){
     var rich=(MODELS||[]).find(function(r){return r.id===m.id||r.id===(m.id||'').replace(/-/g,'');});
-    return {m:m,img:rich&&rich.img||'',badge2:rich&&rich.badge||'',cost:m.estimatedCredits||3};
+    return {m:m,img:(rich&&rich.img)||'',badge:(rich&&rich.badge)||'',cost:m.estimatedCredits||3};
   });
-  // Carrossel de destaque: primeiros 3 featured do MODELS para esse tipo
-  var catMap={video:'video',image:'image',audio:'audio'};
-  var featuredM=(MODELS||[]).filter(function(r){return r.cat===catMap[_scPickerTab]&&r.featured&&r.img;}).slice(0,3);
-  var carousel=featuredM.length?'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">'+featuredM.map(function(r){
-    return '<div onclick="scPickModel(\''+r.id+'\');document.getElementById(\'scQuickModal\').remove()" style="cursor:pointer;border-radius:10px;overflow:hidden;position:relative;aspect-ratio:16/9;background:#0a0a14">'      +'<img src="'+r.img+'" style="width:100%;height:100%;object-fit:cover;opacity:.85" loading="lazy" onerror="this.style.display='none'">'      +'<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.7),transparent 50%)"></div>'      +'<div style="position:absolute;bottom:8px;left:8px;right:8px;color:#fff"><b style="font-size:12px;text-shadow:0 1px 3px rgba(0,0,0,.8)">'+r.name+'</b><div style="font-size:10px;opacity:.8;margin-top:1px">'+(r.sub||'')+'</div></div>'      +(r.badge?'<span style="position:absolute;top:6px;right:6px;background:var(--accent);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px">'+r.badge+'</span>':'')
-      +'</div>';
-  }).join('')+'</div>':'';
-  var listHtml='<div style="display:flex;flex-direction:column;gap:2px">'+enriched.map(function(e){    var m=e.m;
+  var catMap2={video:'video',image:'image',audio:'audio'};
+  var featuredM=(MODELS||[]).filter(function(r){return r.cat===catMap2[_scPickerTab]&&r.featured&&r.img;}).slice(0,3);
+  var carouselHtml='';
+  if(featuredM.length){
+    var cards=featuredM.map(function(r){
+      var safe=escapeAttr(r.id);
+      return '<div data-pickid="'+safe+'" class="sc-pick-feat" style="cursor:pointer;border-radius:10px;overflow:hidden;position:relative;background:#0a0a14;aspect-ratio:16/9">'
+        +(r.img?'<img src="'+r.img+'" style="width:100%;height:100%;object-fit:cover;opacity:.85;pointer-events:none" loading="lazy">':'')
+        +'<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.7),transparent 50%);pointer-events:none"></div>'
+        +'<div style="position:absolute;bottom:8px;left:8px;right:8px;color:#fff;pointer-events:none"><b style="font-size:12px">'+escapeHtml(r.name)+'</b><div style="font-size:10px;opacity:.8">'+(r.sub||'')+'</div></div>'
+        +(r.badge?'<span style="position:absolute;top:6px;right:6px;background:var(--accent);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;pointer-events:none">'+escapeHtml(r.badge)+'</span>':'')
+        +'</div>';
+    }).join('');
+    carouselHtml='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px" onclick="_scPickerClickHandler(event)">'+cards+'</div>';
+  }
+  var rows=enriched.map(function(e){
+    var m=e.m;
+    var safe=escapeAttr(m.id);
     var selected=(S.model===m.id);
-    return '<div onclick="scPickModel(\''+m.id+'\');document.getElementById(\'scQuickModal\').remove()" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:'+(selected?'var(--accent-dim)':'transparent')+';transition:background .15s" onmouseover="this.style.background='var(--bg-2)'" onmouseout="this.style.background=''+(selected?'var(--accent-dim)':'transparent')+''">'
-      +(e.img?'<img src="'+e.img+'" style="width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0" loading="lazy" onerror="this.style.background='var(--panel-2)';this.removeAttribute('src')">':'<div style="width:40px;height:40px;border-radius:8px;background:var(--panel-2);display:grid;place-items:center;flex-shrink:0;font-size:18px">🎬</div>')
-      +'<div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px"><b style="font-size:13px;white-space:nowrap">'+escapeHtml(m.name)+'</b>'+(e.badge2?'<span style="font-size:9px;font-weight:700;background:var(--accent);color:#fff;padding:1px 6px;border-radius:6px">'+e.badge2+'</span>':'')+'</div><div style="font-size:11px;color:var(--ink-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escapeHtml(m.bestFor||m.description||'')+'</div></div>'
-      +'<div style="text-align:right;flex-shrink:0"><div style="font-size:11px;font-weight:600;color:var(--accent)">'+e.cost+(pt?'cr':'cr')+'</div><div style="font-size:10px;color:var(--ink-4)">'+(m.estimatedCredits>7?'premium':'padrão')+'</div></div>'
+    var imgEl=e.img
+      ?('<img src="'+e.img+'" style="width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0;pointer-events:none" loading="lazy">')
+      :'<div style="width:40px;height:40px;border-radius:8px;background:var(--panel-2);display:grid;place-items:center;flex-shrink:0;font-size:18px;pointer-events:none">🎬</div>';
+    var tier=(e.cost>7?'premium':'padrão');
+    var bg=selected?'var(--accent-dim)':'transparent';
+    return '<div data-pickid="'+safe+'" class="sc-pick-row" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:'+bg+'">'
+      +imgEl
+      +'<div style="flex:1;min-width:0;pointer-events:none"><div style="display:flex;align-items:center;gap:6px"><b style="font-size:13px">'+escapeHtml(m.name)+'</b>'+(e.badge?'<span style="font-size:9px;font-weight:700;background:var(--accent);color:#fff;padding:1px 6px;border-radius:6px">'+escapeHtml(e.badge)+'</span>':'')+'</div><div style="font-size:11px;color:var(--ink-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escapeHtml(m.bestFor||m.description||'')+'</div></div>'
+      +'<div style="text-align:right;flex-shrink:0;pointer-events:none"><div style="font-size:11px;font-weight:600;color:var(--accent)">'+e.cost+'cr</div><div style="font-size:10px;color:var(--ink-4)">'+tier+'</div></div>'
       +'</div>';
-  }).join('')+'</div>';
-  return carousel+'<div style="max-height:42vh;overflow-y:auto;padding-right:4px">'+listHtml+'</div>';
+  }).join('');
+  return carouselHtml+'<div style="max-height:42vh;overflow-y:auto;padding-right:4px" onclick="_scPickerClickHandler(event)"><div style="display:flex;flex-direction:column;gap:2px">'+rows+'</div></div>';
 }
+function _scPickerClickHandler(ev){
+  var el=ev.target.closest('[data-pickid]');
+  if(!el)return;
+  var id=el.dataset.pickid;
+  scPickModel(id);
+  var mo=document.getElementById('scQuickModal');if(mo)mo.remove();
+}
+
 function scPickModel(id){
   var m=(window.HSAI_MODELS||[]).find(function(x){return x.id===id;});
   // Contexto Studio: aplica no seletor real do Studio (mapeia por id/nome)
@@ -9375,7 +9388,7 @@ function viewAdminHealth(){
       <div class="hc-actions">
         <button class="btn btn-sm" onclick="runHealthCheck('${c.id}')">${c.actionLabel?hcT(c.actionLabel):(pt?'Testar':'Test')}</button>
         ${c.docsUrl?`<a class="btn btn-sm" href="${c.docsUrl}" target="_blank" rel="noopener">${pt?'Abrir link':'Open link'} ↗</a>`:''}
-        ${c.adminLink?`<button class="btn btn-sm" onclick="go('admin')">${pt?'Configurar agora':'Configure now'}</button>`:''}
+        ${c.adminLink?`<button class="btn btn-sm" onclick=\"go(\'admin\')\">${pt?'Configurar agora':'Configure now'}</button>`:''}
       </div>
     </div>`;
   });
@@ -9433,8 +9446,8 @@ function viewHsEngine(){
     +'</div>'
     +'</div>'
     +'<div style="margin-top:14px;display:flex;gap:8px">'
-    +'<button class="btn btn-primary btn-sm" onclick="go('admin')">'+(pt?'⚙️ Configurar chaves':'⚙️ Configure keys')+'</button>'
-    +'<button class="btn btn-ghost btn-sm" onclick="go('studio')">'+(pt?'▶ Abrir Studio':'▶ Open Studio')+'</button>'
+    +'<button class="btn btn-primary btn-sm" data-go="admin">'+(pt?'⚙️ Configurar chaves':'⚙️ Configure keys')+'</button>'
+    +'<button class="btn btn-ghost btn-sm" data-go="studio">'+(pt?'▶ Abrir Studio':'▶ Open Studio')+'</button>'
     +'</div>'
     +'</div>';
 
@@ -9448,64 +9461,43 @@ function viewHsEngine(){
 function viewAccount(){
   var pt=S.lang==='pt';
   var u=S.user||{};
-  var isG=isGuest();
+  var credits=S.credits||0;
+  var planName=(u.plan?({basic:pt?'Básico':'Basic',premium:'Premium',advanced:pt?'Avançado':'Advanced'}[u.plan]||u.plan):(pt?'Básico':'Basic'));
+  var role=(u.admin||u.role==='admin'?'Admin':'User');
   var avatar=u.picture
     ?('<img src="'+u.picture+'" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--accent)" referrerpolicy="no-referrer">')
     :'<div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent-2),var(--accent));display:grid;place-items:center;font-size:32px;font-weight:800;color:#fff">'+(u.name||'?')[0].toUpperCase()+'</div>';
-
   var profileCard='<div class="card" style="padding:24px;margin-bottom:20px">'
     +'<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);font-weight:600;margin-bottom:16px">'+(pt?'PERFIL':'PROFILE')+'</div>'
     +'<div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:20px">'
     +avatar
-    +'<div>'
-    +'<div style="font-size:20px;font-weight:700">'+escapeHtml(u.name||'—')+'</div>'
+    +'<div><div style="font-size:20px;font-weight:700">'+escapeHtml(u.name||'—')+'</div>'
     +'<div style="font-size:13px;color:var(--ink-3);margin-top:2px">'+escapeHtml(u.email||u.uid||'—')+'</div>'
-    +(u.google?'<div style="margin-top:6px;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink-4)">🔵 '+(pt?'Conta Google conectada':'Google account connected')+'</div>':'')
-    +'</div>'
-    +'</div>'
-    +'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px">'
-    +'<div style="padding:14px;background:var(--bg-2);border-radius:10px;text-align:center">'
-    +'<div style="font-size:24px;font-weight:800;color:var(--accent)">'+(S.credits||0)+'</div>'
-    +'<div style="font-size:11px;color:var(--ink-3);margin-top:2px">'+(pt?'Créditos':'Credits')+'</div>'
-    +'</div>'
-    +'<div style="padding:14px;background:var(--bg-2);border-radius:10px;text-align:center">'
-    +'<div style="font-size:24px;font-weight:800">'+(u.plan?({basic:pt?'Básico':'Basic',premium:'Premium',advanced:pt?'Avançado':'Advanced'}[u.plan]||u.plan):(pt?'Básico':'Basic'))+'</div>'
-    +'<div style="font-size:11px;color:var(--ink-3);margin-top:2px">'+(pt?'Plano':'Plan')+'</div>'
-    +'</div>'
-    +'<div style="padding:14px;background:var(--bg-2);border-radius:10px;text-align:center">'
-    +'<div style="font-size:24px;font-weight:800">'+(u.admin||u.role==='admin'?'Admin':'User')+'</div>'
-    +'<div style="font-size:11px;color:var(--ink-3);margin-top:2px">'+(pt?'Papel':'Role')+'</div>'
-    +'</div>'
-    +'</div>'
-    +'</div>';
-
+    +(u.google?'<div style="margin-top:6px;font-size:11px;color:var(--ink-4)">🔵 '+(pt?'Conta Google conectada':'Google account connected')+'</div>':'')
+    +'</div></div>'
+    +'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px">'
+    +'<div style="padding:14px;background:var(--bg-2);border-radius:10px;text-align:center"><div style="font-size:24px;font-weight:800;color:var(--accent)">'+credits+'</div><div style="font-size:11px;color:var(--ink-3);margin-top:2px">'+(pt?'Créditos':'Credits')+'</div></div>'
+    +'<div style="padding:14px;background:var(--bg-2);border-radius:10px;text-align:center"><div style="font-size:20px;font-weight:800">'+planName+'</div><div style="font-size:11px;color:var(--ink-3);margin-top:2px">'+(pt?'Plano':'Plan')+'</div></div>'
+    +'<div style="padding:14px;background:var(--bg-2);border-radius:10px;text-align:center"><div style="font-size:20px;font-weight:800">'+role+'</div><div style="font-size:11px;color:var(--ink-3);margin-top:2px">'+(pt?'Papel':'Role')+'</div></div>'
+    +'</div></div>';
   var actionsCard='<div class="card" style="padding:20px 24px;margin-bottom:20px">'
     +'<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);font-weight:600;margin-bottom:14px">'+(pt?'CONTA':'ACCOUNT')+'</div>'
     +'<div style="display:grid;gap:10px">'
-    +'<button class="btn btn-ghost" style="justify-content:flex-start;gap:10px;padding:12px 16px;text-align:left" onclick="go('admin-credits')">'
-    +'<span style="font-size:18px">⚡</span><div><b>'+(pt?'Gerenciar créditos':'Manage credits')+'</b><div style="font-size:11px;color:var(--ink-3)">'+(pt?'Ver saldo e histórico de uso':'View balance and usage history')+'</div></div>'
-    +'</button>'
-    +'<button class="btn btn-ghost" style="justify-content:flex-start;gap:10px;padding:12px 16px;text-align:left" onclick="go('plans')">'
-    +'<span style="font-size:18px">🎟</span><div><b>'+(pt?'Ver planos':'View plans')+'</b><div style="font-size:11px;color:var(--ink-3)">'+(pt?'Básico · Premium · Avançado':'Basic · Premium · Advanced')+'</div></div>'
-    +'</button>'
-    +(u.admin||u.role==='admin'?'<button class="btn btn-ghost" style="justify-content:flex-start;gap:10px;padding:12px 16px;text-align:left" onclick="go('admin')"><span style="font-size:18px">🛡️</span><div><b>Admin Panel</b><div style="font-size:11px;color:var(--ink-3)">'+(pt?'Configurações do estúdio e API':'Studio settings and API')+'</div></div></button>':'')
-    +'<button class="btn btn-ghost" style="justify-content:flex-start;gap:10px;padding:12px 16px;text-align:left;color:var(--err)" onclick="if(confirm(''+(pt?'Sair da conta?':'Sign out?')+'')){logout()}">'
-    +'<span style="font-size:18px">🚪</span><div><b>'+(pt?'Sair':'Sign out')+'</b><div style="font-size:11px;color:var(--err);opacity:.7">'+(pt?'Encerrar sessão':'End session')+'</div></div>'
-    +'</button>'
+    +'<div data-go="admin-credits" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;background:var(--bg-2)">'
+    +'<span style="font-size:18px">⚡</span><div><b>'+(pt?'Gerenciar créditos':'Manage credits')+'</b><div style="font-size:11px;color:var(--ink-3)">'+(pt?'Ver saldo e histórico':'View balance and history')+'</div></div>'
     +'</div>'
-    +'</div>';
-
-  var dangerCard=''+(u.admin?''
-    :'<div class="card" style="padding:20px 24px;border:1px solid rgba(200,80,80,.2)">'
-    +'<div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--err);font-weight:600;margin-bottom:12px">'+(pt?'ZONA DE PERIGO':'DANGER ZONE')+'</div>'
-    +'<div style="font-size:13px;color:var(--ink-2);margin-bottom:14px">'+(pt?'Excluir sua conta remove todos os seus dados permanentemente.':'Deleting your account removes all your data permanently.')+'</div>'
-    +'<button class="btn" style="background:rgba(200,80,80,.15);color:var(--err);border:1px solid rgba(200,80,80,.3)" onclick="if(confirm(''+(pt?'Tem certeza? Esta ação não pode ser desfeita.':'Are you sure? This cannot be undone.')+'')){deleteAccount()}">'+(pt?'Excluir minha conta':'Delete my account')+'</button>'
-    +'</div>');
-
+    +'<div data-go="plans" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;background:var(--bg-2)">'
+    +'<span style="font-size:18px">🎟</span><div><b>'+(pt?'Ver planos':'View plans')+'</b><div style="font-size:11px;color:var(--ink-3)">'+pt?'Básico · Premium · Avançado':'Basic · Premium · Advanced'+'</div></div>'
+    +'</div>'
+    +(u.admin||u.role==='admin'
+      ?'<div data-go="admin" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;background:var(--bg-2)"><span style="font-size:18px">🛡️</span><div><b>Admin Panel</b><div style="font-size:11px;color:var(--ink-3)">'+(pt?'Configurações':'Settings')+'</div></div></div>':'')
+    +'<div data-action="logout" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;background:rgba(200,80,80,.08);color:var(--err)">'
+    +'<span style="font-size:18px">🚪</span><div><b>'+(pt?'Sair':'Sign out')+'</b><div style="font-size:11px;opacity:.7">'+(pt?'Encerrar sessão':'End session')+'</div></div>'
+    +'</div>'
+    +'</div></div>';
   return areaHeader({kicker:pt?'conta':'account',title:pt?'Minha Conta':'My Account',desc:pt?'Perfil, plano e configurações da sua conta.':'Profile, plan and account settings.',area:'account'})
     +profileCard
-    +actionsCard
-    +dangerCard;
+    +actionsCard;
 }
 
 function viewUsers(){
@@ -9580,7 +9572,7 @@ function viewCredits(){
     +'</div>'
     +'<div style="font-size:12px;color:var(--ink-3);margin-top:4px">'+(pt?'Renovação em':'Renews on')+' '+renewalStr+'</div>'
     +'</div>'
-    +'<button class="btn btn-primary" onclick="go(\'plans\')">⚡ '+(pt?'Adicionar créditos':'Add credits')+'</button>'
+    +'<button class="btn btn-primary" data-go="plans">⚡ '+(pt?'Adicionar créditos':'Add credits')+'</button>'
     +'</div>'
     +'<div style="height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin-bottom:8px">'
     +'<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--accent-2),var(--accent));border-radius:6px;transition:width .4s"></div>'
@@ -9603,8 +9595,8 @@ function viewCredits(){
     +'<div style="font-size:12px;color:var(--ink-3)">'+planTotal+'s '+(pt?'de geração por mês':'generation / month')+'</div>'
     +'</div>'
     +'<div style="display:flex;flex-direction:column;gap:8px">'
-    +'<button class="btn btn-primary" onclick="go(\'plans\')">⬆ '+(pt?'Fazer upgrade':'Upgrade')+'</button>'
-    +'<button class="btn btn-ghost btn-sm" onclick="go(\'plans\')">'+(pt?'Ver planos':'All plans')+'</button>'
+    +'<button class="btn btn-primary" data-go="plans">⬆ '+(pt?'Fazer upgrade':'Upgrade')+'</button>'
+    +'<button class="btn btn-ghost btn-sm" data-go="plans">'+(pt?'Ver planos':'All plans')+'</button>'
     +'</div>'
     +'</div>'
     +'</div>';
@@ -9623,7 +9615,7 @@ function viewCredits(){
         +'<div style="font-size:18px;font-weight:700;margin-bottom:2px">'+p.name+'</div>'
         +'<div style="font-size:26px;font-weight:800;color:var(--accent);margin:6px 0">'+p.price+'</div>'
         +'<div style="font-size:12px;color:var(--ink-3);margin-bottom:14px">'+p.secs+'s</div>'
-        +'<button class="btn '+(active?'btn-ghost':'btn-primary')+' btn-sm" style="width:100%" onclick="go(\'plans\')">'
+        +'<button class="btn '+(active?'btn-ghost':'btn-primary')+' btn-sm" style="width:100%" data-go="plans">'
         +(active?(pt?'Plano atual':'Current plan'):(pt?'Assinar':'Subscribe'))+'</button>'
         +'</div>';
     }).join('')+'</div>';
