@@ -2932,7 +2932,7 @@ function init(){
   S.theme=localStorage.getItem('hsai_theme')||'light';
   document.body.dataset.theme=S.theme;
   buildMosaic(); syncLang();
-  S.provider=localStorage.getItem('hsai_provider')||(CFG.PROVIDER==='atlascloud'?'auto':(CFG.PROVIDER||'auto'));
+  S.provider=localStorage.getItem('hsai_provider')||(CFG.PROVIDER==='muapi'?'muapi':(CFG.PROVIDER==='atlascloud'?'auto':(CFG.PROVIDER||'muapi')));
   applyCfgOverrides();
   applySEO();
   initGoogle();
@@ -6202,8 +6202,8 @@ function enhanceInPlace(){
   cUpdateCost();
   toast(S.lang==='pt'?'Prompt aprimorado ✨':'Prompt enhanced ✨','ok');
 }
-const PROVIDER_CHAIN=['atlascloud','fal','modelark'];
-const PROVIDER_LABEL={atlascloud:'Atlas Cloud',fal:'fal.ai',modelark:'ModelArk · BytePlus'};
+const PROVIDER_CHAIN=['muapi','atlascloud','fal','modelark'];
+const PROVIDER_LABEL={muapi:'muapi.ai',atlascloud:'Atlas Cloud',fal:'fal.ai',modelark:'ModelArk · BytePlus'};
 // mapeia o id do modelo do app -> slug do Atlas Cloud
 const ATLAS_SLUG={
   seedance2:'bytedance/seedance-2.0', seedance2fast:'bytedance/seedance-2.0-fast',
@@ -6216,8 +6216,8 @@ const ATLAS_IMG_SLUG={
   fluxpro:'black-forest-labs/flux-1.1-pro', nanobanana:'google/nano-banana', nanobananapro:'google/nano-banana-pro',
   nanobanana2:'google/nano-banana', gptimage2:'openai/gpt-image-1', gemini:'google/gemini-2.0-flash-image'
 };
-function hasProviderKey(){const P=CFG.PROVIDERS||{};if(CFG.API_KEY)return true;return ['atlascloud','fal','modelark'].some(k=>P[k]&&(P[k].key||/\/gen\//.test(P[k].base||'')));}
-function firstProviderWithKey(){const P=CFG.PROVIDERS||{};if(S.provider!=='auto')return S.provider;return PROVIDER_CHAIN.find(k=>P[k]&&P[k].key)||'atlascloud';}
+function hasProviderKey(){const P=CFG.PROVIDERS||{};if(CFG.API_KEY)return true;return ['muapi','atlascloud','fal','modelark'].some(k=>P[k]&&(P[k].key||/\/gen\//.test(P[k].base||'')));}
+function firstProviderWithKey(){const P=CFG.PROVIDERS||{};if(S.provider!=='auto')return S.provider;return PROVIDER_CHAIN.find(k=>P[k]&&P[k].key)||'muapi';}
 // ── Atlas Cloud: assíncrono (start → poll prediction → outputs[0]) ──
 async function testAtlasNow(){
   const out=document.getElementById('atlasTestOut');if(!out)return;
@@ -6263,6 +6263,85 @@ async function testAtlasNow(){
 }
 function clearGalleryConfirm(){if(confirm(S.lang==='pt'?'Apagar todos os itens da galeria?':'Delete all gallery items?')){S.gallery=[];localStorage.removeItem('hsai_gal');toast(S.lang==='pt'?'Galeria limpa':'Gallery cleared','ok');render();}}
 const RATIO_DIMS={'16:9':[1280,720],'9:16':[720,1280],'1:1':[1024,1024],'4:3':[1024,768],'3:4':[768,1024],'21:9':[1920,824],'4:5':[864,1080],'5:4':[1080,864],'2:3':[720,1080]};
+// ── muapi.ai: submitAndPoll (105+ modelos: Seedance 2.0, Kling 3.0, Veo3, Sora 2…) ──
+async function muapiGenerate(pc,body){
+  const base=(pc.base||'https://api.muapi.ai').replace(/\/$/,'');
+  const key=pc.key||'';
+  if(!key)throw new Error('muapi: chave não configurada. Admin → Integrações → muapi Key.');
+  const isImg=S.cmode==='image';
+  const [w,h]=RATIO_DIMS[body.aspect_ratio]||[1280,720];
+
+  // Mapa model-id do HSAI → endpoint muapi
+  const MUAPI_VID={
+    seedance2:'seedance-v2.0-t2v', seedance2fast:'seedance-v1.5-pro-t2v-fast',
+    kling3:'kling-v3.0-pro-t2v', klingmotion:'kling-v3.0-pro-t2v', klinglip:'kling-v3.0-pro-t2v',
+    veo31:'veo3.1-text-to-video', sora2:'openai-sora-2-text-to-video',
+    wan27:'wan2.6-text-to-video', hailuo:'minimax-hailuo-2.3-pro-t2v',
+    wan25:'wan2.5-text-to-video', hunyuan:'hunyuan-fast-text-to-video',
+    runway:'runway-text-to-video', kling21:'kling-v2.1-master-t2v',
+  };
+  const MUAPI_I2V={
+    seedance2:'seedance-v2.0-i2v', kling3:'kling-v3.0-pro-image-to-video',
+    klingmotion:'kling-v3.0-pro-image-to-video', kling21:'kling-v2.1-master-i2v',
+    veo31:'veo3.1-image-to-video', runway:'runway-image-to-video',
+    wan25:'wan2.5-image-to-video', leonardo:'leonardoai-motion-2.0',
+  };
+  const MUAPI_IMG={
+    flux:'flux-kontext-dev-t2i', fluxpro:'flux-kontext-pro-t2i', nanobanana:'nano-banana',
+    nanobananapro:'nano-banana-pro', nanobanana2:'nano-banana-2',
+    gptimage2:'gpt-image-2', seedream5:'bytedance-seedream-v4.5',
+    seedream45:'bytedance-seedream-v4.5', gemini:'google-imagen4',
+    midjourney:'midjourney-v7-text-to-image',
+  };
+
+  let endpoint, payload;
+  if(isImg){
+    endpoint=MUAPI_IMG[body.model]||body.model||'flux-kontext-dev-t2i';
+    payload={prompt:body.prompt,aspect_ratio:body.aspect_ratio||'16:9'};
+  } else if(body.start_frame){
+    endpoint=MUAPI_I2V[body.model]||'seedance-v2.0-i2v';
+    payload={prompt:body.prompt,aspect_ratio:body.aspect_ratio||'16:9',duration:body.duration||5,image_url:body.start_frame};
+  } else {
+    endpoint=MUAPI_VID[body.model]||'seedance-v2.0-t2v';
+    payload={prompt:body.prompt,aspect_ratio:body.aspect_ratio||'16:9',duration:body.duration||5,resolution:'720p'};
+  }
+
+  console.log('[muapi] POST',endpoint,payload);
+  // Passo 1: submit
+  const r=await fetch(`${base}/api/v1/${endpoint}`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':key},
+    body:JSON.stringify(payload)
+  });
+  if(!r.ok){let t='';try{t=await r.text();}catch(e){}throw new Error(`muapi ${r.status} — ${t.slice(0,220)||r.statusText}`);}
+  const j=await r.json();
+  // Resposta imediata (imagem)?
+  const directOut=j.outputs&&j.outputs[0]||j.url||j.output;
+  if(directOut)return isImg?{image_url:directOut}:{video_url:directOut};
+  // Passo 2: poll
+  const reqId=j.request_id||j.id;
+  if(!reqId)throw new Error('muapi: resposta sem request_id — '+JSON.stringify(j).slice(0,160));
+  const pollUrl=`${base}/api/v1/predictions/${reqId}/result`;
+  for(let i=0;i<180;i++){
+    await new Promise(res=>setTimeout(res,2000));
+    try{
+      const pr=await fetch(pollUrl,{headers:{'Content-Type':'application/json','x-api-key':key}});
+      if(!pr.ok)continue;
+      const pj=await pr.json();
+      const st=String(pj.status||'').toLowerCase();
+      if(['completed','succeeded','success'].includes(st)){
+        const out=pj.outputs&&pj.outputs[0]||pj.url||pj.output;
+        if(!out)throw new Error('muapi: concluído sem URL de saída');
+        removeJob(reqId);
+        return isImg?{image_url:out}:{video_url:out};
+      }
+      if(['failed','error'].includes(st)){removeJob(reqId);throw new Error('muapi: '+( pj.error||st));}
+    }catch(e){if(e.message&&e.message.includes('muapi:'))throw e;}
+  }
+  // Timeout — enfileira job em background
+  enqueueJob({id:reqId,kind:isImg?'image':'video',prompt:body.prompt,model:body.model,modelName:(modelById(body.model)||{}).name||body.model,ratio:body.aspect_ratio,res:body.resolution,duration:body.duration||0,credits:body.duration||0,valueR$:0,provider:'muapi',pollUrl,key});
+  throw new Error('muapi: geração continua em segundo plano (até 6min). Resultado aparecerá na galeria automaticamente.');
+}
 async function atlasGenerate(pc,body){
   const base=pc.base.replace(/\/$/,'');const isImg=S.cmode==='image';
   const [w,h]=RATIO_DIMS[body.aspect_ratio]||[1280,720];
@@ -6314,6 +6393,7 @@ async function generateViaProviders(body){
     const pc=P[key];
     const direct=/atlascloud/i.test(pc.base)&&!/\/gen\//.test(pc.base);
     try{
+      if(key==='muapi'){const data=await muapiGenerate(pc,body);toast(`muapi.ai ✓`,'ok');return data;}
       if(key==='atlascloud'&&direct){const data=await atlasGenerate(pc,body);toast(`${PROVIDER_LABEL[key]} ✓`,'ok');return data;}
       // backend-proxy ou outros provedores: espera {url|video_url|image_url}
       const res=await fetch(`${pc.base.replace(/\/$/,'')}${/\/gen\//.test(pc.base)?'':'/v1/generate'}`,{method:'POST',
@@ -6399,30 +6479,38 @@ async function pollJobsLoop(){
   while(true){
     await new Promise(r=>setTimeout(r,3000));
     const jobs=loadJobs();if(!jobs.length)continue;
-    const P=CFG.PROVIDERS||{};const pc=P.atlascloud;if(!pc||!pc.key||!pc.base){continue;}
-    const base=pc.base.replace(/\/$/,'');
+    const P=CFG.PROVIDERS||{};
     for(const job of jobs.slice()){
       try{
-        const pr=await fetch(base+'/api/v1/model/prediction/'+job.id,{headers:{'Authorization':'Bearer '+pc.key}});
-        if(!pr.ok)continue;
-        const pj=await pr.json();const d=pj.data||pj;const st=String(d.status||pj.status||'').toLowerCase();
+        // Suporte a muapi (job.provider='muapi') e Atlas Cloud (legacy)
+        const isMuapi=job.provider==='muapi'||job.pollUrl;
+        let pr,pj,st,out;
+        if(isMuapi){
+          // muapi: usa pollUrl salvo no job, ou reconstrói
+          const muKey=(job.key)||(P.muapi&&P.muapi.key)||'';
+          const muBase=(P.muapi&&P.muapi.base)||'https://api.muapi.ai';
+          const pollTarget=job.pollUrl||`${muBase}/api/v1/predictions/${job.id}/result`;
+          if(!muKey)continue;
+          pr=await fetch(pollTarget,{headers:{'Content-Type':'application/json','x-api-key':muKey}});
+          if(!pr.ok)continue;
+          pj=await pr.json();st=String(pj.status||'').toLowerCase();
+          out=pj.outputs&&pj.outputs[0]||pj.url||pj.output;
+        } else {
+          const pc=P.atlascloud;if(!pc||!pc.key||!pc.base)continue;
+          const base=pc.base.replace(/\/$/,'');
+          pr=await fetch(base+'/api/v1/model/prediction/'+job.id,{headers:{'Authorization':'Bearer '+pc.key}});
+          if(!pr.ok)continue;
+          pj=await pr.json();const d=pj.data||pj;st=String(d.status||pj.status||'').toLowerCase();
+          out=extractMediaUrl(d)||extractMediaUrl(pj);
+        }
         if(['completed','succeeded','success'].includes(st)){
-          const out=extractMediaUrl(d)||extractMediaUrl(pj);
-          console.log('[HSAI] Job done:',job.id,'status:',st,'url:',out,'fullResp:',pj);
-          if(out){
-            removeJob(job.id);
-            addCompletedToGallery(out,job);
-            toast(`🎬 ${S.lang==='pt'?'Geração concluída':'Generation complete'}: ${(job.prompt||'').slice(0,40)}…`,'ok');
-          } else {
-            console.warn('[HSAI] Completed but no URL extractable. Response:',pj);
-            removeJob(job.id);
-            toast(S.lang==='pt'?'Concluído na Atlas mas sem URL. Veja console (F12)':'Completed on Atlas but no URL. See console (F12)','err');
-          }
+          console.log('[HSAI] Job done:',job.id,'provider:',job.provider||'atlas','url:',out);
+          if(out){removeJob(job.id);addCompletedToGallery(out,job);toast(`🎬 ${S.lang==='pt'?'Geração concluída':'Generation complete'}: ${(job.prompt||'').slice(0,40)}…`,'ok');}
+          else{removeJob(job.id);toast(S.lang==='pt'?'Concluído mas sem URL. Veja console (F12)':'Completed but no URL. See console (F12)','err');}
         } else if(['failed','error','canceled'].includes(st)){
           removeJob(job.id);
-          const errMsg=d.error||d.message||pj.error||pj.message||st;
-          console.error('[HSAI] Atlas job failed:',job.id,pj);
-          toast(`❌ ${S.lang==='pt'?'Geração falhou':'Generation failed'}: ${String(errMsg).slice(0,80)}. ${S.lang==='pt'?'Detalhes em atlascloud.ai/pt/dashboard':'Details at atlascloud.ai/dashboard'}`,'err');
+          const errMsg=(pj&&(pj.error||pj.message))||st;
+          toast(`❌ ${S.lang==='pt'?'Geração falhou':'Generation failed'}: ${String(errMsg).slice(0,80)}`,'err');
         }
       }catch(e){/* network blip — tenta de novo no próximo loop */}
     }
@@ -6689,7 +6777,7 @@ function adminUsersCard(){
 }
 function applyCfgOverrides(){
   let o={};try{o=JSON.parse(localStorage.getItem('hsai_cfg')||'{}');}catch(e){}
-  CFG.PROVIDERS=CFG.PROVIDERS||{atlascloud:{base:'',key:''},fal:{base:'',key:''},modelark:{base:'',key:''}};
+  CFG.PROVIDERS=CFG.PROVIDERS||{muapi:{base:'https://api.muapi.ai',key:''},atlascloud:{base:'',key:''},fal:{base:'',key:''},modelark:{base:'',key:''}};
   if(o.PROVIDERS){for(const k in o.PROVIDERS){CFG.PROVIDERS[k]=Object.assign({},CFG.PROVIDERS[k],o.PROVIDERS[k]);}}
   if(o.STRIPE){CFG.STRIPE=Object.assign({},CFG.STRIPE,o.STRIPE);}
   if(o.STRIPE_TOPUPS){CFG.STRIPE_TOPUPS=Object.assign({},CFG.STRIPE_TOPUPS,o.STRIPE_TOPUPS);}
@@ -6735,7 +6823,7 @@ function integrationsCard(){
     <p style="font-size:12px;color:var(--ink-3);margin:4px 0 12px">${S.lang==='pt'?'⚠️ <b>Produção:</b> configure chaves reais nas <b>Vercel Environment Variables</b> ou backend seguro — não commite sk_live_ no GitHub. As bases dos provedores já vêm preenchidas; cole a chave aqui só para teste local.':'⚠️ <b>Production:</b> set real keys in <b>Vercel Environment Variables</b> or secure backend — never commit sk_live_ to GitHub. Provider bases are pre-filled; paste keys here for local testing only.'}</p>
 
     <div style="font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin:6px 0">${S.lang==='pt'?'Provedores de geração — cole só as chaves':'Generation providers — paste only the keys'}</div>
-    ${prov('atlascloud','Atlas Cloud')}${prov('fal','fal.ai')}${prov('modelark','ModelArk · BytePlus')}
+    ${prov('muapi','muapi.ai')}${prov('atlascloud','Atlas Cloud')}${prov('fal','fal.ai')}${prov('modelark','ModelArk · BytePlus')}
 
     <div style="font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin:16px 0 6px">${S.lang==='pt'?'Backend & endpoints':'Backend & endpoints'}</div>
     <div class="field"><span class="label">${S.lang==='pt'?'Base do seu backend':'Your backend base'}</span>
@@ -6792,13 +6880,13 @@ function fillEndpoints(){
 function useProxy(){
   const base=(document.getElementById('cfg_BACKEND_BASE')||{}).value.trim().replace(/\/$/,'');
   if(!base){toast(S.lang==='pt'?'Informe a base do backend primeiro':'Set the backend base first','err');return;}
-  ['atlascloud','fal','modelark'].forEach(k=>{const el=document.getElementById('cfg_'+k+'_base');if(el)el.value=base+'/gen/'+k;});
+  ['muapi','atlascloud','fal','modelark'].forEach(k=>{const el=document.getElementById('cfg_'+k+'_base');if(el)el.value=base+'/gen/'+k;});
   toast(S.lang==='pt'?'Bases apontadas para o backend-proxy (chaves ficam no servidor)':'Bases pointed to backend-proxy (keys stay on server)','ok');
 }
 function collectIntegrations(){
   const g=id=>(document.getElementById(id)||{}).value||'';
   const o={PROVIDERS:{}};
-  ['atlascloud','fal','modelark'].forEach(k=>{o.PROVIDERS[k]={base:g('cfg_'+k+'_base'),key:g('cfg_'+k+'_key')};});
+  ['muapi','atlascloud','fal','modelark'].forEach(k=>{o.PROVIDERS[k]={base:g('cfg_'+k+'_base'),key:g('cfg_'+k+'_key')};});
   ENDPOINT_KEYS.forEach(([k])=>o[k]=g('cfg_'+k));
   o.GOOGLE_CLIENT_ID=g('cfg_GOOGLE_CLIENT_ID');
   o.GEMINI_API_KEY=g('cfg_GEMINI_API_KEY');
@@ -9330,7 +9418,7 @@ function viewAdmin(){
     <div class="card"><span class="label">${S.lang==='pt'?'Provedor de geração (vídeo/imagem)':'Generation provider (video/image)'}</span>
       <p style="font-size:12px;color:var(--ink-3);margin:4px 0 12px">${S.lang==='pt'?'Escolha qual provedor usar. <b>Automático</b> tenta o Atlas Cloud primeiro e, se falhar, cai para fal.ai e depois ModelArk.':'Choose which provider to use. <b>Auto</b> tries Atlas Cloud first and falls back to fal.ai then ModelArk.'}</p>
       <div class="seg" style="flex-wrap:wrap">
-        ${[['auto',S.lang==='pt'?'Automático (fallback)':'Auto (fallback)'],['atlascloud','Atlas Cloud'],['fal','fal.ai'],['modelark','ModelArk · BytePlus']].map(([k,l])=>`<button class="${S.provider===k?'on':''}" onclick="setProvider('${k}')">${l}</button>`).join('')}
+        ${[['auto',S.lang==='pt'?'Automático (fallback)':'Auto (fallback)'],['muapi','muapi.ai'],['atlascloud','Atlas Cloud'],['fal','fal.ai'],['modelark','ModelArk · BytePlus']].map(([k,l])=>`<button class="${S.provider===k?'on':''}" onclick="setProvider('${k}')">${l}</button>`).join('')}
       </div>
       <div style="font-size:12.5px;color:var(--ink-2);line-height:1.9;margin-top:14px">
         ${(()=>{const P=CFG.PROVIDERS||{};return [['atlascloud','Atlas Cloud',S.lang==='pt'?'principal':'primary'],['fal','fal.ai',S.lang==='pt'?'secundário':'secondary'],['modelark','ModelArk · BytePlus',S.lang==='pt'?'terciário':'tertiary']].map(([k,name,role],i)=>{const cfg=P[k]||{};const on=!!cfg.key;
