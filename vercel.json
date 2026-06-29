@@ -1,16 +1,11 @@
 {
+  "buildCommand": null,
+  "outputDirectory": ".",
+  "installCommand": "echo skip",
+  "framework": null,
   "rewrites": [
-    {
-      "source": "/kbc",
-      "destination": "/kbc/index.html"
-    },
-    {
-      "source": "/kbc/(.*)",
-      "destination": "/kbc/index.html"
-    },
-    {
-      "source": "/((?!kbc).*)",
-      "destination": "/index.html"
-    }
+    { "source": "/kbc", "destination": "/kbc/index.html" },
+    { "source": "/kbc/(.*)", "destination": "/kbc/index.html" },
+    { "source": "/((?!kbc|api|assets|favicon|manifest|robots|sitemap|llms).*)", "destination": "/index.html" }
   ]
 }
