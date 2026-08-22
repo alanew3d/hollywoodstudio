@@ -1493,9 +1493,23 @@ function hideOutput() {
 ══════════════════════════════════════════════════ */
 function saveGaleria(result, model, prompt) {
   if (result.type==='video_task') return;
-  S.gallery.unshift({result, model, prompt, ts: Date.now()});
-  if (S.gallery.length > 100) S.gallery.pop();
-  localStorage.setItem('hs_gallery', JSON.stringify(S.gallery));
+  // Salva só metadados — não a URL inteira de base64 (pode ser enorme)
+  const item = {
+    model, prompt, ts: Date.now(),
+    type: result.type,
+    url: result.url?.startsWith('data:') ? null : result.url, // evita base64 no storage
+    text: result.type === 'chat' ? (result.text||'').slice(0, 300) : null,
+    provider: result.provider
+  };
+  S.gallery.unshift(item);
+  if (S.gallery.length > 50) S.gallery = S.gallery.slice(0, 50);
+  try {
+    localStorage.setItem('hs_gallery', JSON.stringify(S.gallery));
+  } catch(e) {
+    // localStorage cheio — limpa os mais antigos e tenta de novo
+    S.gallery = S.gallery.slice(0, 10);
+    try { localStorage.setItem('hs_gallery', JSON.stringify(S.gallery)); } catch(e2) {}
+  }
 }
 
 function renderGaleria() {
@@ -1504,15 +1518,18 @@ function renderGaleria() {
   if (!S.gallery.length) { empty.style.display='flex'; grid.innerHTML=''; return; }
   empty.style.display = 'none';
   grid.innerHTML = S.gallery.map(item => {
-    const media = item.result.type==='image'
-      ? `<img src="${item.result.url}" alt="${item.prompt}" loading="lazy">`
-      : item.result.type==='video'
-      ? `<video src="${item.result.url}" muted loop></video>`
-      : `<div style="padding:16px;font-size:12px;color:var(--ink2);height:100px;overflow:hidden">${escHtml((item.result.text||'').slice(0,150))}</div>`;
-    return `<div class="galeria-item">${media}
+    const media = item.type==='image' && item.url
+      ? `<img src="${item.url}" alt="${escHtml(item.prompt)}" loading="lazy">`
+      : item.type==='video' && item.url
+      ? `<video src="${item.url}" muted loop></video>`
+      : item.type==='chat'
+      ? `<div style="padding:16px;font-size:12px;color:var(--ink2);height:120px;overflow:hidden;line-height:1.5">${escHtml(item.text||'')}</div>`
+      : `<div style="padding:16px;font-size:12px;color:var(--ink3);height:120px;display:flex;align-items:center;justify-content:center">⏳</div>`;
+    return `<div class="galeria-item">
+      ${media}
       <div class="galeria-meta">
-        <div class="galeria-model">${item.model}</div>
-        <div class="galeria-prompt">${escHtml(item.prompt)}</div>
+        <div class="galeria-model">${escHtml(item.model||'')}</div>
+        <div class="galeria-prompt">${escHtml(item.prompt||'')}</div>
       </div>
     </div>`;
   }).join('');
