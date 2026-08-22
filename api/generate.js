@@ -177,6 +177,40 @@ async function callOpenRouter(route, prompt, options) {
 async function routeGeneration(modelKey, prompt, options) {
   const route = MODEL_ROUTES[modelKey];
   if (!route) throw new Error(`Modelo "${modelKey}" não encontrado`);
+
+  // Verifica se o provider tem key — se não, usa OpenRouter como fallback
+  const hasKey = {
+    openai:     !!process.env.OPENAI_API_KEY,
+    xai:        !!process.env.XAI_API_KEY,
+    google:     !!process.env.GOOGLE_API_KEY,
+    byteplus:   !!process.env.BYTEPLUS_API_KEY,
+    fal:        !!process.env.FAL_KEY,
+    openrouter: !!process.env.OPENROUTER_API_KEY,
+  };
+
+  // Para modelos de chat sem key do provider, tenta OpenRouter
+  if (!hasKey[route.provider] && route.type === 'chat' && hasKey.openrouter) {
+    const orModels = {
+      'gpt-4o': 'openai/gpt-4o',
+      'gpt-4o-mini': 'openai/gpt-4o-mini',
+      'gemini-2.5-flash': 'google/gemini-2.5-flash',
+      'gemini-2.5-pro': 'google/gemini-2.5-pro',
+      'grok-3': 'x-ai/grok-3-fast',
+      'claude-sonnet-4-6': 'anthropic/claude-sonnet-4-5',
+    };
+    const orModel = orModels[modelKey] || 'google/gemini-2.5-flash';
+    return callOpenRouter({ orModel }, prompt, options);
+  }
+
+  // Para vídeo/imagem sem key — avisa qual key falta
+  if (!hasKey[route.provider]) {
+    const keyNames = {
+      openai:'OPENAI_API_KEY', xai:'XAI_API_KEY', google:'GOOGLE_API_KEY',
+      byteplus:'BYTEPLUS_API_KEY', fal:'FAL_KEY', openrouter:'OPENROUTER_API_KEY'
+    };
+    throw new Error(`${keyNames[route.provider]} não configurada no Vercel`);
+  }
+
   switch (route.provider) {
     case 'openai':     return callOpenAI(route, prompt, { ...options, model: modelKey });
     case 'xai':        return callXAI(route, prompt, options);

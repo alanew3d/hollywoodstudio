@@ -1175,6 +1175,27 @@ function autoResize(el) {
   el.style.height = Math.min(el.scrollHeight, 220) + 'px';
 }
 
+function localRecommend(prompt) {
+  const p = prompt.toLowerCase();
+  const isVideo = /vídeo|video|animação|cena|cinemat|filme|samurai|carro|ação|action|motion|clip/.test(p);
+  const isImage = /imagem|foto|retrato|ilustr|design|logo|arte|visual|produto|poster/.test(p);
+  if (isVideo) return {
+    model: 'seedance-2.5',
+    reason: 'Seedance 2.5 — melhor cinemática para o que você descreveu. Se não tiver BytePlus, use Wan 2.7 via fal.ai.',
+    alternatives: ['minimax-h3', 'kling-3', 'wan-2.7']
+  };
+  if (isImage) return {
+    model: 'gpt-image-1',
+    reason: 'GPT Image 1 — excelente qualidade e controle de composição.',
+    alternatives: ['nano-banana-pro', 'flux-pro', 'grok-image-2']
+  };
+  return {
+    model: 'gemini-2.5-flash',
+    reason: 'Gemini 2.5 Flash via OpenRouter — rápido e já configurado.',
+    alternatives: ['gpt-4o', 'grok-3', 'claude-sonnet-4-6']
+  };
+}
+
 function handleKey(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleGenerate(); }
 }
@@ -1189,20 +1210,17 @@ async function handleGenerate() {
   if (S.mode === 'agent') {
     hideOutput();
     document.getElementById('agent-card').classList.remove('visible');
-    setLoading(true, 'Analisando prompt...');
-    try {
-      const d = await apiCall({action:'recommend', prompt});
-      setLoading(false);
-      const rec = d.recommendation;
-      S.currentRec = {...rec, prompt};
-      document.getElementById('agent-model').textContent = rec.model;
-      document.getElementById('agent-reason').textContent = rec.reason;
-      const alts = document.getElementById('agent-alts');
-      alts.innerHTML = (rec.alternatives||[]).map(m =>
-        `<button class="alt-btn" onclick="selectAlt('${m}')">${m}</button>`
-      ).join('');
-      document.getElementById('agent-card').classList.add('visible');
-    } catch(e) { setLoading(false); showError(e.message); }
+    // Recomendação local — não precisa de API
+    const rec = localRecommend(prompt);
+    S.currentRec = {...rec, prompt};
+    document.getElementById('agent-model').textContent = rec.model;
+    document.getElementById('agent-reason').textContent = rec.reason;
+    const alts = document.getElementById('agent-alts');
+    alts.innerHTML = (rec.alternatives||[]).map(m =>
+      `<button class="alt-btn" onclick="selectAlt('${m}')">${m}</button>`
+    ).join('');
+    document.getElementById('agent-card').classList.add('visible');
+    // NÃO gera automaticamente — espera o usuário aceitar
   } else {
     const model = document.getElementById('manual-model').value;
     await generate(prompt, model);
