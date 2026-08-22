@@ -1471,7 +1471,7 @@ async function generate(prompt, model) {
   hideOutput();
   setLoading(true, `Gerando com ${model}...`);
   try {
-    const d = await apiCall({action:'generate', prompt, model, options:{ratio:S.ratio}});
+    const d = await apiCall({action:'generate', prompt, model, options:{ratio:S.ratio, genType:S.genType}});
     setLoading(false);
     S.credits = Math.max(0, S.credits - 1);
     localStorage.setItem('hs_credits', S.credits);
