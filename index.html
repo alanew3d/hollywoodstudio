@@ -1077,39 +1077,35 @@ function closeModal() {
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-async function doLogin() {
-  const pass = document.getElementById('modal-pass').value;
+function doLogin() {
+  const pass = document.getElementById('modal-pass').value.trim();
   const errEl = document.getElementById('modal-error');
   errEl.textContent = '';
   if (!pass) { errEl.textContent = 'Digite a senha'; return; }
 
-  try {
-    const r = await fetch('/api/auth', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({password: pass})
-    });
-    const d = await r.json();
-    if (d.ok) {
-      S.token = d.token;
-      S.credits = d.credits || 10;
-      S.user = {name: 'Admin', admin: d.admin || false};
-      localStorage.setItem('hs_token', d.token);
-      localStorage.setItem('hs_credits', S.credits);
-      localStorage.setItem('hs_user', JSON.stringify(S.user));
-      closeModal();
-      updateAuthUI();
-      if (S.user.admin) {
-        document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
-        renderAdmin();
-      }
-      toast('Bem-vindo! ' + S.credits + ' créditos disponíveis.');
-    } else {
-      errEl.textContent = d.error || 'Senha incorreta';
-    }
-  } catch(e) {
-    errEl.textContent = 'Erro de conexão';
+  // Lê senha do config.js (carregado antes deste script)
+  const adminPass = (typeof CFG !== 'undefined' && CFG.ADMIN_PASS) ? CFG.ADMIN_PASS : 'hs2026!';
+  const isAdmin = pass === adminPass;
+  const isUser = pass === '1234'; // senha visitante temporária
+
+  if (!isAdmin && !isUser) {
+    errEl.textContent = 'Senha incorreta';
+    return;
   }
+
+  S.token = 'hs-local-token';
+  S.credits = isAdmin ? 9999 : 10;
+  S.user = {name: isAdmin ? 'Admin' : 'Visitante', admin: isAdmin};
+  localStorage.setItem('hs_token', S.token);
+  localStorage.setItem('hs_credits', S.credits);
+  localStorage.setItem('hs_user', JSON.stringify(S.user));
+  closeModal();
+  updateAuthUI();
+  if (isAdmin) {
+    document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
+    renderAdmin();
+  }
+  toast('Bem-vindo' + (isAdmin ? ', Admin!' : '!') + ' ' + S.credits + ' créditos disponíveis.');
 }
 
 function doLogout() {
