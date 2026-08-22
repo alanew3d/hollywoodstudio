@@ -193,12 +193,49 @@ async function callOpenRouter(route, prompt, options) {
   if (!key) throw new Error('OPENROUTER_API_KEY não configurada');
   const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
-    headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
+    headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json',
+      'HTTP-Referer': 'https://hollywoodstudio.ai', 'X-Title': 'Hollywood Studio AI' },
     body: JSON.stringify({ model: route.orModel, messages: [{ role: 'user', content: prompt }] })
   });
   const d = await res.json();
   if (!res.ok) throw new Error(d.error?.message || 'OpenRouter error');
-  return { type: 'chat', text: d.choices[0].message.content, provider: 'OpenRouter' };
+  return { type: 'chat', text: d.choices[0].message.content, provider: 'OpenRouter / ' + route.orModel };
+}
+
+async function callOpenRouterImage(orModel, prompt, options) {
+  const key = process.env.OPENROUTER_API_KEY;
+  if (!key) throw new Error('OPENROUTER_API_KEY não configurada');
+  const res = await fetch('https://openrouter.ai/api/v1/images/generations', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json',
+      'HTTP-Referer': 'https://hollywoodstudio.ai', 'X-Title': 'Hollywood Studio AI' },
+    body: JSON.stringify({ model: orModel, prompt, n: 1,
+      size: options.ratio === '9:16' ? '1024x1792' : options.ratio === '1:1' ? '1024x1024' : '1792x1024' })
+  });
+  const d = await res.json();
+  if (!res.ok) throw new Error(d.error?.message || 'OpenRouter image error');
+  const url = d.data?.[0]?.url || d.data?.[0]?.b64_json;
+  if (!url) throw new Error('OpenRouter não retornou imagem');
+  return { type: 'image', url: url.startsWith('data:') ? url : url, provider: 'OpenRouter / ' + orModel };
+}
+
+async function callOpenRouterVideo(orModel, prompt, options) {
+  const key = process.env.OPENROUTER_API_KEY;
+  if (!key) throw new Error('OPENROUTER_API_KEY não configurada');
+  const res = await fetch('https://openrouter.ai/api/v1/video/generations', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json',
+      'HTTP-Referer': 'https://hollywoodstudio.ai', 'X-Title': 'Hollywood Studio AI' },
+    body: JSON.stringify({ model: orModel, prompt,
+      aspect_ratio: options.ratio || '16:9', duration: options.duration || 5 })
+  });
+  const d = await res.json();
+  if (!res.ok) throw new Error(d.error?.message || 'OpenRouter video error');
+  const url = d.data?.[0]?.url || d.video?.url;
+  if (url) return { type: 'video', url, provider: 'OpenRouter / ' + orModel };
+  const taskId = d.id || d.task_id;
+  if (taskId) return { type: 'video_task', taskId, provider: 'OpenRouter / ' + orModel, polling: true };
+  throw new Error('OpenRouter não retornou vídeo');
 }
 
 async function routeGeneration(modelKey, prompt, options) {
@@ -215,27 +252,67 @@ async function routeGeneration(modelKey, prompt, options) {
     openrouter: !!process.env.OPENROUTER_API_KEY,
   };
 
-  // Para modelos de chat sem key do provider, tenta OpenRouter
-  if (!hasKey[route.provider] && route.type === 'chat' && hasKey.openrouter) {
-    const orModels = {
-      'gpt-4o': 'openai/gpt-4o',
-      'gpt-4o-mini': 'openai/gpt-4o-mini',
-      'gemini-2.5-flash': 'google/gemini-2.5-flash',
-      'gemini-2.5-pro': 'google/gemini-2.5-pro',
-      'grok-3': 'x-ai/grok-3-fast',
+  // Se provider não tem key → usa OpenRouter como fallback universal
+  if (!hasKey[route.provider] && hasKey.openrouter) {
+    // Mapa de fallback para OpenRouter
+    const orFallback = {
+      // Chat
+      'gemini-2.5-flash':  'google/gemini-2.5-flash',
+      'gemini-2.5-pro':    'google/gemini-2.5-pro',
+      'gpt-4o':            'openai/gpt-4o',
+      'gpt-4o-mini':       'openai/gpt-4o-mini',
       'claude-sonnet-4-6': 'anthropic/claude-sonnet-4-5',
+      'grok-3':            'x-ai/grok-3-fast',
+      'grok-3-mini':       'x-ai/grok-3-mini-fast',
+      // Imagem via OpenRouter
+      'gpt-image-1':       'openai/gpt-image-1',
+      'gpt-image-2':       'openai/gpt-image-1',
+      'dall-e-3':          'openai/dall-e-3',
+      'flux-pro':          'black-forest-labs/flux-1.1-pro',
+      'flux-pro-ultra':    'black-forest-labs/flux-1.1-pro-ultra',
+      'flux-dev':          'black-forest-labs/flux-1-schnell-free',
+      'nano-banana-pro':   'black-forest-labs/flux-1.1-pro',
+      'nano-banana-2':     'black-forest-labs/flux-1-schnell-free',
+      'ideogram-v3':       'ideogram-ai/ideogram-v2',
+      'recraft-v3':        'recraft-ai/recraft-v3',
+      'grok-image-2':      'x-ai/grok-2-image-1212',
+      // Vídeo via OpenRouter (modelos disponíveis)
+      'minimax-h3':        'minimax/video-01-live',
+      'hailuo-2':          'minimax/video-01',
+      'kling-3':           'kuaishou/kling-video-1.6-pro',
+      'wan-3':             'alibaba/wan-2.1-1.3b-t2v',
+      'wan-2.7':           'alibaba/wan-2.1-1.3b-t2v',
+      'veo-3':             'google/veo-3',
+      'veo-2':             'google/veo-2',
+      'runway-gen4':       'runwayml/gen4-turbo',
     };
-    const orModel = orModels[modelKey] || 'google/gemini-2.5-flash';
-    return callOpenRouter({ orModel }, prompt, options);
-  }
 
-  // Para vídeo/imagem sem key — avisa qual key falta
-  if (!hasKey[route.provider]) {
+    const orModel = orFallback[modelKey];
+
+    if (orModel) {
+      // Para imagem via OpenRouter
+      if (route.type === 'image') {
+        return callOpenRouterImage(orModel, prompt, options);
+      }
+      // Para vídeo via OpenRouter
+      if (route.type === 'video') {
+        return callOpenRouterVideo(orModel, prompt, options);
+      }
+      // Para chat via OpenRouter
+      return callOpenRouter({ orModel }, prompt, options);
+    }
+
+    // Modelo não tem fallback no OpenRouter
     const keyNames = {
       openai:'OPENAI_API_KEY', xai:'XAI_API_KEY', google:'GOOGLE_API_KEY',
-      byteplus:'BYTEPLUS_API_KEY', fal:'FAL_KEY', openrouter:'OPENROUTER_API_KEY'
+      byteplus:'BYTEPLUS_API_KEY', fal:'FAL_KEY'
     };
-    throw new Error(`${keyNames[route.provider]} não configurada no Vercel`);
+    throw new Error(`${keyNames[route.provider] || 'API key'} não configurada. Este modelo não tem fallback via OpenRouter.`);
+  }
+
+  // Sem nenhuma key disponível
+  if (!hasKey[route.provider] && !hasKey.openrouter) {
+    throw new Error('Nenhuma API key configurada. Adicione OPENROUTER_API_KEY no Vercel para começar.');
   }
 
   switch (route.provider) {
