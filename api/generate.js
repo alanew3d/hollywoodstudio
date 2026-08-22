@@ -52,6 +52,36 @@ const MODEL_ROUTES = {
 
 
 
+// Mapa global de fallback OpenRouter
+const OR_FALLBACK = {
+  'gemini-2.5-flash': 'google/gemini-2.5-flash',
+  'gemini-2.5-pro':   'google/gemini-2.5-pro',
+  'gpt-4o':           'openai/gpt-4o',
+  'gpt-4o-mini':      'openai/gpt-4o-mini',
+  'claude-sonnet-4-6':'anthropic/claude-sonnet-4-5',
+  'grok-3':           'x-ai/grok-3-fast',
+  'grok-3-mini':      'x-ai/grok-3-mini-fast',
+  'gpt-image-1':      'openai/gpt-image-1',
+  'gpt-image-2':      'openai/gpt-image-1',
+  'flux-pro':         'black-forest-labs/flux-1.1-pro',
+  'flux-pro-ultra':   'black-forest-labs/flux-1.1-pro-ultra',
+  'flux-dev':         'black-forest-labs/flux-1-schnell-free',
+  'nano-banana-pro':  'black-forest-labs/flux-1.1-pro',
+  'nano-banana-2':    'black-forest-labs/flux-1-schnell-free',
+  'ideogram-v3':      'ideogram-ai/ideogram-v2',
+  'recraft-v3':       'recraft-ai/recraft-v3',
+  'grok-image-2':     'x-ai/grok-2-image-1212',
+  'imagen-3':         'google/gemini-2.5-flash-image',
+  'minimax-h3':       'minimax/video-01-live',
+  'hailuo-2':         'minimax/video-01',
+  'kling-3':          'kuaishou/kling-video-1.6-pro',
+  'wan-3':            'alibaba/wan-2.1-1.3b-t2v',
+  'wan-2.7':          'alibaba/wan-2.1-1.3b-t2v',
+  'veo-3':            'google/veo-3',
+  'veo-2':            'google/veo-2',
+  'runway-gen4':      'runwayml/gen4-turbo',
+};
+
 function agentRecommend(prompt) {
   const p = prompt.toLowerCase();
   const isVideo = /vídeo|video|animação|animar|cena|cinemat|filme|motion|samurai|carro|corrida/.test(p);
@@ -295,38 +325,8 @@ async function routeGeneration(modelKey, prompt, options) {
 
   // Se provider não tem key → usa OpenRouter como fallback universal
   if (!hasKey[route.provider] && hasKey.openrouter) {
-    // Mapa de fallback para OpenRouter
-    const orFallback = {
-      // Chat
-      'gemini-2.5-flash':  'google/gemini-2.5-flash',
-      'gemini-2.5-pro':    'google/gemini-2.5-pro',
-      'gpt-4o':            'openai/gpt-4o',
-      'gpt-4o-mini':       'openai/gpt-4o-mini',
-      'claude-sonnet-4-6': 'anthropic/claude-sonnet-4-5',
-      'grok-3':            'x-ai/grok-3-fast',
-      'grok-3-mini':       'x-ai/grok-3-mini-fast',
-      // Imagem via OpenRouter
-      'gpt-image-1':       'openai/gpt-image-1',
-      'gpt-image-2':       'openai/gpt-image-1',
-      'dall-e-3':          'openai/dall-e-3',
-      'flux-pro':          'black-forest-labs/flux-1.1-pro',
-      'flux-pro-ultra':    'black-forest-labs/flux-1.1-pro-ultra',
-      'flux-dev':          'black-forest-labs/flux-1-schnell-free',
-      'nano-banana-pro':   'black-forest-labs/flux-1.1-pro',
-      'nano-banana-2':     'black-forest-labs/flux-1-schnell-free',
-      'ideogram-v3':       'ideogram-ai/ideogram-v2',
-      'recraft-v3':        'recraft-ai/recraft-v3',
-      'grok-image-2':      'x-ai/grok-2-image-1212',
-      // Vídeo via OpenRouter (modelos disponíveis)
-      'minimax-h3':        'minimax/video-01-live',
-      'hailuo-2':          'minimax/video-01',
-      'kling-3':           'kuaishou/kling-video-1.6-pro',
-      'wan-3':             'alibaba/wan-2.1-1.3b-t2v',
-      'wan-2.7':           'alibaba/wan-2.1-1.3b-t2v',
-      'veo-3':             'google/veo-3',
-      'veo-2':             'google/veo-2',
-      'runway-gen4':       'runwayml/gen4-turbo',
-    };
+    // Usa o mapa global OR_FALLBACK
+    const orFallback = OR_FALLBACK;
 
     const orModel = orFallback[modelKey];
 
@@ -386,14 +386,33 @@ export default async function handler(req) {
     }
 
     if (action === 'models') {
-      const providers = [];
-      if (process.env.OPENAI_API_KEY)     providers.push('openai');
-      if (process.env.XAI_API_KEY)        providers.push('xai');
-      if (process.env.GOOGLE_API_KEY)     providers.push('google');
-      if (process.env.BYTEPLUS_API_KEY)   providers.push('byteplus');
-      if (process.env.FAL_KEY)            providers.push('fal');
-      if (process.env.OPENROUTER_API_KEY) providers.push('openrouter');
-      return json({ ok: true, providers });
+      const activeProviders = [];
+      if (process.env.OPENAI_API_KEY)     activeProviders.push('openai');
+      if (process.env.XAI_API_KEY)        activeProviders.push('xai');
+      if (process.env.GOOGLE_API_KEY)     activeProviders.push('google');
+      if (process.env.BYTEPLUS_API_KEY)   activeProviders.push('byteplus');
+      if (process.env.FAL_KEY)            activeProviders.push('fal');
+      if (process.env.OPENROUTER_API_KEY) activeProviders.push('openrouter');
+
+      // Modelos disponíveis por provider
+      // OpenRouter cobre: chat de qualquer provider + imagem/vídeo de alguns
+      const hasOR = activeProviders.includes('openrouter');
+
+      const available = Object.entries(MODEL_ROUTES)
+        .filter(([id, r]) => {
+          if (activeProviders.includes(r.provider)) return true;
+          // fallback via OpenRouter
+          if (hasOR && OR_FALLBACK[id]) return true;
+          return false;
+        })
+        .map(([id, r]) => ({
+          id,
+          type: r.type,
+          provider: activeProviders.includes(r.provider) ? r.provider : 'openrouter',
+          via_fallback: !activeProviders.includes(r.provider)
+        }));
+
+      return json({ ok: true, providers: activeProviders, models: available });
     }
 
     if (action === 'generate') {

@@ -1023,6 +1023,9 @@ const S = {
   gallery: JSON.parse(localStorage.getItem('hs_gallery') || '[]'),
   swNodes: [], swConns: [], swCounter: 0,
   swDragging: null, swDragOff: {x:0,y:0},
+  filteredModels: null,
+  availableModels: [],
+  activeProviders: [],
 };
 
 const PROVIDERS = [
@@ -1110,6 +1113,64 @@ const MODELS = [
 /* ══════════════════════════════════════════════════
    INIT APP
 ══════════════════════════════════════════════════ */
+async function loadAvailableModels() {
+  try {
+    const r = await fetch('/api/generate', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','Authorization':'Bearer hs-local-token'},
+      body: JSON.stringify({action:'models'})
+    });
+    const d = await r.json();
+    if (!d.ok) return;
+
+    const available = new Set(d.models.map(m => m.id));
+    S.availableModels = d.models;
+    S.activeProviders = d.providers;
+
+    // Filtra MODELS global para só mostrar disponíveis
+    S.filteredModels = MODELS.filter(m => available.has(m.id));
+
+    // Atualiza o select do modo manual
+    updateModelSelect(d.models);
+
+    // Atualiza dots de provider na topbar
+    updateProviderDots(d.providers);
+
+    console.log('[HSAI] Providers ativos:', d.providers.join(', '));
+    console.log('[HSAI] Modelos disponíveis:', d.models.length);
+  } catch(e) {
+    console.warn('[HSAI] Não foi possível carregar modelos:', e.message);
+    S.filteredModels = MODELS; // fallback: mostra todos
+  }
+}
+
+function updateModelSelect(models) {
+  const sel = document.getElementById('manual-model');
+  if (!sel) return;
+
+  const byType = { video: [], image: [], chat: [] };
+  models.forEach(m => {
+    const info = MODELS.find(x => x.id === m.id);
+    if (info) byType[m.type]?.push({...info, via_fallback: m.via_fallback});
+  });
+
+  const labels = { video: '🎬 Vídeo', image: '🖼 Imagem', chat: '💬 Chat / Texto' };
+  sel.innerHTML = Object.entries(byType)
+    .filter(([, list]) => list.length > 0)
+    .map(([type, list]) => `
+      <optgroup label="${labels[type]}">
+        ${list.map(m => `<option value="${m.id}">
+          ${m.name}${m.badge ? ' — '+m.badge : ''} (${m.via_fallback ? 'via OpenRouter' : m.provider})
+        </option>`).join('')}
+      </optgroup>`).join('');
+}
+
+function updateProviderDots(providers) {
+  // Mostra providers ativos no título da topbar como tooltip
+  const logo = document.querySelector('.topbar-logo');
+  if (logo) logo.title = 'Providers ativos: ' + (providers.join(', ') || 'nenhum');
+}
+
 function startApp() {
   const app = document.getElementById('app');
   app.style.display = 'flex';
@@ -1117,6 +1178,7 @@ function startApp() {
 
   document.body.dataset.theme = S.theme;
   updateAuthUI();
+  loadAvailableModels(); // carrega modelos disponíveis da API
   renderModelos('todos');
   renderGaleria();
   renderAdmin();
@@ -1545,7 +1607,8 @@ function filterModelos(type, btn) {
 }
 
 function renderModelos(filter) {
-  const list = filter==='todos' ? MODELS : MODELS.filter(m=>m.type===filter);
+  const base = S.filteredModels || MODELS;
+  const list = filter==='todos' ? base : base.filter(m=>m.type===filter);
   document.getElementById('modelos-grid').innerHTML = list.map(m => `
     <div class="modelo-card" onclick="usarModelo('${m.id}')">
       <div class="modelo-name">
