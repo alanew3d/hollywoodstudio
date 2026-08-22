@@ -24,9 +24,9 @@ export default function PlanosPage() {
   const [loading, setLoading] = useState(null);
 
   const mpLinks = {
-    basico: 'https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=SEU_ID_BASICO',
-    premium: 'https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=SEU_ID_PREMIUM',
-    agencias: 'https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=SEU_ID_AGENCIAS',
+    basico:   'https://mpago.la/18S6Euq',
+    premium:  'https://mpago.la/1oH3qf6',
+    agencias: 'https://mpago.la/1rFDpXm',
   };
 
   return (

@@ -21,10 +21,10 @@ export default function RootLayout({ children }) {
   // A key já é salva no localStorage pelo próprio app.
   // Se quiser pré-configurar para todos (admin), 
   // adicione NEXT_PUBLIC_MUAPI_KEY no Vercel e descomente:
-  // var envKey = '${process.env.NEXT_PUBLIC_MUAPI_KEY || ''}';
-  // if(envKey && !localStorage.getItem('muapi_key')) {
-  //   localStorage.setItem('muapi_key', envKey);
-  // }
+  var envKey = '${process.env.NEXT_PUBLIC_MUAPI_KEY || ""}';
+  if(envKey && envKey.length > 5 && !localStorage.getItem('muapi_key')) {
+    localStorage.setItem('muapi_key', envKey);
+  }
 
   // ── SPLASH cinematográfico ─────────────────────────
   if(sessionStorage.getItem('hs_splash')) return;
