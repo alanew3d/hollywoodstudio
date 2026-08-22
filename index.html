@@ -3307,6 +3307,13 @@ function buildNav(){
     });
     nav.appendChild(grp);
   });
+  // ── Spider Web (injetado via patch) ──
+  const swGrp=document.createElement('div');swGrp.className='nav-group';
+  swGrp.innerHTML='<h6>'+(S.lang==='pt'?'Ferramentas':'Tools')+'</h6>';
+  const swEl=document.createElement('div');swEl.className='nav-item';swEl.dataset.id='spiderweb';
+  swEl.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><circle cx="12" cy="12" r="2"/><path d="M12 2v8M12 14v8M2 12h8M14 12h8M4.93 4.93l5.66 5.66M13.41 13.41l5.66 5.66M19.07 4.93l-5.66 5.66M10.59 13.41l-5.66 5.66"/></svg><span>Spider Web</span>';
+  swEl.onclick=()=>go('spiderweb');swGrp.appendChild(swEl);
+  nav.appendChild(swGrp);
   if(S.sections&&S.sections.length){
     const grp=document.createElement('div');grp.className='nav-group';
     grp.innerHTML=`<h6>${S.lang==='pt'?'Minhas seções':'My sections'}</h6>`;
@@ -3403,6 +3410,10 @@ function render(){
   if(S.view==='inspo')afterInspo();
   if(S.view==='criar')afterSimpleCreate();
   if(S.view==='admin-health')afterAdminHealth();
+  if(S.view==='spiderweb'){
+    m.innerHTML='<div class="view" style="padding:0;margin:0">'+viewSpiderWeb()+'</div>';
+    afterSpiderWeb();
+  }
   if(S.view==='council'){
     try{
       var _pf=localStorage.getItem('hsai_council_prefill');
