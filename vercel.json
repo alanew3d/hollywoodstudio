@@ -2,5 +2,8 @@
   "buildCommand": "npm install --legacy-peer-deps && npm run build",
   "installCommand": "npm install --legacy-peer-deps",
   "framework": "nextjs",
-  "outputDirectory": ".next"
+  "outputDirectory": ".next",
+  "env": {
+    "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
+  }
 }
