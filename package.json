@@ -6,8 +6,7 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start",
-    "preinstall": "npm config set legacy-peer-deps true"
+    "start": "next start"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -66,5 +65,6 @@
     "@types/react-dom": "^19",
     "typescript": "^5"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "packageManager": "pnpm@9.0.0"
 }
