@@ -1,29 +1,56 @@
 export const config = { runtime: 'edge' };
 
 const MODEL_ROUTES = {
-  'seedance-2':        { provider: 'byteplus', type: 'video', model: 'video-01' },
-  'seedance-2.5':      { provider: 'byteplus', type: 'video', model: 'video-02' },
-  'seedream':          { provider: 'byteplus', type: 'image' },
-  'minimax-h3':        { provider: 'fal', type: 'video', falModel: 'fal-ai/minimax/video-01-live' },
-  'kling-3':           { provider: 'fal', type: 'video', falModel: 'fal-ai/kling-video/v1.6/pro/text-to-video' },
-  'wan-2.7':           { provider: 'fal', type: 'video', falModel: 'fal-ai/wan/v2.2/t2v' },
-  'wan-3':             { provider: 'fal', type: 'video', falModel: 'fal-ai/wan/v3/t2v' },
-  'grok-video':        { provider: 'xai',  type: 'video' },
-  'veo-3':             { provider: 'google', type: 'video' },
-  'gpt-image-1':       { provider: 'openai', type: 'image' },
-  'gpt-image-2':       { provider: 'openai', type: 'image' },
-  'dall-e-3':          { provider: 'openai', type: 'image' },
-  'grok-image-2':      { provider: 'xai',  type: 'image' },
-  'imagen-3':          { provider: 'google', type: 'image' },
-  'nano-banana-pro':   { provider: 'fal', type: 'image', falModel: 'fal-ai/flux/dev' },
-  'flux-pro':          { provider: 'fal', type: 'image', falModel: 'fal-ai/flux-pro' },
-  'gemini-2.5-flash':  { provider: 'google', type: 'chat', model: 'gemini-2.5-flash' },
-  'gemini-2.5-pro':    { provider: 'google', type: 'chat', model: 'gemini-2.5-pro' },
-  'gpt-4o':            { provider: 'openai', type: 'chat' },
-  'gpt-4o-mini':       { provider: 'openai', type: 'chat' },
-  'grok-3':            { provider: 'xai',  type: 'chat' },
-  'claude-sonnet-4-6': { provider: 'openrouter', type: 'chat', orModel: 'anthropic/claude-sonnet-4-5' },
+  // ── VÍDEO fal.ai ──────────────────────────────────────
+  'minimax-h3':      { provider:'fal', type:'video', falModel:'fal-ai/minimax/video-01-live' },
+  'hailuo-2':        { provider:'fal', type:'video', falModel:'fal-ai/minimax/video-01' },
+  'kling-3':         { provider:'fal', type:'video', falModel:'fal-ai/kling-video/v1.6/pro/text-to-video' },
+  'kling-3-pro':     { provider:'fal', type:'video', falModel:'fal-ai/kling-video/v1.6/pro/text-to-video' },
+  'wan-3':           { provider:'fal', type:'video', falModel:'fal-ai/wan/v2.2/t2v' },
+  'wan-2.7':         { provider:'fal', type:'video', falModel:'fal-ai/wan/v2.1/t2v' },
+  'ltx-video':       { provider:'fal', type:'video', falModel:'fal-ai/ltx-video' },
+  'runway-gen4':     { provider:'fal', type:'video', falModel:'fal-ai/runway-gen4/turbo/text-to-video' },
+  // ── VÍDEO BytePlus ────────────────────────────────────
+  'seedance-2':      { provider:'byteplus', type:'video', model:'video-01' },
+  'seedance-2.5':    { provider:'byteplus', type:'video', model:'video-02' },
+  // ── VÍDEO Google ──────────────────────────────────────
+  'veo-3':           { provider:'google', type:'video', model:'veo-003' },
+  'veo-2':           { provider:'google', type:'video', model:'veo-002' },
+  // ── VÍDEO xAI ─────────────────────────────────────────
+  'grok-video':      { provider:'xai', type:'video' },
+  // ── IMAGEM OpenAI ─────────────────────────────────────
+  'gpt-image-1':     { provider:'openai', type:'image', model:'gpt-image-1' },
+  'gpt-image-2':     { provider:'openai', type:'image', model:'dall-e-3' },
+  'dall-e-3':        { provider:'openai', type:'image', model:'dall-e-3' },
+  // ── IMAGEM fal.ai ─────────────────────────────────────
+  'nano-banana-pro': { provider:'fal', type:'image', falModel:'fal-ai/flux/dev' },
+  'nano-banana-2':   { provider:'fal', type:'image', falModel:'fal-ai/flux/schnell' },
+  'flux-pro-ultra':  { provider:'fal', type:'image', falModel:'fal-ai/flux-pro/v1.1-ultra' },
+  'flux-pro':        { provider:'fal', type:'image', falModel:'fal-ai/flux-pro' },
+  'flux-dev':        { provider:'fal', type:'image', falModel:'fal-ai/flux/dev' },
+  'ideogram-v3':     { provider:'fal', type:'image', falModel:'fal-ai/ideogram/v3' },
+  'recraft-v3':      { provider:'fal', type:'image', falModel:'fal-ai/recraft-v3' },
+  // ── IMAGEM Google ─────────────────────────────────────
+  'imagen-3':        { provider:'google', type:'image' },
+  // ── IMAGEM xAI ────────────────────────────────────────
+  'grok-image-2':    { provider:'xai', type:'image' },
+  // ── IMAGEM BytePlus ───────────────────────────────────
+  'seedream':        { provider:'byteplus', type:'image' },
+  // ── CHAT via OpenRouter (fallback automático) ─────────
+  'gemini-2.5-flash':{ provider:'openrouter', type:'chat', orModel:'google/gemini-2.5-flash' },
+  'gemini-2.5-pro':  { provider:'openrouter', type:'chat', orModel:'google/gemini-2.5-pro' },
+  'gpt-4o':          { provider:'openrouter', type:'chat', orModel:'openai/gpt-4o' },
+  'gpt-4o-mini':     { provider:'openrouter', type:'chat', orModel:'openai/gpt-4o-mini' },
+  'claude-sonnet-4-6':{ provider:'openrouter', type:'chat', orModel:'anthropic/claude-sonnet-4-5' },
+  'grok-3':          { provider:'openrouter', type:'chat', orModel:'x-ai/grok-3-fast' },
+  'grok-3-mini':     { provider:'openrouter', type:'chat', orModel:'x-ai/grok-3-mini-fast' },
+  // ── CHAT direto ───────────────────────────────────────
+  'gpt-4o-direct':   { provider:'openai', type:'chat' },
+  'grok-3-direct':   { provider:'xai',    type:'chat' },
+  'gemini-direct':   { provider:'google', type:'chat', model:'gemini-2.5-flash' },
 };
+
+
 
 function agentRecommend(prompt) {
   const p = prompt.toLowerCase();

@@ -740,24 +740,43 @@ body {
               <label class="admin-label">Modelo</label>
               <select id="manual-model" style="width:100%;background:var(--black);border:1px solid var(--border);
                 border-radius:8px;color:var(--ink);font-size:13px;padding:9px 12px;outline:none">
-                <optgroup label="── Vídeo ──">
-                  <option value="seedance-2.5">Seedance 2.5 (BytePlus)</option>
+                <optgroup label="🎬 Vídeo">
+                  <option value="seedance-2.5">Seedance 2.5 — TOP (BytePlus)</option>
                   <option value="seedance-2">Seedance 2 (BytePlus)</option>
-                  <option value="minimax-h3">MiniMax H3 (fal.ai)</option>
+                  <option value="minimax-h3">MiniMax H3 — áudio nativo (fal.ai)</option>
+                  <option value="hailuo-2">Hailuo 2 — NOVO (fal.ai)</option>
                   <option value="kling-3">Kling 3 (fal.ai)</option>
+                  <option value="kling-3-pro">Kling 3 Pro (fal.ai)</option>
+                  <option value="wan-3">Wan 3 — NOVO (fal.ai)</option>
                   <option value="wan-2.7">Wan 2.7 (fal.ai)</option>
-                  <option value="veo-3">Veo 3 (Google)</option>
+                  <option value="veo-3">Veo 3 — Google NOVO</option>
+                  <option value="veo-2">Veo 2 — Google</option>
+                  <option value="ltx-video">LTX Video — 4K rápido (fal.ai)</option>
+                  <option value="runway-gen4">Runway Gen-4 — PRO (fal.ai)</option>
+                  <option value="grok-video">Grok Video 1.5 (xAI)</option>
                 </optgroup>
-                <optgroup label="── Imagem ──">
-                  <option value="gpt-image-1">GPT Image 1 (OpenAI)</option>
-                  <option value="nano-banana-pro">Nano Banana Pro (fal.ai)</option>
+                <optgroup label="🖼 Imagem">
+                  <option value="gpt-image-1">GPT Image 1 — TOP (OpenAI)</option>
+                  <option value="gpt-image-2">GPT Image 2 — NOVO (OpenAI)</option>
+                  <option value="nano-banana-pro">Nano Banana Pro — TOP (fal.ai)</option>
+                  <option value="nano-banana-2">Nano Banana 2 (fal.ai)</option>
+                  <option value="flux-pro-ultra">Flux Pro Ultra — PRO (fal.ai)</option>
                   <option value="flux-pro">Flux Pro (fal.ai)</option>
-                  <option value="grok-image-2">Grok Image 2 (xAI)</option>
+                  <option value="flux-dev">Flux Dev (fal.ai)</option>
+                  <option value="ideogram-v3">Ideogram V3 — texto+logo NOVO (fal.ai)</option>
+                  <option value="recraft-v3">Recraft V3 — SVG vetorial (fal.ai)</option>
+                  <option value="grok-image-2">Grok Image 2 — $0.04 (xAI)</option>
+                  <option value="imagen-3">Imagen 3 (Google)</option>
+                  <option value="seedream">Seedream (BytePlus)</option>
                 </optgroup>
-                <optgroup label="── Chat ──">
-                  <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
-                  <option value="gpt-4o">GPT-4o</option>
-                  <option value="grok-3">Grok 3</option>
+                <optgroup label="💬 Chat / Texto">
+                  <option value="gemini-2.5-flash">Gemini 2.5 Flash — RÁPIDO (OpenRouter)</option>
+                  <option value="gemini-2.5-pro">Gemini 2.5 Pro (OpenRouter)</option>
+                  <option value="gpt-4o">GPT-4o (OpenRouter)</option>
+                  <option value="gpt-4o-mini">GPT-4o Mini — RÁPIDO (OpenRouter)</option>
+                  <option value="claude-sonnet-4-6">Claude Sonnet — TOP (OpenRouter)</option>
+                  <option value="grok-3">Grok 3 (OpenRouter)</option>
+                  <option value="grok-3-mini">Grok 3 Mini — RÁPIDO (OpenRouter)</option>
                 </optgroup>
               </select>
             </div>
@@ -1018,22 +1037,41 @@ const PROVIDERS = [
 ];
 
 const MODELS = [
-  {id:'seedance-2.5', name:'Seedance 2.5', provider:'BytePlus', type:'video', badge:'TOP'},
-  {id:'seedance-2',   name:'Seedance 2',   provider:'BytePlus', type:'video'},
-  {id:'minimax-h3',   name:'MiniMax H3',   provider:'fal.ai',   type:'video', badge:'NOVO'},
-  {id:'kling-3',      name:'Kling 3',      provider:'fal.ai',   type:'video'},
-  {id:'wan-2.7',      name:'Wan 2.7',      provider:'fal.ai',   type:'video'},
-  {id:'veo-3',        name:'Veo 3',        provider:'Google',   type:'video', badge:'NOVO'},
-  {id:'grok-video',   name:'Grok Video',   provider:'xAI',      type:'video'},
-  {id:'gpt-image-1',  name:'GPT Image 1',  provider:'OpenAI',   type:'image', badge:'TOP'},
-  {id:'gpt-image-2',  name:'GPT Image 2',  provider:'OpenAI',   type:'image'},
-  {id:'nano-banana-pro',name:'Nano Banana Pro',provider:'fal.ai',type:'image'},
-  {id:'flux-pro',     name:'Flux Pro',     provider:'fal.ai',   type:'image'},
-  {id:'grok-image-2', name:'Grok Image 2', provider:'xAI',      type:'image', badge:'NOVO'},
-  {id:'imagen-3',     name:'Imagen 3',     provider:'Google',   type:'image'},
-  {id:'gemini-2.5-flash',name:'Gemini 2.5 Flash',provider:'Google',type:'chat'},
-  {id:'gpt-4o',       name:'GPT-4o',       provider:'OpenAI',   type:'chat'},
-  {id:'grok-3',       name:'Grok 3',       provider:'xAI',      type:'chat'},
+  // ── VÍDEO ──────────────────────────────────────────────
+  {id:'seedance-2.5',     name:'Seedance 2.5',        provider:'BytePlus',  type:'video', badge:'TOP',  desc:'Melhor cinemática e movimento'},
+  {id:'seedance-2',       name:'Seedance 2',           provider:'BytePlus',  type:'video',               desc:'Geração cinematográfica rápida'},
+  {id:'minimax-h3',       name:'MiniMax H3',           provider:'fal.ai',    type:'video', badge:'NOVO', desc:'Vídeo com áudio nativo integrado'},
+  {id:'kling-3',          name:'Kling 3',              provider:'fal.ai',    type:'video',               desc:'Física realista e movimento natural'},
+  {id:'kling-3-pro',      name:'Kling 3 Pro',          provider:'fal.ai',    type:'video', badge:'PRO',  desc:'Versão premium com maior controle'},
+  {id:'wan-3',            name:'Wan 3',                provider:'fal.ai',    type:'video', badge:'NOVO', desc:'Open-source de alta qualidade'},
+  {id:'wan-2.7',          name:'Wan 2.7',              provider:'fal.ai',    type:'video',               desc:'Rápido e eficiente'},
+  {id:'veo-3',            name:'Veo 3',                provider:'Google',    type:'video', badge:'NOVO', desc:'Google — qualidade cinematográfica + áudio'},
+  {id:'veo-2',            name:'Veo 2',                provider:'Google',    type:'video',               desc:'Google — vídeos realistas'},
+  {id:'hailuo-2',         name:'Hailuo 2',             provider:'fal.ai',    type:'video', badge:'NOVO', desc:'MiniMax — movimento fluido e detalhado'},
+  {id:'ltx-video',        name:'LTX Video',            provider:'fal.ai',    type:'video',               desc:'Lightricks — 4K até 20s, ultra-rápido'},
+  {id:'grok-video',       name:'Grok Video 1.5',       provider:'xAI',       type:'video',               desc:'xAI — geração multimodal com áudio'},
+  {id:'runway-gen4',      name:'Runway Gen-4',         provider:'fal.ai',    type:'video', badge:'PRO',  desc:'Controle avançado de câmera e cena'},
+  // ── IMAGEM ─────────────────────────────────────────────
+  {id:'gpt-image-1',      name:'GPT Image 1',          provider:'OpenAI',    type:'image', badge:'TOP',  desc:'Segue instruções complexas com precisão'},
+  {id:'gpt-image-2',      name:'GPT Image 2',          provider:'OpenAI',    type:'image', badge:'NOVO', desc:'Fotorrealismo e edição avançada'},
+  {id:'nano-banana-pro',  name:'Nano Banana Pro',      provider:'fal.ai',    type:'image', badge:'TOP',  desc:'Consistência de identidade e rosto'},
+  {id:'nano-banana-2',    name:'Nano Banana 2',        provider:'fal.ai',    type:'image',               desc:'Geração rápida com alta qualidade'},
+  {id:'flux-pro-ultra',   name:'Flux Pro Ultra',       provider:'fal.ai',    type:'image', badge:'PRO',  desc:'Qualidade máxima em alta resolução'},
+  {id:'flux-pro',         name:'Flux Pro',             provider:'fal.ai',    type:'image',               desc:'Arte digital e fotorrealismo'},
+  {id:'flux-dev',         name:'Flux Dev',             provider:'fal.ai',    type:'image',               desc:'Versão open-source do Flux'},
+  {id:'ideogram-v3',      name:'Ideogram V3',          provider:'fal.ai',    type:'image', badge:'NOVO', desc:'Melhor para texto em imagem e logos'},
+  {id:'recraft-v3',       name:'Recraft V3',           provider:'fal.ai',    type:'image',               desc:'SVG vetorial e design gráfico'},
+  {id:'grok-image-2',     name:'Grok Image 2',         provider:'xAI',       type:'image', badge:'NOVO', desc:'$0,04/imagem — custo mais baixo'},
+  {id:'imagen-3',         name:'Imagen 3',             provider:'Google',    type:'image',               desc:'Google — fotorrealismo de alta fidelidade'},
+  {id:'seedream',         name:'Seedream',             provider:'BytePlus',  type:'image',               desc:'ByteDance — estética asiática'},
+  // ── CHAT ───────────────────────────────────────────────
+  {id:'gemini-2.5-flash', name:'Gemini 2.5 Flash',    provider:'Google',    type:'chat', badge:'RÁPIDO', desc:'Rápido e econômico para texto'},
+  {id:'gemini-2.5-pro',   name:'Gemini 2.5 Pro',      provider:'Google',    type:'chat',                desc:'Contexto longo e raciocínio avançado'},
+  {id:'gpt-4o',           name:'GPT-4o',               provider:'OpenAI',    type:'chat',                desc:'Versátil e multimodal'},
+  {id:'gpt-4o-mini',      name:'GPT-4o Mini',          provider:'OpenAI',    type:'chat', badge:'RÁPIDO', desc:'Econômico e rápido'},
+  {id:'claude-sonnet-4-6',name:'Claude Sonnet',        provider:'Anthropic', type:'chat', badge:'TOP',   desc:'Excelente para código e análise'},
+  {id:'grok-3',           name:'Grok 3',               provider:'xAI',       type:'chat',                desc:'Contexto amplo e pesquisa web'},
+  {id:'grok-3-mini',      name:'Grok 3 Mini',          provider:'xAI',       type:'chat', badge:'RÁPIDO', desc:'Rápido e eficiente'},
 ];
 
 /* ══════════════════════════════════════════════════
@@ -1223,22 +1261,72 @@ function autoResize(el) {
 
 function localRecommend(prompt) {
   const p = prompt.toLowerCase();
-  const isVideo = /vídeo|video|animação|cena|cinemat|filme|samurai|carro|ação|action|motion|clip/.test(p);
-  const isImage = /imagem|foto|retrato|ilustr|design|logo|arte|visual|produto|poster/.test(p);
-  if (isVideo) return {
-    model: 'seedance-2.5',
-    reason: 'Seedance 2.5 — melhor cinemática para o que você descreveu. Se não tiver BytePlus, use Wan 2.7 via fal.ai.',
-    alternatives: ['minimax-h3', 'kling-3', 'wan-2.7']
+  const type = S.genType; // respeita o tipo selecionado pelo usuário
+
+  if (type === 'video') {
+    const isCinema = /samurai|cinemat|épico|epic|ação|action|carro|luxury|fashion|natureza|nature|fantasia|fantasy/.test(p);
+    const isShort  = /curto|short|rápido|fast|tiktok|reels/.test(p);
+    if (isCinema) return {
+      model: 'seedance-2.5',
+      reason: 'Seedance 2.5 — melhor cinemática e movimento para cenas épicas.',
+      alternatives: ['minimax-h3', 'kling-3', 'wan-3', 'veo-3']
+    };
+    if (isShort) return {
+      model: 'wan-2.7',
+      reason: 'Wan 2.7 — rápido e eficiente para clips curtos.',
+      alternatives: ['seedance-2', 'kling-3', 'minimax-h3']
+    };
+    return {
+      model: 'minimax-h3',
+      reason: 'MiniMax H3 — vídeo com áudio nativo e coerência de personagem.',
+      alternatives: ['seedance-2.5', 'kling-3', 'wan-3', 'veo-3']
+    };
+  }
+
+  if (type === 'image') {
+    const isPortrait  = /retrato|portrait|pessoa|person|rosto|face|modelo|model/.test(p);
+    const isProduct   = /produto|product|logo|marca|brand|embalagem|package/.test(p);
+    const isArt       = /arte|art|ilustr|illust|anime|cartoon|digital art|concept/.test(p);
+    const isPhoto     = /foto|photo|realista|realistic|fotografia|photography/.test(p);
+    if (isPortrait) return {
+      model: 'nano-banana-pro',
+      reason: 'Nano Banana Pro — consistência de identidade e detalhes faciais precisos.',
+      alternatives: ['gpt-image-2', 'flux-pro-ultra', 'ideogram-v3']
+    };
+    if (isProduct || isPhoto) return {
+      model: 'gpt-image-2',
+      reason: 'GPT Image 2 — fotorrealismo e seguimento fiel de instruções complexas.',
+      alternatives: ['nano-banana-pro', 'flux-pro-ultra', 'recraft-v3']
+    };
+    if (isArt) return {
+      model: 'flux-pro-ultra',
+      reason: 'Flux Pro Ultra — qualidade artística excepcional em alta resolução.',
+      alternatives: ['ideogram-v3', 'recraft-v3', 'nano-banana-2']
+    };
+    return {
+      model: 'gpt-image-1',
+      reason: 'GPT Image 1 — versátil e preciso para qualquer tipo de imagem.',
+      alternatives: ['gpt-image-2', 'nano-banana-pro', 'flux-pro-ultra', 'ideogram-v3']
+    };
+  }
+
+  // chat / texto
+  const isCode   = /código|code|programa|script|função|function|debug/.test(p);
+  const isCreat  = /roteiro|script|história|story|poema|poem|criativo|creative/.test(p);
+  if (isCode) return {
+    model: 'claude-sonnet-4-6',
+    reason: 'Claude Sonnet — excelente para código e análise técnica.',
+    alternatives: ['gpt-4o', 'gemini-2.5-pro', 'grok-3']
   };
-  if (isImage) return {
-    model: 'gpt-image-1',
-    reason: 'GPT Image 1 — excelente qualidade e controle de composição.',
-    alternatives: ['nano-banana-pro', 'flux-pro', 'grok-image-2']
+  if (isCreat) return {
+    model: 'gemini-2.5-pro',
+    reason: 'Gemini 2.5 Pro — criatividade e contexto longo para conteúdo elaborado.',
+    alternatives: ['claude-sonnet-4-6', 'gpt-4o', 'grok-3']
   };
   return {
     model: 'gemini-2.5-flash',
-    reason: 'Gemini 2.5 Flash via OpenRouter — rápido e já configurado.',
-    alternatives: ['gpt-4o', 'grok-3', 'claude-sonnet-4-6']
+    reason: 'Gemini 2.5 Flash via OpenRouter — rápido, inteligente e já configurado.',
+    alternatives: ['gpt-4o', 'grok-3', 'claude-sonnet-4-6', 'gemini-2.5-pro']
   };
 }
 
