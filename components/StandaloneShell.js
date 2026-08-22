@@ -130,14 +130,12 @@ const TABS = [
   },
   {
     id: 'workflows',
-    label: 'Workflows',
+    label: 'Spider Web',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="3" width="6" height="6" rx="1"/>
-        <rect x="15" y="3" width="6" height="6" rx="1"/>
-        <rect x="9" y="15" width="6" height="6" rx="1"/>
-        <path d="M6 9v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9"/>
-        <path d="M12 13v2"/>
+        <circle cx="12" cy="12" r="2"/>
+        <path d="M12 2v8M12 14v8M2 12h8M14 12h8"/>
+        <path d="M4.93 4.93l5.66 5.66M13.41 13.41l5.66 5.66M19.07 4.93l-5.66 5.66M10.59 13.41l-5.66 5.66"/>
       </svg>
     )
   },
