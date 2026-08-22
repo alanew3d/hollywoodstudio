@@ -1178,6 +1178,20 @@ function updateProviderDots(providers) {
 }
 
 function startApp() {
+  // Limpa dados pesados do localStorage se estiver cheio
+  try {
+    localStorage.setItem('hs_test', '1');
+    localStorage.removeItem('hs_test');
+  } catch(e) {
+    // Quota atingida — limpa galeria antiga
+    try {
+      localStorage.removeItem('hs_gallery');
+      localStorage.removeItem('hsai_gallery');
+      localStorage.removeItem('hsai_user');
+      S.gallery = [];
+      console.log('[HSAI] localStorage limpo por quota');
+    } catch(e2) {}
+  }
   const app = document.getElementById('app');
   app.style.display = 'flex';
   setTimeout(()=> app.classList.add('visible'), 30);
@@ -1580,9 +1594,17 @@ function saveGaleria(result, model, prompt) {
   try {
     localStorage.setItem('hs_gallery', JSON.stringify(S.gallery));
   } catch(e) {
-    // localStorage cheio — limpa os mais antigos e tenta de novo
-    S.gallery = S.gallery.slice(0, 10);
-    try { localStorage.setItem('hs_gallery', JSON.stringify(S.gallery)); } catch(e2) {}
+    // localStorage cheio — limpa tudo e salva só os últimos 5
+    try {
+      localStorage.removeItem('hsai_gallery');
+      localStorage.removeItem('hsai_user');
+      localStorage.removeItem('hsai_api_keys');
+      S.gallery = S.gallery.slice(0, 5);
+      localStorage.setItem('hs_gallery', JSON.stringify(S.gallery));
+    } catch(e2) {
+      // Desiste de salvar — sem erro visual
+      console.warn('[HSAI] Não foi possível salvar galeria');
+    }
   }
 }
 
