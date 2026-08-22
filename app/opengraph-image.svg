@@ -1,0 +1,51 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#9333ea;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#db2777;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f97316;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  
+  <!-- Logo -->
+  <rect x="80" y="120" width="80" height="80" rx="16" fill="white" fill-opacity="0.2"/>
+  <text x="120" y="170" font-family="Arial, sans-serif" font-size="40" font-weight="bold" text-anchor="middle" dominant-baseline="middle" fill="white">n</text>
+  
+  <!-- Main Text -->
+  <text x="190" y="180" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="white">nanoart</text>
+  <text x="190" y="240" font-family="Arial, sans-serif" font-size="36" fill="white" fill-opacity="0.9">AI Image Generator</text>
+  
+  <!-- Description -->
+  <text x="190" y="300" font-family="Arial, sans-serif" font-size="24" fill="white" fill-opacity="0.8">Create stunning AI-powered images with nanoart</text>
+  <text x="190" y="335" font-family="Arial, sans-serif" font-size="24" fill="white" fill-opacity="0.8">Powered by Google Nano Banana technology</text>
+  
+  <!-- Decorative Elements -->
+  <circle cx="950" cy="150" r="40" fill="white" fill-opacity="0.1"/>
+  <circle cx="1050" cy="200" r="25" fill="white" fill-opacity="0.15"/>
+  <circle cx="900" cy="250" r="30" fill="white" fill-opacity="0.1"/>
+  
+  <!-- Art Tools Icons -->
+  <g transform="translate(800, 400)">
+    <rect width="60" height="60" rx="12" fill="white" fill-opacity="0.1"/>
+    <text x="30" y="40" font-family="Arial, sans-serif" font-size="30" text-anchor="middle" fill="white">🎨</text>
+  </g>
+  
+  <g transform="translate(880, 430)">
+    <rect width="50" height="50" rx="10" fill="white" fill-opacity="0.1"/>
+    <text x="25" y="35" font-family="Arial, sans-serif" font-size="25" text-anchor="middle" fill="white">✨</text>
+  </g>
+  
+  <g transform="translate(950, 410)">
+    <rect width="55" height="55" rx="11" fill="white" fill-opacity="0.1"/>
+    <text x="27.5" y="37" font-family="Arial, sans-serif" font-size="28" text-anchor="middle" fill="white">🚀</text>
+  </g>
+  
+  <!-- Bottom tagline -->
+  <text x="190" y="420" font-family="Arial, sans-serif" font-size="20" fill="white" fill-opacity="0.7">Transform your ideas into visual masterpieces</text>
+  
+  <!-- Website URL -->
+  <text x="190" y="500" font-family="Arial, sans-serif" font-size="18" fill="white" fill-opacity="0.6">nanoart.app</text>
+</svg>
