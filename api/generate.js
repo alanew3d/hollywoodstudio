@@ -205,26 +205,59 @@ async function callOpenRouter(route, prompt, options) {
 async function callOpenRouterImage(orModel, prompt, options) {
   const key = process.env.OPENROUTER_API_KEY;
   if (!key) throw new Error('OPENROUTER_API_KEY não configurada');
-  const res = await fetch('https://openrouter.ai/api/v1/images/generations', {
+
+  // OpenRouter usa chat/completions com modality de imagem
+  // O modelo retorna a imagem como content dentro da resposta
+  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
-    headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://hollywoodstudio.ai', 'X-Title': 'Hollywood Studio AI' },
-    body: JSON.stringify({ model: orModel, prompt, n: 1,
-      size: (() => {
-        const r = options.ratio || '1:1';
-        if (r === '9:16') return '1024x1536';
-        if (r === '1:1')  return '1024x1024';
-        if (r === '4:5')  return '1024x1280';
-        if (r === '3:4')  return '1024x1365';
-        if (r === '4:3')  return '1365x1024';
-        return '1536x1024'; // 16:9 e padrão
-      })() })
+    headers: {
+      'Authorization': `Bearer ${key}`,
+      'Content-Type': 'application/json',
+      'HTTP-Referer': 'https://hollywoodstudio.ai',
+      'X-Title': 'Hollywood Studio AI'
+    },
+    body: JSON.stringify({
+      model: orModel,
+      messages: [{ role: 'user', content: prompt }],
+    })
   });
-  const d = await res.json();
+
+  const text = await res.text();
+  let d;
+  try { d = JSON.parse(text); } catch(e) {
+    throw new Error('OpenRouter retornou resposta inválida: ' + text.slice(0, 120));
+  }
   if (!res.ok) throw new Error(d.error?.message || 'OpenRouter image error');
-  const url = d.data?.[0]?.url || d.data?.[0]?.b64_json;
-  if (!url) throw new Error('OpenRouter não retornou imagem');
-  return { type: 'image', url: url.startsWith('data:') ? url : url, provider: 'OpenRouter / ' + orModel };
+
+  // Tenta extrair imagem da resposta
+  const content = d.choices?.[0]?.message?.content;
+
+  // Formato 1: array de content blocks com image_url
+  if (Array.isArray(content)) {
+    for (const block of content) {
+      if (block.type === 'image_url') {
+        return { type: 'image', url: block.image_url?.url || block.image_url, provider: 'OpenRouter / ' + orModel };
+      }
+      if (block.type === 'image') {
+        return { type: 'image', url: block.source?.url || block.url, provider: 'OpenRouter / ' + orModel };
+      }
+    }
+  }
+
+  // Formato 2: string com markdown de imagem ![](url)
+  if (typeof content === 'string') {
+    const mdImg = content.match(/!\[.*?\]\((https?:\/\/[^\)]+)\)/);
+    if (mdImg) return { type: 'image', url: mdImg[1], provider: 'OpenRouter / ' + orModel };
+
+    // Formato 3: URL direta na resposta
+    const urlMatch = content.match(/https?:\/\/\S+\.(jpg|jpeg|png|webp|gif)/i);
+    if (urlMatch) return { type: 'image', url: urlMatch[0], provider: 'OpenRouter / ' + orModel };
+
+    // Retorna como texto se não achou imagem (pode ser descrição)
+    return { type: 'chat', text: content, provider: 'OpenRouter / ' + orModel };
+  }
+
+  throw new Error('OpenRouter não retornou imagem para este modelo');
 }
 
 async function callOpenRouterVideo(orModel, prompt, options) {
