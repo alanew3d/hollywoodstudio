@@ -292,13 +292,11 @@ body {
 .alt-btn:hover { color: var(--ink); border-color: var(--border2); }
 
 /* OUTPUT */
-.output-area {
-  width: 100%; max-width: 720px; margin-top: 20px;
-}
 .output-loading {
   display: none; align-items: center;
   justify-content: center; gap: 14px;
-  padding: 40px; color: var(--ink2); font-size: 13px;
+  padding: 32px; color: var(--ink2); font-size: 13px;
+  width: 100%; max-width: 720px;
 }
 .output-loading.visible { display: flex; }
 .spinner {
@@ -309,23 +307,69 @@ body {
   animation: spin .7s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-.output-result { display: none; flex-direction: column; gap: 10px; }
-.output-result.visible { display: flex; }
-.output-result img { width: 100%; border-radius: 12px; border: 1px solid var(--border); }
-.output-result video { width: 100%; border-radius: 12px; }
-.output-text {
-  background: var(--panel); border: 1px solid var(--border);
-  border-radius: 12px; padding: 20px;
-  font-size: 14px; line-height: 1.7; white-space: pre-wrap;
-}
-.output-meta { font-size: 11px; color: var(--ink3); }
 .output-error {
   display: none; background: rgba(231,76,60,0.08);
   border: 1px solid rgba(231,76,60,0.25);
   border-radius: 12px; padding: 14px 18px;
   color: var(--red); font-size: 13px;
+  width: 100%; max-width: 720px;
 }
 .output-error.visible { display: block; }
+
+/* Feed de gerações */
+.gen-thumb {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden;
+  cursor: pointer; transition: all .15s;
+  position: relative;
+}
+.gen-thumb:hover { border-color: var(--gold-dim); transform: translateY(-2px); }
+.gen-thumb img, .gen-thumb video {
+  width: 100%; aspect-ratio: 1;
+  object-fit: cover; display: block;
+}
+.gen-thumb-text {
+  padding: 10px; font-size: 11px;
+  color: var(--ink2); line-height: 1.5;
+  aspect-ratio: 1; overflow: hidden;
+  display: flex; align-items: flex-start;
+}
+.gen-thumb-meta {
+  padding: 8px 10px;
+  border-top: 1px solid var(--border);
+}
+.gen-thumb-model {
+  font-size: 9px; color: var(--gold);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  font-weight: 700; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.gen-thumb-prompt {
+  font-size: 10px; color: var(--ink3); margin-top: 1px;
+  overflow: hidden; display: -webkit-box;
+  -webkit-line-clamp: 1; -webkit-box-orient: vertical;
+}
+.gen-thumb-actions {
+  position: absolute; top: 6px; right: 6px;
+  display: none; gap: 4px;
+}
+.gen-thumb:hover .gen-thumb-actions { display: flex; }
+.gen-thumb-btn {
+  background: rgba(0,0,0,0.65); border: none;
+  border-radius: 5px; color: #fff;
+  font-size: 10px; padding: 3px 7px;
+  cursor: pointer; backdrop-filter: blur(4px);
+  transition: background .15s; white-space: nowrap;
+}
+.gen-thumb-btn:hover { background: rgba(201,168,76,0.8); color: #000; }
+.gen-thumb-new {
+  animation: thumbIn .35s ease both;
+}
+@keyframes thumbIn {
+  from { opacity:0; transform:scale(0.9) translateY(8px); }
+  to   { opacity:1; transform:none; }
+}
 
 /* ══ VIEW: GALERIA ═══════════════════════════════════ */
 #view-galeria {
@@ -737,17 +781,19 @@ body {
         </div>
       </div>
 
-      <!-- OUTPUT -->
-      <div class="output-area">
-        <div class="output-loading" id="output-loading">
-          <div class="spinner"></div>
-          <span id="loading-text">Gerando...</span>
+      <!-- LOADING -->
+      <div class="output-loading" id="output-loading">
+        <div class="spinner"></div>
+        <span id="loading-text">Gerando...</span>
+      </div>
+      <div class="output-error" id="output-error"></div>
+
+      <!-- FEED DE GERAÇÕES -->
+      <div id="gen-feed" style="width:100%;max-width:720px;margin-top:8px;display:none;flex-direction:column;gap:0">
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink3);font-weight:600;margin-bottom:12px">
+          Gerações
         </div>
-        <div class="output-result" id="output-result">
-          <div class="output-meta" id="output-meta"></div>
-          <div id="output-content"></div>
-        </div>
-        <div class="output-error" id="output-error"></div>
+        <div id="gen-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px"></div>
       </div>
     </div>
 
@@ -1277,13 +1323,65 @@ function setLoading(on, label='Gerando...') {
 }
 
 function showResult(result, model, prompt) {
-  document.getElementById('output-meta').textContent = `${model} · ${result.provider||''} · "${prompt.slice(0,60)}${prompt.length>60?'…':''}"`;
-  const c = document.getElementById('output-content');
-  if (result.type==='image') c.innerHTML = `<img src="${result.url}" alt="${prompt}" style="width:100%;border-radius:12px;border:1px solid var(--border)">`;
-  else if (result.type==='video') c.innerHTML = `<video src="${result.url}" controls autoplay muted loop style="width:100%;border-radius:12px"></video>`;
-  else if (result.type==='chat') c.innerHTML = `<div class="output-text">${escHtml(result.text)}</div>`;
-  else c.innerHTML = `<div class="output-text">Tarefa em processamento.\nID: ${result.taskId}\nProvider: ${result.provider}</div>`;
-  document.getElementById('output-result').classList.add('visible');
+  hideOutput();
+  const feed = document.getElementById('gen-feed');
+  const grid = document.getElementById('gen-grid');
+  feed.style.display = 'flex';
+
+  const id = 'gen-' + Date.now();
+  const div = document.createElement('div');
+  div.className = 'gen-thumb gen-thumb-new';
+  div.id = id;
+
+  let media = '';
+  if (result.type === 'image') {
+    media = `<img src="${result.url}" alt="${escHtml(prompt)}" loading="lazy"
+      onclick="openFull('${result.url}','image')">`;
+  } else if (result.type === 'video') {
+    media = `<video src="${result.url}" muted loop playsinline
+      onclick="this.paused?this.play():this.pause()"
+      style="cursor:pointer"></video>`;
+    // autoplay quando entra em view
+    setTimeout(() => { const v = div.querySelector('video'); if(v) v.play().catch(()=>{}); }, 100);
+  } else if (result.type === 'chat') {
+    media = `<div class="gen-thumb-text">${escHtml(result.text)}</div>`;
+  } else {
+    media = `<div class="gen-thumb-text" style="font-size:10px;color:var(--ink3)">
+      ⏳ Processando...<br><br>ID: ${result.taskId}<br>${result.provider}</div>`;
+  }
+
+  div.innerHTML = `
+    ${media}
+    <div class="gen-thumb-actions">
+      ${result.url ? `<button class="gen-thumb-btn" onclick="openFull('${result.url}','${result.type}')">⛶ Ver</button>` : ''}
+      <button class="gen-thumb-btn" onclick="reusarPrompt('${escHtml(prompt).replace(/'/g,"\'")}')">↺ Recriar</button>
+    </div>
+    <div class="gen-thumb-meta">
+      <div class="gen-thumb-model">${model}</div>
+      <div class="gen-thumb-prompt">${escHtml(prompt)}</div>
+    </div>`;
+
+  // insere no início do grid
+  grid.insertBefore(div, grid.firstChild);
+  saveGaleria(result, model, prompt);
+}
+
+function openFull(url, type) {
+  const m = document.createElement('div');
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9000;display:flex;align-items:center;justify-content:center;cursor:zoom-out;padding:20px';
+  m.onclick = () => m.remove();
+  if (type === 'video') {
+    m.innerHTML = `<video src="${url}" controls autoplay loop style="max-width:100%;max-height:90vh;border-radius:8px"></video>`;
+  } else {
+    m.innerHTML = `<img src="${url}" style="max-width:100%;max-height:90vh;border-radius:8px;object-fit:contain">`;
+  }
+  document.body.appendChild(m);
+}
+
+function reusarPrompt(prompt) {
+  document.getElementById('prompt-input').value = prompt;
+  document.getElementById('prompt-input').focus();
+  document.getElementById('prompt-input').dispatchEvent(new Event('input'));
 }
 
 function showError(msg) {
@@ -1293,7 +1391,6 @@ function showError(msg) {
 }
 
 function hideOutput() {
-  document.getElementById('output-result').classList.remove('visible');
   document.getElementById('output-error').classList.remove('visible');
   document.getElementById('output-loading').classList.remove('visible');
 }
