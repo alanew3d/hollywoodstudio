@@ -724,7 +724,7 @@ body {
             <button class="pill-btn active" id="pill-video" onclick="setType('video',this)">🎬 Vídeo</button>
             <button class="pill-btn" id="pill-image" onclick="setType('image',this)">🖼 Imagem</button>
             <button class="pill-btn" id="pill-chat" onclick="setType('chat',this)">💬 Chat</button>
-            <button class="pill-btn" id="pill-ratio" onclick="cycleRatio()">16:9</button>
+            <button class="pill-btn" id="pill-ratio" onclick="cycleRatio()" title="Proporção">16:9</button>
           </div>
           <button class="btn-gerar" id="btn-gerar" onclick="handleGenerate()">
             Gerar <span style="font-size:16px">›</span>
@@ -780,10 +780,15 @@ body {
                 </optgroup>
               </select>
             </div>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end;padding-top:18px">
+            <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:flex-end;padding-top:18px">
               <button class="pill-btn active" onclick="selectPill('ratio','16:9',this)">16:9</button>
               <button class="pill-btn" onclick="selectPill('ratio','9:16',this)">9:16</button>
               <button class="pill-btn" onclick="selectPill('ratio','1:1',this)">1:1</button>
+              <button class="pill-btn" onclick="selectPill('ratio','4:5',this)">4:5</button>
+              <button class="pill-btn" onclick="selectPill('ratio','3:4',this)">3:4</button>
+              <button class="pill-btn" onclick="selectPill('ratio','4:3',this)">4:3</button>
+              <button class="pill-btn" onclick="selectPill('ratio','21:9',this)">21:9</button>
+              <button class="pill-btn" onclick="selectPill('ratio','2:3',this)">2:3</button>
             </div>
           </div>
         </div>
@@ -1234,7 +1239,7 @@ function setMode(m) {
   hideOutput();
 }
 
-const RATIOS = ['16:9','9:16','1:1','4:5','4:3'];
+const RATIOS = ['16:9','9:16','1:1','4:5','3:4','4:3','21:9','2:3','3:2'];
 let ratioIdx = 0;
 function cycleRatio() {
   ratioIdx = (ratioIdx+1) % RATIOS.length;
@@ -1370,7 +1375,7 @@ function selectAlt(model) {
 async function acceptRec() {
   if (!S.currentRec) return;
   document.getElementById('agent-card').classList.remove('visible');
-  await generate(S.currentRec.prompt, S.currentRec.model);
+  await generate(S.currentRec.prompt, S.currentRec.model, { ratio: S.ratio });
 }
 
 async function generate(prompt, model) {

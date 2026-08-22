@@ -210,7 +210,15 @@ async function callOpenRouterImage(orModel, prompt, options) {
     headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json',
       'HTTP-Referer': 'https://hollywoodstudio.ai', 'X-Title': 'Hollywood Studio AI' },
     body: JSON.stringify({ model: orModel, prompt, n: 1,
-      size: options.ratio === '9:16' ? '1024x1792' : options.ratio === '1:1' ? '1024x1024' : '1792x1024' })
+      size: (() => {
+        const r = options.ratio || '1:1';
+        if (r === '9:16') return '1024x1536';
+        if (r === '1:1')  return '1024x1024';
+        if (r === '4:5')  return '1024x1280';
+        if (r === '3:4')  return '1024x1365';
+        if (r === '4:3')  return '1365x1024';
+        return '1536x1024'; // 16:9 e padrão
+      })() })
   });
   const d = await res.json();
   if (!res.ok) throw new Error(d.error?.message || 'OpenRouter image error');
