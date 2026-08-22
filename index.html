@@ -171,8 +171,10 @@ body {
 
 /* ══ VIEW: CRIAR (campo central) ════════════════════ */
 #view-criar {
-  align-items: center; justify-content: center;
-  overflow-y: auto; padding: 40px 20px 80px;
+  align-items: center;
+  justify-content: flex-start;
+  overflow-y: auto;
+  padding: 40px 20px 80px;
 }
 
 .criar-hero {
@@ -813,11 +815,11 @@ body {
       <div class="output-error" id="output-error"></div>
 
       <!-- FEED DE GERAÇÕES -->
-      <div id="gen-feed" style="width:100%;max-width:720px;margin-top:8px;display:none;flex-direction:column;gap:0">
-        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink3);font-weight:600;margin-bottom:12px">
+      <div id="gen-feed" style="width:100%;max-width:720px;margin-top:24px;display:none;flex-direction:column;gap:12px">
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink3);font-weight:600">
           Gerações
         </div>
-        <div id="gen-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px"></div>
+        <div id="gen-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px"></div>
       </div>
     </div>
 
@@ -1163,6 +1165,10 @@ function updateModelSelect(models) {
           ${m.name}${m.badge ? ' — '+m.badge : ''} (${m.via_fallback ? 'via OpenRouter' : m.provider})
         </option>`).join('')}
       </optgroup>`).join('');
+
+  // Seleciona o primeiro modelo de imagem por padrão (mais comum para geração visual)
+  const firstImage = models.find(m => m.type === 'image');
+  if (firstImage) sel.value = firstImage.id;
 }
 
 function updateProviderDots(providers) {
@@ -1411,13 +1417,19 @@ async function handleGenerate() {
   if (S.mode === 'agent') {
     hideOutput();
     document.getElementById('agent-card').classList.remove('visible');
-    // Recomendação local — não precisa de API
+
+    // Recomendação local baseada no tipo selecionado + prompt
     const rec = localRecommend(prompt);
     S.currentRec = {...rec, prompt};
+
+    // Filtra alternativas para só mostrar modelos disponíveis
+    const available = new Set((S.availableModels||[]).map(m=>m.id));
+    const altsFiltered = (rec.alternatives||[]).filter(m => available.size === 0 || available.has(m));
+
     document.getElementById('agent-model').textContent = rec.model;
     document.getElementById('agent-reason').textContent = rec.reason;
     const alts = document.getElementById('agent-alts');
-    alts.innerHTML = (rec.alternatives||[]).map(m =>
+    alts.innerHTML = altsFiltered.map(m =>
       `<button class="alt-btn" onclick="selectAlt('${m}')">${m}</button>`
     ).join('');
     document.getElementById('agent-card').classList.add('visible');
