@@ -1,11 +1,6 @@
 {
-  "buildCommand": null,
-  "outputDirectory": ".",
-  "installCommand": "echo skip",
-  "framework": null,
-  "rewrites": [
-    { "source": "/kbc", "destination": "/kbc/index.html" },
-    { "source": "/kbc/(.*)", "destination": "/kbc/index.html" },
-    { "source": "/((?!kbc|api|assets|favicon|manifest|robots|sitemap|llms).*)", "destination": "/index.html" }
-  ]
+  "buildCommand": "npm install && npm run build",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "outputDirectory": ".next"
 }
