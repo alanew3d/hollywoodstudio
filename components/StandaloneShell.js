@@ -315,6 +315,13 @@ export default function StandaloneShell() {
 
   const [balance, setBalance] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [showAdmin, setShowAdmin] = useState(false);
+  const [userPlan, setUserPlan] = useState('Starter');
+  const [userCredits, setUserCredits] = useState(10);
+  const [userEmail, setUserEmail] = useState('');
+  const [userName, setUserName] = useState('');
+  const [adminUsers, setAdminUsers] = useState([]);
+  const isAdmin = typeof window !== 'undefined' && localStorage.getItem('hs_is_admin') === 'true';
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [hasMounted, setHasMounted] = useState(false);
   const [showVadooBanner, setShowVadooBanner] = useState(() => {
@@ -790,6 +797,19 @@ export default function StandaloneShell() {
               <span className="hidden sm:inline">Settings</span>
             </button>
           </div>
+
+            {/* Botão Admin — só admin vê */}
+            {isAdmin && (
+              <button
+                onClick={() => setShowAdmin(true)}
+                style={{display:'flex',alignItems:'center',gap:'6px',padding:'6px 12px',
+                  borderRadius:'6px',border:'1px solid rgba(201,168,76,0.4)',
+                  background:'rgba(201,168,76,0.08)',color:'#c9a84c',
+                  fontSize:'13px',fontWeight:700,cursor:'pointer'}}
+              >
+                ⚙ <span className="hidden sm:inline">Admin</span>
+              </button>
+            )}
         </header>
       )}
 
@@ -1141,43 +1161,201 @@ export default function StandaloneShell() {
         }
       `}</style>
 
-      {/* Settings Modal */}
+      {/* ── SETTINGS MODAL ─────────────────────────── */}
       {showSettings && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in-up">
-          <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-8 w-full max-w-sm shadow-2xl">
-            <h2 className="text-white font-bold text-lg mb-2">Settings</h2>
-            <p className="text-white/40 text-[13px] mb-8">
-              Manage your AI studio preferences and authentication.
-            </p>
-            
-            <div className="space-y-4 mb-8">
-              <div className="bg-white/5 border border-white/[0.03] rounded-md p-4">
-                <label className="block text-xs font-bold text-white/30 mb-2">
-                   Active API Key
-                </label>
-                <div className="text-[13px] font-mono text-white/80">
-                  {apiKey.slice(0, 8)}••••••••••••••••
-                </div>
-              </div>
-            </div>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={e => e.target === e.currentTarget && setShowSettings(false)}>
+          <div className="bg-[#0e0f12] border border-white/10 rounded-2xl w-full max-w-md shadow-2xl overflow-y-auto max-h-[90vh]">
+            <div className="p-6">
 
-            <div className="flex gap-3">
-              <button
-                onClick={handleKeyChange}
-                className="flex-1 h-10 rounded-md bg-red-500/10 text-red-400 hover:bg-red-500/20 text-xs font-semibold transition-all"
-              >
-                Change Key
+              {/* Header usuário */}
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-full bg-[#c9a84c]/20 border border-[#c9a84c]/40 flex items-center justify-center text-xl font-bold text-[#c9a84c]">
+                  {(userName || userEmail || 'U')[0].toUpperCase()}
+                </div>
+                <div>
+                  <div className="text-white font-semibold text-sm">{userName || 'Usuário'}</div>
+                  <div className="text-white/40 text-xs">{userEmail || 'Sem email'}</div>
+                </div>
+                <button onClick={() => setShowSettings(false)}
+                  className="ml-auto text-white/30 hover:text-white text-xl w-8 h-8 flex items-center justify-center">✕</button>
+              </div>
+
+              {/* Plano e créditos */}
+              <div className="bg-white/5 rounded-xl p-4 mb-4">
+                <div className="flex justify-between items-center mb-3">
+                  <div>
+                    <div className="text-[10px] text-white/30 uppercase tracking-widest mb-1">Plano atual</div>
+                    <div className="text-[#c9a84c] font-bold text-base">{userPlan}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-[10px] text-white/30 uppercase tracking-widest mb-1">Créditos</div>
+                    <div className="text-white font-bold text-2xl">{userCredits}</div>
+                  </div>
+                </div>
+                <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                  <div className="h-full rounded-full transition-all"
+                    style={{
+                      width: `${Math.min(100, (userCredits / (userPlan === 'Agências' ? 2000 : userPlan === 'Premium' ? 700 : 200)) * 100)}%`,
+                      background: userCredits < 20 ? '#e74c3c' : '#c9a84c'
+                    }}/>
+                </div>
+                <p className="text-[10px] text-white/20 text-center mt-2">
+                  Créditos não expiram · Acumulam mês a mês
+                </p>
+              </div>
+
+              {/* Upgrade / Cancelar */}
+              <div className="flex gap-2 mb-4">
+                <a href="/planos" onClick={() => setShowSettings(false)}
+                  className="flex-1 py-2.5 rounded-xl text-center text-xs font-bold text-black transition-opacity hover:opacity-85"
+                  style={{background:'#c9a84c'}}>
+                  ★ Ver Planos / Upgrade
+                </a>
+                <button onClick={() => {
+                  if(confirm('Cancelar assinatura? Créditos restantes continuam disponíveis.'))
+                    alert('Entre em contato: contato@hollywoodstudio.ai');
+                }}
+                  className="px-4 py-2.5 rounded-xl border border-white/10 text-white/50 text-xs hover:border-white/20 hover:text-white/80 transition-all">
+                  Cancelar
+                </button>
+              </div>
+
+              {/* Top-up créditos */}
+              <div className="mb-4">
+                <div className="text-[10px] text-[#c9a84c] uppercase tracking-widest font-bold mb-3">
+                  ⚡ Recarregar Créditos
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    {usd:'$5',  real:'R$27',  credits:'~50 cr',  url:'https://mpago.la/topup5'},
+                    {usd:'$10', real:'R$54',  credits:'~110 cr', url:'https://mpago.la/topup10'},
+                    {usd:'$15', real:'R$82',  credits:'~180 cr', url:'https://mpago.la/topup15'},
+                    {usd:'$20', real:'R$108', credits:'~250 cr', url:'https://mpago.la/topup20'},
+                  ].map(p => (
+                    <button key={p.usd} onClick={() => window.open(p.url,'_blank')}
+                      className="p-3 rounded-xl border border-white/10 bg-white/5 hover:border-[#c9a84c]/40 transition-all text-center cursor-pointer">
+                      <div className="text-[#c9a84c] font-bold text-base">{p.usd}</div>
+                      <div className="text-white/30 text-[10px]">{p.real}</div>
+                      <div className="text-white/50 text-[10px] mt-0.5">{p.credits}</div>
+                    </button>
+                  ))}
+                </div>
+                <p className="text-[10px] text-white/20 text-center mt-2">
+                  PIX · Cartão · Boleto via Mercado Pago
+                </p>
+              </div>
+
+              {/* Sair */}
+              <button onClick={() => {
+                localStorage.removeItem('muapi_key');
+                localStorage.removeItem('hs_user');
+                localStorage.removeItem('hs_is_admin');
+                setShowSettings(false);
+                window.location.reload();
+              }}
+                className="w-full py-2.5 rounded-xl border border-white/10 text-white/40 text-xs hover:border-red-500/30 hover:text-red-400 transition-all">
+                Sair da conta
               </button>
-              <button
-                onClick={() => setShowSettings(false)}
-                className="flex-1 h-10 rounded-md bg-white/5 text-white/80 hover:bg-white/10 text-xs font-semibold transition-all border border-white/5"
-              >
-                Close
-              </button>
+
             </div>
           </div>
         </div>
       )}
+
+      {/* ── ADMIN MODAL ─────────────────────────────── */}
+      {showAdmin && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={e => e.target === e.currentTarget && setShowAdmin(false)}>
+          <div className="bg-[#0e0f12] border border-white/10 rounded-2xl w-full max-w-2xl shadow-2xl overflow-y-auto max-h-[90vh]">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-white font-bold text-lg">⚙ Admin — Hollywood Studio AI</h2>
+                <button onClick={() => setShowAdmin(false)} className="text-white/30 hover:text-white text-xl">✕</button>
+              </div>
+
+              {/* Stats */}
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                {[
+                  {label:'Usuários total', value: adminUsers.length || '—', color:'#3b82f6'},
+                  {label:'Plano Básico',   value: adminUsers.filter(u=>u.plan==='Básico').length || 0,  color:'#c9a84c'},
+                  {label:'Plano Premium',  value: adminUsers.filter(u=>u.plan==='Premium').length || 0, color:'#a855f7'},
+                  {label:'Agências',       value: adminUsers.filter(u=>u.plan==='Agências').length || 0,color:'#22c55e'},
+                ].map(s => (
+                  <div key={s.label} className="bg-white/5 rounded-xl p-4 text-center">
+                    <div className="font-bold text-2xl mb-1" style={{color:s.color}}>{s.value}</div>
+                    <div className="text-white/30 text-[10px] uppercase tracking-wider">{s.label}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Alerta MuAPI */}
+              <div className="bg-white/5 rounded-xl p-4 mb-4 border border-[#c9a84c]/20">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <div className="text-white font-semibold text-sm mb-1">💳 Saldo MuAPI</div>
+                    <div className="text-white/40 text-xs">
+                      Recarregue em{' '}
+                      <a href="https://muapi.ai/billing" target="_blank" className="text-[#c9a84c] underline">muapi.ai/billing</a>
+                      {' '}quando necessário
+                    </div>
+                  </div>
+                  <div className="text-[#c9a84c] font-bold text-xl">{balance !== null ? `$${balance}` : '—'}</div>
+                </div>
+                <button onClick={() => window.open('https://muapi.ai/billing','_blank')}
+                  className="mt-3 w-full py-2 rounded-lg text-xs font-bold text-black transition-opacity hover:opacity-85"
+                  style={{background:'#c9a84c'}}>
+                  ➕ Recarregar MuAPI
+                </button>
+              </div>
+
+              {/* Usuários */}
+              <div className="bg-white/5 rounded-xl p-4">
+                <div className="flex justify-between items-center mb-3">
+                  <div className="text-white font-semibold text-sm">👥 Usuários</div>
+                  <button onClick={() => setAdminUsers([
+                    {email:'usuario@exemplo.com', plan:'Básico', credits:150, joined:'22/08/2026'},
+                  ])}
+                    className="text-[10px] text-[#c9a84c] border border-[#c9a84c]/30 px-3 py-1 rounded-full hover:bg-[#c9a84c]/10">
+                    Carregar do Supabase
+                  </button>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="text-white/30 border-b border-white/5">
+                        <th className="text-left py-2 pr-3">Email</th>
+                        <th className="text-left py-2 pr-3">Plano</th>
+                        <th className="text-left py-2 pr-3">Créditos</th>
+                        <th className="text-left py-2">Cadastro</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {adminUsers.length === 0 ? (
+                        <tr><td colSpan="4" className="text-center py-6 text-white/20">
+                          Clique em "Carregar do Supabase" para ver usuários
+                        </td></tr>
+                      ) : adminUsers.map((u,i) => (
+                        <tr key={i} className="border-b border-white/5">
+                          <td className="py-2 pr-3 text-white/70">{u.email}</td>
+                          <td className="py-2 pr-3">
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold text-black"
+                              style={{background:'#c9a84c'}}>{u.plan}</span>
+                          </td>
+                          <td className="py-2 pr-3 text-[#c9a84c] font-bold">{u.credits}</td>
+                          <td className="py-2 text-white/30">{u.joined}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
