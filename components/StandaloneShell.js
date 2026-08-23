@@ -130,7 +130,7 @@ const TABS = [
   },
   {
     id: 'workflows',
-    label: 'Spider Web',
+    label: '✺ Spider Web',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="2"/>
@@ -166,7 +166,7 @@ const TABS = [
   },
   {
     id: 'apps',
-    label: 'Explore Apps',
+    label: 'Templates & Apps',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="3" width="7" height="7"/>
@@ -1006,6 +1006,7 @@ export default function StandaloneShell() {
             onGenerationEnd={makeGenerationEndCallback('workflows')}
             onGenerationComplete={makeSuccessCallback('workflows')}
             onGenerationError={makeErrorCallback('workflows')}
+            defaultView="builder"
           />
         </div>
         <div className={activeTab === 'agents' ? "h-full w-full" : "hidden"}>

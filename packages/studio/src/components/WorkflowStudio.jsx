@@ -166,7 +166,7 @@ export default function WorkflowStudio({
   const [loading, setLoading] = useState(true);
   const [selectedWorkflow, setSelectedWorkflow] = useState(null);
   const [activeSubTab, setActiveSubTab] = useState("playground"); // 'playground' | 'builder'
-  const [activeMainTab, setActiveMainTab] = useState("templates"); // 'templates' | 'my-workflows' | 'published'
+  const [activeMainTab, setActiveMainTab] = useState("my-workflows"); // 'templates' | 'my-workflows' | 'published'
   const [renamingWorkflow, setRenamingWorkflow] = useState(null);
   const [newWorkflowName, setNewWorkflowName] = useState("");
   const [isDeletingId, setIsDeletingId] = useState(null);

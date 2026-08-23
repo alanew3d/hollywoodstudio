@@ -177,7 +177,7 @@ export default function AppsStudio({ apiKey }) {
         className="group bg-[#0a0a0a] border border-white/5 rounded-lg flex flex-col overflow-hidden transition-all duration-300 hover:border-white/10 hover:bg-[#0f0f0f] hover:shadow-2xl hover:shadow-blue-500/5 hover:-translate-y-1"
       >
         {/* Thumbnail Section */}
-        <div className="relative h-44 w-full overflow-hidden bg-white/5">
+        <div className="relative h-28 w-full overflow-hidden bg-white/5">
           {app.thumbnail ? (
             <img
               src={app.thumbnail}
@@ -193,7 +193,7 @@ export default function AppsStudio({ apiKey }) {
         </div>
 
         {/* Content Section */}
-        <div className="p-5 flex flex-col flex-1 space-y-4">
+        <div className="p-3 flex flex-col flex-1 space-y-2">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-lg text-[#22d3ee] border border-white/5 group-hover:border-white/10 transition-colors">
               <app.icon />
@@ -310,7 +310,7 @@ export default function AppsStudio({ apiKey }) {
         </div>
 
         {/* Apps Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full pt-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 w-full pt-4">
           {templateApps.map((app, index) => renderAppCard(app, false, index))}
           {dummyAppsData.map((app, index) => renderAppCard(app, true, index + templateApps.length))}
         </div>
