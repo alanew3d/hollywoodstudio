@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { ImageStudio, VideoStudio, ClippingStudio, VibeMotionStudio, LipSyncStudio, RecastStudio, CinemaStudio, AudioStudio, MarketingStudio, WorkflowStudio, AgentStudio, AppsStudio, AiInfluencerStudio, LayersStudio, getUserBalance } from 'studio';
@@ -415,7 +415,7 @@ export default function StandaloneShell() {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [hasMounted, setHasMounted] = useState(false);
   const [showVadooBanner, setShowVadooBanner] = useState(() => {
-    if (typeof window !== 'undefined') return localStorage.getItem('vadoo_banner_dismissed') !== '1';
+    if (typeof window !== 'undefined') return localStorage.getItem('hs_banner_dismissed') !== '1';
     return true;
   });
 
@@ -778,17 +778,17 @@ export default function StandaloneShell() {
       {showVadooBanner && (
         <div className="flex-shrink-0 w-full bg-indigo-600 flex items-center justify-center px-4 py-2 gap-3 relative z-50">
           <a
-            href="https://vadoo.tv"
+            href="https://hollywoodstudio.ai/planos"
             target="_blank"
             rel="noopener noreferrer"
             className="text-[13px] font-bold text-white hover:opacity-80 transition-opacity text-center"
           >
-            Unrestricted AI Images &amp; Videos → Auto-Publish as YouTube Shorts &amp; TikToks, Earn ↗
+            🎬 Hollywood Studio AI — Gere imagens, vídeos e áudio com IA. Conheça os planos ↗
           </a>
           <button
             onClick={() => {
               setShowVadooBanner(false);
-              localStorage.setItem('vadoo_banner_dismissed', '1');
+              localStorage.setItem('hs_banner_dismissed', '1');
             }}
             className="absolute right-3 text-white/60 hover:text-white transition-colors text-lg leading-none"
             aria-label="Dismiss"
