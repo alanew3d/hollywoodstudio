@@ -49,3 +49,6 @@ export default async function handler(req, res) {
 
   return res.status(405).json({ error: 'Method not allowed' });
 }
+
+// Google OAuth Client ID configurado
+// 1080113912210-medhqckkq2qp38j9ggqoegik2n9inue3.apps.googleusercontent.com

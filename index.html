@@ -1304,6 +1304,41 @@ function startApp() {
 }
 
 /* ══════════════════════════════════════════════════
+   OAUTH CALLBACK
+══════════════════════════════════════════════════ */
+async function checkOAuthCallback() {
+  const hash   = window.location.hash;
+  const search = window.location.search;
+  let token = null;
+
+  if (hash.includes('access_token=')) {
+    token = new URLSearchParams(hash.replace('#','')).get('access_token');
+  } else if (search.includes('access_token=')) {
+    token = new URLSearchParams(search).get('access_token');
+  }
+  if (!token) return;
+
+  S.token = token;
+  localStorage.setItem('hs_token', token);
+
+  try {
+    const res = await fetch(SUPA_URL + '/auth/v1/user', {
+      headers: { 'apikey': SUPA_ANON, 'Authorization': 'Bearer ' + token }
+    });
+    const d = await res.json();
+    const name = d.user_metadata?.full_name || d.user_metadata?.name || d.email?.split('@')[0] || 'Usuário';
+    S.user = { name, email: d.email, admin: false, avatar: d.user_metadata?.avatar_url };
+    S.credits = 10;
+    localStorage.setItem('hs_user', JSON.stringify(S.user));
+    localStorage.setItem('hs_credits', '10');
+  } catch(e) { console.warn('Erro ao buscar perfil:', e); }
+
+  window.history.replaceState(null, '', window.location.pathname);
+  updateAuthUI();
+  toast('Bem-vindo, ' + (S.user?.name || '') + '! ✦');
+}
+
+/* ══════════════════════════════════════════════════
    THEME
 ══════════════════════════════════════════════════ */
 function toggleTheme() {
@@ -1429,7 +1464,7 @@ async function doSignup() {
 }
 
 async function loginGoogle() {
-  const redirectUrl = window.location.origin + '/auth/callback';
+  const redirectUrl = 'https://hollywoodstudio.ai';
   window.location.href = SUPA_URL + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(redirectUrl);
 }
 
