@@ -123,6 +123,20 @@ export default async function handler(req) {
       return ok({ ok:true, recommendation: agentRecommend(prompt, genType) });
     }
 
+    // Saldo MuAPI
+    if (action === 'balance') {
+      try {
+        const res = await fetch('https://api.muapi.ai/v1/account', {
+          headers: { 'x-api-key': MUAPI_KEY }
+        });
+        const d = await res.json();
+        const balance = d.balance || d.credits || d.remaining || 0;
+        return ok({ ok: true, balance });
+      } catch(e) {
+        return ok({ ok: true, balance: '?' });
+      }
+    }
+
     // Lista modelos disponíveis
     if (action === 'models') {
       const models = Object.entries(MODELS).map(([id, m]) => ({

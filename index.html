@@ -689,7 +689,8 @@ body {
 
     <div class="topbar-right">
       <button class="btn-icon" onclick="toggleTheme()" title="Tema">☀</button>
-      <div class="credits-badge" id="credits-badge"></div>
+      <div class="credits-badge" id="credits-badge" onclick="openSettings()" style="cursor:pointer" title="Créditos"></div>
+      <span id="btn-admin-topbar" class="admin-only" style="display:none"><button class="btn-icon" onclick="showView('admin')" title="Admin" style="font-size:11px;letter-spacing:0.5px">⚙ Admin</button></span>
       <button class="btn-entrar" id="btn-entrar" onclick="openModal('credits')">Entrar</button>
     </div>
   </div>
@@ -976,32 +977,102 @@ body {
 
     <!-- ADMIN -->
     <div class="view" id="view-admin">
-      <div class="admin-card">
-        <h3>🔑 API Keys — Providers</h3>
-        <div class="provider-status" id="prov-status"></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" id="keys-grid"></div>
-        <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
-          <button class="btn-primary" onclick="salvarKeys()">💾 Salvar</button>
-          <button class="btn-sm" onclick="testarProviders()">🔌 Testar</button>
-          <button class="btn-sm" onclick="exportarEnv()">📋 Exportar .env</button>
-        </div>
-        <div id="keys-status" style="margin-top:10px;font-size:12px;color:var(--ink2)"></div>
+
+      <!-- STATS RÁPIDOS -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px">
+        ${[
+          {id:'stat-users',    label:'Usuários',     icon:'👥', color:'var(--blue)'},
+          {id:'stat-active',   label:'Ativos hoje',  icon:'🟢', color:'var(--green)'},
+          {id:'stat-revenue',  label:'Receita mês',  icon:'💰', color:'var(--gold)'},
+          {id:'stat-gens',     label:'Gerações hoje',icon:'⚡', color:'#a855f7'},
+        ].map(s=>`
+          <div class="admin-card" style="text-align:center;padding:16px">
+            <div style="font-size:24px;margin-bottom:4px">${s.icon}</div>
+            <div id="${s.id}" style="font-size:22px;font-weight:700;color:${s.color}">—</div>
+            <div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:1px">${s.label}</div>
+          </div>
+        `).join('')}
       </div>
-      <div class="admin-card">
-        <h3>👥 Usuários</h3>
-        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-          <button class="btn-sm" onclick="exportarUsuarios()">📋 Exportar CSV</button>
-          <button class="btn-sm" onclick="adicionarCreditos()">➕ Adicionar créditos</button>
+
+      <!-- ALERTA MUAPI -->
+      <div class="admin-card" style="margin-bottom:16px;border-color:rgba(201,168,76,0.3)">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+          <div>
+            <h3 style="margin-bottom:4px">💳 Saldo MuAPI</h3>
+            <p style="font-size:12px;color:var(--ink2)">Quando zerar, as gerações param. Recarregue manualmente em <a href="https://muapi.ai" target="_blank" style="color:var(--gold)">muapi.ai</a></p>
+          </div>
+          <div style="text-align:right">
+            <div id="muapi-balance" style="font-size:28px;font-weight:700;color:var(--gold)">—</div>
+            <div style="font-size:11px;color:var(--ink3)">saldo estimado</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;height:8px;background:var(--border);border-radius:4px;overflow:hidden">
+          <div id="muapi-bar" style="height:100%;background:var(--gold);border-radius:4px;width:0%;transition:width .5s"></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+          <button class="btn-primary" onclick="window.open('https://muapi.ai/billing','_blank')">
+            ➕ Recarregar MuAPI
+          </button>
+          <button class="btn-sm" onclick="checkMuapiBalance()">🔄 Verificar saldo</button>
+        </div>
+        <div id="muapi-alert" style="margin-top:10px;font-size:12px;display:none;padding:10px;border-radius:8px;background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3);color:var(--red)">
+          ⚠ Saldo baixo! Recarregue para não interromper o serviço.
+        </div>
+      </div>
+
+      <!-- USUÁRIOS -->
+      <div class="admin-card" style="margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <h3>👥 Usuários</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn-sm" onclick="loadAdminUsers()">🔄 Atualizar</button>
+            <button class="btn-sm" onclick="exportarUsuariosAdmin()">📋 CSV</button>
+            <button class="btn-primary" onclick="promptAddCredits()">➕ Créditos</button>
+          </div>
         </div>
         <div style="overflow-x:auto">
-          <table class="admin-users-table" id="users-table">
+          <table class="admin-users-table" id="admin-users-table">
             <thead><tr>
-              <th>Nome</th><th>Email</th><th>Créditos</th><th>Criado</th><th>Ações</th>
+              <th>Nome</th><th>Email</th><th>Plano</th><th>Créditos</th><th>Gerações</th><th>Cadastro</th><th>Ações</th>
             </tr></thead>
-            <tbody id="users-tbody"></tbody>
+            <tbody id="admin-users-tbody">
+              <tr><td colspan="7" style="text-align:center;padding:20px;color:var(--ink3)">
+                <button class="btn-sm" onclick="loadAdminUsers()">Carregar usuários do Supabase</button>
+              </td></tr>
+            </tbody>
           </table>
         </div>
       </div>
+
+      <!-- API KEYS -->
+      <div class="admin-card">
+        <h3>🔑 Configurações de API</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+          ${[
+            {id:'cfg-muapi',   label:'MuAPI Key (principal)',    ph:'54428a...'},
+            {id:'cfg-openai',  label:'OpenAI (backup imagem)',   ph:'sk-proj-...'},
+            {id:'cfg-google',  label:'Google / Gemini',          ph:'AIza...'},
+            {id:'cfg-fal',     label:'fal.ai (Wan3, Flux3...)',  ph:'fal-key-...'},
+            {id:'cfg-kling',   label:'Kling (direto)',           ph:'kling-...'},
+            {id:'cfg-ltx',     label:'LTX 2.5 / Lightricks',    ph:'ltx-...'},
+          ].map(k=>`
+            <label>
+              <div style="font-size:10px;color:var(--ink2);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">${k.label}</div>
+              <input type="password" id="${k.id}" placeholder="${k.ph}"
+                class="admin-input" autocomplete="off"
+                style="font-family:monospace;font-size:12px">
+            </label>
+          `).join('')}
+        </div>
+        <p style="font-size:11px;color:var(--ink3);margin-top:10px">
+          ⚠ Salve as keys no Vercel → Environment Variables. Aqui é apenas visualização de quais estão configuradas.
+        </p>
+        <div style="margin-top:12px">
+          <button class="btn-sm" onclick="testarProviders()">🔌 Testar conexões</button>
+          <span id="keys-status" style="font-size:12px;color:var(--ink2);margin-left:10px"></span>
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -1096,6 +1167,90 @@ body {
         <a href="#" onclick="openModal('credits');return false">← Voltar aos planos</a>
       </p>
     </div>
+  </div>
+</div>
+
+<!-- MODAL SETTINGS USUÁRIO -->
+<div id="modal-settings" style="display:none;position:fixed;inset:0;z-index:5001;align-items:center;justify-content:center;padding:20px">
+  <div style="position:absolute;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px)" onclick="closeSettings()"></div>
+  <div style="position:relative;background:var(--dark);border:1px solid var(--border);border-radius:20px;width:100%;max-width:480px;padding:32px;max-height:90vh;overflow-y:auto">
+    <button onclick="closeSettings()" style="position:absolute;top:14px;right:14px;background:none;border:none;color:var(--ink3);font-size:18px;cursor:pointer">✕</button>
+    
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px">
+      <div id="settings-avatar" style="width:52px;height:52px;border-radius:50%;background:var(--gold-glow);border:2px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--gold)">?</div>
+      <div>
+        <div id="settings-name" style="font-size:16px;font-weight:700;color:var(--ink)">—</div>
+        <div id="settings-email" style="font-size:12px;color:var(--ink2)">—</div>
+      </div>
+    </div>
+
+    <!-- Créditos e plano -->
+    <div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div>
+          <div style="font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Plano atual</div>
+          <div id="settings-plan" style="font-size:15px;font-weight:700;color:var(--gold)">Starter</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Créditos</div>
+          <div id="settings-credits-display" style="font-size:22px;font-weight:700;color:var(--ink)">0</div>
+        </div>
+      </div>
+      <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden">
+        <div id="settings-credits-bar" style="height:100%;background:var(--gold);border-radius:3px;transition:width .3s;width:0%"></div>
+      </div>
+      <p style="font-size:11px;color:var(--ink3);margin-top:6px;text-align:center">
+        Créditos não expiram • Acumulam com o próximo mês
+      </p>
+    </div>
+
+    <!-- Upgrade / Cancelar -->
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <button onclick="showView('planos');closeSettings()"
+        style="flex:1;padding:10px;border-radius:10px;border:none;background:var(--gold);color:#000;font-size:12px;font-weight:700;cursor:pointer">
+        ★ Ver Planos / Upgrade
+      </button>
+      <button onclick="if(confirm('Cancelar assinatura? Seus créditos restantes continuam disponíveis.'))alert('Entre em contato: contato@hollywoodstudio.ai')"
+        style="padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:none;color:var(--ink2);font-size:12px;cursor:pointer">
+        Cancelar
+      </button>
+    </div>
+
+    <!-- Top-up de créditos -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:11px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:10px">
+        ⚡ Recarregar Créditos
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        ${[
+          {usd:'$5',real:'R$27',credits:'~50 créditos',mp:'https://mpago.la/topup5'},
+          {usd:'$10',real:'R$54',credits:'~110 créditos',mp:'https://mpago.la/topup10'},
+          {usd:'$15',real:'R$82',credits:'~180 créditos',mp:'https://mpago.la/topup15'},
+          {usd:'$20',real:'R$108',credits:'~250 créditos',mp:'https://mpago.la/topup20'},
+        ].map(p=>`
+          <button onclick="window.open('${p.mp}','_blank')"
+            style="padding:12px 8px;border-radius:10px;border:1px solid var(--border);background:var(--panel);
+            cursor:pointer;text-align:center;transition:all .15s"
+            onmouseover="this.style.borderColor='var(--gold-dim)'" onmouseout="this.style.borderColor='var(--border)'">
+            <div style="font-size:16px;font-weight:700;color:var(--gold)">${p.usd}</div>
+            <div style="font-size:10px;color:var(--ink3)">${p.real}</div>
+            <div style="font-size:10px;color:var(--ink2);margin-top:2px">${p.credits}</div>
+          </button>
+        `).join('')}
+      </div>
+      <p style="font-size:10px;color:var(--ink3);text-align:center;margin-top:8px">
+        PIX • Cartão • Boleto via Mercado Pago
+      </p>
+    </div>
+
+    <!-- Logout -->
+    <button onclick="doLogout();closeSettings()"
+      style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);
+      background:none;color:var(--ink2);font-size:12px;cursor:pointer;transition:all .15s"
+      onmouseover="this.style.color='var(--red)';this.style.borderColor='var(--red)'"
+      onmouseout="this.style.color='var(--ink2)';this.style.borderColor='var(--border)'">
+      Sair da conta
+    </button>
   </div>
 </div>
 
@@ -1271,36 +1426,31 @@ function updateProviderDots(providers) {
 }
 
 function startApp() {
-  // Limpa dados pesados do localStorage se estiver cheio
-  try {
-    localStorage.setItem('hs_test', '1');
-    localStorage.removeItem('hs_test');
-  } catch(e) {
-    // Quota atingida — limpa galeria antiga
-    try {
-      localStorage.removeItem('hs_gallery');
-      localStorage.removeItem('hsai_gallery');
-      localStorage.removeItem('hsai_user');
-      S.gallery = [];
-      console.log('[HSAI] localStorage limpo por quota');
-    } catch(e2) {}
-  }
+  // Limpa localStorage se cheio
+  try { localStorage.setItem('hs_test','1'); localStorage.removeItem('hs_test'); }
+  catch(e) { try { localStorage.removeItem('hs_gallery'); S.gallery=[]; } catch(e2){} }
+
   const app = document.getElementById('app');
   app.style.display = 'flex';
   setTimeout(()=> app.classList.add('visible'), 30);
 
   document.body.dataset.theme = S.theme;
-  updateAuthUI();
-  checkOAuthCallback();
-  loadAvailableModels(); // carrega modelos disponíveis da API
-  renderModelos('todos');
-  renderGaleria();
-  renderAdmin();
-  renderStoryboard();
 
-  if (S.user?.admin) {
-    document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
-  }
+  // Verifica callback OAuth primeiro
+  checkOAuthCallback().then(() => {
+    updateAuthUI();
+    loadAvailableModels();
+    renderModelos('todos');
+    renderGaleria();
+    renderAdmin();
+    renderStoryboard();
+    if (S.user?.admin) document.querySelectorAll('.admin-only').forEach(el => el.style.display='');
+
+    // Se não logado → abre tela de login automaticamente
+    if (!S.token) {
+      setTimeout(() => openModal('login'), 400);
+    }
+  });
 }
 
 /* ══════════════════════════════════════════════════
@@ -2271,6 +2421,126 @@ async function swRunAll() {
 /* ══════════════════════════════════════════════════
    UTILS
 ══════════════════════════════════════════════════ */
+function openSettings() {
+  if (!S.token) { openModal('credits'); return; }
+  const modal = document.getElementById('modal-settings');
+  modal.style.display = 'flex';
+  // Preenche dados
+  const user = S.user || {};
+  const initial = (user.name || user.email || 'U')[0].toUpperCase();
+  document.getElementById('settings-avatar').textContent = user.avatar ? '' : initial;
+  if (user.avatar) {
+    document.getElementById('settings-avatar').innerHTML = `<img src="${user.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`;
+  }
+  document.getElementById('settings-name').textContent = user.name || 'Usuário';
+  document.getElementById('settings-email').textContent = user.email || '';
+  document.getElementById('settings-plan').textContent = 
+    S.credits >= 2000 ? 'Agências' : S.credits >= 700 ? 'Premium' : S.credits >= 200 ? 'Básico' : 'Starter';
+  document.getElementById('settings-credits-display').textContent = S.credits || 0;
+  const maxCredits = S.credits >= 2000 ? 2000 : S.credits >= 700 ? 700 : 200;
+  const pct = Math.min(100, ((S.credits || 0) / maxCredits) * 100);
+  document.getElementById('settings-credits-bar').style.width = pct + '%';
+  document.getElementById('settings-credits-bar').style.background = 
+    pct < 20 ? 'var(--red)' : pct < 50 ? '#f59e0b' : 'var(--gold)';
+}
+
+function closeSettings() {
+  document.getElementById('modal-settings').style.display = 'none';
+}
+
+/* ══════════════════════════════════════════════════
+   ADMIN FUNCTIONS
+══════════════════════════════════════════════════ */
+async function checkMuapiBalance() {
+  try {
+    const res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','Authorization':'Bearer hs-local-token'},
+      body: JSON.stringify({action:'balance'})
+    });
+    const d = await res.json();
+    const balance = d.balance || 0;
+    const formatted = '$' + parseFloat(balance).toFixed(2);
+    const el = document.getElementById('muapi-balance');
+    if (el) el.textContent = formatted;
+    const bar = document.getElementById('muapi-bar');
+    if (bar) {
+      const pct = Math.min(100, (balance / 50) * 100);
+      bar.style.width = pct + '%';
+      bar.style.background = pct < 20 ? 'var(--red)' : pct < 50 ? '#f59e0b' : 'var(--gold)';
+    }
+    const alert = document.getElementById('muapi-alert');
+    if (alert) alert.style.display = balance < 5 ? 'block' : 'none';
+  } catch(e) {
+    const el = document.getElementById('muapi-balance');
+    if (el) el.textContent = 'Erro';
+  }
+}
+
+async function loadAdminUsers() {
+  const tbody = document.getElementById('admin-users-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:16px;color:var(--ink3)">Carregando...</td></tr>';
+
+  try {
+    // Busca usuários do Supabase via service role
+    const res = await fetch(SUPA_URL + '/auth/v1/admin/users', {
+      headers: {
+        'apikey': SUPA_ANON,
+        'Authorization': 'Bearer ' + S.token
+      }
+    });
+    const d = await res.json();
+    const users = d.users || [];
+
+    if (!users.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:16px;color:var(--ink3)">Nenhum usuário cadastrado ainda</td></tr>';
+      return;
+    }
+
+    const stats = { total: users.length, active: 0 };
+    tbody.innerHTML = users.map(u => {
+      const name = u.user_metadata?.full_name || u.email?.split('@')[0] || '—';
+      const created = u.created_at ? new Date(u.created_at).toLocaleDateString('pt-BR') : '—';
+      const provider = u.app_metadata?.provider || 'email';
+      return `<tr>
+        <td style="padding:8px">${escHtml(name)}</td>
+        <td style="padding:8px;font-size:11px;color:var(--ink2)">${escHtml(u.email||'')}</td>
+        <td style="padding:8px"><span style="font-size:10px;padding:2px 8px;border-radius:10px;background:var(--gold-glow);color:var(--gold);font-weight:700">Starter</span></td>
+        <td style="padding:8px;font-weight:700;color:var(--gold)">10</td>
+        <td style="padding:8px;color:var(--ink2)">0</td>
+        <td style="padding:8px;font-size:11px;color:var(--ink3)">${created}</td>
+        <td style="padding:8px">
+          <button class="btn-sm" onclick="adminAddCredits('${u.id}','${escHtml(u.email||'')}')">+créditos</button>
+        </td>
+      </tr>`;
+    }).join('');
+
+    // Atualiza stats
+    const statEl = document.getElementById('stat-users');
+    if (statEl) statEl.textContent = users.length;
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:16px;color:var(--red)">Erro: ${e.message}</td></tr>`;
+  }
+}
+
+function adminAddCredits(userId, email) {
+  const amount = parseInt(prompt('Créditos para ' + email + ':', '200') || '0');
+  if (!amount) return;
+  // Aqui você atualizaria o Supabase — por enquanto mostra confirmação
+  toast('✓ ' + amount + ' créditos para ' + email + ' (implemente via Supabase)');
+}
+
+function promptAddCredits() {
+  const email = prompt('Email do usuário:');
+  if (!email) return;
+  adminAddCredits('', email);
+}
+
+function exportarUsuariosAdmin() {
+  toast('Exportação disponível após integração Supabase completa');
+}
+
 function escHtml(s=''){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 function toast(msg, dur=2800) {
