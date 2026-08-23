@@ -1,0 +1,7 @@
+{
+  "framework": "nextjs",
+  "outputDirectory": ".next",
+  "env": {
+    "FAL_KEY": "@fal-key"
+  }
+}
