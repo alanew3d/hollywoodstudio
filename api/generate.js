@@ -1,334 +1,161 @@
 export const config = { runtime: 'edge' };
 
-// Modelos disponíveis via OpenRouter (verificados)
-const OR_MODELS = {
-  // CHAT
-  'gemini-2.5-flash':   { type:'chat', orModel:'google/gemini-2.5-flash' },
-  'gemini-2.5-pro':     { type:'chat', orModel:'google/gemini-2.5-pro' },
-  'gpt-4o':             { type:'chat', orModel:'openai/gpt-4o' },
-  'gpt-4o-mini':        { type:'chat', orModel:'openai/gpt-4o-mini' },
-  'claude-sonnet-4-6':  { type:'chat', orModel:'anthropic/claude-sonnet-4-5' },
-  'grok-3':             { type:'chat', orModel:'x-ai/grok-3-fast' },
-  'grok-3-mini':        { type:'chat', orModel:'x-ai/grok-3-mini-fast' },
-  // IMAGEM via OpenRouter (modelos confirmados)
-  'gemini-image':       { type:'image', orModel:'google/gemini-2.5-flash-image' },
-  'gemini-image-pro':   { type:'image', orModel:'google/gemini-3.1-flash-image' },
-  'gpt-image-or':       { type:'image', orModel:'openai/gpt-5-image-mini' },
-  'gpt-image-or-pro':   { type:'image', orModel:'openai/gpt-5-image' },
-};
+const MUAPI_KEY = process.env.MUAPI_KEY || '54428a943dc90921ff29737af3b5ace6527c5309dcc17d6c1ad54dfd1c32abae';
+const MUAPI_BASE = 'https://api.muapi.ai/v1';
 
-// Modelos com providers diretos (quando key disponível)
-const DIRECT_MODELS = {
-  // OpenAI direto
-  'gpt-image-1':      { provider:'openai', type:'image' },
-  'dall-e-3':         { provider:'openai', type:'image' },
-  'gpt-4o-direct':    { provider:'openai', type:'chat' },
-  // Google direto
-  'imagen-3':         { provider:'google', type:'image' },
-  'veo-3':            { provider:'google', type:'video' },
-  // BytePlus direto
-  'seedance-2.5':     { provider:'byteplus', type:'video', model:'video-02' },
-  'seedance-2':       { provider:'byteplus', type:'video', model:'video-01' },
-  // fal.ai direto
-  'flux-pro':         { provider:'fal', type:'image', falModel:'fal-ai/flux-pro' },
-  'flux-pro-ultra':   { provider:'fal', type:'image', falModel:'fal-ai/flux-pro/v1.1-ultra' },
-  'nano-banana-pro':  { provider:'fal', type:'image', falModel:'fal-ai/flux/dev' },
-  'minimax-h3':       { provider:'fal', type:'video', falModel:'fal-ai/minimax/video-01-live' },
-  'kling-3':          { provider:'fal', type:'video', falModel:'fal-ai/kling-video/v1.6/pro/text-to-video' },
-  'wan-3':            { provider:'fal', type:'video', falModel:'fal-ai/wan/v2.2/t2v' },
-  'wan-2.7':          { provider:'fal', type:'video', falModel:'fal-ai/wan/v2.1/t2v' },
-  // xAI direto
-  'grok-image-2':     { provider:'xai', type:'image' },
+// Mapa de modelos → endpoints MuAPI
+const MODELS = {
+  // IMAGEM
+  'nano-banana-pro':  { type:'image', endpoint:'/images/generate', model:'nano-banana-pro' },
+  'nano-banana-2':    { type:'image', endpoint:'/images/generate', model:'nano-banana-2' },
+  'flux-pro':         { type:'image', endpoint:'/images/generate', model:'flux-pro' },
+  'flux-dev':         { type:'image', endpoint:'/images/generate', model:'flux-dev' },
+  'seedream':         { type:'image', endpoint:'/images/generate', model:'seedream' },
+  'wan-image':        { type:'image', endpoint:'/images/generate', model:'wan-2.5' },
+  'ideogram':         { type:'image', endpoint:'/images/generate', model:'ideogram-v3' },
+  'gpt-image-1':      { type:'image', endpoint:'/images/generate', model:'gpt-image-1' },
+  // VÍDEO
+  'seedance-lite':    { type:'video', endpoint:'/videos/generate', model:'seedance-lite' },
+  'seedance-2':       { type:'video', endpoint:'/videos/generate', model:'seedance-2' },
+  'seedance-2.5':     { type:'video', endpoint:'/videos/generate', model:'seedance-2.5' },
+  'wan-2.1':          { type:'video', endpoint:'/videos/generate', model:'wan-2.1' },
+  'wan-3':            { type:'video', endpoint:'/videos/generate', model:'wan-3' },
+  'kling-1.6':        { type:'video', endpoint:'/videos/generate', model:'kling-1.6' },
+  'kling-2.1':        { type:'video', endpoint:'/videos/generate', model:'kling-2.1' },
+  'minimax-h3':       { type:'video', endpoint:'/videos/generate', model:'minimax-hailuo-h3' },
+  'veo-3':            { type:'video', endpoint:'/videos/generate', model:'veo-3' },
+  // CHAT
+  'gemini-2.5-flash': { type:'chat', endpoint:'/chat/completions', model:'gemini-2.5-flash' },
+  'gpt-4o':           { type:'chat', endpoint:'/chat/completions', model:'gpt-4o' },
+  'claude-sonnet':    { type:'chat', endpoint:'/chat/completions', model:'claude-sonnet-4-5' },
+  'grok-3':           { type:'chat', endpoint:'/chat/completions', model:'grok-3' },
 };
 
 function agentRecommend(prompt, genType) {
   const p = prompt.toLowerCase();
-  const hasOR = true; // assumido ativo
-
   if (genType === 'video') {
-    return {
-      model: 'seedance-2.5',
-      reason: 'Seedance 2.5 — melhor cinemática. Requer BytePlus key.',
-      alternatives: ['minimax-h3','kling-3','wan-3'],
-      type: 'video'
-    };
+    const isCinema = /samurai|cinemat|épico|epic|ação|action|luxury|fashion|fantasia|drama/.test(p);
+    return isCinema
+      ? { model:'seedance-2.5', reason:'Seedance 2.5 — melhor cinemática para cenas épicas.', alternatives:['kling-2.1','minimax-h3','wan-3','veo-3'] }
+      : { model:'seedance-lite', reason:'Seedance Lite — rápido e econômico para vídeos gerais.', alternatives:['seedance-2','wan-2.1','kling-1.6'] };
   }
-
   if (genType === 'chat') {
-    const isCode = /código|code|programa|script|debug/.test(p);
-    return {
-      model: isCode ? 'claude-sonnet-4-6' : 'gemini-2.5-flash',
-      reason: isCode ? 'Claude Sonnet — excelente para código.' : 'Gemini 2.5 Flash — rápido e preciso.',
-      alternatives: ['gpt-4o','grok-3','gemini-2.5-pro'],
-      type: 'chat'
-    };
+    return { model:'gemini-2.5-flash', reason:'Gemini 2.5 Flash — rápido e inteligente.', alternatives:['gpt-4o','claude-sonnet','grok-3'] };
   }
-
-  // imagem (padrão)
-  return {
-    model: 'gemini-image',
-    reason: 'Gemini Image via OpenRouter — disponível agora com sua key.',
-    alternatives: ['gpt-image-or','gemini-image-pro','gpt-image-or-pro'],
-    type: 'image'
-  };
+  // imagem
+  const isPortrait = /retrato|portrait|pessoa|rosto|face|modelo/.test(p);
+  const isArt      = /anime|cartoon|ilustr|digital art|concept|fantasia/.test(p);
+  if (isPortrait) return { model:'nano-banana-pro', reason:'Nano Banana Pro — detalhes faciais e consistência de identidade.', alternatives:['gpt-image-1','flux-pro','ideogram'] };
+  if (isArt)      return { model:'flux-dev',        reason:'Flux Dev — qualidade artística e estilos variados.', alternatives:['nano-banana-pro','ideogram','seedream'] };
+  return           { model:'nano-banana-pro', reason:'Nano Banana Pro — versátil e de alta qualidade.', alternatives:['flux-pro','gpt-image-1','seedream','wan-image'] };
 }
 
-// ── OPENROUTER ────────────────────────────────────────
-async function callOR(orModel, type, prompt, options) {
-  const key = process.env.OPENROUTER_API_KEY;
-  if (!key) throw new Error('OPENROUTER_API_KEY não configurada');
-
-  const headers = {
-    'Authorization': `Bearer ${key}`,
-    'Content-Type': 'application/json',
-    'HTTP-Referer': 'https://hollywoodstudio.ai',
-    'X-Title': 'Hollywood Studio AI'
-  };
-
-  if (type === 'chat') {
-    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method:'POST', headers,
-      body: JSON.stringify({ model: orModel, messages:[{role:'user',content:prompt}] })
-    });
-    const text = await res.text();
-    let d; try { d = JSON.parse(text); } catch(e) { throw new Error('OpenRouter retornou resposta inválida'); }
-    if (!res.ok) throw new Error(d.error?.message || 'OpenRouter chat error');
-    return { type:'chat', text: d.choices[0].message.content, provider:'OpenRouter / '+orModel };
-  }
-
-  if (type === 'image') {
-    // Modelos de imagem do OpenRouter usam chat/completions com output de imagem
-    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method:'POST', headers,
-      body: JSON.stringify({
-        model: orModel,
-        messages: [{ role:'user', content: prompt }],
-      })
-    });
-    const text = await res.text();
-    let d; try { d = JSON.parse(text); } catch(e) { throw new Error('OpenRouter retornou resposta inválida: '+text.slice(0,100)); }
-    if (!res.ok) throw new Error(d.error?.message || 'OpenRouter image error');
-
-    const content = d.choices?.[0]?.message?.content;
-    if (Array.isArray(content)) {
-      for (const block of content) {
-        if (block.type === 'image_url') return { type:'image', url: block.image_url?.url || block.image_url, provider:'OpenRouter / '+orModel };
-        if (block.type === 'image')     return { type:'image', url: block.source?.url || block.url, provider:'OpenRouter / '+orModel };
-      }
-    }
-    if (typeof content === 'string') {
-      const mdImg = content.match(/!\[.*?\]\((https?:\/\/[^\)]+)\)/);
-      if (mdImg) return { type:'image', url: mdImg[1], provider:'OpenRouter / '+orModel };
-      const urlMatch = content.match(/https?:\/\/\S+\.(jpg|jpeg|png|webp)/i);
-      if (urlMatch) return { type:'image', url: urlMatch[0], provider:'OpenRouter / '+orModel };
-      // retorna como texto se não achou imagem
-      return { type:'chat', text: content, provider:'OpenRouter / '+orModel };
-    }
-    throw new Error('OpenRouter não retornou imagem para '+orModel);
-  }
-}
-
-// ── OPENAI DIRETO ─────────────────────────────────────
-async function callOpenAI(route, prompt, options) {
-  const key = process.env.OPENAI_API_KEY;
-  if (!key) throw new Error('OPENAI_API_KEY não configurada');
-  if (route.type === 'image') {
-    const res = await fetch('https://api.openai.com/v1/images/generations', {
-      method:'POST',
-      headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},
-      body: JSON.stringify({ model:'dall-e-3', prompt, n:1, size:'1024x1024' })
-    });
-    const d = await res.json();
-    if (!res.ok) throw new Error(d.error?.message || 'OpenAI error');
-    return { type:'image', url: d.data[0].url, provider:'OpenAI' };
-  }
-  if (route.type === 'chat') {
-    const res = await fetch('https://api.openai.com/v1/chat/completions', {
-      method:'POST',
-      headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},
-      body: JSON.stringify({ model:'gpt-4o', messages:[{role:'user',content:prompt}] })
-    });
-    const d = await res.json();
-    if (!res.ok) throw new Error(d.error?.message || 'OpenAI error');
-    return { type:'chat', text: d.choices[0].message.content, provider:'OpenAI' };
-  }
-}
-
-// ── GOOGLE DIRETO ─────────────────────────────────────
-async function callGoogle(route, prompt, options) {
-  const key = process.env.GOOGLE_API_KEY;
-  if (!key) throw new Error('GOOGLE_API_KEY não configurada');
-  if (route.type === 'chat') {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`,{
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ contents:[{parts:[{text:prompt}]}] })
-    });
-    const d = await res.json();
-    if (!res.ok) throw new Error(d.error?.message || 'Google error');
-    return { type:'chat', text: d.candidates[0].content.parts[0].text, provider:'Google' };
-  }
-  if (route.type === 'image') {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${key}`,{
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ instances:[{prompt}], parameters:{ sampleCount:1, aspectRatio: options.ratio||'1:1' } })
-    });
-    const d = await res.json();
-    if (!res.ok) throw new Error(d.error?.message || 'Google Imagen error');
-    return { type:'image', url:`data:image/png;base64,${d.predictions[0].bytesBase64Encoded}`, provider:'Google / Imagen' };
-  }
-}
-
-// ── XAI DIRETO ────────────────────────────────────────
-async function callXAI(route, prompt, options) {
-  const key = process.env.XAI_API_KEY;
-  if (!key) throw new Error('XAI_API_KEY não configurada');
-  if (route.type === 'image') {
-    const res = await fetch('https://api.x.ai/v1/images/generations',{
-      method:'POST',
-      headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},
-      body: JSON.stringify({ model:'grok-2-image-1212', prompt, n:1 })
-    });
-    const d = await res.json();
-    if (!res.ok) throw new Error(d.error?.message || 'xAI error');
-    return { type:'image', url: d.data[0].url, provider:'xAI / Grok' };
-  }
-}
-
-// ── FAL.AI DIRETO ─────────────────────────────────────
-async function callFal(route, prompt, options) {
-  const key = process.env.FAL_KEY;
-  if (!key) throw new Error('FAL_KEY não configurada');
-  const res = await fetch(`https://fal.run/${route.falModel}`,{
-    method:'POST',
-    headers:{'Authorization':`Key ${key}`,'Content-Type':'application/json'},
-    body: JSON.stringify({ prompt, ...(route.type==='video'&&{duration:5,aspect_ratio:options.ratio||'16:9'}), ...(route.type==='image'&&{image_size:'square_hd',num_images:1}) })
+async function callMuAPI(endpoint, body) {
+  const res = await fetch(MUAPI_BASE + endpoint, {
+    method: 'POST',
+    headers: { 'x-api-key': MUAPI_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
   });
-  const d = await res.json();
-  if (!res.ok) throw new Error(d.detail||d.error||'fal.ai error');
-  if (route.type==='image') return { type:'image', url: d.images?.[0]?.url, provider:'fal.ai' };
-  const url = d.video?.url; if (url) return { type:'video', url, provider:'fal.ai' };
-  return { type:'video_task', taskId: d.request_id, provider:'fal.ai' };
+  const text = await res.text();
+  let data;
+  try { data = JSON.parse(text); } catch(e) { throw new Error('MuAPI resposta inválida: ' + text.slice(0,100)); }
+  if (!res.ok) throw new Error(data.message || data.error || 'MuAPI error ' + res.status);
+  return data;
 }
 
-// ── BYTEPLUS DIRETO ───────────────────────────────────
-async function callByteplus(route, prompt, options) {
-  const key = process.env.BYTEPLUS_API_KEY;
-  if (!key) throw new Error('BYTEPLUS_API_KEY não configurada');
-  const res = await fetch('https://ark.ap-southeast.byteplusi.com/api/v3/contents/generations/tasks',{
-    method:'POST',
-    headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},
-    body: JSON.stringify({ model: route.model||'video-01', content:[{type:'text',text:prompt}], parameters:{duration:5,resolution:'720p',aspect_ratio:options.ratio||'16:9'} })
+async function generateImage(modelInfo, prompt, options) {
+  const data = await callMuAPI(modelInfo.endpoint, {
+    model: modelInfo.model,
+    prompt,
+    width:  options.ratio === '9:16' ? 768  : options.ratio === '1:1' ? 1024 : 1344,
+    height: options.ratio === '9:16' ? 1344 : options.ratio === '1:1' ? 1024 : 768,
+    num_images: 1,
   });
-  const d = await res.json();
-  if (!res.ok) throw new Error(d.error?.message||'BytePlus error');
-  return { type:'video_task', taskId: d.id, provider:'BytePlus / Seedance' };
+  const url = data.images?.[0]?.url || data.url || data.data?.[0]?.url;
+  if (!url) throw new Error('MuAPI não retornou imagem');
+  return { type:'image', url, provider:'MuAPI / ' + modelInfo.model };
 }
 
-// ── ROUTER PRINCIPAL ──────────────────────────────────
-async function routeGeneration(modelId, prompt, options) {
-  // 1. Tenta OpenRouter primeiro (modelos diretos do OR)
-  if (OR_MODELS[modelId]) {
-    const orRoute = OR_MODELS[modelId];
-    return callOR(orRoute.orModel, orRoute.type, prompt, options);
-  }
-
-  // 2. Tenta provider direto
-  const direct = DIRECT_MODELS[modelId];
-  if (!direct) throw new Error(`Modelo "${modelId}" não encontrado`);
-
-  const hasKey = {
-    openai:    !!process.env.OPENAI_API_KEY,
-    google:    !!process.env.GOOGLE_API_KEY,
-    xai:       !!process.env.XAI_API_KEY,
-    byteplus:  !!process.env.BYTEPLUS_API_KEY,
-    fal:       !!process.env.FAL_KEY,
-  };
-
-  if (!hasKey[direct.provider]) {
-    throw new Error(`${direct.provider.toUpperCase()} key não configurada no Vercel. Configure ${direct.provider.toUpperCase()}_API_KEY em Settings → Environment Variables.`);
-  }
-
-  switch(direct.provider) {
-    case 'openai':   return callOpenAI(direct, prompt, options);
-    case 'google':   return callGoogle(direct, prompt, options);
-    case 'xai':      return callXAI(direct, prompt, options);
-    case 'fal':      return callFal(direct, prompt, options);
-    case 'byteplus': return callByteplus(direct, prompt, options);
-  }
+async function generateVideo(modelInfo, prompt, options) {
+  const data = await callMuAPI(modelInfo.endpoint, {
+    model: modelInfo.model,
+    prompt,
+    aspect_ratio: options.ratio || '16:9',
+    duration: options.duration || 5,
+  });
+  // Vídeo pode ser assíncrono
+  const url = data.video_url || data.url || data.videos?.[0]?.url;
+  if (url) return { type:'video', url, provider:'MuAPI / ' + modelInfo.model };
+  const taskId = data.task_id || data.id || data.request_id;
+  if (taskId) return { type:'video_task', taskId, provider:'MuAPI / ' + modelInfo.model, polling: true };
+  throw new Error('MuAPI não retornou vídeo');
 }
 
-// ── HANDLER PRINCIPAL ─────────────────────────────────
+async function generateChat(modelInfo, prompt) {
+  const data = await callMuAPI(modelInfo.endpoint, {
+    model: modelInfo.model,
+    messages: [{ role:'user', content: prompt }],
+    max_tokens: 2000,
+  });
+  const text = data.choices?.[0]?.message?.content || data.content || data.text;
+  if (!text) throw new Error('MuAPI não retornou texto');
+  return { type:'chat', text, provider:'MuAPI / ' + modelInfo.model };
+}
+
 export default async function handler(req) {
   if (req.method === 'OPTIONS') return ok(null, 200);
-  if (req.method !== 'POST') return ok({error:'Method not allowed'}, 405);
+  if (req.method !== 'POST') return ok({ error:'Method not allowed' }, 405);
 
-  const auth = req.headers.get('authorization')||'';
-  const token = auth.replace('Bearer ','');
-  if (!['hs-local-token', process.env.API_SECRET||'hs-token'].includes(token))
-    return ok({ok:false,error:'Unauthorized'}, 401);
+  // Auth — aceita token local ou Supabase
+  const auth = req.headers.get('authorization') || '';
+  const token = auth.replace('Bearer ', '');
+  const validLocal = ['hs-local-token', process.env.API_SECRET || 'hs-token'];
+  if (!token || (!validLocal.includes(token) && token.length < 20)) {
+    return ok({ ok:false, error:'Unauthorized' }, 401);
+  }
 
   try {
     const body = await req.json();
-    const { action, prompt, model, options={}, genType='image' } = body;
+    const { action, prompt, model, options = {}, genType = 'image' } = body;
 
+    // Recomendação do agente
     if (action === 'recommend') {
       return ok({ ok:true, recommendation: agentRecommend(prompt, genType) });
     }
 
+    // Lista modelos disponíveis
     if (action === 'models') {
-      const hasOR = !!process.env.OPENROUTER_API_KEY;
-      const providers = [];
-      if (!!process.env.OPENAI_API_KEY)    providers.push('openai');
-      if (!!process.env.GOOGLE_API_KEY)    providers.push('google');
-      if (!!process.env.XAI_API_KEY)       providers.push('xai');
-      if (!!process.env.BYTEPLUS_API_KEY)  providers.push('byteplus');
-      if (!!process.env.FAL_KEY)           providers.push('fal');
-      if (hasOR)                           providers.push('openrouter');
-
-      // Modelos disponíveis
-      const available = [];
-      if (hasOR) {
-        Object.entries(OR_MODELS).forEach(([id,r]) => available.push({id, type:r.type, provider:'openrouter', name: getModelName(id)}));
-      }
-      Object.entries(DIRECT_MODELS).forEach(([id,r]) => {
-        if (providers.includes(r.provider)) available.push({id, type:r.type, provider:r.provider, name: getModelName(id)});
-      });
-
-      return ok({ ok:true, providers, models: available });
+      const models = Object.entries(MODELS).map(([id, m]) => ({
+        id, type: m.type, provider: 'MuAPI', name: id
+      }));
+      return ok({ ok:true, providers:['muapi'], models });
     }
 
+    // Gera conteúdo
     if (action === 'generate') {
-      if (!prompt) return ok({error:'Prompt obrigatório'}, 400);
-      if (!model)  return ok({error:'Modelo obrigatório'}, 400);
-      const result = await routeGeneration(model, prompt, options);
+      if (!prompt) return ok({ error:'Prompt obrigatório' }, 400);
+      if (!model)  return ok({ error:'Modelo obrigatório' }, 400);
+
+      const modelInfo = MODELS[model];
+      if (!modelInfo) return ok({ error:`Modelo "${model}" não encontrado` }, 400);
+
+      let result;
+      if (modelInfo.type === 'image') result = await generateImage(modelInfo, prompt, options);
+      else if (modelInfo.type === 'video') result = await generateVideo(modelInfo, prompt, options);
+      else result = await generateChat(modelInfo, prompt);
+
       return ok({ ok:true, result });
     }
 
-    return ok({error:'Action inválida'}, 400);
+    return ok({ error:'Action inválida' }, 400);
   } catch(e) {
     return ok({ ok:false, error: e.message }, 500);
   }
 }
 
-function getModelName(id) {
-  const names = {
-    'gemini-image':'Gemini Image', 'gemini-image-pro':'Gemini Image Pro',
-    'gpt-image-or':'GPT-5 Image Mini', 'gpt-image-or-pro':'GPT-5 Image',
-    'gemini-2.5-flash':'Gemini 2.5 Flash', 'gemini-2.5-pro':'Gemini 2.5 Pro',
-    'gpt-4o':'GPT-4o', 'gpt-4o-mini':'GPT-4o Mini', 'claude-sonnet-4-6':'Claude Sonnet',
-    'grok-3':'Grok 3', 'grok-3-mini':'Grok 3 Mini',
-    'gpt-image-1':'GPT Image 1', 'imagen-3':'Imagen 3',
-    'seedance-2.5':'Seedance 2.5', 'seedance-2':'Seedance 2',
-    'flux-pro':'Flux Pro', 'flux-pro-ultra':'Flux Pro Ultra', 'nano-banana-pro':'Nano Banana Pro',
-    'minimax-h3':'MiniMax H3', 'kling-3':'Kling 3', 'wan-3':'Wan 3', 'wan-2.7':'Wan 2.7',
-    'veo-3':'Veo 3', 'grok-image-2':'Grok Image 2',
-  };
-  return names[id] || id;
-}
-
 function ok(data, status=200) {
   return new Response(JSON.stringify(data), {
     status,
-    headers:{'Content-Type':'application/json','Access-Control-Allow-Origin':'*'}
+    headers: { 'Content-Type':'application/json', 'Access-Control-Allow-Origin':'*' }
   });
 }

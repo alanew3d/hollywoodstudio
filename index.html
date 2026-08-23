@@ -744,42 +744,29 @@ body {
               <select id="manual-model" style="width:100%;background:var(--black);border:1px solid var(--border);
                 border-radius:8px;color:var(--ink);font-size:13px;padding:9px 12px;outline:none">
                 <optgroup label="🎬 Vídeo">
-                  <option value="seedance-2.5">Seedance 2.5 — TOP (BytePlus)</option>
-                  <option value="seedance-2">Seedance 2 (BytePlus)</option>
-                  <option value="minimax-h3">MiniMax H3 — áudio nativo (fal.ai)</option>
-                  <option value="hailuo-2">Hailuo 2 — NOVO (fal.ai)</option>
-                  <option value="kling-3">Kling 3 (fal.ai)</option>
-                  <option value="kling-3-pro">Kling 3 Pro (fal.ai)</option>
-                  <option value="wan-3">Wan 3 — NOVO (fal.ai)</option>
-                  <option value="wan-2.7">Wan 2.7 (fal.ai)</option>
-                  <option value="veo-3">Veo 3 — Google NOVO</option>
-                  <option value="veo-2">Veo 2 — Google</option>
-                  <option value="ltx-video">LTX Video — 4K rápido (fal.ai)</option>
-                  <option value="runway-gen4">Runway Gen-4 — PRO (fal.ai)</option>
-                  <option value="grok-video">Grok Video 1.5 (xAI)</option>
+                  <option value="kling-2.1">⭐ Kling 3 Omni — melhor qualidade</option>
+                  <option value="seedance-2.5">Seedance 2.5 — cinemático</option>
+                  <option value="seedance-2">Seedance 2</option>
+                  <option value="minimax-h3">MiniMax H3 — com áudio</option>
+                  <option value="wan-3">Wan 3</option>
+                  <option value="wan-2.1">Wan 2.1 — rápido</option>
+                  <option value="veo-3">Veo 3 — Google</option>
+                  <option value="seedance-lite">Seedance Lite — econômico</option>
                 </optgroup>
                 <optgroup label="🖼 Imagem">
-                  <option value="gpt-image-1">GPT Image 1 — TOP (OpenAI)</option>
-                  <option value="gpt-image-2">GPT Image 2 — NOVO (OpenAI)</option>
-                  <option value="nano-banana-pro">Nano Banana Pro — TOP (fal.ai)</option>
-                  <option value="nano-banana-2">Nano Banana 2 (fal.ai)</option>
-                  <option value="flux-pro-ultra">Flux Pro Ultra — PRO (fal.ai)</option>
-                  <option value="flux-pro">Flux Pro (fal.ai)</option>
-                  <option value="flux-dev">Flux Dev (fal.ai)</option>
-                  <option value="ideogram-v3">Ideogram V3 — texto+logo NOVO (fal.ai)</option>
-                  <option value="recraft-v3">Recraft V3 — SVG vetorial (fal.ai)</option>
-                  <option value="grok-image-2">Grok Image 2 — $0.04 (xAI)</option>
-                  <option value="imagen-3">Imagen 3 (Google)</option>
-                  <option value="seedream">Seedream (BytePlus)</option>
+                  <option value="nano-banana-pro">⭐ Nano Banana Pro — retratos</option>
+                  <option value="flux-pro">Flux Pro — fotorrealismo</option>
+                  <option value="flux-dev">Flux Dev — arte</option>
+                  <option value="ideogram">Ideogram — texto em imagem</option>
+                  <option value="gpt-image-1">GPT Image 1</option>
+                  <option value="seedream">Seedream</option>
+                  <option value="wan-image">Wan 2.5 Image</option>
                 </optgroup>
                 <optgroup label="💬 Chat / Texto">
-                  <option value="gemini-2.5-flash">Gemini 2.5 Flash — RÁPIDO (OpenRouter)</option>
-                  <option value="gemini-2.5-pro">Gemini 2.5 Pro (OpenRouter)</option>
-                  <option value="gpt-4o">GPT-4o (OpenRouter)</option>
-                  <option value="gpt-4o-mini">GPT-4o Mini — RÁPIDO (OpenRouter)</option>
-                  <option value="claude-sonnet-4-6">Claude Sonnet — TOP (OpenRouter)</option>
-                  <option value="grok-3">Grok 3 (OpenRouter)</option>
-                  <option value="grok-3-mini">Grok 3 Mini — RÁPIDO (OpenRouter)</option>
+                  <option value="gemini-2.5-flash">⭐ Gemini 2.5 Flash — rápido</option>
+                  <option value="gpt-4o">GPT-4o</option>
+                  <option value="claude-sonnet">Claude Sonnet</option>
+                  <option value="grok-3">Grok 3</option>
                 </optgroup>
               </select>
             </div>
@@ -864,6 +851,33 @@ body {
       <div style="text-align:center;margin-bottom:8px">
         <h2 style="font-family:Georgia,serif;font-size:28px;font-weight:400">Planos & Créditos</h2>
         <p style="color:var(--ink2);font-size:13px;margin-top:6px">Créditos válidos para vídeo, imagem e áudio</p>
+      </div>
+
+      <!-- Pacotes avulsos -->
+      <div style="width:100%;max-width:860px;margin-bottom:32px">
+        <p style="font-size:11px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;font-weight:700;text-align:center;margin-bottom:14px">
+          ⚡ Créditos Avulsos — sem assinatura
+        </p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
+          ${[
+            {label:'Starter', real:'R$27', usd:'$5', credits:'~50 créditos'},
+            {label:'Plus', real:'R$54', usd:'$10', credits:'~110 créditos'},
+            {label:'Pro', real:'R$82', usd:'$15', credits:'~180 créditos'},
+            {label:'Max', real:'R$108', usd:'$20', credits:'~250 créditos'},
+          ].map(p => `
+            <div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;cursor:pointer;transition:all .15s"
+              onmouseover="this.style.borderColor='var(--gold-dim)'" onmouseout="this.style.borderColor='var(--border)'"
+              onclick="alert('Pacotes avulsos em breve via Mercado Pago!')">
+              <div style="font-size:11px;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">${p.label}</div>
+              <div style="font-size:22px;font-weight:300;color:var(--gold)">${p.real}</div>
+              <div style="font-size:11px;color:var(--ink3)">${p.usd}</div>
+              <div style="font-size:11px;color:var(--ink2);margin-top:4px">${p.credits}</div>
+            </div>
+          `).join('')}
+        </div>
+        <p style="text-align:center;font-size:11px;color:var(--ink3);margin-top:10px">
+          PIX • Cartão • Boleto — Créditos não expiram • Acumulam com assinatura
+        </p>
       </div>
       <div class="planos-grid">
         <div class="plano-card">
@@ -1461,7 +1475,7 @@ function setMode(m) {
   hideOutput();
 }
 
-const RATIOS = ['16:9','9:16','1:1','4:5','3:4','4:3','21:9','2:3','3:2'];
+const RATIOS = ['9:16','16:9','1:1','4:5','3:4','4:3','21:9','2:3'];
 let ratioIdx = 0;
 function cycleRatio() {
   ratioIdx = (ratioIdx+1) % RATIOS.length;
