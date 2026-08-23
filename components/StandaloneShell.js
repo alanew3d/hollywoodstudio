@@ -165,6 +165,27 @@ const TABS = [
     )
   },
   {
+    id: 'headshot',
+    label: 'Headshot Studio',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+    )
+  },
+  {
+    id: 'nano-banana',
+    label: 'Nano Banana Studio',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+        <circle cx="8.5" cy="8.5" r="1.5"/>
+        <polyline points="21 15 16 10 5 21"/>
+      </svg>
+    )
+  },
+  {
     id: 'apps',
     label: 'Templates & Apps',
     icon: (
@@ -1025,6 +1046,77 @@ export default function StandaloneShell() {
             />
           )}
         </div>
+        {/* Headshot Studio */}
+        <div className={activeTab === 'headshot' ? "h-full w-full overflow-auto" : "hidden"}>
+          <div className="flex flex-col items-center justify-center min-h-full p-8 text-center">
+            <div className="w-20 h-20 rounded-2xl mb-6 flex items-center justify-center text-4xl"
+              style={{background:'rgba(201,168,76,0.15)',border:'1px solid rgba(201,168,76,0.3)'}}>
+              👤
+            </div>
+            <h2 className="text-white font-bold text-2xl mb-3">AI Headshot Studio</h2>
+            <p className="text-white/50 text-sm max-w-md mb-8 leading-relaxed">
+              Gere retratos profissionais com IA. Carregue uma foto, escolha o estilo e receba headshots prontos para LinkedIn, portfólio e redes sociais.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-lg mb-8">
+              {['LinkedIn Profissional','Corporate Executive','Creative Artist'].map(style => (
+                <div key={style}
+                  className="p-4 rounded-xl border border-white/10 bg-white/5 hover:border-[#c9a84c]/40 cursor-pointer transition-all text-sm text-white/70 hover:text-white">
+                  {style}
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={() => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'image/*';
+                input.onchange = () => alert('Upload recebido! Integração com Nano Banana Pro em breve.');
+                input.click();
+              }}
+              className="px-8 py-3 rounded-xl font-bold text-black text-sm"
+              style={{background:'#c9a84c'}}>
+              📸 Carregar sua foto
+            </button>
+            <p className="text-white/20 text-xs mt-4">Powered by Nano Banana Pro · ~3 créditos por set</p>
+          </div>
+        </div>
+
+        {/* Nano Banana Studio */}
+        <div className={activeTab === 'nano-banana' ? "h-full w-full overflow-auto" : "hidden"}>
+          <div className="flex flex-col items-center justify-center min-h-full p-8 text-center">
+            <div className="w-20 h-20 rounded-2xl mb-6 flex items-center justify-center text-4xl"
+              style={{background:'rgba(201,168,76,0.15)',border:'1px solid rgba(201,168,76,0.3)'}}>
+              🍌
+            </div>
+            <h2 className="text-white font-bold text-2xl mb-3">Nano Banana Studio</h2>
+            <p className="text-white/50 text-sm max-w-md mb-8 leading-relaxed">
+              Geração de imagens com consistência de identidade. Ideal para personagens, produtos com marca e retratos que precisam manter coerência visual entre gerações.
+            </p>
+            <div className="w-full max-w-lg mb-6">
+              <textarea
+                placeholder="Descreva o personagem ou produto que quer criar com consistência de identidade..."
+                className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white text-sm resize-none outline-none focus:border-[#c9a84c]/40 transition-colors"
+                rows={4}
+              />
+            </div>
+            <div className="flex gap-3 flex-wrap justify-center mb-6">
+              {['Retrato realista','Estilo anime','Arte digital','Fotografia'].map(s => (
+                <button key={s}
+                  className="px-4 py-2 rounded-lg border border-white/10 bg-white/5 text-white/60 text-xs hover:border-[#c9a84c]/40 hover:text-white transition-all">
+                  {s}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => alert('Gere primeiro no Image Studio com Nano Banana Pro. Esta seção dedicada está em desenvolvimento.')}
+              className="px-8 py-3 rounded-xl font-bold text-black text-sm"
+              style={{background:'#c9a84c'}}>
+              ✦ Gerar com Nano Banana
+            </button>
+            <p className="text-white/20 text-xs mt-4">Powered by Nano Banana Pro · Consistência de identidade garantida</p>
+          </div>
+        </div>
+
         <div className={activeTab === 'apps' ? "h-full w-full" : "hidden"}>
           <AppsStudio apiKey={apiKey} />
         </div>
