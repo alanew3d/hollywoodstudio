@@ -104,6 +104,7 @@ const TABS = [
   {
     id: 'cinema',
     label: 'Cinema Studio',
+    externalUrl: 'https://cinema.hollywoodstudio.ai',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
@@ -1002,8 +1003,10 @@ export default function StandaloneShell() {
                             return (
                               <a
                                 key={tab.id}
-                                href={`/studio/${tab.id}`}
-                                onClick={(event) => handleNavigationItemClick(event, tab.id)}
+                                href={tab.externalUrl || `/studio/${tab.id}`}
+                                target={tab.externalUrl ? '_blank' : undefined}
+                                rel={tab.externalUrl ? 'noopener noreferrer' : undefined}
+                                onClick={(event) => { if (!tab.externalUrl) handleNavigationItemClick(event, tab.id); }}
                                 aria-current={isActive ? 'page' : undefined}
                                 className={`
                                   group relative flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[12px] font-medium transition-all duration-150
