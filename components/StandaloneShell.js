@@ -546,14 +546,12 @@ export default function StandaloneShell() {
 
   useEffect(() => {
     setHasMounted(true);
-    const envKey = typeof window !== 'undefined' ? (window.__MUAPI_KEY__ || '') : '';
+    const envKey = (typeof window !== 'undefined' && window.__MUAPI_KEY__) ? window.__MUAPI_KEY__ : '';
     const stored = localStorage.getItem(STORAGE_KEY) || envKey;
     if (stored) {
       if (!localStorage.getItem(STORAGE_KEY) && envKey) localStorage.setItem(STORAGE_KEY, envKey);
-    if (stored) {
       setApiKey(stored);
       fetchBalance(stored);
-      // Sync cookie immediately on mount to establish identity for background requests
       document.cookie = `muapi_key=${stored}; path=/; max-age=31536000; SameSite=Lax`;
     }
   }, [fetchBalance]);
