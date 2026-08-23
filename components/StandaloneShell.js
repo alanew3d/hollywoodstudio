@@ -344,6 +344,74 @@ export default function StandaloneShell() {
   const [userName, setUserName] = useState('');
   const [adminUsers, setAdminUsers] = useState([]);
   const isAdmin = typeof window !== 'undefined' && localStorage.getItem('hs_is_admin') === 'true';
+
+  // ── Carrega créditos reais do Supabase ─────────
+  const loadUserCredits = React.useCallback(async () => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('hs_token') : null;
+    if (!token || token === 'hs-local-token') return;
+    try {
+      const res = await fetch('/api/user-credits', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.ok) {
+        setUserCredits(data.credits);
+        setUserPlan(data.plan === 'basico' ? 'Básico' :
+                    data.plan === 'premium' ? 'Premium' :
+                    data.plan === 'agencias' ? 'Agências' : 'Starter');
+        setUserEmail(data.email || '');
+        setUserName(data.name || '');
+        // Atualiza balance exibido na topbar
+        if (data.credits !== null) {
+          setBalance(`${data.credits} cr`);
+        }
+      }
+    } catch(e) { console.warn('Erro ao carregar créditos:', e.message); }
+  }, []);
+
+  // ── Custo por tipo de geração ───────────────────
+  const CREDIT_COSTS = {
+    image: 3,
+    video: 35,
+    audio: 5,
+    chat: 1,
+  };
+
+  // ── Verifica e debita créditos antes de gerar ──
+  const checkAndDebitCredits = React.useCallback(async (type = 'image', model = '') => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('hs_token') : null;
+
+    // Admin não paga créditos
+    if (isAdmin || token === 'hs-local-token') return { ok: true, balance: 9999 };
+
+    if (!token) return { ok: false, error: 'Login necessário' };
+
+    // Custo baseado no modelo
+    let cost = CREDIT_COSTS[type] || 1;
+    if (model?.includes('kling') || model?.includes('minimax') || model?.includes('veo')) cost = 50;
+    if (model?.includes('seedance-2.5') || model?.includes('wan-3')) cost = 40;
+
+    const res = await fetch('/api/user-credits', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ amount: cost, description: `Geração ${type} — ${model}` })
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      return { ok: false, error: data.error || 'Créditos insuficientes', needsUpgrade: true };
+    }
+
+    // Atualiza saldo local
+    setUserCredits(data.balance);
+    setBalance(`${data.balance} cr`);
+    return { ok: true, balance: data.balance, cost };
+  }, [isAdmin, CREDIT_COSTS]);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [hasMounted, setHasMounted] = useState(false);
   const [showVadooBanner, setShowVadooBanner] = useState(() => {
@@ -616,6 +684,13 @@ export default function StandaloneShell() {
       axios.interceptors.request.eject(interceptorId);
     };
   }, [apiKey]);
+
+  // Carrega créditos reais do Supabase ao montar
+  React.useEffect(() => {
+    loadUserCredits();
+    const interval = setInterval(loadUserCredits, 60000); // atualiza a cada 1 min
+    return () => clearInterval(interval);
+  }, [loadUserCredits]);
 
   // Poll for balance every 30 seconds if key is present
   useEffect(() => {
