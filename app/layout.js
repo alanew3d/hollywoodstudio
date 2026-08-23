@@ -30,14 +30,14 @@ export default function RootLayout({ children }) {
   var isMobile=window.innerWidth<=768;
   var img=document.createElement('img');
   img.src=isMobile?'/hero-hollywoodstudio-ai-vert.png':'/hero-hollywoodstudio-ai.jpg';
-  img.style.cssText='width:100%;height:100%;object-fit:cover;animation:hsZoomIn 1.2s ease-out forwards';
+  img.style.cssText='width:100%;height:100%;object-fit:cover;animation:hsZoomIn 1.8s ease-out forwards';
   var st=document.createElement('style');
   st.textContent='@keyframes hsZoomIn{from{transform:scale(1.06);opacity:0}to{transform:scale(1);opacity:1}}';
   var skip=document.createElement('button');
   skip.textContent='Pular →';
   skip.style.cssText='position:absolute;bottom:28px;'+(isMobile?'left:50%;transform:translateX(-50%)':'right:28px')+';border:1px solid rgba(201,168,76,.75);background:rgba(0,0,0,.6);color:#fff;border-radius:999px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;backdrop-filter:blur(10px);font-family:-apple-system,sans-serif';
-  function hide(){splash.style.opacity='0';setTimeout(function(){if(splash.parentNode)splash.parentNode.removeChild(splash);},520);}
-  skip.onclick=hide; img.onerror=hide; setTimeout(hide,2800);
+  function hide(){splash.style.opacity='0';setTimeout(function(){if(splash.parentNode)splash.parentNode.removeChild(splash);},820);}
+  skip.onclick=hide; img.onerror=hide; setTimeout(hide,4500);
   splash.appendChild(st);splash.appendChild(img);splash.appendChild(skip);
   document.body.appendChild(splash);
 })();
