@@ -539,7 +539,10 @@ export default function StandaloneShell() {
 
   useEffect(() => {
     setHasMounted(true);
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const envKey = typeof window !== 'undefined' ? (window.__MUAPI_KEY__ || '') : '';
+    const stored = localStorage.getItem(STORAGE_KEY) || envKey;
+    if (stored) {
+      if (!localStorage.getItem(STORAGE_KEY) && envKey) localStorage.setItem(STORAGE_KEY, envKey);
     if (stored) {
       setApiKey(stored);
       fetchBalance(stored);
@@ -638,7 +641,9 @@ export default function StandaloneShell() {
     </div>
   );
 
-  if (!apiKey) {
+  // Se não tem key, usa a do ambiente silenciosamente
+  // Só mostra modal se realmente não há nenhuma key disponível
+  if (!apiKey && !process.env.NEXT_PUBLIC_MUAPI_KEY) {
     return <ApiKeyModal onSave={handleKeySave} />;
   }
 
